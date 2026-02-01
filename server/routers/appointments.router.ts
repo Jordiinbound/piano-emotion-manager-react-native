@@ -342,6 +342,10 @@ export const appointmentsRouter = router({
       const database = await db.getDb();
       if (!database) return { items: [], total: 0, stats: null, nextCursor: undefined };
 
+      // DEBUG: Log partnerId
+      console.log('🔍 [appointments.list] ctx.partnerId:', ctx.partnerId, 'type:', typeof ctx.partnerId);
+      console.log('🔍 [appointments.list] ctx.user:', ctx.user ? { id: ctx.user.id, email: ctx.user.email, partnerId: ctx.user.partnerId } : null);
+
       // Construir condiciones WHERE con filtrado por organización
       const whereClauses = [
         filterByPartner(appointments.partnerId, ctx.partnerId),

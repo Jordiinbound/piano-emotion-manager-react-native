@@ -51,8 +51,9 @@ export default function InvoicesScreen() {
   const params = useLocalSearchParams<{ filter?: string }>();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null); // null = "Todos los meses"
-  const [selectedYear, setSelectedYear] = useState<number | null>(null); // null = "Todos los años"
+  // Inicializar con mes y año actual (siempre debe haber selección)
+  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
@@ -63,44 +64,15 @@ export default function InvoicesScreen() {
 
   const debouncedSearch = useDebounce(search, 300);
   
-  // Calcular dateFrom y dateTo basado en los filtros seleccionados
+  // Calcular dateFrom y dateTo para el mes y año seleccionados
   const { dateFrom, dateTo } = useMemo(() => {
-    if (selectedMonth === null && selectedYear === null) {
-      // Sin filtro de fecha
-      return { dateFrom: undefined, dateTo: undefined };
-    }
-    
-    let year = selectedYear || new Date().getFullYear();
-    let month = selectedMonth;
-    
-    if (selectedMonth !== null && selectedYear !== null) {
-      // Mes y año específicos
-      const start = new Date(year, month, 1);
-      const end = new Date(year, month + 1, 0, 23, 59, 59);
-      return {
-        dateFrom: start.toISOString(),
-        dateTo: end.toISOString()
-      };
-    } else if (selectedMonth !== null) {
-      // Solo mes seleccionado (todos los años)
-      // Buscar desde 2022 hasta 2026
-      const start = new Date(2022, month, 1);
-      const end = new Date(2026, month + 1, 0, 23, 59, 59);
-      return {
-        dateFrom: start.toISOString(),
-        dateTo: end.toISOString()
-      };
-    } else if (selectedYear !== null) {
-      // Solo año seleccionado (todos los meses)
-      const start = new Date(year, 0, 1);
-      const end = new Date(year, 11, 31, 23, 59, 59);
-      return {
-        dateFrom: start.toISOString(),
-        dateTo: end.toISOString()
-      };
-    }
-    
-    return { dateFrom: undefined, dateTo: undefined };
+    // Siempre hay mes y año seleccionados
+    const start = new Date(selectedYear, selectedMonth, 1);
+    const end = new Date(selectedYear, selectedMonth + 1, 0, 23, 59, 59);
+    return {
+      dateFrom: start.toISOString(),
+      dateTo: end.toISOString()
+    };
   }, [selectedMonth, selectedYear]);
   
   const { invoices, loading, totalInvoices } = useInvoicesData({
@@ -172,47 +144,27 @@ export default function InvoicesScreen() {
 
 
   const handlePrevMonth = () => {
-    if (selectedMonth === null) {
-      setSelectedMonth(11); // Empezar desde diciembre
-    } else if (selectedMonth === 0) {
-      setSelectedMonth(11);
+    if (selectedMonth === 0) {
+      setSelectedMonth(11); // Diciembre
     } else {
       setSelectedMonth(selectedMonth - 1);
     }
   };
 
   const handleNextMonth = () => {
-    if (selectedMonth === null) {
-      setSelectedMonth(0); // Empezar desde enero
-    } else if (selectedMonth === 11) {
-      setSelectedMonth(0);
+    if (selectedMonth === 11) {
+      setSelectedMonth(0); // Enero
     } else {
       setSelectedMonth(selectedMonth + 1);
     }
   };
 
   const handlePrevYear = () => {
-    if (selectedYear === null) {
-      setSelectedYear(2025); // Año por defecto
-    } else {
-      setSelectedYear(selectedYear - 1);
-    }
+    setSelectedYear(selectedYear - 1);
   };
 
   const handleNextYear = () => {
-    if (selectedYear === null) {
-      setSelectedYear(2026); // Año por defecto
-    } else {
-      setSelectedYear(selectedYear + 1);
-    }
-  };
-
-  const handleResetMonth = () => {
-    setSelectedMonth(null);
-  };
-
-  const handleResetYear = () => {
-    setSelectedYear(null);
+    setSelectedYear(selectedYear + 1);
   };
 
   const handleInvoicePress = useCallback((invoice: Invoice) => {
@@ -317,31 +269,31 @@ export default function InvoicesScreen() {
         </View>
         
         <View style={styles.periodSelectorContainer}>
-          {/* Selector de mes independiente */}
+          {/* Selector de mes */}
           <View style={styles.periodSelector}>
             <Pressable onPress={handlePrevMonth} style={styles.navButton}>
               <Text style={styles.navButtonText}>←</Text>
             </Pressable>
-            <Pressable onPress={handleResetMonth} style={styles.periodTextContainer}>
+            <View style={styles.periodTextContainer}>
               <Text style={styles.periodText}>
-                {selectedMonth !== null ? MONTH_NAMES[selectedMonth] : 'Todos los meses'}
+                {MONTH_NAMES[selectedMonth]}
               </Text>
-            </Pressable>
+            </View>
             <Pressable onPress={handleNextMonth} style={styles.navButton}>
               <Text style={styles.navButtonText}>→</Text>
             </Pressable>
           </View>
 
-          {/* Selector de año independiente */}
+          {/* Selector de año */}
           <View style={styles.periodSelector}>
             <Pressable onPress={handlePrevYear} style={styles.navButton}>
               <Text style={styles.navButtonText}>←</Text>
             </Pressable>
-            <Pressable onPress={handleResetYear} style={styles.periodTextContainer}>
+            <View style={styles.periodTextContainer}>
               <Text style={styles.periodText}>
-                {selectedYear !== null ? selectedYear : 'Todos los años'}
+                {selectedYear}
               </Text>
-            </Pressable>
+            </View>
             <Pressable onPress={handleNextYear} style={styles.navButton}>
               <Text style={styles.navButtonText}>→</Text>
             </Pressable>

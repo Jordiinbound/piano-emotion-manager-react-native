@@ -470,3 +470,8 @@
 - [ ] 5. Agregar navegación a meses anteriores (ya existe pero verificar funcionamiento)
 - [ ] 6. Arreglar icono del calendario para que navegue al calendario
 - [ ] 7. Agregar segunda fila en Previsión con indicadores de Inventario y Carga de trabajo
+
+## Bugs Nuevos Reportados (2026-02-01)
+
+- [ ] Selectores de mes/año deben permitir solo selección específica (eliminar opción "Todos")
+- [ ] Facturas limitadas a 30 por mes - problema de paginación no resuelto
