@@ -324,8 +324,7 @@ export const appointmentsRouter = router({
    */
   list: orgProcedure
     .input(paginationSchema.optional())
-    .query(withCache(
-      async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const { 
         limit = 30, 
         cursor, 
@@ -442,9 +441,7 @@ export const appointmentsRouter = router({
       }
 
       return { items, nextCursor, total, stats };
-    },
-    { ttl: 300, prefix: 'appointments', includeUser: true, procedurePath: 'appointments.list' }
-  )),
+    }),
   
   /**
    * Lista completa sin paginación (para selects)
