@@ -178,7 +178,7 @@ export const invoicesRouter = router({
   /**
    * Lista de facturas con paginación y filtros
    */
-  list: protectedProcedure
+  list: orgProcedure
     .input(paginationSchema.optional())
     .query(withCache(
       async ({ ctx, input }) => {
