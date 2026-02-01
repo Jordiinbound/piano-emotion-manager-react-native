@@ -21,6 +21,7 @@ interface CalendarViewProps {
   events: CalendarEvent[];
   onEventPress?: (event: CalendarEvent) => void;
   onDatePress?: (date: string) => void;
+  onMonthChange?: (year: number, month: number) => void;
   initialDate?: string;
 }
 
@@ -32,7 +33,7 @@ const MONTHS = [
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
-export function CalendarView({ events, onEventPress, onDatePress, initialDate }: CalendarViewProps) {
+export function CalendarView({ events, onEventPress, onDatePress, onMonthChange, initialDate }: CalendarViewProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [currentDate, setCurrentDate] = useState(() => {
     if (initialDate) return new Date(initialDate);
@@ -136,6 +137,13 @@ export function CalendarView({ events, onEventPress, onDatePress, initialDate }:
     
     return days;
   }, [currentDate, today]);
+
+  // Notificar cambios de mes al componente padre
+  useEffect(() => {
+    if (onMonthChange) {
+      onMonthChange(currentDate.getFullYear(), currentDate.getMonth());
+    }
+  }, [currentDate, onMonthChange]);
 
   const navigatePrevious = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
