@@ -95,6 +95,18 @@ export function useAppointmentsData() {
 
   // Convertir citas del servidor al formato local
   const appointments: Appointment[] = (serverAppointments?.items || []).map(serverToLocalAppointment);
+  
+  // Logs de diagnóstico
+  console.log('🔍 [useAppointmentsData] Total citas del servidor:', serverAppointments?.items?.length || 0);
+  console.log('🔍 [useAppointmentsData] Total citas convertidas:', appointments.length);
+  console.log('🔍 [useAppointmentsData] Primeras 3 citas:', appointments.slice(0, 3).map(apt => ({
+    id: apt.id,
+    clientId: apt.clientId,
+    date: apt.date,
+    startTime: apt.startTime,
+    status: apt.status
+  })));
+  console.log('🔍 [useAppointmentsData] Stats del servidor:', statsData);
 
   // Citas de hoy
   const todayAppointments = useMemo(() => {

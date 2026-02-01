@@ -44,6 +44,9 @@ export default function AgendaScreen() {
     const today = new Date().toISOString().split('T')[0];
     const groups: { date: string; label: string; appointments: Appointment[] }[] = [];
 
+    console.log('🔍 [AgendaScreen] Total appointments recibidas:', appointments.length);
+    console.log('🔍 [AgendaScreen] Fecha de hoy:', today);
+
     // Ordenar por fecha y hora
     const sorted = [...appointments].sort((a, b) => {
       const dateCompare = a.date.localeCompare(b.date);
@@ -51,8 +54,13 @@ export default function AgendaScreen() {
       return a.startTime.localeCompare(b.startTime);
     });
 
+    console.log('🔍 [AgendaScreen] Appointments ordenadas:', sorted.length);
+    console.log('🔍 [AgendaScreen] Primeras 3 fechas:', sorted.slice(0, 3).map(a => a.date));
+
     // Filtrar solo citas futuras o de hoy
     const upcoming = sorted.filter((a) => a.date >= today && a.status !== 'cancelled');
+    
+    console.log('🔍 [AgendaScreen] Appointments futuras después de filtrar:', upcoming.length);
 
     // Agrupar por fecha
     upcoming.forEach((apt) => {
