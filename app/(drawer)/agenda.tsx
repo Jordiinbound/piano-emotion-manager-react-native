@@ -57,8 +57,8 @@ export default function AgendaScreen() {
     console.log('🔍 [AgendaScreen] Appointments ordenadas:', sorted.length);
     console.log('🔍 [AgendaScreen] Primeras 3 fechas:', sorted.slice(0, 3).map(a => a.date));
 
-    // Mostrar todas las citas (no filtrar por fecha)
-    const upcoming = sorted.filter((a) => a.status !== 'cancelled');
+    // Filtrar solo citas futuras o de hoy
+    const upcoming = sorted.filter((a) => a.date >= today && a.status !== 'cancelled');
     
     console.log('🔍 [AgendaScreen] Appointments futuras después de filtrar:', upcoming.length);
 
@@ -135,9 +135,15 @@ export default function AgendaScreen() {
     }, [totalCount, showCalendar, accent, router, setHeaderConfig])
   );
 
-  // Convertir citas a eventos para el calendario
+  // Convertir citas a eventos para el calendario (solo futuras)
   const calendarEvents = useMemo(() => {
-    return appointments.map((apt) => {
+    const today = new Date().toISOString().split('T')[0];
+    const futureAppointments = appointments.filter(apt => apt.date >= today);
+    
+    console.log('🔍 [AgendaScreen] Total appointments para calendario:', futureAppointments.length);
+    console.log('🔍 [AgendaScreen] Primeras 3 fechas para calendario:', futureAppointments.slice(0, 3).map(a => a.date));
+    
+    return futureAppointments.map((apt) => {
       const client = getClient(apt.clientId);
       return {
         id: apt.id,
