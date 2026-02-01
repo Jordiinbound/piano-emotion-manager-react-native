@@ -89,17 +89,36 @@ export default function AgendaScreen() {
 
   // Convertir citas a eventos para el calendario
   const calendarEvents = useMemo(() => {
+    // Verificación defensiva: si appointments está vacío, devolver array vacío
+    if (!appointments || appointments.length === 0) {
+      return [];
+    }
+    
     return appointments.map((apt) => {
-      const client = getClient(apt.clientId);
-      return {
-        id: apt.id,
-        date: apt.date,
-        startTime: apt.startTime,
-        endTime: apt.endTime,
-        title: client ? getClientFullName(client) : 'Cliente',
-        subtitle: apt.notes,
-        status: apt.status,
-      };
+      try {
+        const client = getClient(apt.clientId);
+        return {
+          id: apt.id,
+          date: apt.date,
+          startTime: apt.startTime,
+          endTime: apt.endTime,
+          title: client ? getClientFullName(client) : 'Cliente',
+          subtitle: apt.notes,
+          status: apt.status,
+        };
+      } catch (error) {
+        // Si hay error al obtener el cliente, devolver evento con título genérico
+        console.warn('[calendarEvents] Error processing appointment:', apt.id, error);
+        return {
+          id: apt.id,
+          date: apt.date,
+          startTime: apt.startTime,
+          endTime: apt.endTime,
+          title: 'Cliente',
+          subtitle: apt.notes,
+          status: apt.status,
+        };
+      }
     });
   }, [appointments, getClient]);
 
