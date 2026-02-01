@@ -135,15 +135,12 @@ export default function AgendaScreen() {
     }, [totalCount, showCalendar, accent, router, setHeaderConfig])
   );
 
-  // Convertir citas a eventos para el calendario (solo futuras)
+  // Convertir citas a eventos para el calendario (todas las fechas)
   const calendarEvents = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
-    const futureAppointments = appointments.filter(apt => apt.date >= today);
+    console.log('🔍 [AgendaScreen] Total appointments para calendario:', appointments.length);
+    console.log('🔍 [AgendaScreen] Primeras 3 fechas para calendario:', appointments.slice(0, 3).map(a => a.date));
     
-    console.log('🔍 [AgendaScreen] Total appointments para calendario:', futureAppointments.length);
-    console.log('🔍 [AgendaScreen] Primeras 3 fechas para calendario:', futureAppointments.slice(0, 3).map(a => a.date));
-    
-    return futureAppointments.map((apt) => {
+    return appointments.map((apt) => {
       const client = getClient(apt.clientId);
       return {
         id: apt.id,
