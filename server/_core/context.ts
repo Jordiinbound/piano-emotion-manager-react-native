@@ -84,7 +84,7 @@ export async function createContext(opts: CreateContextOptions): Promise<TrpcCon
       const db = await getDb();
       if (db) {
         // Get the first user from database for stress testing
-        const [testUser] = await getDb().select().from(users).limit(1);
+        const [testUser] = await db.select().from(users).limit(1);
         if (testUser) {
           console.log('[Stress Test] Using test user:', { id: testUser.id, email: testUser.email });
           return { 
