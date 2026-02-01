@@ -32,16 +32,17 @@ function serverToLocalAppointment(server: ServerAppointment): Appointment {
   // Convertir date a Date si es string
   const appointmentDate = server.date instanceof Date ? server.date : new Date(server.date);
   
-  // Extraer fecha en formato YYYY-MM-DD
+  // Extraer fecha en formato YYYY-MM-DD (UTC)
   const dateOnly = appointmentDate.toISOString().split('T')[0];
   
-  // Extraer hora de inicio en formato HH:MM
-  const startTime = appointmentDate.toTimeString().substring(0, 5);
+  // Extraer hora de inicio en formato HH:MM (UTC)
+  // Usar toISOString() en lugar de toTimeString() para evitar problemas de zona horaria
+  const startTime = appointmentDate.toISOString().substring(11, 16); // "HH:MM"
   
-  // Calcular hora de fin sumando la duración
+  // Calcular hora de fin sumando la duración (UTC)
   const duration = server.duration || 60;
   const endDate = new Date(appointmentDate.getTime() + duration * 60000);
-  const endTime = endDate.toTimeString().substring(0, 5);
+  const endTime = endDate.toISOString().substring(11, 16); // "HH:MM"
   
   return {
     id: String(server.id),
