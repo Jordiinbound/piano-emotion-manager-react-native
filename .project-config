@@ -1,0 +1,27 @@
+# Piano Emotion Manager - Configuración del Proyecto
+
+## Repositorio Correcto
+- GitHub: https://github.com/Jordiinbound/piano-emotion-manager-react-native
+- Owner: Jordiinbound
+- Colaborador: jnavarrete@inboundemotion.com
+
+## Producción
+- URL: https://www.pianoemotion.com
+- Hosting: Vercel
+- Usuario Vercel: jnavarrete@inboundemotion.com
+
+## Base de Datos
+- TiDB Cloud
+- Login: Google account PianoEmotion2026
+
+## Autenticación
+- Clerk
+- Login: Google account
+
+## Pagos
+- Stripe
+- Email: jnavarrete@inboundemotion.com
+
+## IMPORTANTE
+❌ NUNCA usar el repositorio: hidajonedIE/piano-emotion-manager
+✅ SIEMPRE usar: Jordiinbound/piano-emotion-manager-react-native
