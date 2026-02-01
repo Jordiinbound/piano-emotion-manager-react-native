@@ -57,8 +57,8 @@ export default function AgendaScreen() {
     console.log('🔍 [AgendaScreen] Appointments ordenadas:', sorted.length);
     console.log('🔍 [AgendaScreen] Primeras 3 fechas:', sorted.slice(0, 3).map(a => a.date));
 
-    // Filtrar solo citas futuras o de hoy
-    const upcoming = sorted.filter((a) => a.date >= today && a.status !== 'cancelled');
+    // Mostrar todas las citas (no filtrar por fecha)
+    const upcoming = sorted.filter((a) => a.status !== 'cancelled');
     
     console.log('🔍 [AgendaScreen] Appointments futuras después de filtrar:', upcoming.length);
 
