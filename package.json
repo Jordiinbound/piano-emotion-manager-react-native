@@ -46,6 +46,7 @@
     "@trpc/react-query": "11.7.2",
     "@trpc/server": "11.7.2",
     "@upstash/redis": "^1.36.1",
+    "@vercel/kv": "^3.0.0",
     "axios": "^1.12.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "bcryptjs": "^3.0.3",

@@ -345,6 +345,9 @@ export const appointmentsRouter = router({
       // DEBUG: Log partnerId
       console.log('🔍 [appointments.list] ctx.partnerId:', ctx.partnerId, 'type:', typeof ctx.partnerId);
       console.log('🔍 [appointments.list] ctx.user:', ctx.user ? { id: ctx.user.id, email: ctx.user.email, partnerId: ctx.user.partnerId } : null);
+      
+      // DEBUG: Log SQL query details
+      console.log('🔍 [appointments.list] WHERE clause will filter by partnerId:', ctx.partnerId);
 
       // Construir condiciones WHERE con filtrado por organización
       const whereClauses = [
@@ -377,6 +380,9 @@ export const appointmentsRouter = router({
 
       // Consulta principal con paginación y eager loading
       const offset = cursor || 0;
+      
+      console.log('🔍 [appointments.list] About to execute query with whereClauses:', whereClauses.length);
+      
       const items = await withQueue(() => database
         .select({
           // Campos de appointment
@@ -426,6 +432,9 @@ export const appointmentsRouter = router({
         ));
 
       const stats = calculateAppointmentStats(allAppointments);
+      
+      console.log('🔍 [appointments.list] RESULTS - items.length:', items.length, 'total:', total, 'stats.total:', stats.total);
+      console.log('🔍 [appointments.list] First 3 items:', items.slice(0, 3).map(i => ({ id: i.id, partnerId: i.partnerId, date: i.date })));
 
       let nextCursor: number | undefined = undefined;
       if (items.length === limit) {
