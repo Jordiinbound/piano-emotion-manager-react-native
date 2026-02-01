@@ -21,6 +21,7 @@ interface CalendarViewProps {
   events: CalendarEvent[];
   onEventPress?: (event: CalendarEvent) => void;
   onDatePress?: (date: string) => void;
+  onMonthChange?: (date: Date) => void;
   initialDate?: string;
 }
 
@@ -32,7 +33,7 @@ const MONTHS = [
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
-export function CalendarView({ events, onEventPress, onDatePress, initialDate }: CalendarViewProps) {
+export function CalendarView({ events, onEventPress, onDatePress, onMonthChange, initialDate }: CalendarViewProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [currentDate, setCurrentDate] = useState(() => {
     if (initialDate) return new Date(initialDate);
@@ -148,6 +149,7 @@ export function CalendarView({ events, onEventPress, onDatePress, initialDate }:
       newDate.setDate(newDate.getDate() - 1);
     }
     setCurrentDate(newDate);
+    onMonthChange?.(newDate);
   };
 
   const navigateNext = () => {
@@ -161,11 +163,14 @@ export function CalendarView({ events, onEventPress, onDatePress, initialDate }:
       newDate.setDate(newDate.getDate() + 1);
     }
     setCurrentDate(newDate);
+    onMonthChange?.(newDate);
   };
 
   const goToToday = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setCurrentDate(new Date());
+    const today = new Date();
+    setCurrentDate(today);
+    onMonthChange?.(today);
   };
 
   const toggleViewMode = () => {

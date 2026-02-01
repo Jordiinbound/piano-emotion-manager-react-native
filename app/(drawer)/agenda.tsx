@@ -39,13 +39,16 @@ export default function AgendaScreen() {
   const warning = useThemeColor({}, 'warning');
   const error = useThemeColor({}, 'error');
 
-  // Agrupar citas por fecha
+  // Agrupar citas por fecha (filtradas por mes seleccionado)
   const groupedAppointments = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
     const groups: { date: string; label: string; appointments: Appointment[] }[] = [];
 
+    const selectedYear = selectedDate.getFullYear();
+    const selectedMonth = selectedDate.getMonth();
+    
     console.log('🔍 [AgendaScreen] Total appointments recibidas:', appointments.length);
-    console.log('🔍 [AgendaScreen] Fecha de hoy:', today);
+    console.log('🔍 [AgendaScreen] Mes seleccionado:', selectedYear, selectedMonth + 1);
 
     // Ordenar por fecha y hora
     const sorted = [...appointments].sort((a, b) => {
@@ -54,11 +57,11 @@ export default function AgendaScreen() {
       return a.startTime.localeCompare(b.startTime);
     });
 
-    console.log('🔍 [AgendaScreen] Appointments ordenadas:', sorted.length);
-    console.log('🔍 [AgendaScreen] Primeras 3 fechas:', sorted.slice(0, 3).map(a => a.date));
-
-    // Filtrar solo citas futuras o de hoy
-    const upcoming = sorted.filter((a) => a.date >= today && a.status !== 'cancelled');
+    // Filtrar por mes seleccionado
+    const monthStart = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-01`;
+    const lastDay = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+    const monthEnd = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+    const upcoming = sorted.filter((a) => a.date >= monthStart && a.date <= monthEnd && a.status !== 'cancelled');
     
     console.log('🔍 [AgendaScreen] Appointments futuras después de filtrar:', upcoming.length);
 
@@ -85,7 +88,7 @@ export default function AgendaScreen() {
     });
 
     return groups;
-  }, [appointments]);
+  }, [appointments, selectedDate]);
 
   // Usar stats del hook si está disponible, sino calcular localmente
   const pendingCount = stats?.pending || appointments.filter((a: Appointment) => a.status !== 'cancelled' && a.status !== 'completed').length;
@@ -100,6 +103,8 @@ export default function AgendaScreen() {
   }, [appointments]);
 
   const [showCalendar, setShowCalendar] = useState(true);
+  // Estado para el mes seleccionado en el calendario
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Configurar header con acciones - useFocusEffect para actualización al recibir foco
   useFocusEffect(
@@ -281,6 +286,7 @@ export default function AgendaScreen() {
             events={calendarEvents}
             onEventPress={handleCalendarEventPress}
             onDatePress={handleCalendarDatePress}
+            onMonthChange={(date) => setSelectedDate(date)}
           />
         )}
 
