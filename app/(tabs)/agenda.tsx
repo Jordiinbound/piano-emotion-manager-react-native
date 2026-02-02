@@ -27,8 +27,21 @@ export default function AgendaScreen() {
   const clientsData = useClientsData();
   const pianosData = usePianosData();
 
+  // Logging detallado para diagnosticar el problema
+  console.log('[AgendaScreen] clientsData:', clientsData);
+  console.log('[AgendaScreen] clientsData type:', typeof clientsData);
+  console.log('[AgendaScreen] clientsData keys:', clientsData ? Object.keys(clientsData) : 'null');
+  console.log('[AgendaScreen] getClient:', clientsData?.getClient);
+  console.log('[AgendaScreen] getClient type:', typeof clientsData?.getClient);
+  console.log('[AgendaScreen] pianosData:', pianosData);
+  console.log('[AgendaScreen] pianosData type:', typeof pianosData);
+  console.log('[AgendaScreen] pianosData keys:', pianosData ? Object.keys(pianosData) : 'null');
+  console.log('[AgendaScreen] getPiano:', pianosData?.getPiano);
+  console.log('[AgendaScreen] getPiano type:', typeof pianosData?.getPiano);
+
   // Verificación defensiva: si los hooks no devuelven funciones válidas, mostrar loading
   if (!clientsData?.getClient || !pianosData?.getPiano) {
+    console.log('[AgendaScreen] Mostrando pantalla de carga porque las funciones no están disponibles');
     return (
       <LinearGradient
         colors={['#003a8c', '#001d4a']}
@@ -44,6 +57,7 @@ export default function AgendaScreen() {
     );
   }
 
+  console.log('[AgendaScreen] Funciones disponibles, continuando con el render');
   const { getClient } = clientsData;
   const { getPiano } = pianosData;
 
