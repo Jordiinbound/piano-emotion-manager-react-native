@@ -70,7 +70,8 @@ export default function PianosScreen() {
   });
 
   const { getClient } = useClientsData();
-  const { services } = useServicesData();
+  // Cargar todos los servicios (5000) cuando se usa filtro de servicio para calcular recomendaciones correctamente
+  const { services } = useServicesData({ pageSize: (filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair') ? 5000 : undefined });
   const { recommendations } = useRecommendations(pianos, services);
 
   // Filtrar pianos basado en el filtro de servicio necesario

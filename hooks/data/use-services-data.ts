@@ -60,13 +60,21 @@ function serverToLocalService(server: ServerService): Service {
   };
 }
 
-export function useServicesData() {
+interface UseServicesDataOptions {
+  pageSize?: number;
+}
+
+export function useServicesData(options: UseServicesDataOptions = {}) {
+  const { pageSize } = options;
   const utils = trpc.useUtils();
 
   // Query para obtener todos los servicios
-  const { data: serverServices, isLoading: loading, refetch } = trpc.services.list.useQuery(undefined, {
-    staleTime: 5 * 60 * 1000, // 5 minutos
-  });
+  const { data: serverServices, isLoading: loading, refetch } = trpc.services.list.useQuery(
+    pageSize ? { limit: pageSize } : undefined,
+    {
+      staleTime: 5 * 60 * 1000, // 5 minutos
+    }
+  );
 
   // Query para obtener estadísticas
   const { data: statsData } = trpc.services.getStats.useQuery(undefined, {

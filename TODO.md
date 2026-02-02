@@ -3,6 +3,10 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Sistema de Alertas y Filtros
+- [x] Filtros de afinaciones/regulaciones siguen sin funcionar:
+  - [x] Problema resuelto: useServicesData() ahora acepta parámetro pageSize
+  - [x] Solución aplicada: Cargar 5000 servicios cuando se usa filtro de servicio en pianos
+  - [x] Recomendaciones ahora se calculan con todos los datos disponibles
 - [x] Alerta "Citas de esta semana" debe abrir agenda en vista de semana:
   - [x] Implementado parámetro de URL para vista inicial del calendario
   - [x] Alerta ahora usa `/agenda?view=week`
