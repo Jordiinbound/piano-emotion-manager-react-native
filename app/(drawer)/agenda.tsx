@@ -1,3 +1,5 @@
+console.log('[agenda.tsx (drawer)] ===== ARCHIVO CARGADO =====');
+
 import React from 'react';
 import { useTranslation } from '@/hooks/use-translation';
 import { useRouter, usePathname } from 'expo-router';
@@ -21,7 +23,10 @@ import { useClientsData, usePianosData, useAppointmentsData } from '@/hooks/data
 import { Appointment, APPOINTMENT_STATUS_LABELS } from '@/types/business';
 import { formatDate, getClientFullName } from '@/types';
 
+console.log('[agenda.tsx (drawer)] ===== COMPONENTE DEFINIDO =====');
+
 export default function AgendaScreen() {
+  console.log('[AgendaScreen (drawer)] ===== COMPONENTE EJECUTÁNDOSE =====');
   const router = useRouter();
   const pathname = usePathname();
   const { t } = useTranslation();
