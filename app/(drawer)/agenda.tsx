@@ -109,9 +109,18 @@ export default function AgendaScreen() {
     return groups;
   }, [appointments, selectedDate]);
 
-  // Usar stats del hook si está disponible, sino calcular localmente
+  // Calcular total de citas del mes seleccionado
+  const totalCount = useMemo(() => {
+    const selectedYear = selectedDate.getFullYear();
+    const selectedMonth = selectedDate.getMonth();
+    
+    return appointments.filter((a: Appointment) => {
+      const aptDate = new Date(a.date);
+      return aptDate.getFullYear() === selectedYear && aptDate.getMonth() === selectedMonth;
+    }).length;
+  }, [appointments, selectedDate]);
+  
   const pendingCount = stats?.pending || appointments.filter((a: Appointment) => a.status !== 'cancelled' && a.status !== 'completed').length;
-  const totalCount = total || appointments.length;
 
   // Citas de hoy para el optimizador de rutas
   const todayAppointments = useMemo(() => {

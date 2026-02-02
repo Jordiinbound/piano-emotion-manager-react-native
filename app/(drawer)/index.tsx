@@ -82,7 +82,7 @@ export default function DashboardScreen() {
 
   // Datos
   const { services } = useServicesData();
-  const { appointments } = useAppointmentsData();
+  const { appointments, upcomingAppointments: hookUpcomingAppointments } = useAppointmentsData();
   const { alerts, stats: alertStats } = useAlertsOptimized(15);
   
   // Predicciones
@@ -111,14 +111,10 @@ export default function DashboardScreen() {
     revenue: 0,
   };
 
-  // Próximas citas (3 más cercanas)
+  // Próximas citas (3 más cercanas) - usar las del hook que ya están calculadas correctamente
   const upcomingAppointments = useMemo(() => {
-    const now = new Date();
-    return appointments
-      .filter((apt) => new Date(apt.date) >= now)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .slice(0, 3);
-  }, [appointments]);
+    return hookUpcomingAppointments.slice(0, 3);
+  }, [hookUpcomingAppointments]);
 
   // Navegación de meses
   const navigatePreviousMonth = useCallback(() => {

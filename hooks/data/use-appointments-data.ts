@@ -65,8 +65,10 @@ function serverToLocalAppointment(server: ServerAppointment): Appointment {
 export function useAppointmentsData() {
   const utils = trpc.useUtils();
 
-  // Query para obtener todas las citas
-  const { data: serverAppointments, isLoading: loading, refetch } = trpc.appointments.list.useQuery(undefined, {
+  // Query para obtener todas las citas (límite alto para cargar todas)
+  const { data: serverAppointments, isLoading: loading, refetch } = trpc.appointments.list.useQuery(
+    { limit: 5000 },
+    {
     staleTime: 2 * 60 * 1000, // 2 minutos (las citas cambian más frecuentemente)
   });
 
