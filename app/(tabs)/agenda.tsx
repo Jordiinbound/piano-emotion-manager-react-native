@@ -24,8 +24,28 @@ export default function AgendaScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { appointments, loading } = useAppointmentsData();
-  const { getClient } = useClientsData();
-  const { getPiano } = usePianosData();
+  const clientsData = useClientsData();
+  const pianosData = usePianosData();
+
+  // Verificación defensiva: si los hooks no devuelven datos válidos, mostrar loading
+  if (!clientsData || !pianosData) {
+    return (
+      <LinearGradient
+        colors={['#003a8c', '#001d4a']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={styles.container}
+      >
+        <ScreenHeader title="Agenda" subtitle="Cargando..." icon="calendar" showBackButton={true} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ThemedText>Cargando datos...</ThemedText>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  const { getClient } = clientsData;
+  const { getPiano } = pianosData;
 
   const accent = useThemeColor({}, 'accent');
   const textSecondary = useThemeColor({}, 'textSecondary');
