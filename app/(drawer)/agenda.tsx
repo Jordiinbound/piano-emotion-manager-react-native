@@ -39,9 +39,9 @@ export default function AgendaScreen() {
   console.log('[AgendaScreen] ✅ insets OK');
   const { appointments, loading, total, stats } = useAppointmentsData();
   console.log('[AgendaScreen] ✅ appointments OK:', appointments?.length);
-  const { getClient } = useClientsData();
+  const { getClient } = useClientsData({ pageSize: 5000 }); // Cargar todos los clientes
   console.log('[AgendaScreen] ✅ getClient OK:', typeof getClient);
-  const { getPiano } = usePianosData();
+  const { getPiano } = usePianosData({ pageSize: 5000 }); // Cargar todos los pianos
   console.log('[AgendaScreen] ✅ getPiano OK:', typeof getPiano);
 
   const accent = useThemeColor({}, 'accent');

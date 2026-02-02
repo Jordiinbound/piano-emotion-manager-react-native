@@ -11,7 +11,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import { Appointment } from '@/types/business';
-import { Client, getClientFullName } from '@/types';
+import { Client, getClientFullName, getClientFormattedAddress } from '@/types';
 
 interface RouteStop {
   appointment: Appointment;
@@ -41,10 +41,9 @@ export function RouteOptimizer({ appointments, getClient, onAppointmentPress }: 
 
   // Construir dirección completa del cliente
   const buildAddress = (client: Client | null): string => {
-    if (!client?.address) return '';
-    const { street, number, postalCode, city, province } = client.address;
-    const parts = [street, number, postalCode, city, province].filter(Boolean);
-    return parts.length > 0 ? parts.join(', ') + ', España' : '';
+    if (!client) return '';
+    const address = getClientFormattedAddress(client);
+    return address ? address + ', España' : '';
   };
 
   // Preparar paradas de la ruta
