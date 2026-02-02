@@ -3,6 +3,10 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Sistema de Alertas y Filtros
+- [x] Generar servicios de prueba para pianos:
+  - [x] Revertir cambios en useRecommendations (volver a lógica original)
+  - [x] Crear script para generar servicios de prueba (scripts/seed-services.ts)
+  - [ ] Ejecutar script manualmente: npx ts-node scripts/seed-services.ts
 - [x] Página de pianos normal va a blanco:
   - [x] Agregado else en useEffect para desactivar spinner en filtros normales
   - [x] El spinner ahora se desactiva correctamente cuando !isServiceFilter
