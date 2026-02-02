@@ -45,7 +45,7 @@ const accessoriesSchema = z.object({
 }).optional().nullable();
 
 const paginationSchema = z.object({
-  limit: z.number().int().min(1).max(100).default(30),
+  limit: z.number().int().min(1).max(5000).default(30),
   cursor: z.number().optional(),
   sortBy: z.enum(["brand", "model", "year", "createdAt", "updatedAt"]).default("brand"),
   sortOrder: z.enum(["asc", "desc"]).default("asc"),

@@ -129,7 +129,7 @@ export const clientsRouter = router({
   list: protectedProcedure
      .input(
         z.object({
-          limit: z.number().min(1).max(100).default(30),
+          limit: z.number().min(1).max(5000).default(30),
           cursor: z.number().optional(),
           search: z.string().optional(),
           region: z.string().optional(),
