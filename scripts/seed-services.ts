@@ -10,12 +10,12 @@
  * npx ts-node scripts/seed-services.ts
  */
 
-import { db } from '../server/db';
+import { getDb } from '../server/db';
 import { pianos, services } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 
-// Tipos de servicio disponibles
-const SERVICE_TYPES = ['tuning', 'regulation', 'repair', 'voicing', 'cleaning'] as const;
+// Tipos de servicio disponibles (deben coincidir con el schema)
+const SERVICE_TYPES = ['tuning', 'regulation', 'repair', 'maintenance_basic', 'maintenance_complete'] as const;
 
 // Función para generar una fecha aleatoria en el pasado
 function randomPastDate(maxDaysAgo: number): Date {
@@ -31,8 +31,8 @@ function generateCost(serviceType: string): number {
     tuning: { min: 80, max: 150 },
     regulation: { min: 200, max: 500 },
     repair: { min: 100, max: 800 },
-    voicing: { min: 150, max: 300 },
-    cleaning: { min: 50, max: 120 },
+    maintenance_basic: { min: 50, max: 100 },
+    maintenance_complete: { min: 150, max: 300 },
   };
   
   const range = costs[serviceType as keyof typeof costs] || { min: 50, max: 200 };
@@ -60,15 +60,15 @@ function generateNotes(serviceType: string): string {
       'Reparación de teclas pegajosas. Problema resuelto.',
       'Reparación menor completada. Piano en buen estado.',
     ],
-    voicing: [
-      'Entonación de martillos realizada. Mejora en la calidad del sonido.',
-      'Ajuste de timbre completado. Sonido más uniforme.',
-      'Voicing estándar. Piano sonando equilibrado.',
+    maintenance_basic: [
+      'Mantenimiento básico completado. Limpieza y revisión general.',
+      'Revisión rutinaria realizada. Piano en buen estado.',
+      'Mantenimiento preventivo básico. Todo funcionando correctamente.',
     ],
-    cleaning: [
-      'Limpieza profunda completada. Piano en excelente estado estético.',
-      'Limpieza interior y exterior. Polvo y suciedad eliminados.',
-      'Mantenimiento de limpieza regular. Piano bien cuidado.',
+    maintenance_complete: [
+      'Mantenimiento completo realizado. Limpieza profunda y ajustes.',
+      'Servicio completo de mantenimiento. Piano en óptimas condiciones.',
+      'Mantenimiento exhaustivo completado. Mejora general del instrumento.',
     ],
   };
   
@@ -79,6 +79,9 @@ function generateNotes(serviceType: string): string {
 async function seedServices() {
   try {
     console.log('🎹 Iniciando generación de servicios de prueba...\n');
+    
+    // Obtener instancia de db
+    const db = await getDb();
     
     // Obtener todos los pianos
     const allPianos = await db.select().from(pianos);
@@ -108,7 +111,9 @@ async function seedServices() {
         serviceDate.setDate(serviceDate.getDate() - daysAgo);
         
         await db.insert(services).values({
+          odId: piano.odId,
           pianoId: piano.id,
+          clientId: piano.clientId,
           serviceType: 'tuning',
           date: serviceDate.toISOString().split('T')[0],
           cost: generateCost('tuning'),
@@ -129,7 +134,9 @@ async function seedServices() {
           serviceDate.setDate(serviceDate.getDate() - daysAgo);
           
           await db.insert(services).values({
+            odId: piano.odId,
             pianoId: piano.id,
+            clientId: piano.clientId,
             serviceType: 'regulation',
             date: serviceDate.toISOString().split('T')[0],
             cost: generateCost('regulation'),
@@ -148,7 +155,9 @@ async function seedServices() {
         console.log(`   ✨ Generando servicio adicional: ${randomServiceType}...`);
         
         await db.insert(services).values({
+          odId: piano.odId,
           pianoId: piano.id,
+          clientId: piano.clientId,
           serviceType: randomServiceType,
           date: serviceDate.toISOString().split('T')[0],
           cost: generateCost(randomServiceType),
