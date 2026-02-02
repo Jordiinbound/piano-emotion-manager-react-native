@@ -16,6 +16,7 @@ import { useHeader } from '@/contexts/HeaderContext';
 import { FlatList, Pressable, RefreshControl, StyleSheet, View, Text, useWindowDimensions, ActivityIndicator } from 'react-native';
 
 import { PianoCard, EmptyState } from '@/components/cards';
+import { ThemedText } from '@/components/themed-text';
 import { FAB } from '@/components/fab';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { SearchBar } from '@/components/search-bar';
@@ -50,6 +51,7 @@ export default function PianosScreen() {
   const [filter, setFilter] = useState<FilterType>((params.filter as FilterType) || 'all');
   const [refreshing, setRefreshing] = useState(false);
   const [localPage, setLocalPage] = useState(1); // Página local para filtros de servicio
+  const [isCalculatingRecommendations, setIsCalculatingRecommendations] = useState(false);
   const LOCAL_PAGE_SIZE = 30;
 
   // Debounce search para evitar demasiadas peticiones
@@ -76,9 +78,15 @@ export default function PianosScreen() {
   const { services } = useServicesData({ pageSize: (filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair') ? 5000 : undefined });
   const { recommendations } = useRecommendations(pianos, services);
 
-  // Resetear página local cuando cambia el filtro
+  // Resetear página local y activar indicador de cálculo cuando cambia a filtro de servicio
   useMemo(() => {
     setLocalPage(1);
+    const isServiceFilter = filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair';
+    if (isServiceFilter) {
+      setIsCalculatingRecommendations(true);
+      // Desactivar después de un breve delay para permitir que se carguen los datos
+      setTimeout(() => setIsCalculatingRecommendations(false), 1000);
+    }
   }, [filter]);
 
   // Filtrar pianos basado en el filtro de servicio necesario
@@ -213,6 +221,21 @@ export default function PianosScreen() {
       <View style={styles.container}>
         <View style={styles.loadingState}>
           <LoadingSpinner size="large" messageType="pianos" />
+        </View>
+      </View>
+    );
+  }
+
+  // Mostrar indicador de carga cuando se están calculando recomendaciones para filtros de servicio
+  const isServiceFilter = filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair';
+  if (isServiceFilter && (isCalculatingRecommendations || loading || (pianos.length === 0 && loading) || (services.length === 0 && loading))) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.loadingState}>
+          <ActivityIndicator size="large" color={COLORS.accent} />
+          <ThemedText style={{ marginTop: Spacing.md, color: COLORS.textSecondary }}>
+            Calculando recomendaciones...
+          </ThemedText>
         </View>
       </View>
     );

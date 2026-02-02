@@ -3,6 +3,13 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Sistema de Alertas y Filtros
+- [x] Página en blanco al hacer clic en alertas:
+  - [x] Agregado indicador de carga "Calculando recomendaciones..."
+  - [x] Muestra spinner mientras se cargan 5000 pianos y servicios
+  - [x] Evita pantalla en blanco durante cálculo de recomendaciones
+- [ ] Conteos incorrectos en alertas:
+  - [ ] "30 pianos requieren afinación (30 urgentes)" - todos marcados como urgentes
+  - [ ] "20 pianos necesitan regulación (5 urgentes)" - números sospechosos
 - [x] Implementar paginación manual para filtros de servicio:
   - [x] Cargar todos los pianos/servicios y filtrar localmente
   - [x] Paginar resultados filtrados (30 por página)
