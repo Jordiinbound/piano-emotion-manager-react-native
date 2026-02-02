@@ -3,6 +3,12 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Sistema de Alertas y Filtros
+- [x] Implementar paginación manual para filtros de servicio:
+  - [x] Cargar todos los pianos/servicios y filtrar localmente
+  - [x] Paginar resultados filtrados (30 por página)
+  - [x] Controles Anterior/Siguiente con botones deshabilitados en extremos
+  - [x] Mostrar "Mostrando 1-30 de 150 pianos que necesitan afinación"
+  - [x] Header actualizado con conteo correcto y descripción del filtro
 - [x] Añadir indicadores visuales de urgencia:
   - [x] Badge "URGENTE" en tarjetas de pianos con prioridad urgent
   - [x] Color rojo con icono de alerta para destacar visualmente

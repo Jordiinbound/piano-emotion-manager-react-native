@@ -49,6 +49,8 @@ export default function PianosScreen() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>((params.filter as FilterType) || 'all');
   const [refreshing, setRefreshing] = useState(false);
+  const [localPage, setLocalPage] = useState(1); // Página local para filtros de servicio
+  const LOCAL_PAGE_SIZE = 30;
 
   // Debounce search para evitar demasiadas peticiones
   const debouncedSearch = useDebounce(search, 300);
@@ -74,8 +76,13 @@ export default function PianosScreen() {
   const { services } = useServicesData({ pageSize: (filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair') ? 5000 : undefined });
   const { recommendations } = useRecommendations(pianos, services);
 
+  // Resetear página local cuando cambia el filtro
+  useMemo(() => {
+    setLocalPage(1);
+  }, [filter]);
+
   // Filtrar pianos basado en el filtro de servicio necesario
-  const filteredPianos = useMemo(() => {
+  const allFilteredPianos = useMemo(() => {
     if (filter === 'needs_tuning') {
       const pianosNeedingTuning = recommendations
         .filter(r => r.type === 'tuning' && r.priority !== 'ok')
@@ -97,6 +104,21 @@ export default function PianosScreen() {
     return pianos;
   }, [pianos, recommendations, filter]);
 
+  // Paginar localmente los resultados filtrados cuando se usa filtro de servicio
+  const filteredPianos = useMemo(() => {
+    const isServiceFilter = filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair';
+    if (!isServiceFilter) {
+      return allFilteredPianos;
+    }
+    const startIndex = (localPage - 1) * LOCAL_PAGE_SIZE;
+    const endIndex = startIndex + LOCAL_PAGE_SIZE;
+    return allFilteredPianos.slice(startIndex, endIndex);
+  }, [allFilteredPianos, localPage, filter]);
+
+  // Calcular total de páginas para filtros de servicio
+  const totalFilteredCount = allFilteredPianos.length;
+  const totalPages = Math.ceil(totalFilteredCount / LOCAL_PAGE_SIZE);
+
   // Determinar si es móvil, tablet o desktop
   const isMobile = width < 768;
   const isDesktop = width >= 1024;
@@ -104,13 +126,21 @@ export default function PianosScreen() {
   // Configurar header
   useFocusEffect(
     React.useCallback(() => {
+    const isServiceFilter = filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair';
+    const displayCount = isServiceFilter ? totalFilteredCount : totalPianos;
+    const filterLabel = filter === 'needs_tuning' ? 'que necesitan afinación' : 
+                        filter === 'needs_regulation' ? 'que necesitan regulación' :
+                        filter === 'needs_repair' ? 'que necesitan reparación' : '';
+    
     setHeaderConfig({
       title: t('navigation.pianos'),
-      subtitle: `${totalPianos} ${totalPianos === 1 ? 'piano' : 'pianos'}`,
+      subtitle: isServiceFilter 
+        ? `${displayCount} ${displayCount === 1 ? 'piano' : 'pianos'} ${filterLabel}`
+        : `${displayCount} ${displayCount === 1 ? 'piano' : 'pianos'}`,
       icon: 'pianokeys',
       showBackButton: false,
     });
-    }, [totalPianos, t, setHeaderConfig])
+    }, [totalPianos, totalFilteredCount, filter, t, setHeaderConfig])
   );
 
   // Estadísticas vienen del hook (calculadas en backend)
@@ -238,6 +268,38 @@ export default function PianosScreen() {
         ))}
       </View>
 
+      {/* Controles de paginación para filtros de servicio */}
+      {(filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair') && totalFilteredCount > 0 && (
+        <View style={styles.paginationContainer}>
+          <Text style={styles.paginationInfo}>
+            Mostrando {((localPage - 1) * LOCAL_PAGE_SIZE) + 1}-{Math.min(localPage * LOCAL_PAGE_SIZE, totalFilteredCount)} de {totalFilteredCount} pianos
+          </Text>
+          <View style={styles.paginationControls}>
+            <Pressable
+              style={[styles.paginationButton, localPage === 1 && styles.paginationButtonDisabled]}
+              onPress={() => setLocalPage(p => Math.max(1, p - 1))}
+              disabled={localPage === 1}
+            >
+              <Text style={[styles.paginationButtonText, localPage === 1 && styles.paginationButtonTextDisabled]}>
+                ← Anterior
+              </Text>
+            </Pressable>
+            <Text style={styles.paginationPageInfo}>
+              Página {localPage} de {totalPages}
+            </Text>
+            <Pressable
+              style={[styles.paginationButton, localPage === totalPages && styles.paginationButtonDisabled]}
+              onPress={() => setLocalPage(p => Math.min(totalPages, p + 1))}
+              disabled={localPage === totalPages}
+            >
+              <Text style={[styles.paginationButtonText, localPage === totalPages && styles.paginationButtonTextDisabled]}>
+                Siguiente →
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
+
       {/* Lista de pianos */}
       {filteredPianos.length === 0 ? (
         <EmptyState
@@ -358,6 +420,49 @@ const styles = StyleSheet.create({
   },
   filterTextActive: {
     color: '#FFFFFF',
+  },
+
+  // Paginación
+  paginationContainer: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    gap: Spacing.sm,
+  },
+  paginationInfo: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+  },
+  paginationControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.md,
+  },
+  paginationButton: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.background,
+  },
+  paginationButtonDisabled: {
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+  },
+  paginationButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.primary,
+  },
+  paginationButtonTextDisabled: {
+    color: COLORS.textTertiary,
+  },
+  paginationPageInfo: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
   },
 
   // Lista
