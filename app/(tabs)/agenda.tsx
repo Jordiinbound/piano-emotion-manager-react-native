@@ -1,4 +1,5 @@
 import { useTranslation } from '@/hooks/use-translation';
+console.log('[agenda.tsx] ===== ARCHIVO CARGADO =====');
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -19,7 +20,10 @@ import { useClientsData, usePianosData, useAppointmentsData } from '@/hooks/data
 import { Appointment, APPOINTMENT_STATUS_LABELS } from '@/types/business';
 import { formatDate, getClientFullName } from '@/types';
 
+console.log('[agenda.tsx] ===== COMPONENTE DEFINIDO =====');
+
 export default function AgendaScreen() {
+  console.log('[AgendaScreen] ===== COMPONENTE EJECUTÁNDOSE =====');
   const router = useRouter();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
