@@ -722,7 +722,7 @@ export const onboardingRouter = router({
    */
   getOnboardingStatus: protectedProcedure
     .query(async ({ ctx }) => {
-      const database = await (await getDb())!.getDb();
+      const database = await getDb();
       if (!database) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
