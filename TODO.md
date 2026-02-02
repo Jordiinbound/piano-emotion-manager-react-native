@@ -3,6 +3,10 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Sistema de Alertas y Filtros
+- [x] Página de pianos normal va a blanco:
+  - [x] Agregado else en useEffect para desactivar spinner en filtros normales
+  - [x] El spinner ahora se desactiva correctamente cuando !isServiceFilter
+  - [x] Pantalla normal funciona correctamente
 - [x] Página en blanco al hacer clic en alertas:
   - [x] Reemplazado useMemo por useEffect para manejo correcto de estado
   - [x] Spinner se activa al cambiar a filtro de servicio

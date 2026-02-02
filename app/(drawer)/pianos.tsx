@@ -91,10 +91,13 @@ export default function PianosScreen() {
     }
   }, [filter]);
 
-  // Desactivar indicador cuando las recomendaciones estén listas
+  // Desactivar indicador cuando las recomendaciones estén listas o cuando se cambia a filtro normal
   useEffect(() => {
     const isServiceFilter = filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair';
     if (isServiceFilter && recommendations.length > 0 && !loading) {
+      setIsCalculatingRecommendations(false);
+    } else if (!isServiceFilter) {
+      // Desactivar spinner si no es filtro de servicio
       setIsCalculatingRecommendations(false);
     }
   }, [recommendations, loading, filter]);
