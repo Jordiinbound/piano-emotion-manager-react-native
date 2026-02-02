@@ -3,6 +3,10 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Sistema de Alertas y Filtros
+- [x] Alerta "Citas de esta semana" debe abrir agenda en vista de semana:
+  - [x] Implementado parámetro de URL para vista inicial del calendario
+  - [x] Alerta ahora usa `/agenda?view=week`
+  - [x] Se posiciona automáticamente en la semana actual
 - [x] Filtros de pianos muestran 0 resultados:
   - [x] needs_tuning, needs_regulation, needs_repair ahora funcionan correctamente
   - [x] Problema resuelto: ahora se cargan 5000 pianos cuando se usa filtro de servicio

@@ -23,6 +23,7 @@ interface CalendarViewProps {
   onDatePress?: (date: string) => void;
   onMonthChange?: (date: Date) => void;
   initialDate?: string;
+  initialViewMode?: ViewMode;
 }
 
 type ViewMode = 'month' | 'week' | 'day';
@@ -33,8 +34,8 @@ const MONTHS = [
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
-export function CalendarView({ events, onEventPress, onDatePress, onMonthChange, initialDate }: CalendarViewProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>('month');
+export function CalendarView({ events, onEventPress, onDatePress, onMonthChange, initialDate, initialViewMode }: CalendarViewProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode || 'month');
   const [currentDate, setCurrentDate] = useState(() => {
     if (initialDate) return new Date(initialDate);
     return new Date();

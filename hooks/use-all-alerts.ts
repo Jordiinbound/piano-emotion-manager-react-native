@@ -158,7 +158,7 @@ export function useAllAlerts(
         priority: 'info',
         title: 'Citas esta semana',
         message: `Tienes ${weekAppointments.length} ${weekAppointments.length === 1 ? 'cita' : 'citas'} esta semana`,
-        actionUrl: '/agenda',
+        actionUrl: '/agenda?view=week',
         data: { count: weekAppointments.length, appointments: weekAppointments },
       });
     }

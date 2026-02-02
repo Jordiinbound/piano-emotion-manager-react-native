@@ -2,7 +2,7 @@ console.log('[agenda.tsx (drawer)] ===== ARCHIVO CARGADO =====');
 
 import React from 'react';
 import { useTranslation } from '@/hooks/use-translation';
-import { useRouter, usePathname } from 'expo-router';
+import { useRouter, usePathname, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeader } from '@/contexts/HeaderContext';
@@ -28,6 +28,7 @@ console.log('[agenda.tsx (drawer)] ===== COMPONENTE DEFINIDO =====');
 export default function AgendaScreen() {
   console.log('[AgendaScreen (drawer)] ===== COMPONENTE EJECUTÁNDOSE =====');
   const router = useRouter();
+  const params = useLocalSearchParams<{ view?: string }>();
   console.log('[AgendaScreen] ✅ router OK');
   const pathname = usePathname();
   console.log('[AgendaScreen] ✅ pathname OK:', pathname);
@@ -311,6 +312,7 @@ export default function AgendaScreen() {
             onEventPress={handleCalendarEventPress}
             onDatePress={handleCalendarDatePress}
             onMonthChange={(date) => setSelectedDate(date)}
+            initialViewMode={(params.view === 'week' || params.view === 'day') ? params.view as any : 'month'}
           />
         )}
 
