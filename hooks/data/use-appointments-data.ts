@@ -65,10 +65,28 @@ function serverToLocalAppointment(server: ServerAppointment): Appointment {
 export function useAppointmentsData() {
   const utils = trpc.useUtils();
 
-  // Query para obtener todas las citas
-  const { data: serverAppointments, isLoading: loading, refetch } = trpc.appointments.list.useQuery(undefined, {
-    staleTime: 2 * 60 * 1000, // 2 minutos (las citas cambian más frecuentemente)
-  });
+  // Query con paginación infinita para obtener todas las citas
+  const {
+    data: infiniteData,
+    isLoading: loading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch
+  } = trpc.appointments.list.useInfiniteQuery(
+    {},
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      staleTime: 2 * 60 * 1000, // 2 minutos
+    }
+  );
+
+  // Combinar todas las páginas en un solo array
+  const serverAppointments = useMemo(() => {
+    if (!infiniteData?.pages) return { items: [] };
+    const allItems = infiniteData.pages.flatMap(page => page.items || []);
+    return { items: allItems };
+  }, [infiniteData]);
 
   // Query para estadísticas globales
   const { data: statsData } = trpc.appointments.getStats.useQuery(undefined, {
@@ -257,5 +275,9 @@ export function useAppointmentsData() {
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    // Paginación infinita
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
   };
 }
