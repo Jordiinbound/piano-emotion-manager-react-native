@@ -29,10 +29,10 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 
 // Hooks y datos
-import { useServicesData, useAppointmentsData } from '@/hooks/data';
+import { useServicesData, useAppointmentsData, usePianosData, useInvoicesData, useQuotesData } from '@/hooks/data';
 import { useTranslation } from '@/hooks/use-translation';
 import { trpc } from '@/utils/trpc';
-import { useAlertsOptimized } from '@/hooks/use-alerts-optimized';
+import { useAllAlerts } from '@/hooks/use-all-alerts';
 import { usePredictionsSummary, useChurnRisk, useMaintenancePredictions, useInventoryPredictions, useWorkloadPredictions } from '@/hooks/use-predictions';
 import { formatCompactNumber } from '@/utils/format';
 
@@ -83,7 +83,10 @@ export default function DashboardScreen() {
   // Datos
   const { services } = useServicesData();
   const { appointments, upcomingAppointments: hookUpcomingAppointments } = useAppointmentsData();
-  const { alerts, stats: alertStats } = useAlertsOptimized(15);
+  const { pianos } = usePianosData({ pageSize: 5000 });
+  const { invoices } = useInvoicesData();
+  const { quotes } = useQuotesData();
+  const { alerts, stats: alertStats } = useAllAlerts(pianos, services, appointments, invoices, quotes);
   
   // Predicciones
   const { data: predictionsSummary } = usePredictionsSummary();
