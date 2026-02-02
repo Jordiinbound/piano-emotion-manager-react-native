@@ -27,8 +27,8 @@ export default function AgendaScreen() {
   const clientsData = useClientsData();
   const pianosData = usePianosData();
 
-  // Verificación defensiva: si los hooks no devuelven datos válidos, mostrar loading
-  if (!clientsData || !pianosData) {
+  // Verificación defensiva: si los hooks no devuelven funciones válidas, mostrar loading
+  if (!clientsData?.getClient || !pianosData?.getPiano) {
     return (
       <LinearGradient
         colors={['#003a8c', '#001d4a']}
