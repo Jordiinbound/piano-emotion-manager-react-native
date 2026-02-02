@@ -45,13 +45,15 @@ export default function AgendaScreen() {
   const dateRange = useMemo(() => {
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     
-    return {
-      dateFrom: firstDay.toISOString().split('T')[0],
-      dateTo: lastDay.toISOString().split('T')[0],
-    };
+    // Formatear fechas manualmente para evitar problemas de zona horaria
+    const firstDay = 1;
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    
+    const dateFrom = `${year}-${String(month + 1).padStart(2, '0')}-${String(firstDay).padStart(2, '0')}`;
+    const dateTo = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+    
+    return { dateFrom, dateTo };
   }, [selectedDate]);
   
   console.log('📅 [AgendaScreen] Rango de fechas:', dateRange);
