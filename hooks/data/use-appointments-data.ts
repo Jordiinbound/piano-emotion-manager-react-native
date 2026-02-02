@@ -74,9 +74,10 @@ export function useAppointmentsData() {
     isFetchingNextPage,
     refetch
   } = trpc.appointments.list.useInfiniteQuery(
-    {},
+    { limit: 30 }, // Parámetros base
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
+      initialPageParam: undefined, // Primer página sin cursor
       staleTime: 2 * 60 * 1000, // 2 minutos
     }
   );
