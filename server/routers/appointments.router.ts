@@ -76,7 +76,7 @@ const recurrenceSchema = z.object({
  * Esquema de paginación
  */
 const paginationSchema = z.object({
-  limit: z.number().int().min(1).max(100).default(30),
+  limit: z.number().int().min(1).max(5000).default(30),
   cursor: z.number().optional(),
   sortBy: z.enum(["date", "status", "clientId", "createdAt"]).default("date"),
   sortOrder: z.enum(["asc", "desc"]).default("asc"),
