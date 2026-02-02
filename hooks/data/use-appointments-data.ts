@@ -62,21 +62,13 @@ function serverToLocalAppointment(server: ServerAppointment): Appointment {
   };
 }
 
-export function useAppointmentsData(dateFrom?: string, dateTo?: string) {
+export function useAppointmentsData() {
   const utils = trpc.useUtils();
 
-  // Query simple con filtrado por rango de fechas (mucho más eficiente)
-  const { data: serverAppointments, isLoading: loading, refetch } = trpc.appointments.list.useQuery(
-    {
-      limit: 1000, // Límite alto para un mes completo
-      dateFrom,
-      dateTo,
-    },
-    {
-      staleTime: 2 * 60 * 1000, // 2 minutos
-      enabled: true, // Siempre habilitado
-    }
-  );
+  // Query para obtener todas las citas
+  const { data: serverAppointments, isLoading: loading, refetch } = trpc.appointments.list.useQuery(undefined, {
+    staleTime: 2 * 60 * 1000, // 2 minutos (las citas cambian más frecuentemente)
+  });
 
   // Query para estadísticas globales
   const { data: statsData } = trpc.appointments.getStats.useQuery(undefined, {

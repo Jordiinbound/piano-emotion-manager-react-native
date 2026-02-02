@@ -37,35 +37,12 @@ export default function AgendaScreen() {
   console.log('[AgendaScreen] ✅ header OK');
   const insets = useSafeAreaInsets();
   console.log('[AgendaScreen] ✅ insets OK');
-  
-  // Estado para el mes seleccionado (DEBE estar antes del hook)
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  
-  // Calcular rango de fechas para el mes seleccionado
-  const dateRange = useMemo(() => {
-    const year = selectedDate.getFullYear();
-    const month = selectedDate.getMonth();
-    
-    // Formatear fechas manualmente para evitar problemas de zona horaria
-    const firstDay = 1;
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    
-    const dateFrom = `${year}-${String(month + 1).padStart(2, '0')}-${String(firstDay).padStart(2, '0')}`;
-    const dateTo = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
-    
-    return { dateFrom, dateTo };
-  }, [selectedDate]);
-  
-  console.log('📅 [AgendaScreen] Rango de fechas:', dateRange);
-  
-  const { appointments, loading, total, stats } = useAppointmentsData(dateRange.dateFrom, dateRange.dateTo);
+  const { appointments, loading, total, stats } = useAppointmentsData();
   console.log('[AgendaScreen] ✅ appointments OK:', appointments?.length);
   const { getClient } = useClientsData();
   console.log('[AgendaScreen] ✅ getClient OK:', typeof getClient);
   const { getPiano } = usePianosData();
   console.log('[AgendaScreen] ✅ getPiano OK:', typeof getPiano);
-
-
 
   const accent = useThemeColor({}, 'accent');
   const textSecondary = useThemeColor({}, 'textSecondary');
@@ -76,6 +53,8 @@ export default function AgendaScreen() {
   const error = useThemeColor({}, 'error');
   console.log('[AgendaScreen] ✅ theme colors OK');
 
+  // Estado para el mes seleccionado en el calendario (DEBE estar antes de useMemo)
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(true);
   console.log('[AgendaScreen] ✅ state OK');
 
