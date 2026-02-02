@@ -28,13 +28,21 @@ console.log('[agenda.tsx (drawer)] ===== COMPONENTE DEFINIDO =====');
 export default function AgendaScreen() {
   console.log('[AgendaScreen (drawer)] ===== COMPONENTE EJECUTÁNDOSE =====');
   const router = useRouter();
+  console.log('[AgendaScreen] ✅ router OK');
   const pathname = usePathname();
+  console.log('[AgendaScreen] ✅ pathname OK:', pathname);
   const { t } = useTranslation();
+  console.log('[AgendaScreen] ✅ translation OK');
   const { setHeaderConfig } = useHeader();
+  console.log('[AgendaScreen] ✅ header OK');
   const insets = useSafeAreaInsets();
+  console.log('[AgendaScreen] ✅ insets OK');
   const { appointments, loading, total, stats } = useAppointmentsData();
+  console.log('[AgendaScreen] ✅ appointments OK:', appointments?.length);
   const { getClient } = useClientsData();
+  console.log('[AgendaScreen] ✅ getClient OK:', typeof getClient);
   const { getPiano } = usePianosData();
+  console.log('[AgendaScreen] ✅ getPiano OK:', typeof getPiano);
 
   const accent = useThemeColor({}, 'accent');
   const textSecondary = useThemeColor({}, 'textSecondary');
@@ -43,6 +51,12 @@ export default function AgendaScreen() {
   const success = useThemeColor({}, 'success');
   const warning = useThemeColor({}, 'warning');
   const error = useThemeColor({}, 'error');
+  console.log('[AgendaScreen] ✅ theme colors OK');
+
+  // Estado para el mes seleccionado en el calendario (DEBE estar antes de useMemo)
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showCalendar, setShowCalendar] = useState(true);
+  console.log('[AgendaScreen] ✅ state OK');
 
   // Agrupar citas por fecha (filtradas por mes seleccionado)
   const groupedAppointments = useMemo(() => {
@@ -106,10 +120,6 @@ export default function AgendaScreen() {
       .filter(a => a.date === today && a.status !== 'cancelled' && a.status !== 'completed')
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   }, [appointments]);
-
-  const [showCalendar, setShowCalendar] = useState(true);
-  // Estado para el mes seleccionado en el calendario
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Configurar header con acciones - useFocusEffect para actualización al recibir foco
   useFocusEffect(
