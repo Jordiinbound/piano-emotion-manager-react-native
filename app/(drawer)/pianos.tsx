@@ -65,8 +65,8 @@ export default function PianosScreen() {
     stats,
   } = usePianosData({
     search: debouncedSearch,
-    category: filter !== 'all' ? filter : undefined,
-    pageSize: 30,
+    category: (filter !== 'all' && filter !== 'needs_tuning' && filter !== 'needs_regulation' && filter !== 'needs_repair') ? filter : undefined,
+    pageSize: (filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair') ? 5000 : 30,
   });
 
   const { getClient } = useClientsData();
