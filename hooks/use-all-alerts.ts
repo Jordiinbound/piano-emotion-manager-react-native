@@ -146,7 +146,7 @@ export function useAllAlerts(
         priority: 'urgent',
         title: 'Citas de hoy',
         message: `Tienes ${todayAppointments.length} ${todayAppointments.length === 1 ? 'cita' : 'citas'} programada${todayAppointments.length === 1 ? '' : 's'} para hoy`,
-        actionUrl: '/(tabs)/agenda',
+        actionUrl: '/agenda',
         data: { count: todayAppointments.length, appointments: todayAppointments },
       });
     }
@@ -158,7 +158,7 @@ export function useAllAlerts(
         priority: 'info',
         title: 'Citas esta semana',
         message: `Tienes ${weekAppointments.length} ${weekAppointments.length === 1 ? 'cita' : 'citas'} esta semana`,
-        actionUrl: '/(tabs)/agenda',
+        actionUrl: '/agenda',
         data: { count: weekAppointments.length, appointments: weekAppointments },
       });
     }

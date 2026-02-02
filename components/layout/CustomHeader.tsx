@@ -83,7 +83,7 @@ export default function CustomHeader({
                 Platform.OS === 'web' && { fontSize: 24 }
               ]}
             >
-              {title.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}
+              {title.toUpperCase()}
             </ThemedText>
             {subtitle && (
               <ThemedText style={styles.subtitle}>

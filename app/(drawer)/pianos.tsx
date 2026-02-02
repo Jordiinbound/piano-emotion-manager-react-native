@@ -9,7 +9,7 @@
  * - Tipografía limpia y espaciado generoso
  */
 
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeader } from '@/contexts/HeaderContext';
@@ -19,7 +19,8 @@ import { PianoCard, EmptyState } from '@/components/cards';
 import { FAB } from '@/components/fab';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { SearchBar } from '@/components/search-bar';
-import { useClientsData, usePianosData } from '@/hooks/data';
+import { useClientsData, usePianosData, useServicesData } from '@/hooks/data';
+import { useRecommendations } from '@/hooks/use-recommendations';
 import { useTranslation } from '@/hooks/use-translation';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import { Piano, PianoCategory, getClientFullName } from '@/types';
@@ -37,15 +38,16 @@ const COLORS = {
   accent: '#e07a5f',        // Terracota (solo para acciones)
 };
 
-type FilterType = 'all' | PianoCategory;
+type FilterType = 'all' | PianoCategory | 'needs_tuning' | 'needs_regulation' | 'needs_repair';
 
 export default function PianosScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ filter?: string }>();
   const { t } = useTranslation();
   const { setHeaderConfig } = useHeader();
   const { width } = useWindowDimensions();
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<FilterType>('all');
+  const [filter, setFilter] = useState<FilterType>((params.filter as FilterType) || 'all');
   const [refreshing, setRefreshing] = useState(false);
 
   // Debounce search para evitar demasiadas peticiones
@@ -68,6 +70,31 @@ export default function PianosScreen() {
   });
 
   const { getClient } = useClientsData();
+  const { services } = useServicesData();
+  const { recommendations } = useRecommendations(pianos, services);
+
+  // Filtrar pianos basado en el filtro de servicio necesario
+  const filteredPianos = useMemo(() => {
+    if (filter === 'needs_tuning') {
+      const pianosNeedingTuning = recommendations
+        .filter(r => r.type === 'tuning' && r.priority !== 'ok')
+        .map(r => r.pianoId);
+      return pianos.filter(p => pianosNeedingTuning.includes(p.id));
+    }
+    if (filter === 'needs_regulation') {
+      const pianosNeedingRegulation = recommendations
+        .filter(r => r.type === 'regulation' && r.priority !== 'ok')
+        .map(r => r.pianoId);
+      return pianos.filter(p => pianosNeedingRegulation.includes(p.id));
+    }
+    if (filter === 'needs_repair') {
+      const pianosNeedingRepair = recommendations
+        .filter(r => r.type === 'repair')
+        .map(r => r.pianoId);
+      return pianos.filter(p => pianosNeedingRepair.includes(p.id));
+    }
+    return pianos;
+  }, [pianos, recommendations, filter]);
 
   // Determinar si es móvil, tablet o desktop
   const isMobile = width < 768;
@@ -206,7 +233,7 @@ export default function PianosScreen() {
       </View>
 
       {/* Lista de pianos */}
-      {pianos.length === 0 ? (
+      {filteredPianos.length === 0 ? (
         <EmptyState
           icon="pianokeys"
           showBackButton={false}
@@ -219,7 +246,7 @@ export default function PianosScreen() {
         />
       ) : (
         <FlatList
-          data={pianos}
+          data={filteredPianos}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           contentContainerStyle={styles.list}

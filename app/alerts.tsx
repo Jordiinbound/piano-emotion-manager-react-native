@@ -32,7 +32,9 @@ export default function AlertsScreen() {
   
   const [emailClientPreference, setEmailClientPreference] = useState<'gmail' | 'outlook' | 'default'>('gmail');
   
-  const isLoading = loadingPianos || loadingServices || loadingAppointments || loadingInvoices || loadingQuotes;
+  // Mostrar alertas tan pronto como tengamos datos parciales
+  const isLoading = loadingPianos && loadingServices && loadingAppointments && loadingInvoices && loadingQuotes;
+  const hasPartialData = !loadingPianos || !loadingServices || !loadingAppointments || !loadingInvoices || !loadingQuotes;
   
   // Cargar preferencia de cliente de correo
   useEffect(() => {
@@ -193,6 +195,13 @@ export default function AlertsScreen() {
         {isLoading ? (
           <View style={styles.loadingContainer}>
             <ThemedText style={{ color: textSecondary }}>Cargando alertas...</ThemedText>
+            <ThemedText style={{ color: textSecondary, fontSize: 12, marginTop: 8 }}>
+              {loadingPianos && 'Cargando pianos...'}
+              {loadingServices && 'Cargando servicios...'}
+              {loadingAppointments && 'Cargando citas...'}
+              {loadingInvoices && 'Cargando facturas...'}
+              {loadingQuotes && 'Cargando presupuestos...'}
+            </ThemedText>
           </View>
         ) : alerts.length === 0 ? (
           <View style={styles.emptyContainer}>
