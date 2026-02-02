@@ -243,7 +243,7 @@ export function useAppointmentsData() {
     todayAppointments,
     upcomingAppointments,
     stats: statsData,
-    total: statsData?.total || appointments.length,
+    total: appointments.length,
     addAppointment,
     updateAppointment,
     deleteAppointment,
