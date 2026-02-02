@@ -49,21 +49,60 @@ export function useAllAlerts(
   invoices?: any[],
   quotes?: any[]
 ): AllAlertsResult {
-  // Alertas de pianos (existentes)
+  // Alertas de pianos (consolidadas)
   const { recommendations, urgentCount: pianoUrgent, pendingCount: pianoPending } = useRecommendations(pianos, services);
 
-  // Convertir recomendaciones de pianos a alertas
+  // Consolidar alertas de pianos por tipo
   const pianoAlerts: Alert[] = useMemo(() => {
-    return recommendations.map((rec, index) => ({
-      id: `piano-${rec.pianoId}-${index}`,
-      type: 'piano' as const,
-      priority: rec.priority === 'urgent' ? 'urgent' as const : 'warning' as const,
-      title: rec.type === 'tuning' ? 'Afinación requerida' : 
-             rec.type === 'regulation' ? 'Regulación requerida' : 'Reparación requerida',
-      message: rec.message,
-      actionUrl: `/piano/${rec.pianoId}`,
-      data: rec,
-    }));
+    const tuningRecs = recommendations.filter(r => r.type === 'tuning');
+    const regulationRecs = recommendations.filter(r => r.type === 'regulation');
+    const repairRecs = recommendations.filter(r => r.type === 'repair');
+    const alerts: Alert[] = [];
+
+    // Alerta consolidada de afinaciones
+    if (tuningRecs.length > 0) {
+      const urgentTuning = tuningRecs.filter(r => r.priority === 'urgent').length;
+      const priority = urgentTuning > 0 ? 'urgent' as const : 'warning' as const;
+      alerts.push({
+        id: 'pianos-tuning',
+        type: 'piano' as const,
+        priority,
+        title: 'Afinaciones requeridas',
+        message: `${tuningRecs.length} ${tuningRecs.length === 1 ? 'piano requiere' : 'pianos requieren'} afinación${urgentTuning > 0 ? ` (${urgentTuning} urgente${urgentTuning > 1 ? 's' : ''})` : ''}`,
+        actionUrl: '/pianos?filter=needs_tuning',
+        data: { count: tuningRecs.length, urgent: urgentTuning, pianos: tuningRecs },
+      });
+    }
+
+    // Alerta consolidada de regulaciones
+    if (regulationRecs.length > 0) {
+      const urgentRegulation = regulationRecs.filter(r => r.priority === 'urgent').length;
+      const priority = urgentRegulation > 0 ? 'urgent' as const : 'warning' as const;
+      alerts.push({
+        id: 'pianos-regulation',
+        type: 'piano' as const,
+        priority,
+        title: 'Regulaciones recomendadas',
+        message: `${regulationRecs.length} ${regulationRecs.length === 1 ? 'piano necesita' : 'pianos necesitan'} regulación${urgentRegulation > 0 ? ` (${urgentRegulation} urgente${urgentRegulation > 1 ? 's' : ''})` : ''}`,
+        actionUrl: '/pianos?filter=needs_regulation',
+        data: { count: regulationRecs.length, urgent: urgentRegulation, pianos: regulationRecs },
+      });
+    }
+
+    // Alerta consolidada de reparaciones
+    if (repairRecs.length > 0) {
+      alerts.push({
+        id: 'pianos-repair',
+        type: 'piano' as const,
+        priority: 'urgent' as const,
+        title: 'Reparaciones requeridas',
+        message: `${repairRecs.length} ${repairRecs.length === 1 ? 'piano requiere' : 'pianos requieren'} reparación`,
+        actionUrl: '/pianos?filter=needs_repair',
+        data: { count: repairRecs.length, pianos: repairRecs },
+      });
+    }
+
+    return alerts;
   }, [recommendations]);
 
   // Pre-calcular fechas una sola vez
