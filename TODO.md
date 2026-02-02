@@ -3,10 +3,14 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Sistema de Alertas y Filtros
-- [x] Filtros de afinaciones/regulaciones siguen sin funcionar:
-  - [x] Problema resuelto: useServicesData() ahora acepta parámetro pageSize
-  - [x] Solución aplicada: Cargar 5000 servicios cuando se usa filtro de servicio en pianos
-  - [x] Recomendaciones ahora se calculan con todos los datos disponibles
+- [x] Añadir indicadores visuales de urgencia:
+  - [x] Badge "URGENTE" en tarjetas de pianos con prioridad urgent
+  - [x] Color rojo con icono de alerta para destacar visualmente
+  - [x] Se muestra automáticamente cuando hay recomendaciones urgentes
+- [x] Filtros de afinaciones/regulaciones limitados a 100 registros:
+  - [x] useServicesData() ahora acepta parámetro pageSize
+  - [x] Backend ahora acepta hasta 5000 registros
+  - [x] Límite aumentado en server/routers/services.router.ts de 100 a 5000
 - [x] Alerta "Citas de esta semana" debe abrir agenda en vista de semana:
   - [x] Implementado parámetro de URL para vista inicial del calendario
   - [x] Alerta ahora usa `/agenda?view=week`

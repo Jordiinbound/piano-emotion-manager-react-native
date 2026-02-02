@@ -146,15 +146,20 @@ export default function PianosScreen() {
   const renderItem = useCallback(
     ({ item }: { item: Piano }) => {
       const client = getClient(item.clientId);
+      // Verificar si el piano tiene alguna recomendación urgente
+      const hasUrgentRecommendation = recommendations.some(
+        r => r.pianoId === item.id && r.priority === 'urgent'
+      );
       return (
         <PianoCard
           piano={item}
           clientName={client ? getClientFullName(client) : undefined}
           onPress={() => handlePianoPress(item)}
+          hasUrgentRecommendation={hasUrgentRecommendation}
         />
       );
     },
-    [getClient, handlePianoPress]
+    [getClient, handlePianoPress, recommendations]
   );
 
   const renderFooter = useCallback(() => {

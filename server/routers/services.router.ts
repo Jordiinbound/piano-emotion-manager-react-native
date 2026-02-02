@@ -93,7 +93,7 @@ const serviceBaseSchema = z.object({
 });
 
 const paginationSchema = z.object({
-  limit: z.number().int().min(1).max(100).default(30),
+  limit: z.number().int().min(1).max(5000).default(30),
   cursor: z.number().optional(),
   sortBy: z.enum(["date", "cost", "serviceType", "createdAt"]).default("date"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),

@@ -94,12 +94,14 @@ interface PianoCardProps {
   piano: Piano;
   clientName?: string;
   onPress: () => void;
+  hasUrgentRecommendation?: boolean;
 }
 
-export const PianoCard = memo(function PianoCard({ piano, clientName, onPress }: PianoCardProps) {
+export const PianoCard = memo(function PianoCard({ piano, clientName, onPress, hasUrgentRecommendation }: PianoCardProps) {
   const cardBg = useThemeColor({}, 'cardBackground');
   const borderColor = useThemeColor({}, 'border');
   const textSecondary = useThemeColor({}, 'textSecondary');
+  const error = useThemeColor({}, 'error');
   const conditionColor = PIANO_CONDITION_COLORS[piano.condition];
 
   const handlePress = () => {
@@ -125,9 +127,17 @@ export const PianoCard = memo(function PianoCard({ piano, clientName, onPress }:
         <IconSymbol name="pianokeys" size={24} color={conditionColor} />
       </View>
       <View style={styles.cardContent}>
-        <ThemedText type="defaultSemiBold" numberOfLines={1}>
-          {piano.brand} {piano.model}
-        </ThemedText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flex: 1 }}>
+            {piano.brand} {piano.model}
+          </ThemedText>
+          {hasUrgentRecommendation && (
+            <View style={[styles.urgentBadge, { backgroundColor: `${error}20`, borderColor: error }]}>
+              <IconSymbol name="exclamationmark.triangle.fill" size={12} color={error} />
+              <ThemedText style={[styles.urgentText, { color: error }]}>URGENTE</ThemedText>
+            </View>
+          )}
+        </View>
         <View style={styles.cardRow}>
           <ThemedText style={[styles.cardSubtext, { color: textSecondary }]}>
             {PIANO_CATEGORY_LABELS[piano.category]} • {getPianoTypeLabel(piano.type)}
@@ -398,6 +408,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 0.3,
     textTransform: 'uppercase',
+  },
+  urgentBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    borderWidth: 1,
+  },
+  urgentText: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   emptyState: {
     flex: 1,
