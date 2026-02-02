@@ -10,7 +10,7 @@
  */
 
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeader } from '@/contexts/HeaderContext';
 import { FlatList, Pressable, RefreshControl, StyleSheet, View, Text, useWindowDimensions, ActivityIndicator } from 'react-native';
@@ -78,16 +78,26 @@ export default function PianosScreen() {
   const { services } = useServicesData({ pageSize: (filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair') ? 5000 : undefined });
   const { recommendations } = useRecommendations(pianos, services);
 
-  // Resetear página local y activar indicador de cálculo cuando cambia a filtro de servicio
-  useMemo(() => {
+  // Resetear página local cuando cambia el filtro
+  useEffect(() => {
     setLocalPage(1);
+  }, [filter]);
+
+  // Activar indicador de cálculo cuando cambia a filtro de servicio
+  useEffect(() => {
     const isServiceFilter = filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair';
     if (isServiceFilter) {
       setIsCalculatingRecommendations(true);
-      // Desactivar después de un breve delay para permitir que se carguen los datos
-      setTimeout(() => setIsCalculatingRecommendations(false), 1000);
     }
   }, [filter]);
+
+  // Desactivar indicador cuando las recomendaciones estén listas
+  useEffect(() => {
+    const isServiceFilter = filter === 'needs_tuning' || filter === 'needs_regulation' || filter === 'needs_repair';
+    if (isServiceFilter && recommendations.length > 0 && !loading) {
+      setIsCalculatingRecommendations(false);
+    }
+  }, [recommendations, loading, filter]);
 
   // Filtrar pianos basado en el filtro de servicio necesario
   const allFilteredPianos = useMemo(() => {

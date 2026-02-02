@@ -4,9 +4,10 @@
 
 ### Sistema de Alertas y Filtros
 - [x] Página en blanco al hacer clic en alertas:
-  - [x] Agregado indicador de carga "Calculando recomendaciones..."
-  - [x] Muestra spinner mientras se cargan 5000 pianos y servicios
-  - [x] Evita pantalla en blanco durante cálculo de recomendaciones
+  - [x] Reemplazado useMemo por useEffect para manejo correcto de estado
+  - [x] Spinner se activa al cambiar a filtro de servicio
+  - [x] Spinner se desactiva cuando recommendations.length > 0 y !loading
+  - [x] Solución robusta implementada con detección real de datos
 - [x] Conteos incorrectos en alertas (solo mostraba 30 pianos):
   - [x] alerts.tsx ahora carga 5000 pianos y servicios
   - [x] Calcula recomendaciones sobre todos los pianos disponibles
