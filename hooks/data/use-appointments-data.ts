@@ -62,32 +62,21 @@ function serverToLocalAppointment(server: ServerAppointment): Appointment {
   };
 }
 
-export function useAppointmentsData() {
+export function useAppointmentsData(dateFrom?: string, dateTo?: string) {
   const utils = trpc.useUtils();
 
-  // Query con paginación infinita para obtener todas las citas
-  const {
-    data: infiniteData,
-    isLoading: loading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    refetch
-  } = trpc.appointments.list.useInfiniteQuery(
-    { limit: 30 }, // Parámetros base
+  // Query simple con filtrado por rango de fechas (mucho más eficiente)
+  const { data: serverAppointments, isLoading: loading, refetch } = trpc.appointments.list.useQuery(
     {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      initialPageParam: undefined, // Primer página sin cursor
+      limit: 1000, // Límite alto para un mes completo
+      dateFrom,
+      dateTo,
+    },
+    {
       staleTime: 2 * 60 * 1000, // 2 minutos
+      enabled: true, // Siempre habilitado
     }
   );
-
-  // Combinar todas las páginas en un solo array
-  const serverAppointments = useMemo(() => {
-    if (!infiniteData?.pages) return { items: [] };
-    const allItems = infiniteData.pages.flatMap(page => page.items || []);
-    return { items: allItems };
-  }, [infiniteData]);
 
   // Query para estadísticas globales
   const { data: statsData } = trpc.appointments.getStats.useQuery(undefined, {
@@ -276,9 +265,5 @@ export function useAppointmentsData() {
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
-    // Paginación infinita
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
   };
 }

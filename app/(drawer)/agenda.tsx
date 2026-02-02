@@ -37,42 +37,33 @@ export default function AgendaScreen() {
   console.log('[AgendaScreen] ✅ header OK');
   const insets = useSafeAreaInsets();
   console.log('[AgendaScreen] ✅ insets OK');
-  const { appointments, loading, total, stats, fetchNextPage, hasNextPage, isFetchingNextPage } = useAppointmentsData();
+  
+  // Estado para el mes seleccionado (DEBE estar antes del hook)
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  
+  // Calcular rango de fechas para el mes seleccionado
+  const dateRange = useMemo(() => {
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    
+    return {
+      dateFrom: firstDay.toISOString().split('T')[0],
+      dateTo: lastDay.toISOString().split('T')[0],
+    };
+  }, [selectedDate]);
+  
+  console.log('📅 [AgendaScreen] Rango de fechas:', dateRange);
+  
+  const { appointments, loading, total, stats } = useAppointmentsData(dateRange.dateFrom, dateRange.dateTo);
   console.log('[AgendaScreen] ✅ appointments OK:', appointments?.length);
   const { getClient } = useClientsData();
   console.log('[AgendaScreen] ✅ getClient OK:', typeof getClient);
   const { getPiano } = usePianosData();
   console.log('[AgendaScreen] ✅ getPiano OK:', typeof getPiano);
 
-  // Cargar automáticamente todas las páginas al montar el componente
-  useEffect(() => {
-    let isMounted = true;
-    
-    async function loadAllPages() {
-      console.log('🔄 [AgendaScreen] Iniciando carga de todas las páginas...');
-      let pagesLoaded = 1;
-      
-      // Continuar cargando mientras haya más páginas
-      while (isMounted && hasNextPage && !loading) {
-        console.log(`🔄 [AgendaScreen] Cargando página ${pagesLoaded + 1}...`);
-        await fetchNextPage();
-        pagesLoaded++;
-      }
-      
-      if (isMounted) {
-        console.log(`✅ [AgendaScreen] Todas las páginas cargadas (${pagesLoaded} páginas, ${appointments.length} citas)`);
-      }
-    }
-    
-    // Esperar a que termine la carga inicial antes de cargar más páginas
-    if (!loading && hasNextPage) {
-      loadAllPages();
-    }
-    
-    return () => {
-      isMounted = false;
-    };
-  }, [loading, hasNextPage, fetchNextPage, appointments.length]);
+
 
   const accent = useThemeColor({}, 'accent');
   const textSecondary = useThemeColor({}, 'textSecondary');
@@ -83,8 +74,6 @@ export default function AgendaScreen() {
   const error = useThemeColor({}, 'error');
   console.log('[AgendaScreen] ✅ theme colors OK');
 
-  // Estado para el mes seleccionado en el calendario (DEBE estar antes de useMemo)
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(true);
   console.log('[AgendaScreen] ✅ state OK');
 
