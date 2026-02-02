@@ -168,6 +168,7 @@ export default function RootLayout() {
                       <Stack.Screen name="service-catalog" options={{ title: 'Catálogo de Servicios', headerShown: false }} />
                       <Stack.Screen name="service-categories" options={{ title: 'Categorías de Servicios', headerShown: false }} />
                       <Stack.Screen name="admin" options={{ title: 'Administración', headerShown: false }} />
+                      <Stack.Screen name="alerts" options={{ title: 'Alertas', headerShown: false }} />
                     </Stack>
                     <AIAssistant />
                     </OnboardingGuard>

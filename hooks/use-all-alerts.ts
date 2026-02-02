@@ -54,7 +54,7 @@ export function useAllAlerts(
 
   // Consolidar alertas de pianos por tipo
   const pianoAlerts: Alert[] = useMemo(() => {
-    const tuningRecs = recommendations.filter(r => r.type === 'tuning');
+    const tuningRecs = recommendations.filter(r => r.type === 'tuning' && r.priority !== 'ok');
     const regulationRecs = recommendations.filter(r => r.type === 'regulation');
     const repairRecs = recommendations.filter(r => r.type === 'repair');
     const alerts: Alert[] = [];

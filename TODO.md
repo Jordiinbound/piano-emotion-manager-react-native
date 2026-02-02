@@ -3,10 +3,21 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Sistema de Alertas y Filtros
+- [ ] Breadcrumb sigue mostrando ALERTS en lugar de ALERTAS:
+  - [ ] Buscar dónde se define el título "Alerts" en el código
+  - [ ] Cambiar a "Alertas" en español
+- [ ] Falta paginación en pantalla de pianos normal (sin filtros):
+  - [ ] Solo funciona con filtros de servicio
+  - [ ] Implementar paginación para vista normal de pianos
+- [ ] Ejecutar script de seed en base de datos de producción:
+  - [x] Script ejecutándose contra TiDB (639 pianos)
+  - [ ] Esperar a que termine (10-15 minutos)
+  - [ ] Verificar que alertas muestren números realistas
 - [x] Generar servicios de prueba para pianos:
   - [x] Revertir cambios en useRecommendations (volver a lógica original)
   - [x] Crear script para generar servicios de prueba (scripts/seed-services.ts)
-  - [ ] Ejecutar script manualmente: npx ts-node scripts/seed-services.ts
+  - [x] Script ejecutado exitosamente: 222 servicios creados para 180 pianos
+  - [x] Promedio: 1.23 servicios por piano
 - [x] Página de pianos normal va a blanco:
   - [x] Agregado else en useEffect para desactivar spinner en filtros normales
   - [x] El spinner ahora se desactiva correctamente cuando !isServiceFilter
@@ -74,3 +85,22 @@
 - [ ] Notificaciones push
 - [ ] Soporte multi-idioma completo
 - [ ] Animaciones mejoradas
+
+### Problemas Identificados (02 Feb 2026)
+- [ ] **PROBLEMA CRÍTICO: Inconsistencia en cálculo de alertas de afinación:**
+  - [ ] Pantalla de alertas muestra: 639 pianos requieren afinación
+  - [ ] Pantalla de pianos (con filtro) muestra: 189 pianos
+  - [ ] Diferencia de 450 pianos (639 - 189 = 450)
+  - [ ] Alertas de regulación funcionan correctamente (182 en ambas pantallas)
+  - [ ] Investigar por qué solo las afinaciones se calculan mal en alertas
+
+- [ ] Breadcrumb muestra "ALERTS" en lugar de "ALERTAS":
+  - [ ] Visible en header de pantalla de alertas
+  - [ ] Se agregó configuración en app/_layout.tsx pero no funciona
+  - [ ] Cambiar a español
+
+- [x] Script de seed v2 ejecutado exitosamente:
+  - [x] 3893 servicios creados para 639 pianos
+  - [x] 454 pianos OK (71%), 135 warning (21.1%), 50 urgentes (7.8%)
+  - [x] Alertas esperadas: 185 afinaciones, 181 regulaciones
+  - [x] Datos actualizados en base de datos de producción
