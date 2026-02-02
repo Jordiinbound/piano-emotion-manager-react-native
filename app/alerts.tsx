@@ -21,8 +21,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AlertsScreen() {
   const router = useRouter();
-  const { pianos, loading: loadingPianos } = usePianosData();
-  const { services, loading: loadingServices } = useServicesData();
+  // Cargar TODOS los pianos y servicios (5000) para calcular alertas correctamente
+  const { pianos, loading: loadingPianos } = usePianosData({ pageSize: 5000 });
+  const { services, loading: loadingServices } = useServicesData({ pageSize: 5000 });
   const { appointments, loading: loadingAppointments } = useAppointmentsData();
   const { invoices, loading: loadingInvoices } = useInvoicesData();
   const { quotes, loading: loadingQuotes } = useQuotesData();
