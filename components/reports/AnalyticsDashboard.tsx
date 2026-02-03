@@ -309,7 +309,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
 // ============================================================================
 
 interface HorizontalBarChartProps {
-  data: { label: string; value: number; percentage: number }[];
+  data: { typeName: string; count: number }[];
 }
 
 const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
@@ -323,19 +323,21 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
   }
 
   const chartColors = [COLORS.primary, COLORS.success, COLORS.warning, COLORS.danger, COLORS.purple];
-  const maxValue = Math.max(...data.map(d => d.value), 1);
+  const maxValue = Math.max(...data.map(d => d.count), 1);
+  const totalServices = data.reduce((sum, d) => sum + d.count, 0);
 
   return (
     <View style={styles.horizontalBarContainer}>
       {data.slice(0, 5).map((item, index) => {
-        const percentage = (item.value / maxValue) * 100;
+        const percentage = (item.count / maxValue) * 100;
+        const percentageOfTotal = (item.count / totalServices) * 100;
         const color = chartColors[index % chartColors.length];
         
         return (
           <View key={index} style={styles.barRow}>
             <View style={styles.barLabelContainer}>
               <View style={[styles.barDot, { backgroundColor: color }]} />
-              <Text style={styles.barLabel}>{item.label}</Text>
+              <Text style={styles.barLabel}>{item.typeName}</Text>
             </View>
             <View style={styles.barTrack}>
               <View 
@@ -349,8 +351,8 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
               />
             </View>
             <View style={styles.barValueContainer}>
-              <Text style={styles.barValue}>{item.value}</Text>
-              <Text style={styles.barPercentage}>({item.percentage.toFixed(1)}%)</Text>
+              <Text style={styles.barValue}>{item.count}</Text>
+              <Text style={styles.barPercentage}>({percentageOfTotal.toFixed(1)}%)</Text>
             </View>
           </View>
         );
