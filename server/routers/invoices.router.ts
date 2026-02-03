@@ -182,8 +182,8 @@ export const invoicesRouter = router({
    */
   list: orgProcedure
     .input(paginationSchema.optional())
-    .query(withCache(
-      async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
+      // TEMPORAL: Caché desactivado para debug
       console.log('[invoices.list] 🔍 Procedimiento ejecutado');
       console.log('[invoices.list] 📥 Input recibido:', JSON.stringify(input));
       console.log('[invoices.list] 👤 Usuario:', { partnerId: ctx.partnerId, userId: ctx.userId });
@@ -279,9 +279,7 @@ export const invoicesRouter = router({
 
       console.error('[invoices.list] 📤 Retornando:', JSON.stringify({ itemsCount: items.length, total, nextCursor }));
       return { items, nextCursor, total, stats };
-    },
-    { ttl: 300, prefix: 'invoices', includeUser: true, procedurePath: 'invoices.list' }
-  )),
+    }),
   
   /**
    * Lista completa sin paginación (para selects)
