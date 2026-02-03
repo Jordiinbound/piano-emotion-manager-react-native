@@ -14,6 +14,7 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useHeader } from '@/contexts/HeaderContext';
 import { FlatList, Pressable, RefreshControl, StyleSheet, View, Text, useWindowDimensions } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 import { FAB } from '@/components/fab';
 import { LoadingSpinner } from '@/components/loading-spinner';
@@ -140,33 +141,7 @@ export default function InvoicesScreen() {
 
 
 
-  const handlePrevMonth = () => {
-    if (selectedMonth === 0) {
-      setSelectedMonth(11);
-      setSelectedYear(selectedYear - 1);
-    } else {
-      setSelectedMonth(selectedMonth - 1);
-    }
-  };
-
-  const handleNextMonth = () => {
-    if (selectedMonth === 11) {
-      setSelectedMonth(0);
-      setSelectedYear(selectedYear + 1);
-    } else {
-      setSelectedMonth(selectedMonth + 1);
-    }
-  };
-
-  const handlePrevYear = () => {
-    setSelectedYear(selectedYear - 1);
-  };
-
-  const handleNextYear = () => {
-    setSelectedYear(selectedYear + 1);
-  };
-
-  // Ya no necesitamos reset porque siempre hay un mes/año seleccionado
+  // Funciones de navegación eliminadas - ahora se usan dropdowns
 
   const handleInvoicePress = useCallback((invoice: Invoice) => {
     router.push({
@@ -270,34 +245,30 @@ export default function InvoicesScreen() {
         </View>
         
         <View style={styles.periodSelectorContainer}>
-          {/* Selector de mes independiente */}
+          {/* Selector de mes desplegable */}
           <View style={styles.periodSelector}>
-            <Pressable onPress={handlePrevMonth} style={styles.navButton}>
-              <Text style={styles.navButtonText}>←</Text>
-            </Pressable>
-            <View style={styles.periodTextContainer}>
-              <Text style={styles.periodText}>
-                {MONTH_NAMES[selectedMonth]}
-              </Text>
-            </View>
-            <Pressable onPress={handleNextMonth} style={styles.navButton}>
-              <Text style={styles.navButtonText}>→</Text>
-            </Pressable>
+            <Picker
+              selectedValue={selectedMonth}
+              onValueChange={(value) => setSelectedMonth(value as number)}
+              style={styles.picker}
+            >
+              {MONTH_NAMES.map((month, index) => (
+                <Picker.Item key={index} label={month} value={index} />
+              ))}
+            </Picker>
           </View>
 
-          {/* Selector de año independiente */}
+          {/* Selector de año desplegable */}
           <View style={styles.periodSelector}>
-            <Pressable onPress={handlePrevYear} style={styles.navButton}>
-              <Text style={styles.navButtonText}>←</Text>
-            </Pressable>
-            <View style={styles.periodTextContainer}>
-              <Text style={styles.periodText}>
-                {selectedYear}
-              </Text>
-            </View>
-            <Pressable onPress={handleNextYear} style={styles.navButton}>
-              <Text style={styles.navButtonText}>→</Text>
-            </Pressable>
+            <Picker
+              selectedValue={selectedYear}
+              onValueChange={(value) => setSelectedYear(value as number)}
+              style={styles.picker}
+            >
+              {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map((year) => (
+                <Picker.Item key={year} label={year.toString()} value={year} />
+              ))}
+            </Picker>
           </View>
         </View>
       </View>
@@ -476,6 +447,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 6,
     gap: 8,
+    minWidth: 150,
+  },
+  picker: {
+    flex: 1,
+    height: 40,
+    color: COLORS.text,
   },
   navButton: {
     paddingHorizontal: 8,

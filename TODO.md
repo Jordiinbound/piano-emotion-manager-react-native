@@ -104,3 +104,16 @@
   - [x] 454 pianos OK (71%), 135 warning (21.1%), 50 urgentes (7.8%)
   - [x] Alertas esperadas: 185 afinaciones, 181 regulaciones
   - [x] Datos actualizados en base de datos de producción
+
+### Facturas (02 Feb 2026)
+- [x] Error 400 en carga de facturas (IDENTIFICADO Y SOLUCIONADO):
+  - [x] Causa: Parámetro "direction": "forward" no existía en schema del backend
+  - [x] Ubicación: useInfiniteQuery en hooks/data/use-invoices-data.ts
+  - [x] Solución: Código en repo ya estaba corregido, necesita redeploy
+- [x] Selectores de año y mes:
+  - [x] Cambiados de botones de navegación (flechas ← →) a selectores desplegables
+  - [x] Implementado Picker para mes con lista de 12 meses
+  - [x] Implementado Picker para año con rango de 10 años (actual ± 5)
+  - [x] Eliminadas funciones handlePrevMonth/handleNextMonth/handlePrevYear/handleNextYear
+  - [x] Agregado import de @react-native-picker/picker
+  - [x] Agregado estilo picker en styles
