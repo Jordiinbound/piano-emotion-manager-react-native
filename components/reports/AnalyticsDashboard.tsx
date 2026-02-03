@@ -328,13 +328,11 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
   }
 
   const chartColors = [COLORS.primary, COLORS.success, COLORS.warning, COLORS.danger, COLORS.purple];
-  const maxValue = Math.max(...data.map(d => d.count), 1);
   const totalServices = data.reduce((sum, d) => sum + d.count, 0);
 
   return (
     <View style={styles.horizontalBarContainer}>
       {data.slice(0, 5).map((item, index) => {
-        const percentage = (item.count / maxValue) * 100;
         const percentageOfTotal = (item.count / totalServices) * 100;
         const color = chartColors[index % chartColors.length];
         
@@ -349,7 +347,7 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
                 style={[
                   styles.barFill, 
                   { 
-                    width: `${percentage}%`,
+                    width: `${percentageOfTotal}%`,
                     backgroundColor: color 
                   }
                 ]} 
