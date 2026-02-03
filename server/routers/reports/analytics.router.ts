@@ -33,8 +33,12 @@ export const analyticsRouter = router({
   getDashboardMetrics: protectedProcedure
     .input(dateRangeSchema)
     .query(async ({ ctx, input }) => {
+      console.log('[DEBUG] getDashboardMetrics - partnerId:', (ctx as any).partnerId);
+      console.log('[DEBUG] getDashboardMetrics - input:', input);
       const analytics = createAnalyticsService((ctx as any).partnerId);
-      return analytics.getDashboardMetrics(input);
+      const result = await analytics.getDashboardMetrics(input);
+      console.log('[DEBUG] getDashboardMetrics - result:', result);
+      return result;
     }),
 
   /**
@@ -92,7 +96,7 @@ export const analyticsRouter = router({
    * Obtiene pianos por marca
    */
   getPianosByBrand: protectedProcedure.query(async ({ ctx }) => {
-    const analytics = createAnalyticsService((ctx as any).organizationId);
+    const analytics = createAnalyticsService((ctx as any).partnerId);
     return analytics.getPianosByBrand();
   }),
 
@@ -114,7 +118,7 @@ export const analyticsRouter = router({
    * Obtiene distribución geográfica
    */
   getGeographicDistribution: protectedProcedure.query(async ({ ctx }) => {
-    const analytics = createAnalyticsService((ctx as any).organizationId);
+    const analytics = createAnalyticsService((ctx as any).partnerId);
     return analytics.getGeographicDistribution();
   }),
 
@@ -140,7 +144,7 @@ export const analyticsRouter = router({
   generateExecutiveSummary: protectedProcedure
     .input(dateRangeSchema)
     .mutation(async ({ ctx, input }) => {
-      const generator = createPDFGenerator((ctx as any).organizationId);
+      const generator = createPDFGenerator((ctx as any).partnerId);
       return generator.generateExecutiveSummary(input);
     }),
 
@@ -150,7 +154,7 @@ export const analyticsRouter = router({
   generateServicesReport: protectedProcedure
     .input(dateRangeSchema)
     .mutation(async ({ ctx, input }) => {
-      const generator = createPDFGenerator((ctx as any).organizationId);
+      const generator = createPDFGenerator((ctx as any).partnerId);
       return generator.generateServicesReport(input);
     }),
 
@@ -160,7 +164,7 @@ export const analyticsRouter = router({
   generateFinancialReport: protectedProcedure
     .input(dateRangeSchema)
     .mutation(async ({ ctx, input }) => {
-      const generator = createPDFGenerator((ctx as any).organizationId);
+      const generator = createPDFGenerator((ctx as any).partnerId);
       return generator.generateFinancialReport(input);
     }),
 
@@ -170,7 +174,7 @@ export const analyticsRouter = router({
   generateClientsReport: protectedProcedure
     .input(dateRangeSchema)
     .mutation(async ({ ctx, input }) => {
-      const generator = createPDFGenerator((ctx as any).organizationId);
+      const generator = createPDFGenerator((ctx as any).partnerId);
       return generator.generateClientsReport(input);
     }),
 
@@ -178,7 +182,7 @@ export const analyticsRouter = router({
    * Obtiene KPIs rápidos para widget
    */
   getQuickKPIs: protectedProcedure.query(async ({ ctx }) => {
-    const analytics = createAnalyticsService((ctx as any).organizationId);
+    const analytics = createAnalyticsService((ctx as any).partnerId);
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     
@@ -201,7 +205,7 @@ export const analyticsRouter = router({
    * Obtiene comparativa año actual vs anterior
    */
   getYearOverYearComparison: protectedProcedure.query(async ({ ctx }) => {
-    const analytics = createAnalyticsService((ctx as any).organizationId);
+    const analytics = createAnalyticsService((ctx as any).partnerId);
     const now = new Date();
     
     // Año actual
