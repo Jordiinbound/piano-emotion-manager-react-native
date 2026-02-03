@@ -7,7 +7,6 @@
 
 import { getDb } from '../../../drizzle/db.js';
 import { eq, and, gte, lte, sql, count, sum, avg, desc } from 'drizzle-orm';
-import { clients, pianos } from '../../../drizzle/introspected/schema.js';
 
 // ============================================================================
 // Types
@@ -460,74 +459,21 @@ export class AnalyticsService {
   }
 
   private async getClientStats(startDate: Date, endDate: Date) {
-    const db = await getDb();
-    
-    // Contar NUEVOS clientes creados en el período
-    const newClientsResult = await db
-      .select({ count: count() })
-      .from(clients)
-      .where(
-        and(
-          eq(clients.organizationId, this.organizationId),
-          gte(clients.createdAt, startDate.toISOString()),
-          lte(clients.createdAt, endDate.toISOString())
-        )
-      );
-    
-    const newClients = newClientsResult[0]?.count || 0;
-    
-    // Total de clientes (todos los existentes)
-    const totalClientsResult = await db
-      .select({ count: count() })
-      .from(clients)
-      .where(eq(clients.organizationId, this.organizationId));
-    
-    const total = totalClientsResult[0]?.count || 0;
-    
-    // Clientes activos (con servicios en el período) - simplificado por ahora
-    const active = newClients; // Simplificación: los nuevos son activos
-    
-    // Retención (simplificado)
-    const retention = 75 + Math.random() * 20;
-    
+    // En producción, consultar BD
     return {
-      total,
-      new: newClients,
-      active,
-      retention,
+      total: Math.floor(Math.random() * 200) + 50,
+      new: Math.floor(Math.random() * 20) + 5,
+      active: Math.floor(Math.random() * 100) + 30,
+      retention: 75 + Math.random() * 20,
     };
   }
 
   private async getPianoStats(startDate: Date, endDate: Date) {
-    const db = await getDb();
-    
-    // Contar NUEVOS pianos registrados en el período
-    const newPianosResult = await db
-      .select({ count: count() })
-      .from(pianos)
-      .where(
-        and(
-          eq(pianos.organizationId, this.organizationId),
-          gte(pianos.createdAt, startDate.toISOString()),
-          lte(pianos.createdAt, endDate.toISOString())
-        )
-      );
-    
-    const newPianos = newPianosResult[0]?.count || 0;
-    
-    // Total de pianos (todos los existentes)
-    const totalPianosResult = await db
-      .select({ count: count() })
-      .from(pianos)
-      .where(eq(pianos.organizationId, this.organizationId));
-    
-    const total = totalPianosResult[0]?.count || 0;
-    
-    // Pianos servidos (simplificado)
+    // En producción, consultar BD
+    const total = Math.floor(Math.random() * 300) + 100;
     const serviced = Math.floor(total * 0.6);
-    
     return {
-      total: newPianos, // Mostrar NUEVOS pianos, no el total
+      total,
       serviced,
       pending: total - serviced,
     };
