@@ -546,18 +546,6 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </View>
       </View>
 
-      {/* View All Reports Button */}
-      {onNavigateToReports && (
-        <TouchableOpacity
-          style={styles.viewAllButton}
-          onPress={onNavigateToReports}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.viewAllButtonText}>{t('reports.viewAllReports')}</Text>
-          <Ionicons name="arrow-forward" size={18} color={COLORS.primary} />
-        </TouchableOpacity>
-      )}
-
       <View style={styles.bottomPadding} />
     </ScrollView>
   );
