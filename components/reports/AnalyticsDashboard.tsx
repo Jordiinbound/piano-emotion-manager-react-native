@@ -413,8 +413,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
   // Gráfico de evolución SIEMPRE últimos 12 meses (independiente del selector)
   const last12MonthsRange = {
-    start: new Date(new Date().setMonth(new Date().getMonth() - 12)),
-    end: new Date(),
+    startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)),
+    endDate: new Date(),
   };
   const { data: revenueData } = useRevenueChart(last12MonthsRange, 'month');
   const { data: servicesData } = useServicesByType(dateRange);
