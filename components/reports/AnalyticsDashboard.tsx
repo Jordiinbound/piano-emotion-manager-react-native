@@ -52,6 +52,7 @@ interface MetricCardProps {
   title: string;
   value: string | number;
   change?: number;
+  subtitle?: string;
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
 }
@@ -69,6 +70,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   title,
   value,
   change,
+  subtitle,
   icon,
   color,
 }) => {
@@ -99,6 +101,9 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </View>
       <Text style={styles.metricValue}>{value}</Text>
       <Text style={styles.metricTitle}>{title}</Text>
+      {subtitle && (
+        <Text style={styles.metricSubtitle}>{subtitle}</Text>
+      )}
     </View>
   );
 };
@@ -488,28 +493,28 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             icon="receipt-outline"
             color={COLORS.warning}
           />
-          <QuickStatCard
+          <MetricCard
             title={t('reports.completionRate')}
             value={`${(metrics?.services.completionRate || 0).toFixed(1)}%`}
             subtitle="Servicios completados"
             icon="checkmark-circle-outline"
             color={COLORS.success}
           />
-          <QuickStatCard
+          <MetricCard
             title={t('reports.retention')}
             value={`${(metrics?.clients.retention || 0).toFixed(1)}%`}
             subtitle="Clientes recurrentes"
             icon="repeat-outline"
             color={COLORS.primary}
           />
-          <QuickStatCard
+          <MetricCard
             title={t('reports.pianos')}
             value={metrics?.pianos.total || 0}
             subtitle="Pianos registrados"
             icon="musical-notes-outline"
             color={COLORS.warning}
           />
-          <QuickStatCard
+          <MetricCard
             title="Ingresos medios"
             value={formatCurrency(metrics?.revenue.total ? metrics.revenue.total / Math.max(metrics.services.total, 1) : 0)}
             subtitle="Por servicio"
@@ -677,6 +682,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.text.secondary,
     fontWeight: '500',
+  },
+  metricSubtitle: {
+    fontSize: 11,
+    color: COLORS.text.tertiary,
+    marginTop: 2,
   },
   section: {
     paddingHorizontal: 24,
