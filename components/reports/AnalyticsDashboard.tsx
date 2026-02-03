@@ -333,7 +333,7 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
 
   return (
     <View style={styles.horizontalBarContainer}>
-      {data.slice(0, 5).map((item, index) => {
+      {data.map((item, index) => {
         const percentageOfTotal = (item.count / totalServices) * 100;
         const barWidth = (item.count / maxValue) * 100;
         const color = chartColors[index % chartColors.length];
