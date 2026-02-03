@@ -1,6 +1,7 @@
 /**
  * tRPC API Handler for Vercel Serverless Functions
  * Piano Emotion Manager
+ * Updated: 2026-02-03 - Force rebuild with direction parameter fix
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
