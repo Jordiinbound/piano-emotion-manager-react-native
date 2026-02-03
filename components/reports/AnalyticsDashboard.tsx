@@ -158,7 +158,7 @@ interface LineChartProps {
 }
 
 const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) => {
-  const [chartWidth, setChartWidth] = React.useState(SCREEN_WIDTH - 48);
+  const [chartWidth, setChartWidth] = React.useState(0);
 
   const handleLayout = (event: any) => {
     const { width } = event.nativeEvent.layout;
@@ -220,7 +220,8 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
 
   return (
     <View style={styles.chartContainer} onLayout={handleLayout}>
-      <Svg width={chartWidth} height={chartHeight}>
+      {chartWidth > 0 && (
+        <Svg width={chartWidth} height={chartHeight}>
         {/* Grid lines */}
         {gridLines.map((line, index) => (
           <React.Fragment key={index}>
@@ -300,6 +301,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
           ) : null;
         })}
       </Svg>
+      )}
     </View>
   );
 };
