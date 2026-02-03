@@ -279,6 +279,7 @@ export class AnalyticsService {
         .from(services)
         .where(
           and(
+            eq(services.organizationId, this.organizationId),
             eq(services.serviceType, serviceType.type as any),
             gte(services.date, startDate.toISOString()),
             lte(services.date, endDate.toISOString())
@@ -330,6 +331,7 @@ export class AnalyticsService {
       .leftJoin(services, eq(clients.id, services.clientId))
       .where(
         and(
+          eq(clients.organizationId, this.organizationId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -372,6 +374,7 @@ export class AnalyticsService {
         avgYear: avg(pianos.year),
       })
       .from(pianos)
+      .where(eq(pianos.organizationId, this.organizationId))
       .groupBy(pianos.brand)
       .orderBy(desc(count()));
 
@@ -428,7 +431,12 @@ export class AnalyticsService {
         clientCount: count(clients.id),
       })
       .from(clients)
-      .where(sql`${clients.city} IS NOT NULL`)
+      .where(
+        and(
+          eq(clients.organizationId, this.organizationId),
+          sql`${clients.city} IS NOT NULL`
+        )
+      )
       .groupBy(clients.city, clients.region)
       .orderBy(desc(count(clients.id)));
 
@@ -513,6 +521,7 @@ export class AnalyticsService {
       .from(services)
       .where(
         and(
+          eq(services.organizationId, this.organizationId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -531,6 +540,7 @@ export class AnalyticsService {
       .from(services)
       .where(
         and(
+          eq(services.organizationId, this.organizationId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -560,7 +570,8 @@ export class AnalyticsService {
     // Total de clientes
     const totalResult = await db
       .select({ count: count() })
-      .from(clients);
+      .from(clients)
+      .where(eq(clients.organizationId, this.organizationId));
     const total = totalResult[0]?.count || 0;
 
     // Nuevos clientes en el período
@@ -569,6 +580,7 @@ export class AnalyticsService {
       .from(clients)
       .where(
         and(
+          eq(clients.organizationId, this.organizationId),
           gte(clients.createdAt, startDate.toISOString()),
           lte(clients.createdAt, endDate.toISOString())
         )
@@ -581,6 +593,7 @@ export class AnalyticsService {
       .from(services)
       .where(
         and(
+          eq(services.organizationId, this.organizationId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -604,7 +617,8 @@ export class AnalyticsService {
     // Total de pianos
     const totalResult = await db
       .select({ count: count() })
-      .from(pianos);
+      .from(pianos)
+      .where(eq(pianos.organizationId, this.organizationId));
     const total = totalResult[0]?.count || 0;
 
     // Pianos con servicio en el período
@@ -613,6 +627,7 @@ export class AnalyticsService {
       .from(services)
       .where(
         and(
+          eq(services.organizationId, this.organizationId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -634,6 +649,7 @@ export class AnalyticsService {
       .from(clients)
       .where(
         and(
+          eq(clients.organizationId, this.organizationId),
           gte(clients.createdAt, startDate.toISOString()),
           lte(clients.createdAt, endDate.toISOString())
         )
@@ -650,6 +666,7 @@ export class AnalyticsService {
       .from(pianos)
       .where(
         and(
+          eq(pianos.organizationId, this.organizationId),
           gte(pianos.createdAt, startDate.toISOString()),
           lte(pianos.createdAt, endDate.toISOString())
         )
