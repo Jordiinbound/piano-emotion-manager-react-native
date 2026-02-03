@@ -46,9 +46,9 @@ function getDateRangeFromPreset(preset: PeriodPreset): DateRange {
       return { startDate: yesterday, endDate: today };
 
     case 'thisWeek':
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Lunes
-      return { startDate: startOfWeek, endDate: now };
+      const last7Days = new Date(now);
+      last7Days.setDate(now.getDate() - 7);
+      return { startDate: last7Days, endDate: now };
 
     case 'lastWeek':
       const lastWeekEnd = new Date(today);
@@ -58,8 +58,9 @@ function getDateRangeFromPreset(preset: PeriodPreset): DateRange {
       return { startDate: lastWeekStart, endDate: lastWeekEnd };
 
     case 'thisMonth':
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      return { startDate: startOfMonth, endDate: now };
+      const last30Days = new Date(now);
+      last30Days.setDate(now.getDate() - 30);
+      return { startDate: last30Days, endDate: now };
 
     case 'lastMonth':
       const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -67,9 +68,9 @@ function getDateRangeFromPreset(preset: PeriodPreset): DateRange {
       return { startDate: lastMonthStart, endDate: lastMonthEnd };
 
     case 'thisQuarter':
-      const quarterMonth = Math.floor(now.getMonth() / 3) * 3;
-      const startOfQuarter = new Date(now.getFullYear(), quarterMonth, 1);
-      return { startDate: startOfQuarter, endDate: now };
+      const last90Days = new Date(now);
+      last90Days.setDate(now.getDate() - 90);
+      return { startDate: last90Days, endDate: now };
 
     case 'lastQuarter':
       const lastQuarterMonth = Math.floor(now.getMonth() / 3) * 3 - 3;
@@ -78,8 +79,9 @@ function getDateRangeFromPreset(preset: PeriodPreset): DateRange {
       return { startDate: lastQuarterStart, endDate: lastQuarterEnd };
 
     case 'thisYear':
-      const startOfYear = new Date(now.getFullYear(), 0, 1);
-      return { startDate: startOfYear, endDate: now };
+      const last365Days = new Date(now);
+      last365Days.setDate(now.getDate() - 365);
+      return { startDate: last365Days, endDate: now };
 
     case 'lastYear':
       const lastYearStart = new Date(now.getFullYear() - 1, 0, 1);
