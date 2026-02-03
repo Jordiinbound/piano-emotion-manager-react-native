@@ -1047,15 +1047,8 @@ export default function SettingsIndexScreen() {
               <IconSymbol name="chevron.right" size={20} color={textSecondary} />
             </Pressable>
 
-            <View style={[styles.linkRow, { borderBottomWidth: 0 }]}>
-              <View style={[styles.settingIcon, { backgroundColor: `${accent}15` }]}>
-                <IconSymbol name="globe" size={20} color={accent} />
-              </View>
-              <View style={styles.settingContent}>
-                <ThemedText style={styles.settingLabel}>Idioma</ThemedText>
-              </View>
-              <Pressable onPress={() => router.push("/settings/languages")}><ThemedText>Manage Languages</ThemedText></Pressable>
-            </View>
+            {/* Selector de idioma personal del usuario */}
+            <LanguageSelector mode="inline" />
           </View>
         </Accordion>
 

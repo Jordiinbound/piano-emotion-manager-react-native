@@ -180,11 +180,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: COLORS.white,
-    // textTransform: 'uppercase',
     fontFamily: Platform.select({
       ios: 'System',
       android: 'sans-serif-medium',
-      web: 'Arkhip, system-ui, -apple-system, sans-serif',
+      web: 'Montserrat-Bold, system-ui, -apple-system, sans-serif',
     }),
   },
   subtitle: {

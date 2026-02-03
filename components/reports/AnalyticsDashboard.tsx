@@ -149,15 +149,15 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
 };
 
 // ============================================================================
-// Line Chart Component - Mejorado con fuentes legibles
+// Bar Chart Component - Gráfico de barras verticales
 // ============================================================================
 
-interface LineChartProps {
+interface BarChartProps {
   data: { label: string; value: number }[];
   color?: string;
 }
 
-const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) => {
+const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
   const [chartWidth, setChartWidth] = React.useState(300);
 
   const handleLayout = (event: any) => {
@@ -168,7 +168,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
   if (!data || data.length === 0) {
     return (
       <View style={styles.emptyChart}>
-        <Ionicons name="trending-up-outline" size={40} color={COLORS.text.tertiary} />
+        <Ionicons name="bar-chart-outline" size={40} color={COLORS.text.tertiary} />
         <Text style={styles.emptyChartText}>No hay datos disponibles</Text>
       </View>
     );
@@ -181,27 +181,15 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
   const minValue = 0;
   const range = maxValue - minValue || 1;
 
-  const chartHeight = 220;
-  const padding = { top: 30, right: 20, bottom: 50, left: 60 };
+  const chartHeight = 280;
+  const padding = { top: 40, right: 20, bottom: 60, left: 60 };
   const plotWidth = chartWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
 
-  // Calcular puntos del gráfico
-  const points = displayData.map((item, index) => {
-    const x = padding.left + (index / Math.max(displayData.length - 1, 1)) * plotWidth;
-    const y = padding.top + plotHeight - ((item.value - minValue) / range) * plotHeight;
-    return { x, y, value: item.value, label: item.label };
-  });
-
-  // Crear path de línea
-  const createLinePath = () => {
-    if (points.length === 0) return '';
-    let path = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 1; i < points.length; i++) {
-      path += ` L ${points[i].x} ${points[i].y}`;
-    }
-    return path;
-  };
+  // Calcular ancho de cada barra con espacio entre ellas
+  const barSpacing = 8;
+  const totalBars = displayData.length;
+  const barWidth = Math.max(20, (plotWidth - (totalBars - 1) * barSpacing) / totalBars);
 
   // Formatear valor como moneda
   const formatValue = (value: number) => {
@@ -222,88 +210,80 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
     <View style={styles.chartContainer} onLayout={handleLayout}>
       {chartWidth > 0 && (
         <Svg width={chartWidth} height={chartHeight}>
-        {/* Grid lines */}
-        {gridLines.map((line, index) => (
-          <React.Fragment key={index}>
-            <Line
-              x1={padding.left}
-              y1={line.y}
-              x2={chartWidth - padding.right}
-              y2={line.y}
-              stroke={COLORS.border}
-              strokeWidth={1}
-              strokeDasharray="4,4"
-            />
-            <SvgText
-              x={padding.left - 8}
-              y={line.y + 4}
-              fill={COLORS.text.secondary}
-              fontSize="14"
-              fontWeight="600"
-              textAnchor="end"
-              fontFamily="System"
-            >
-              {formatValue(line.value)}
-            </SvgText>
-          </React.Fragment>
-        ))}
-        
-        {/* Línea principal */}
-        <Path
-          d={createLinePath()}
-          stroke={color}
-          strokeWidth={2.5}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        
-        {/* Puntos en la línea con valores */}
-        {points.map((point, index) => (
-          <React.Fragment key={index}>
-            <Circle
-              cx={point.x}
-              cy={point.y}
-              r={4}
-              fill={COLORS.card}
-              stroke={color}
-              strokeWidth={2}
-            />
-            {/* Mostrar valor encima del punto */}
-            <SvgText
-              x={point.x}
-              y={point.y - 12}
-              fill={COLORS.text.primary}
-              fontSize="14"
-              fontWeight="700"
-              textAnchor="middle"
-              fontFamily="System"
-            >
-              {formatValue(point.value)}
-            </SvgText>
-          </React.Fragment>
-        ))}
-
-        {/* Etiquetas del eje X */}
-        {points.map((point, index) => {
-          // Mostrar todas las etiquetas si hay 6 o menos, sino alternadas
-          const showLabel = displayData.length <= 6 || index % 2 === 0;
-          return showLabel ? (
-            <SvgText
-              key={`label-${index}`}
-              x={point.x}
-              y={chartHeight - 15}
-              fill={COLORS.text.secondary}
-              fontSize="13"
-              fontWeight="600"
-              textAnchor="middle"
-              fontFamily="System"
-            >
-              {point.label}
-            </SvgText>
-          ) : null;
-        })}
-      </Svg>
+          {/* Grid lines */}
+          {gridLines.map((line, index) => (
+            <React.Fragment key={index}>
+              <Line
+                x1={padding.left}
+                y1={line.y}
+                x2={chartWidth - padding.right}
+                y2={line.y}
+                stroke={COLORS.border}
+                strokeWidth={1}
+                strokeDasharray="4,4"
+              />
+              <SvgText
+                x={padding.left - 8}
+                y={line.y + 4}
+                fill={COLORS.text.secondary}
+                fontSize="12"
+                fontWeight="600"
+                textAnchor="end"
+                fontFamily="System"
+              >
+                {formatValue(line.value)}
+              </SvgText>
+            </React.Fragment>
+          ))}
+          
+          {/* Barras */}
+          {displayData.map((item, index) => {
+            const barHeight = ((item.value - minValue) / range) * plotHeight;
+            const x = padding.left + index * (barWidth + barSpacing);
+            const y = padding.top + plotHeight - barHeight;
+            
+            return (
+              <React.Fragment key={index}>
+                {/* Barra */}
+                <Rect
+                  x={x}
+                  y={y}
+                  width={barWidth}
+                  height={barHeight}
+                  fill={color}
+                  rx={4}
+                />
+                
+                {/* Valor encima de la barra */}
+                <SvgText
+                  x={x + barWidth / 2}
+                  y={y - 8}
+                  fill={COLORS.text.primary}
+                  fontSize="12"
+                  fontWeight="700"
+                  textAnchor="middle"
+                  fontFamily="System"
+                >
+                  {formatValue(item.value)}
+                </SvgText>
+                
+                {/* Etiqueta del mes */}
+                <SvgText
+                  x={x + barWidth / 2}
+                  y={chartHeight - 20}
+                  fill={COLORS.text.secondary}
+                  fontSize="11"
+                  fontWeight="600"
+                  textAnchor="middle"
+                  fontFamily="System"
+                  transform={`rotate(-45, ${x + barWidth / 2}, ${chartHeight - 20})`}
+                >
+                  {item.label}
+                </SvgText>
+              </React.Fragment>
+            );
+          })}
+        </Svg>
       )}
     </View>
   );
@@ -329,13 +309,12 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
 
   const chartColors = [COLORS.primary, COLORS.success, COLORS.warning, COLORS.danger, COLORS.purple];
   const totalServices = data.reduce((sum, d) => sum + d.count, 0);
-  const maxValue = Math.max(...data.map(d => d.count));
 
   return (
     <View style={styles.horizontalBarContainer}>
       {data.map((item, index) => {
         const percentageOfTotal = (item.count / totalServices) * 100;
-        const barWidth = (item.count / maxValue) * 100;
+        const barWidth = percentageOfTotal; // Usar el porcentaje directamente para que sume 100%
         const color = chartColors[index % chartColors.length];
         
         return (
@@ -549,7 +528,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           <Text style={styles.sectionSubtitle}>Últimos 12 meses</Text>
         </View>
         <View style={styles.chartCard}>
-          <LineChart
+          <BarChart
             data={revenueData?.map((d) => ({ label: d.period, value: d.revenue })) || []}
             color={COLORS.primary}
           />
