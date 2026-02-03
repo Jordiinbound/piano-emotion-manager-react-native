@@ -239,6 +239,7 @@ export const invoicesRouter = router({
       // Consulta principal con paginación
       const offset = cursor || 0;
       console.log('[invoices.list] 🔎 Ejecutando query con filtros:', { dateFrom, dateTo, status, clientId, search, partnerId: ctx.partnerId });
+      console.log('[invoices.list] 📋 whereClauses:', whereClauses.map(c => c.toString()));
       let items = await database
         .select()
         .from(invoices)
@@ -247,6 +248,9 @@ export const invoicesRouter = router({
         .limit(limit)
         .offset(offset);
       console.log('[invoices.list] ✅ Query completada. Facturas encontradas:', items.length);
+      if (items.length > 0) {
+        console.log('[invoices.list] 📄 Primera factura:', { id: items[0].id, date: items[0].date, status: items[0].status, invoiceNumber: items[0].invoiceNumber });
+      }
 
       // Marcar facturas vencidas
       items = markOverdueInvoices(items);
