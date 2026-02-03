@@ -205,7 +205,7 @@ export class AnalyticsService {
     groupBy: 'day' | 'week' | 'month' = 'month'
   ): Promise<RevenueByPeriod[]> {
     const { startDate, endDate } = dateRange;
-    const db = getDb();
+    const db = await getDb();
 
     const periods: RevenueByPeriod[] = [];
     const current = new Date(startDate);
@@ -251,7 +251,7 @@ export class AnalyticsService {
    */
   async getServicesByType(dateRange: DateRange): Promise<ServicesByType[]> {
     const { startDate, endDate } = dateRange;
-    const db = getDb();
+    const db = await getDb();
 
     // Tipos de servicio predefinidos
     const serviceTypes = [
@@ -316,7 +316,7 @@ export class AnalyticsService {
     limit: number = 10,
     sortBy: 'revenue' | 'services' = 'revenue'
   ): Promise<TopClient[]> {
-    const db = getDb();
+    const db = await getDb();
     const { startDate, endDate } = dateRange;
 
     const result = await db
@@ -365,7 +365,7 @@ export class AnalyticsService {
    * Obtiene distribución de pianos por marca
    */
   async getPianosByBrand(): Promise<PianosByBrand[]> {
-    const db = getDb();
+    const db = await getDb();
 
     const result = await db
       .select({
@@ -422,7 +422,7 @@ export class AnalyticsService {
    * Obtiene distribución geográfica
    */
   async getGeographicDistribution(): Promise<GeographicDistribution[]> {
-    const db = getDb();
+    const db = await getDb();
 
     const result = await db
       .select({
@@ -519,7 +519,7 @@ export class AnalyticsService {
         endDate: endDate.toISOString()
       });
 
-      const db = getDb();
+      const db = await getDb();
       
       // Calcular ingresos desde facturas pagadas, no desde costos de servicios
       const result = await db
@@ -549,7 +549,7 @@ export class AnalyticsService {
   }
 
   private async getServiceCount(startDate: Date, endDate: Date): Promise<number> {
-    const db = getDb();
+    const db = await getDb();
     
     const result = await db
       .select({
@@ -568,7 +568,7 @@ export class AnalyticsService {
   }
 
   private async getServiceStats(startDate: Date, endDate: Date) {
-    const db = getDb();
+    const db = await getDb();
     
     // Total de servicios en el período
     const total = await this.getServiceCount(startDate, endDate);
@@ -583,7 +583,7 @@ export class AnalyticsService {
   }
 
   private async getClientStats(startDate: Date, endDate: Date) {
-    const db = getDb();
+    const db = await getDb();
     
     // Total de clientes
     const totalResult = await db
@@ -630,7 +630,7 @@ export class AnalyticsService {
   }
 
   private async getPianoStats(startDate: Date, endDate: Date) {
-    const db = getDb();
+    const db = await getDb();
     
     // Total de pianos
     const totalResult = await db
@@ -660,7 +660,7 @@ export class AnalyticsService {
   }
 
   private async getNewClientsCount(startDate: Date, endDate: Date): Promise<number> {
-    const db = getDb();
+    const db = await getDb();
     
     const result = await db
       .select({ count: count() })
@@ -677,7 +677,7 @@ export class AnalyticsService {
   }
 
   private async getNewPianosCount(startDate: Date, endDate: Date): Promise<number> {
-    const db = getDb();
+    const db = await getDb();
     
     const result = await db
       .select({ count: count() })
