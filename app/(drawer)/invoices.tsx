@@ -75,7 +75,7 @@ export default function InvoicesScreen() {
     };
   }, [selectedMonth, selectedYear]);
   
-  const { invoices, loading, totalInvoices } = useInvoicesData({
+  const { invoices, loading, totalInvoices, stats: backendStats } = useInvoicesData({
     search: debouncedSearch,
     status: filter !== 'all' ? filter : undefined,
     dateFrom,
@@ -84,15 +84,25 @@ export default function InvoicesScreen() {
 
   const isDesktop = width >= 1024;
 
-  // Calcular estadísticas
+  // Usar estadísticas del backend (filtradas por mes/año)
   const stats = useMemo(() => {
+    if (backendStats) {
+      return {
+        total: backendStats.totalAmount || 0,
+        pending: backendStats.pendingAmount || 0,
+        paid: backendStats.paidAmount || 0,
+        draft: backendStats.total - backendStats.paid - backendStats.pending || 0,
+        count: invoices.length
+      };
+    }
+    // Fallback: calcular del frontend si no hay stats del backend
     const total = invoices.reduce((sum, inv) => sum + inv.total, 0);
     const pending = invoices.filter(inv => inv.status === 'sent').reduce((sum, inv) => sum + inv.total, 0);
     const paid = invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.total, 0);
     const draft = invoices.filter(inv => inv.status === 'draft').length;
     
     return { total, pending, paid, count: invoices.length, draft };
-  }, [invoices]);
+  }, [invoices, backendStats]);
 
   // Filtrar facturas (el backend ya filtra por fecha, aquí solo filtramos overdue)
   const filteredInvoices = useMemo(() => {
