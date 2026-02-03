@@ -574,36 +574,11 @@ export class AnalyticsService {
     // Total de servicios en el período
     const total = await this.getServiceCount(startDate, endDate);
     
-    // Contar servicios completados
-    const completedResult = await db
-      .select({ count: count() })
-      .from(services)
-      .where(
-        and(
-          eq(services.partnerId, this.partnerId),
-          gte(services.date, startDate.toISOString()),
-          lte(services.date, endDate.toISOString()),
-          eq(services.status, 'completed')
-        )
-      );
-    const completed = completedResult[0]?.count || 0;
-    
-    // Contar servicios cancelados
-    const cancelledResult = await db
-      .select({ count: count() })
-      .from(services)
-      .where(
-        and(
-          eq(services.partnerId, this.partnerId),
-          gte(services.date, startDate.toISOString()),
-          lte(services.date, endDate.toISOString()),
-          eq(services.status, 'cancelled')
-        )
-      );
-    const cancelled = cancelledResult[0]?.count || 0;
-    
-    // Calcular servicios pendientes
-    const pending = total - completed - cancelled;
+    // Por ahora, asumimos que todos los servicios están completados
+    // En el futuro, se puede agregar un campo 'status' a la tabla services
+    const completed = total;
+    const cancelled = 0;
+    const pending = 0;
 
     return { total, completed, pending, cancelled };
   }

@@ -925,7 +925,6 @@ export const services = mysqlTable("services", {
 	pianoId: int().notNull(),
 	clientId: int().notNull(),
 	serviceType: mysqlEnum(['tuning','repair','regulation','maintenance_basic','maintenance_complete','maintenance_premium','inspection','restoration','other']).notNull(),
-	status: mysqlEnum(['pending','scheduled','in_progress','completed','cancelled']).default('pending').notNull(),
 	date: timestamp({ mode: 'string' }).notNull(),
 	cost: decimal({ precision: 10, scale: 2 }),
 	duration: int(),
