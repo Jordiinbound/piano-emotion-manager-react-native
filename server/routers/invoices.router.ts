@@ -225,11 +225,15 @@ export const invoicesRouter = router({
       }
       
       if (dateFrom) {
-        whereClauses.push(gte(invoices.date, new Date(dateFrom).toISOString()));
+        // Convertir dateFrom a formato MySQL (YYYY-MM-DD HH:mm:ss) sin timezone
+        const dateFromMySQL = new Date(dateFrom).toISOString().slice(0, 19).replace('T', ' ');
+        whereClauses.push(gte(invoices.date, dateFromMySQL));
       }
       
       if (dateTo) {
-        whereClauses.push(lte(invoices.date, new Date(dateTo).toISOString()));
+        // Convertir dateTo a formato MySQL (YYYY-MM-DD HH:mm:ss) sin timezone
+        const dateToMySQL = new Date(dateTo).toISOString().slice(0, 19).replace('T', ' ');
+        whereClauses.push(lte(invoices.date, dateToMySQL));
       }
 
       // Construir ORDER BY
@@ -574,11 +578,15 @@ export const invoicesRouter = router({
       ];
 
       if (input?.dateFrom) {
-        whereClauses.push(gte(invoices.date, new Date(input.dateFrom).toISOString()));
+        // Convertir dateFrom a formato MySQL (YYYY-MM-DD HH:mm:ss) sin timezone
+        const dateFromMySQL = new Date(input.dateFrom).toISOString().slice(0, 19).replace('T', ' ');
+        whereClauses.push(gte(invoices.date, dateFromMySQL));
       }
 
       if (input?.dateTo) {
-        whereClauses.push(lte(invoices.date, new Date(input.dateTo).toISOString()));
+        // Convertir dateTo a formato MySQL (YYYY-MM-DD HH:mm:ss) sin timezone
+        const dateToMySQL = new Date(input.dateTo).toISOString().slice(0, 19).replace('T', ' ');
+        whereClauses.push(lte(invoices.date, dateToMySQL));
       }
 
       const items = await database
