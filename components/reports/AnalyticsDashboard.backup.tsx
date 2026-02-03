@@ -1,11 +1,6 @@
 /**
- * Dashboard de Analytics - Diseño Estructurado y Cohesivo v3
+ * Dashboard de Analytics - Diseño Estructurado y Cohesivo v2
  * Piano Emotion Manager
- * 
- * Cambios v3:
- * - Grid 4x4 unificado (8 métricas juntas)
- * - Gráfico de evolución siempre últimos 12 meses (independiente del selector)
- * - Barras horizontales proporcionales con leyenda visible
  */
 
 import React, { useState, useCallback } from 'react';
@@ -19,7 +14,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Svg, { Path, Circle, Line, Text as SvgText } from 'react-native-svg';
+import Svg, { Path, Circle, Line, Text as SvgText, Rect } from 'react-native-svg';
 import {
   useDashboardMetrics,
   useRevenueChart,
@@ -53,10 +48,9 @@ const COLORS = {
 // Types
 // ============================================================================
 
-interface UnifiedMetricCardProps {
+interface MetricCardProps {
   title: string;
   value: string | number;
-  subtitle?: string;
   change?: number;
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
@@ -68,13 +62,12 @@ interface PeriodSelectorProps {
 }
 
 // ============================================================================
-// Unified Metric Card Component (para grid 4x4)
+// Metric Card Component
 // ============================================================================
 
-const UnifiedMetricCard: React.FC<UnifiedMetricCardProps> = ({
+const MetricCard: React.FC<MetricCardProps> = ({
   title,
   value,
-  subtitle,
   change,
   icon,
   color,
@@ -82,12 +75,12 @@ const UnifiedMetricCard: React.FC<UnifiedMetricCardProps> = ({
   const isPositive = change !== undefined && change >= 0;
 
   return (
-    <View style={styles.unifiedMetricCard}>
-      <View style={styles.unifiedMetricHeader}>
+    <View style={styles.metricCard}>
+      <View style={styles.metricHeader}>
         <View style={[styles.iconContainer, { backgroundColor: color + '15' }]}>
           <Ionicons name={icon} size={18} color={color} />
         </View>
-        {change !== undefined && change !== 0 && (
+        {change !== undefined && (
           <View style={[styles.changeBadge, { 
             backgroundColor: isPositive ? '#ecfdf5' : '#fef2f2' 
           }]}>
@@ -104,11 +97,8 @@ const UnifiedMetricCard: React.FC<UnifiedMetricCardProps> = ({
           </View>
         )}
       </View>
-      <Text style={styles.unifiedMetricValue}>{value}</Text>
-      <Text style={styles.unifiedMetricTitle}>{title}</Text>
-      {subtitle && (
-        <Text style={styles.unifiedMetricSubtitle}>{subtitle}</Text>
-      )}
+      <Text style={styles.metricValue}>{value}</Text>
+      <Text style={styles.metricTitle}>{title}</Text>
     </View>
   );
 };
@@ -154,15 +144,15 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
 };
 
 // ============================================================================
-// Bar Chart Component - Para evolución de ingresos (columnas verticales)
+// Line Chart Component - Mejorado con fuentes legibles
 // ============================================================================
 
-interface BarChartProps {
+interface LineChartProps {
   data: { label: string; value: number }[];
   color?: string;
 }
 
-const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
+const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) => {
   const [chartWidth, setChartWidth] = React.useState(SCREEN_WIDTH - 48);
 
   const handleLayout = (event: any) => {
@@ -173,31 +163,58 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   if (!data || data.length === 0) {
     return (
       <View style={styles.emptyChart}>
-        <Ionicons name="bar-chart-outline" size={40} color={COLORS.text.tertiary} />
+        <Ionicons name="trending-up-outline" size={40} color={COLORS.text.tertiary} />
         <Text style={styles.emptyChartText}>No hay datos disponibles</Text>
       </View>
     );
   }
 
-  const maxValue = Math.max(...data.map(d => d.value), 1);
+  // Mostrar los últimos 12 meses o todos los datos disponibles
+  const displayData = data.length > 12 ? data.slice(-12) : data;
+  
+  // Si hay muy pocos datos, mostrar mensaje
+  if (displayData.length < 2) {
+    return (
+      <View style={styles.emptyChart}>
+        <Ionicons name="information-circle-outline" size={40} color={COLORS.text.tertiary} />
+        <Text style={styles.emptyChartText}>Datos insuficientes para mostrar gráfico</Text>
+        <Text style={styles.emptyChartSubtext}>Se necesitan al menos 2 períodos</Text>
+      </View>
+    );
+  }
+
+  const maxValue = Math.max(...displayData.map(d => d.value), 1);
   const minValue = 0;
   const range = maxValue - minValue || 1;
 
-  const chartHeight = 240;
-  const padding = { top: 40, right: 20, bottom: 50, left: 60 };
+  const chartHeight = 220;
+  const padding = { top: 30, right: 20, bottom: 50, left: 60 };
   const plotWidth = chartWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
 
-  // Calcular ancho de barras
-  const barWidth = Math.min(plotWidth / data.length - 8, 40);
-  const spacing = plotWidth / data.length;
+  // Calcular puntos del gráfico
+  const points = displayData.map((item, index) => {
+    const x = padding.left + (index / Math.max(displayData.length - 1, 1)) * plotWidth;
+    const y = padding.top + plotHeight - ((item.value - minValue) / range) * plotHeight;
+    return { x, y, value: item.value, label: item.label };
+  });
+
+  // Crear path de línea
+  const createLinePath = () => {
+    if (points.length === 0) return '';
+    let path = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      path += ` L ${points[i].x} ${points[i].y}`;
+    }
+    return path;
+  };
 
   // Formatear valor como moneda
   const formatValue = (value: number) => {
     if (value >= 1000) {
-      return `${(value / 1000).toFixed(1)}k`;
+      return `${(value / 1000).toFixed(1)}k €`;
     }
-    return `${Math.round(value)}`;
+    return `${Math.round(value)} €`;
   };
 
   // Líneas de grid horizontales
@@ -226,58 +243,67 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
               x={padding.left - 8}
               y={line.y + 4}
               fill={COLORS.text.secondary}
-              fontSize="11"
+              fontSize="12"
               fontWeight="500"
               textAnchor="end"
             >
-              {formatValue(line.value)}€
+              {formatValue(line.value)}
             </SvgText>
           </React.Fragment>
         ))}
         
-        {/* Barras */}
-        {data.map((item, index) => {
-          const x = padding.left + index * spacing + (spacing - barWidth) / 2;
-          const barHeight = (item.value / maxValue) * plotHeight;
-          const y = padding.top + plotHeight - barHeight;
-          
-          return (
-            <React.Fragment key={index}>
-              {/* Barra */}
-              <Path
-                d={`M ${x} ${y + 4} 
-                    L ${x + barWidth} ${y + 4} 
-                    L ${x + barWidth} ${padding.top + plotHeight} 
-                    L ${x} ${padding.top + plotHeight} Z`}
-                fill={color}
-                opacity={0.9}
-              />
-              
-              {/* Valor encima de la barra */}
-              <SvgText
-                x={x + barWidth / 2}
-                y={y - 6}
-                fill={COLORS.text.primary}
-                fontSize="11"
-                fontWeight="600"
-                textAnchor="middle"
-              >
-                {formatValue(item.value)}€
-              </SvgText>
-              
-              {/* Etiqueta del mes */}
-              <SvgText
-                x={x + barWidth / 2}
-                y={chartHeight - 20}
-                fill={COLORS.text.secondary}
-                fontSize="10"
-                fontWeight="500"
-                textAnchor="middle"
-              >
-                {item.label}
-              </SvgText>
-            </React.Fragment>
-          );
+        {/* Línea principal */}
+        <Path
+          d={createLinePath()}
+          stroke={color}
+          strokeWidth={2.5}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        
+        {/* Puntos en la línea con valores */}
+        {points.map((point, index) => (
+          <React.Fragment key={index}>
+            <Circle
+              cx={point.x}
+              cy={point.y}
+              r={4}
+              fill={COLORS.card}
+              stroke={color}
+              strokeWidth={2}
+            />
+            {/* Mostrar valor encima del punto */}
+            <SvgText
+              x={point.x}
+              y={point.y - 12}
+              fill={COLORS.text.primary}
+              fontSize="11"
+              fontWeight="600"
+              textAnchor="middle"
+            >
+              {formatValue(point.value)}
+            </SvgText>
+          </React.Fragment>
+        ))}
+
+        {/* Etiquetas del eje X */}
+        {points.map((point, index) => {
+          // Mostrar todas las etiquetas si hay 6 o menos, sino alternadas
+          const showLabel = displayData.length <= 6 || index % 2 === 0;
+          return showLabel ? (
+            <SvgText
+              key={`label-${index}`}
+              x={point.x}
+              y={chartHeight - 15}
+              fill={COLORS.text.secondary}
+              fontSize="11"
+              fontWeight="500"
+              textAnchor="middle"
+            >
+              {point.label}
+            </SvgText>
+          ) : null;
         })}
       </Svg>
     </View>
@@ -289,7 +315,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
 // ============================================================================
 
 interface HorizontalBarChartProps {
-  data: { type: string; count: number }[];
+  data: { label: string; value: number; percentage: number }[];
 }
 
 const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
@@ -302,33 +328,21 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
     );
   }
 
-  const maxValue = Math.max(...data.map(d => d.count), 1);
-  const totalServices = data.reduce((sum, d) => sum + d.count, 0);
-
-  const serviceColors: Record<string, string> = {
-    'Afinación': COLORS.primary,
-    'Reparación': COLORS.success,
-    'Mantenimiento': COLORS.warning,
-    'Regulación': COLORS.purple,
-    'Restauración': COLORS.danger,
-  };
+  const chartColors = [COLORS.primary, COLORS.success, COLORS.warning, COLORS.danger, COLORS.purple];
+  const maxValue = Math.max(...data.map(d => d.value), 1);
 
   return (
     <View style={styles.horizontalBarContainer}>
-      {data.map((item, index) => {
-        const percentage = (item.count / maxValue) * 100;
-        const percentageOfTotal = (item.count / totalServices) * 100;
-        const color = serviceColors[item.type] || COLORS.primary;
+      {data.slice(0, 5).map((item, index) => {
+        const percentage = (item.value / maxValue) * 100;
+        const color = chartColors[index % chartColors.length];
         
         return (
           <View key={index} style={styles.barRow}>
-            {/* Leyenda con nombre del servicio */}
             <View style={styles.barLabelContainer}>
               <View style={[styles.barDot, { backgroundColor: color }]} />
-              <Text style={styles.barLabel}>{item.type}</Text>
+              <Text style={styles.barLabel}>{item.label}</Text>
             </View>
-            
-            {/* Barra proporcional */}
             <View style={styles.barTrack}>
               <View 
                 style={[
@@ -340,15 +354,40 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
                 ]} 
               />
             </View>
-            
-            {/* Valor y porcentaje */}
             <View style={styles.barValueContainer}>
-              <Text style={styles.barValue}>{item.count}</Text>
-              <Text style={styles.barPercentage}>({percentageOfTotal.toFixed(1)}%)</Text>
+              <Text style={styles.barValue}>{item.value}</Text>
+              <Text style={styles.barPercentage}>({item.percentage.toFixed(1)}%)</Text>
             </View>
           </View>
         );
       })}
+    </View>
+  );
+};
+
+// ============================================================================
+// Quick Stat Card Component
+// ============================================================================
+
+interface QuickStatCardProps {
+  title: string;
+  value: string | number;
+  subtitle: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+}
+
+const QuickStatCard: React.FC<QuickStatCardProps> = ({ title, value, subtitle, icon, color }) => {
+  return (
+    <View style={styles.quickStatCard}>
+      <View style={styles.quickStatHeader}>
+        <View style={[styles.quickStatIcon, { backgroundColor: color + '15' }]}>
+          <Ionicons name={icon} size={18} color={color} />
+        </View>
+      </View>
+      <Text style={styles.quickStatValue}>{value}</Text>
+      <Text style={styles.quickStatTitle}>{title}</Text>
+      <Text style={styles.quickStatSubtitle}>{subtitle}</Text>
     </View>
   );
 };
@@ -376,12 +415,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     changePeriod,
   } = useDashboardMetrics('thisMonth');
 
-  // Gráfico de evolución SIEMPRE últimos 12 meses (independiente del selector)
-  const last12MonthsRange = {
-    start: new Date(new Date().setMonth(new Date().getMonth() - 12)),
-    end: new Date(),
-  };
-  const { data: revenueData } = useRevenueChart(last12MonthsRange, 'month');
+  const { data: revenueData } = useRevenueChart(dateRange, 'month');
   const { data: servicesData } = useServicesByType(dateRange);
   const { downloadPDF, isExporting } = useReportExport();
 
@@ -427,63 +461,90 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       {/* Period Selector */}
       <PeriodSelector selected={preset} onSelect={changePeriod} />
 
-      {/* Unified Metrics Grid - 4x4 (8 métricas juntas) */}
+      {/* Main Metrics Grid - 2x2 */}
+      <View style={styles.metricsGrid}>
+        <MetricCard
+          title={t('reports.revenue')}
+          value={formatCurrency(metrics?.revenue.total || 0)}
+          change={metrics?.revenue.changePercent}
+          icon="cash-outline"
+          color={COLORS.primary}
+        />
+        <MetricCard
+          title={t('reports.services')}
+          value={metrics?.services.total || 0}
+          icon="construct-outline"
+          color={COLORS.success}
+        />
+        <MetricCard
+          title={t('reports.clients')}
+          value={metrics?.clients.total || 0}
+          change={metrics?.clients.new ? (metrics.clients.new / metrics.clients.total) * 100 : 0}
+          icon="people-outline"
+          color={COLORS.purple}
+        />
+        <MetricCard
+          title={t('reports.avgTicket')}
+          value={formatCurrency(metrics?.averages.ticketValue || 0)}
+          icon="receipt-outline"
+          color={COLORS.warning}
+        />
+      </View>
+
+      {/* Revenue Evolution Chart */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Métricas Principales</Text>
-          <Text style={styles.sectionSubtitle}>Indicadores clave de rendimiento del período seleccionado</Text>
+          <Text style={styles.sectionTitle}>{t('reports.revenueEvolution')}</Text>
+          <Text style={styles.sectionSubtitle}>Últimos 12 meses</Text>
         </View>
-        <View style={styles.unifiedMetricsGrid}>
-          <UnifiedMetricCard
-            title={t('reports.revenue')}
-            value={formatCurrency(metrics?.revenue.total || 0)}
-            change={metrics?.revenue.changePercent}
-            icon="cash-outline"
+        <View style={styles.chartCard}>
+          <LineChart
+            data={revenueData?.map((d) => ({ label: d.period, value: d.revenue })) || []}
             color={COLORS.primary}
           />
-          <UnifiedMetricCard
-            title={t('reports.services')}
-            value={metrics?.services.total || 0}
-            subtitle="Servicios realizados"
-            icon="construct-outline"
-            color={COLORS.success}
-          />
-          <UnifiedMetricCard
-            title={t('reports.clients')}
-            value={metrics?.clients.total || 0}
-            change={metrics?.clients.new ? (metrics.clients.new / metrics.clients.total) * 100 : 0}
-            icon="people-outline"
-            color={COLORS.purple}
-          />
-          <UnifiedMetricCard
-            title={t('reports.avgTicket')}
-            value={formatCurrency(metrics?.averages.ticketValue || 0)}
-            subtitle="Ticket promedio"
-            icon="receipt-outline"
-            color={COLORS.warning}
-          />
-          <UnifiedMetricCard
+        </View>
+      </View>
+
+      {/* Services by Type - Barras horizontales */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{t('reports.servicesByType')}</Text>
+          <Text style={styles.sectionSubtitle}>Distribución de servicios realizados</Text>
+        </View>
+        <View style={styles.chartCard}>
+          <HorizontalBarChart data={servicesData || []} />
+        </View>
+      </View>
+
+      {/* Quick Stats - Grid 2x2 */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{t('reports.quickStats')}</Text>
+          <Text style={styles.sectionSubtitle}>Indicadores clave de rendimiento</Text>
+        </View>
+        <View style={styles.quickStatsGrid}>
+          <QuickStatCard
             title={t('reports.completionRate')}
             value={`${(metrics?.services.completionRate || 0).toFixed(1)}%`}
             subtitle="Servicios completados"
             icon="checkmark-circle-outline"
             color={COLORS.success}
           />
-          <UnifiedMetricCard
+          <QuickStatCard
             title={t('reports.retention')}
             value={`${(metrics?.clients.retention || 0).toFixed(1)}%`}
             subtitle="Clientes recurrentes"
             icon="repeat-outline"
             color={COLORS.primary}
           />
-          <UnifiedMetricCard
+          <QuickStatCard
             title={t('reports.pianos')}
             value={metrics?.pianos.total || 0}
             subtitle="Pianos registrados"
             icon="musical-notes-outline"
             color={COLORS.warning}
           />
-          <UnifiedMetricCard
+          <QuickStatCard
             title="Ingresos medios"
             value={formatCurrency(metrics?.revenue.total ? metrics.revenue.total / Math.max(metrics.services.total, 1) : 0)}
             subtitle="Por servicio"
@@ -493,30 +554,19 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </View>
       </View>
 
-      {/* Revenue Evolution Chart - SIEMPRE últimos 12 meses */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('reports.revenueEvolution')}</Text>
-          <Text style={styles.sectionSubtitle}>Evolución de facturación - Últimos 12 meses</Text>
-        </View>
-        <View style={styles.chartCard}>
-          <BarChart
-            data={revenueData?.map((d) => ({ label: d.period, value: d.revenue })) || []}
-            color={COLORS.primary}
-          />
-        </View>
-      </View>
+      {/* View All Reports Button */}
+      {onNavigateToReports && (
+        <TouchableOpacity
+          style={styles.viewAllButton}
+          onPress={onNavigateToReports}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.viewAllButtonText}>{t('reports.viewAllReports')}</Text>
+          <Ionicons name="arrow-forward" size={18} color={COLORS.primary} />
+        </TouchableOpacity>
+      )}
 
-      {/* Services by Type - Barras horizontales con leyenda */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('reports.servicesByType')}</Text>
-          <Text style={styles.sectionSubtitle}>Distribución de servicios realizados en el período</Text>
-        </View>
-        <View style={styles.chartCard}>
-          <HorizontalBarChart data={servicesData || []} />
-        </View>
-      </View>
+      <View style={styles.bottomPadding} />
     </ScrollView>
   );
 };
@@ -534,12 +584,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingHorizontal: 24,
+    paddingTop: 24,
     paddingBottom: 16,
-    backgroundColor: COLORS.card,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   headerTitle: {
     fontSize: 24,
@@ -554,30 +601,32 @@ const styles = StyleSheet.create({
   exportButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: `${COLORS.primary}15`,
+    borderRadius: 12,
+    backgroundColor: COLORS.card,
+    borderWidth: 1,
+    borderColor: COLORS.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
   periodSelector: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginBottom: 20,
     gap: 8,
-    backgroundColor: COLORS.card,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   periodButton: {
     flex: 1,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: COLORS.background,
+    borderRadius: 10,
+    backgroundColor: COLORS.card,
+    borderWidth: 1,
+    borderColor: COLORS.border,
     alignItems: 'center',
   },
   periodButtonActive: {
     backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
   },
   periodButtonText: {
     fontSize: 13,
@@ -585,42 +634,25 @@ const styles = StyleSheet.create({
     color: COLORS.text.secondary,
   },
   periodButtonTextActive: {
-    color: '#FFFFFF',
+    color: COLORS.card,
   },
-  section: {
-    marginTop: 20,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-  },
-  sectionHeader: {
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: COLORS.text.primary,
-    marginBottom: 4,
-  },
-  sectionSubtitle: {
-    fontSize: 13,
-    color: COLORS.text.secondary,
-  },
-  
-  // Unified Metrics Grid (4x4)
-  unifiedMetricsGrid: {
+  metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    paddingHorizontal: 24,
     gap: 12,
+    marginBottom: 24,
   },
-  unifiedMetricCard: {
-    width: (SCREEN_WIDTH - 32 - 12) / 2, // 2 columnas con gap
+  metricCard: {
+    flex: 1,
+    minWidth: (SCREEN_WIDTH - 60) / 2,
     backgroundColor: COLORS.card,
     borderRadius: 12,
-    padding: 14,
+    padding: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  unifiedMetricHeader: {
+  metricHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -636,33 +668,43 @@ const styles = StyleSheet.create({
   changeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 6,
+    gap: 2,
   },
   changeText: {
     fontSize: 11,
     fontWeight: '600',
   },
-  unifiedMetricValue: {
-    fontSize: 20,
+  metricValue: {
+    fontSize: 22,
     fontWeight: '700',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
-  unifiedMetricTitle: {
+  metricTitle: {
     fontSize: 13,
-    fontWeight: '600',
     color: COLORS.text.secondary,
-    marginBottom: 2,
+    fontWeight: '500',
   },
-  unifiedMetricSubtitle: {
-    fontSize: 11,
-    color: COLORS.text.tertiary,
+  section: {
+    paddingHorizontal: 24,
+    marginBottom: 24,
   },
-  
-  // Charts
+  sectionHeader: {
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.text.primary,
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 13,
+    color: COLORS.text.secondary,
+  },
   chartCard: {
     backgroundColor: COLORS.card,
     borderRadius: 12,
@@ -671,31 +713,37 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   chartContainer: {
-    minHeight: 240,
+    width: '100%',
+    alignItems: 'center',
   },
   emptyChart: {
-    alignItems: 'center',
+    height: 200,
     justifyContent: 'center',
-    paddingVertical: 60,
+    alignItems: 'center',
+    gap: 8,
   },
   emptyChartText: {
-    marginTop: 12,
     fontSize: 14,
+    fontWeight: '600',
     color: COLORS.text.secondary,
   },
-  
-  // Horizontal Bar Chart
+  emptyChartSubtext: {
+    fontSize: 12,
+    color: COLORS.text.tertiary,
+  },
   horizontalBarContainer: {
-    gap: 20,
+    gap: 16,
   },
   barRow: {
-    gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   barLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: 120,
     gap: 8,
-    marginBottom: 6,
   },
   barDot: {
     width: 8,
@@ -703,39 +751,95 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   barLabel: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: COLORS.text.primary,
+    flex: 1,
   },
   barTrack: {
-    height: 36,
+    flex: 1,
+    height: 28,
     backgroundColor: COLORS.background,
-    borderRadius: 8,
-    position: 'relative',
+    borderRadius: 6,
     overflow: 'hidden',
   },
   barFill: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    borderRadius: 8,
-    minWidth: 2,
+    height: '100%',
+    borderRadius: 6,
   },
   barValueContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
+    width: 80,
+    alignItems: 'flex-end',
   },
   barValue: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
     color: COLORS.text.primary,
   },
   barPercentage: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 11,
     color: COLORS.text.secondary,
   },
+  quickStatsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  quickStatCard: {
+    flex: 1,
+    minWidth: (SCREEN_WIDTH - 60) / 2,
+    backgroundColor: COLORS.card,
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  quickStatHeader: {
+    marginBottom: 12,
+  },
+  quickStatIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quickStatValue: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: COLORS.text.primary,
+    marginBottom: 4,
+  },
+  quickStatTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.text.primary,
+    marginBottom: 2,
+  },
+  quickStatSubtitle: {
+    fontSize: 11,
+    color: COLORS.text.secondary,
+  },
+  viewAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: COLORS.card,
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+    gap: 8,
+  },
+  viewAllButtonText: {
+    color: COLORS.primary,
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  bottomPadding: {
+    height: 40,
+  },
 });
+
+export default AnalyticsDashboard;

@@ -4,7 +4,10 @@ import * as schema from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 
 // Configuración de conexión
-const connection = await mysql.createConnection(process.env.DATABASE_URL!);
+const connection = await mysql.createConnection({
+  uri: process.env.DATABASE_URL!,
+  ssl: { rejectUnauthorized: true }
+});
 const db = drizzle(connection, { schema, mode: 'default' });
 
 // Tipos de servicios para pianos
