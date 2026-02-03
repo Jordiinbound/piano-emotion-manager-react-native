@@ -265,7 +265,7 @@ export default function InvoicesScreen() {
               onValueChange={(value) => setSelectedYear(value as number)}
               style={styles.picker}
             >
-              {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map((year) => (
+              {Array.from({ length: new Date().getFullYear() - 2020 + 1 }, (_, i) => 2020 + i).map((year) => (
                 <Picker.Item key={year} label={year.toString()} value={year} />
               ))}
             </Picker>
