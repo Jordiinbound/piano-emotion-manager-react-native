@@ -98,14 +98,16 @@ export function useInvoicesData(options: UseInvoicesDataOptions = {}) {
     refetch,
     error: queryError 
   } = trpc.invoices.list.useInfiniteQuery(
-    {
-      limit: pageSize,
-      search: search || undefined,
-      status: status || undefined,
-      clientId: clientId || undefined,
-      dateFrom: dateFrom || undefined,
-      dateTo: dateTo || undefined,
-    },
+    (() => {
+      // Construir parámetros sin incluir valores undefined/null
+      const params: any = { limit: pageSize };
+      if (search) params.search = search;
+      if (status) params.status = status;
+      if (clientId) params.clientId = clientId;
+      if (dateFrom) params.dateFrom = dateFrom;
+      if (dateTo) params.dateTo = dateTo;
+      return params;
+    })(),
     {
       initialPageParam: undefined,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -120,10 +122,13 @@ export function useInvoicesData(options: UseInvoicesDataOptions = {}) {
 
   // Query para estadísticas globales
   const { data: statsData } = trpc.invoices.getStats.useQuery(
-    {
-      dateFrom: dateFrom || undefined,
-      dateTo: dateTo || undefined,
-    },
+    (() => {
+      // Construir parámetros sin incluir valores undefined/null
+      const params: any = {};
+      if (dateFrom) params.dateFrom = dateFrom;
+      if (dateTo) params.dateTo = dateTo;
+      return params;
+    })(),
     {
       staleTime: 5 * 60 * 1000, // 5 minutos
     }
