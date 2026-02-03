@@ -5,7 +5,7 @@
 
 import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc.js';
-import { db } from '../db/index.js';
+import * as db from '../db.js';
 import { services, clients, pianos, users } from '../../drizzle/schema.js';
 import { eq, sql, and, gte, lte } from 'drizzle-orm';
 
@@ -18,6 +18,7 @@ export const debugRouter = router({
     console.log('[DEBUG] ctx.user:', JSON.stringify(ctx.user, null, 2));
     console.log('[DEBUG] ctx.partnerId:', (ctx as any).partnerId);
     
+    const database = await db.getDb();
     const partnerId = (ctx as any).partnerId;
     
     // 1. Información del usuario
@@ -31,9 +32,9 @@ export const debugRouter = router({
     console.log('[DEBUG] userInfo:', JSON.stringify(userInfo, null, 2));
     
     // 2. Contar registros totales en cada tabla
-    const totalServices = await db.select({ count: sql<number>`count(*)` }).from(services);
-    const totalClients = await db.select({ count: sql<number>`count(*)` }).from(clients);
-    const totalPianos = await db.select({ count: sql<number>`count(*)` }).from(pianos);
+    const totalServices = await database.select({ count: sql<number>`count(*)` }).from(services);
+    const totalClients = await database.select({ count: sql<number>`count(*)` }).from(clients);
+    const totalPianos = await database.select({ count: sql<number>`count(*)` }).from(pianos);
     
     const totals = {
       services: totalServices[0]?.count || 0,
@@ -44,17 +45,17 @@ export const debugRouter = router({
     console.log('[DEBUG] totals:', JSON.stringify(totals, null, 2));
     
     // 3. Contar registros con partnerId del usuario
-    const servicesWithPartnerId = await db
+    const servicesWithPartnerId = await database
       .select({ count: sql<number>`count(*)` })
       .from(services)
       .where(eq(services.partnerId, partnerId));
       
-    const clientsWithPartnerId = await db
+    const clientsWithPartnerId = await database
       .select({ count: sql<number>`count(*)` })
       .from(clients)
       .where(eq(clients.partnerId, partnerId));
       
-    const pianosWithPartnerId = await db
+    const pianosWithPartnerId = await database
       .select({ count: sql<number>`count(*)` })
       .from(pianos)
       .where(eq(pianos.partnerId, partnerId));
@@ -68,17 +69,17 @@ export const debugRouter = router({
     console.log('[DEBUG] withPartnerId:', JSON.stringify(withPartnerId, null, 2));
     
     // 4. Obtener valores únicos de partnerId en cada tabla
-    const uniquePartnerIdsServices = await db
+    const uniquePartnerIdsServices = await database
       .selectDistinct({ partnerId: services.partnerId })
       .from(services)
       .limit(10);
       
-    const uniquePartnerIdsClients = await db
+    const uniquePartnerIdsClients = await database
       .selectDistinct({ partnerId: clients.partnerId })
       .from(clients)
       .limit(10);
       
-    const uniquePartnerIdsPianos = await db
+    const uniquePartnerIdsPianos = await database
       .selectDistinct({ partnerId: pianos.partnerId })
       .from(pianos)
       .limit(10);
@@ -92,7 +93,7 @@ export const debugRouter = router({
     console.log('[DEBUG] uniquePartnerIds:', JSON.stringify(uniquePartnerIds, null, 2));
     
     // 5. Obtener muestra de servicios (primeros 5)
-    const sampleServices = await db
+    const sampleServices = await database
       .select({
         id: services.id,
         partnerId: services.partnerId,
@@ -109,7 +110,7 @@ export const debugRouter = router({
     console.log('[DEBUG] sampleServices:', JSON.stringify(sampleServices, null, 2));
     
     // 6. Obtener muestra de clientes (primeros 5)
-    const sampleClients = await db
+    const sampleClients = await database
       .select({
         id: clients.id,
         partnerId: clients.partnerId,
@@ -123,7 +124,7 @@ export const debugRouter = router({
     console.log('[DEBUG] sampleClients:', JSON.stringify(sampleClients, null, 2));
     
     // 7. Obtener muestra de pianos (primeros 5)
-    const samplePianos = await db
+    const samplePianos = await database
       .select({
         id: pianos.id,
         partnerId: pianos.partnerId,
@@ -141,7 +142,7 @@ export const debugRouter = router({
     const now = new Date();
     const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
     
-    const servicesInRange = await db
+    const servicesInRange = await database
       .select({ count: sql<number>`count(*)` })
       .from(services)
       .where(
