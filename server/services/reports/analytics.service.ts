@@ -114,10 +114,10 @@ export interface GeographicDistribution {
 // ============================================================================
 
 export class AnalyticsService {
-  private organizationId: number;
+  private partnerId: number;
 
-  constructor(organizationId: number) {
-    this.organizationId = organizationId;
+  constructor(partnerId: number) {
+    this.partnerId = organizationId;
   }
 
   /**
@@ -279,7 +279,7 @@ export class AnalyticsService {
         .from(services)
         .where(
           and(
-            eq(services.organizationId, this.organizationId),
+            eq(services.partnerId, this.partnerId),
             eq(services.serviceType, serviceType.type as any),
             gte(services.date, startDate.toISOString()),
             lte(services.date, endDate.toISOString())
@@ -331,7 +331,7 @@ export class AnalyticsService {
       .leftJoin(services, eq(clients.id, services.clientId))
       .where(
         and(
-          eq(clients.organizationId, this.organizationId),
+          eq(clients.partnerId, this.partnerId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -374,7 +374,7 @@ export class AnalyticsService {
         avgYear: avg(pianos.year),
       })
       .from(pianos)
-      .where(eq(pianos.organizationId, this.organizationId))
+      .where(eq(pianos.partnerId, this.partnerId))
       .groupBy(pianos.brand)
       .orderBy(desc(count()));
 
@@ -433,7 +433,7 @@ export class AnalyticsService {
       .from(clients)
       .where(
         and(
-          eq(clients.organizationId, this.organizationId),
+          eq(clients.partnerId, this.partnerId),
           sql`${clients.city} IS NOT NULL`
         )
       )
@@ -521,7 +521,7 @@ export class AnalyticsService {
       .from(services)
       .where(
         and(
-          eq(services.organizationId, this.organizationId),
+          eq(services.partnerId, this.partnerId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -540,7 +540,7 @@ export class AnalyticsService {
       .from(services)
       .where(
         and(
-          eq(services.organizationId, this.organizationId),
+          eq(services.partnerId, this.partnerId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -571,7 +571,7 @@ export class AnalyticsService {
     const totalResult = await db
       .select({ count: count() })
       .from(clients)
-      .where(eq(clients.organizationId, this.organizationId));
+      .where(eq(clients.partnerId, this.partnerId));
     const total = totalResult[0]?.count || 0;
 
     // Nuevos clientes en el período
@@ -580,7 +580,7 @@ export class AnalyticsService {
       .from(clients)
       .where(
         and(
-          eq(clients.organizationId, this.organizationId),
+          eq(clients.partnerId, this.partnerId),
           gte(clients.createdAt, startDate.toISOString()),
           lte(clients.createdAt, endDate.toISOString())
         )
@@ -593,7 +593,7 @@ export class AnalyticsService {
       .from(services)
       .where(
         and(
-          eq(services.organizationId, this.organizationId),
+          eq(services.partnerId, this.partnerId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -618,7 +618,7 @@ export class AnalyticsService {
     const totalResult = await db
       .select({ count: count() })
       .from(pianos)
-      .where(eq(pianos.organizationId, this.organizationId));
+      .where(eq(pianos.partnerId, this.partnerId));
     const total = totalResult[0]?.count || 0;
 
     // Pianos con servicio en el período
@@ -627,7 +627,7 @@ export class AnalyticsService {
       .from(services)
       .where(
         and(
-          eq(services.organizationId, this.organizationId),
+          eq(services.partnerId, this.partnerId),
           gte(services.date, startDate.toISOString()),
           lte(services.date, endDate.toISOString())
         )
@@ -649,7 +649,7 @@ export class AnalyticsService {
       .from(clients)
       .where(
         and(
-          eq(clients.organizationId, this.organizationId),
+          eq(clients.partnerId, this.partnerId),
           gte(clients.createdAt, startDate.toISOString()),
           lte(clients.createdAt, endDate.toISOString())
         )
@@ -666,7 +666,7 @@ export class AnalyticsService {
       .from(pianos)
       .where(
         and(
-          eq(pianos.organizationId, this.organizationId),
+          eq(pianos.partnerId, this.partnerId),
           gte(pianos.createdAt, startDate.toISOString()),
           lte(pianos.createdAt, endDate.toISOString())
         )
@@ -692,6 +692,6 @@ export class AnalyticsService {
 // Factory Function
 // ============================================================================
 
-export function createAnalyticsService(organizationId: number): AnalyticsService {
+export function createAnalyticsService(partnerId: number): AnalyticsService {
   return new AnalyticsService(organizationId);
 }

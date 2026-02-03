@@ -33,7 +33,7 @@ export const analyticsRouter = router({
   getDashboardMetrics: protectedProcedure
     .input(dateRangeSchema)
     .query(async ({ ctx, input }) => {
-      const analytics = createAnalyticsService((ctx as any).organizationId);
+      const analytics = createAnalyticsService((ctx as any).partnerId);
       return analytics.getDashboardMetrics(input);
     }),
 
@@ -48,7 +48,7 @@ export const analyticsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const analytics = createAnalyticsService((ctx as any).organizationId);
+      const analytics = createAnalyticsService((ctx as any).partnerId);
       return analytics.getRevenueByPeriod(input.dateRange, input.groupBy);
     }),
 
@@ -58,7 +58,7 @@ export const analyticsRouter = router({
   getServicesByType: protectedProcedure
     .input(dateRangeSchema)
     .query(async ({ ctx, input }) => {
-      const analytics = createAnalyticsService((ctx as any).organizationId);
+      const analytics = createAnalyticsService((ctx as any).partnerId);
       return analytics.getServicesByType(input);
     }),
 
@@ -74,7 +74,7 @@ export const analyticsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const analytics = createAnalyticsService((ctx as any).organizationId);
+      const analytics = createAnalyticsService((ctx as any).partnerId);
       return analytics.getTopClients(input.dateRange, input.limit, input.sortBy);
     }),
 
@@ -84,7 +84,7 @@ export const analyticsRouter = router({
   getTechnicianPerformance: protectedProcedure
     .input(dateRangeSchema)
     .query(async ({ ctx, input }) => {
-      const analytics = createAnalyticsService((ctx as any).organizationId);
+      const analytics = createAnalyticsService((ctx as any).partnerId);
       return analytics.getTechnicianPerformance(input);
     }),
 
@@ -106,7 +106,7 @@ export const analyticsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const analytics = createAnalyticsService((ctx as any).organizationId);
+      const analytics = createAnalyticsService((ctx as any).partnerId);
       return analytics.getMonthlyTrends(input.months);
     }),
 
@@ -129,7 +129,7 @@ export const analyticsRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const analytics = createAnalyticsService((ctx as any).organizationId);
+      const analytics = createAnalyticsService((ctx as any).partnerId);
       const csv = await analytics.exportToCSV(input.reportType, input.dateRange);
       return { content: csv, filename: `reporte_${input.reportType}.csv` };
     }),
