@@ -417,9 +417,12 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   } = useDashboardMetrics('thisMonth');
 
   // Gráfico de evolución SIEMPRE últimos 12 meses (independiente del selector)
+  const now = new Date();
+  const twelveMonthsAgo = new Date();
+  twelveMonthsAgo.setMonth(now.getMonth() - 12);
   const last12MonthsRange = {
-    startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)),
-    endDate: new Date(),
+    startDate: twelveMonthsAgo,
+    endDate: now,
   };
   const { data: revenueData } = useRevenueChart(last12MonthsRange, 'month');
   const { data: servicesData } = useServicesByType(dateRange);
@@ -646,7 +649,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   metricCard: {
-    width: '48%',
+    width: '23.5%',
     backgroundColor: COLORS.card,
     borderRadius: 4,
     padding: 16,
