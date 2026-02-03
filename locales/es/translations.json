@@ -1081,7 +1081,13 @@
     "services": "Servicios",
     "clients": "Clientes",
     "avgTicket": "Ticket medio",
-    "revenueEvolution": "Evolución de ingresos"
+    "revenueEvolution": "Evolución de ingresos",
+    "servicesByType": "Servicios por tipo",
+    "quickStats": "Estadísticas rápidas",
+    "completionRate": "Tasa de finalización",
+    "retention": "Retención",
+    "pianos": "Pianos",
+    "viewAllReports": "Ver todos los informes"
   },
   "shop": {
     "noShops": "No hay tiendas disponibles",
