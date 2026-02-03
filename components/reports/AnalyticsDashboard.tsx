@@ -653,6 +653,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
+    minWidth: 0,
   },
   metricHeader: {
     flexDirection: 'row',
@@ -666,6 +667,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
+    flexShrink: 0,
   },
   changeBadge: {
     flexDirection: 'row',
@@ -674,6 +676,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 4,
     gap: 4,
+    flexShrink: 1,
+    minWidth: 0,
   },
   changeText: {
     fontSize: 14,
