@@ -107,6 +107,7 @@ export function useInvoicesData(options: UseInvoicesDataOptions = {}) {
       dateTo: dateTo || undefined,
     },
     {
+      initialPageParam: undefined,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       staleTime: 5 * 60 * 1000, // 5 minutos
       retry: 2,
