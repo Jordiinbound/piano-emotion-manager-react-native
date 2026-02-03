@@ -1,5 +1,5 @@
 import { createTRPCReact } from "@trpc/react-query";
-import { httpBatchLink } from "@trpc/client";
+import { httpLink } from "@trpc/client";
 import superjson from "superjson";
 import type { AppRouter } from "@/server/routers";
 import { getApiBaseUrl } from "@/constants/oauth";
@@ -7,9 +7,12 @@ import { getApiBaseUrl } from "@/constants/oauth";
 /**
  * tRPC React client for type-safe API calls.
  *
- * IMPORTANT (tRPC v11): The `transformer` must be inside `httpBatchLink`,
+  * IMPORTANT (tRPC v11): The `transformer` must be inside httpLink,
  * NOT at the root createClient level. This ensures client and server
  * use the same serialization format (superjson).
+ * 
+ * NOTE: Using httpLink instead of httpBatchLink to avoid batching issues
+ * that were causing 400 errors in production..
  */
 export const trpc = createTRPCReact<AppRouter>();
 
@@ -32,7 +35,7 @@ export function setGlobalTokenGetter(getToken: () => Promise<string | null>) {
 export function createTRPCClient() {
   return trpc.createClient({
     links: [
-      httpBatchLink({
+      httpLink({
         url: `${getApiBaseUrl()}/api/trpc`,
         // tRPC v11: transformer MUST be inside httpBatchLink, not at root
         transformer: superjson,
