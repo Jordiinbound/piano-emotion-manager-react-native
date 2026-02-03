@@ -100,7 +100,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         )}
       </View>
       <Text style={styles.metricValue}>{value}</Text>
-      <Text style={styles.metricTitle}>{title}</Text>
+      <Text style={styles.metricTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
       {subtitle && (
         <Text style={styles.metricSubtitle}>{subtitle}</Text>
       )}
@@ -469,6 +469,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             title={t('reports.revenue')}
             value={formatCurrency(metrics?.revenue.total || 0)}
             change={metrics?.revenue.changePercent}
+            subtitle="vs período anterior"
             icon="cash-outline"
             color={COLORS.primary}
           />
@@ -480,8 +481,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           />
           <MetricCard
             title={t('reports.clients')}
-            value={metrics?.clients.total || 0}
-            change={metrics?.clients.new ? (metrics.clients.new / metrics.clients.total) * 100 : 0}
+            value={metrics?.clients.new || 0}
+            subtitle="Nuevos en el período"
             icon="people-outline"
             color={COLORS.purple}
           />
@@ -507,8 +508,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           />
           <MetricCard
             title={t('reports.pianos')}
-            value={metrics?.pianos.total || 0}
-            subtitle="Pianos registrados"
+            value={metrics?.pianos.new || 0}
+            subtitle="Nuevos en el período"
             icon="musical-notes-outline"
             color={COLORS.warning}
           />
