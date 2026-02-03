@@ -186,6 +186,7 @@ export class AnalyticsService {
       },
       pianos: {
         total: pianoStats.total,
+        new: pianoStats.new,
         serviced: pianoStats.serviced,
         pending: pianoStats.pending,
       },
@@ -573,11 +574,36 @@ export class AnalyticsService {
     // Total de servicios en el período
     const total = await this.getServiceCount(startDate, endDate);
     
-    // Por ahora, asumimos que todos los servicios están completados
-    // En el futuro, se puede agregar un campo 'status' a la tabla services
-    const completed = total;
-    const cancelled = 0;
-    const pending = 0;
+    // Contar servicios completados
+    const completedResult = await db
+      .select({ count: count() })
+      .from(services)
+      .where(
+        and(
+          eq(services.partnerId, this.partnerId),
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString()),
+          eq(services.status, 'completed')
+        )
+      );
+    const completed = completedResult[0]?.count || 0;
+    
+    // Contar servicios cancelados
+    const cancelledResult = await db
+      .select({ count: count() })
+      .from(services)
+      .where(
+        and(
+          eq(services.partnerId, this.partnerId),
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString()),
+          eq(services.status, 'cancelled')
+        )
+      );
+    const cancelled = cancelledResult[0]?.count || 0;
+    
+    // Calcular servicios pendientes
+    const pending = total - completed - cancelled;
 
     return { total, completed, pending, cancelled };
   }
@@ -639,6 +665,19 @@ export class AnalyticsService {
       .where(eq(pianos.partnerId, this.partnerId));
     const total = totalResult[0]?.count || 0;
 
+    // Nuevos pianos en el período
+    const newResult = await db
+      .select({ count: count() })
+      .from(pianos)
+      .where(
+        and(
+          eq(pianos.partnerId, this.partnerId),
+          gte(pianos.createdAt, startDate.toISOString()),
+          lte(pianos.createdAt, endDate.toISOString())
+        )
+      );
+    const newPianos = newResult[0]?.count || 0;
+
     // Pianos con servicio en el período
     const servicedResult = await db
       .selectDistinct({ pianoId: services.pianoId })
@@ -654,6 +693,7 @@ export class AnalyticsService {
 
     return {
       total,
+      new: newPianos,
       serviced,
       pending: total - serviced,
     };
