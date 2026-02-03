@@ -182,14 +182,15 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   const range = maxValue - minValue || 1;
 
   const chartHeight = 280;
-  const padding = { top: 40, right: 5, bottom: 60, left: 35 };
+  const padding = { top: 40, right: 10, bottom: 60, left: 35 };
   const plotWidth = chartWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
 
-  // Calcular ancho de cada barra con espacio entre ellas
-  const barSpacing = 4; // Reducido para que quepan los 12 meses
+  // Calcular ancho de cada barra para ocupar el 100% del espacio disponible
+  const barSpacing = 8; // Espacio entre barras
   const totalBars = displayData.length;
-  const barWidth = Math.max(15, (plotWidth - (totalBars - 1) * barSpacing) / totalBars);
+  const totalSpacing = (totalBars - 1) * barSpacing;
+  const barWidth = (plotWidth - totalSpacing) / totalBars;
 
   // Formatear valor como moneda
   const formatValue = (value: number) => {

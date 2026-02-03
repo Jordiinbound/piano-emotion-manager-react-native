@@ -7,6 +7,7 @@
 
 import { getDb } from '../../../drizzle/db.js';
 import { eq, and, gte, lte, sql, count, sum, avg, desc } from 'drizzle-orm';
+import { clients, pianos, services } from '../../../drizzle/schema.js';
 
 // ============================================================================
 // Types
@@ -116,7 +117,7 @@ export class AnalyticsService {
   private organizationId: number;
 
   constructor(organizationId: number) {
-    this.organizationId! = organizationId;
+    this.organizationId = organizationId;
   }
 
   /**
@@ -204,8 +205,8 @@ export class AnalyticsService {
     groupBy: 'day' | 'week' | 'month' = 'month'
   ): Promise<RevenueByPeriod[]> {
     const { startDate, endDate } = dateRange;
+    const db = getDb();
 
-    // Simulación de datos - En producción, esto vendría de la BD
     const periods: RevenueByPeriod[] = [];
     const current = new Date(startDate);
 
@@ -228,15 +229,15 @@ export class AnalyticsService {
         nextDate.setMonth(nextDate.getMonth() + 1);
       }
 
-      // En producción, consultar BD para este período
+      // Consultar BD para este período
       const revenue = await this.getTotalRevenue(current, nextDate);
-      const services = await this.getServiceCount(current, nextDate);
+      const servicesCount = await this.getServiceCount(current, nextDate);
 
       periods.push({
         period: periodLabel,
         revenue,
-        services,
-        averageTicket: services > 0 ? revenue / services : 0,
+        services: servicesCount,
+        averageTicket: servicesCount > 0 ? revenue / servicesCount : 0,
       });
 
       current.setTime(nextDate.getTime());
@@ -250,16 +251,18 @@ export class AnalyticsService {
    */
   async getServicesByType(dateRange: DateRange): Promise<ServicesByType[]> {
     const { startDate, endDate } = dateRange;
+    const db = getDb();
 
     // Tipos de servicio predefinidos
     const serviceTypes = [
       { type: 'tuning', name: 'Afinación' },
       { type: 'repair', name: 'Reparación' },
       { type: 'regulation', name: 'Regulación' },
-      { type: 'voicing', name: 'Armonización' },
-      { type: 'cleaning', name: 'Limpieza' },
-      { type: 'evaluation', name: 'Evaluación' },
-      { type: 'moving', name: 'Transporte' },
+      { type: 'maintenance_basic', name: 'Mantenimiento Básico' },
+      { type: 'maintenance_complete', name: 'Mantenimiento Completo' },
+      { type: 'maintenance_premium', name: 'Mantenimiento Premium' },
+      { type: 'inspection', name: 'Inspección' },
+      { type: 'restoration', name: 'Restauración' },
       { type: 'other', name: 'Otros' },
     ];
 
@@ -267,18 +270,34 @@ export class AnalyticsService {
     let totalServices = 0;
 
     for (const serviceType of serviceTypes) {
-      // En producción, consultar BD
-      const count = Math.floor(Math.random() * 50) + 5; // Placeholder
-      const revenue = count * (Math.random() * 100 + 50);
-      totalServices += count;
+      // Consultar BD para este tipo de servicio
+      const result = await db
+        .select({
+          count: count(),
+          totalCost: sum(services.cost),
+        })
+        .from(services)
+        .where(
+          and(
+            eq(services.serviceType, serviceType.type as any),
+            gte(services.date, startDate.toISOString()),
+            lte(services.date, endDate.toISOString())
+          )
+        );
 
-      results.push({
-        type: serviceType.type,
-        typeName: serviceType.name,
-        count,
-        revenue,
-        percentage: 0, // Se calcula después
-      });
+      const serviceCount = result[0]?.count || 0;
+      const revenue = Number(result[0]?.totalCost || 0);
+      totalServices += serviceCount;
+
+      if (serviceCount > 0) {
+        results.push({
+          type: serviceType.type,
+          typeName: serviceType.name,
+          count: serviceCount,
+          revenue,
+          percentage: 0, // Se calcula después
+        });
+      }
     }
 
     // Calcular porcentajes
@@ -296,9 +315,38 @@ export class AnalyticsService {
     limit: number = 10,
     sortBy: 'revenue' | 'services' = 'revenue'
   ): Promise<TopClient[]> {
-    // En producción, consultar BD con joins
-    // Placeholder con datos de ejemplo
-    return [];
+    const db = getDb();
+    const { startDate, endDate } = dateRange;
+
+    const result = await db
+      .select({
+        id: clients.id,
+        name: clients.name,
+        email: clients.email,
+        totalServices: count(services.id),
+        totalRevenue: sum(services.cost),
+      })
+      .from(clients)
+      .leftJoin(services, eq(clients.id, services.clientId))
+      .where(
+        and(
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString())
+        )
+      )
+      .groupBy(clients.id)
+      .orderBy(sortBy === 'revenue' ? desc(sum(services.cost)) : desc(count(services.id)))
+      .limit(limit);
+
+    return result.map(r => ({
+      id: r.id,
+      name: r.name,
+      email: r.email || '',
+      totalServices: r.totalServices || 0,
+      totalRevenue: Number(r.totalRevenue || 0),
+      lastServiceDate: null,
+      pianoCount: 0,
+    }));
   }
 
   /**
@@ -307,7 +355,7 @@ export class AnalyticsService {
   async getTechnicianPerformance(
     dateRange: DateRange
   ): Promise<TechnicianPerformance[]> {
-    // En producción, consultar BD
+    // Esta funcionalidad requiere tabla de técnicos
     return [];
   }
 
@@ -315,30 +363,27 @@ export class AnalyticsService {
    * Obtiene distribución de pianos por marca
    */
   async getPianosByBrand(): Promise<PianosByBrand[]> {
-    // En producción, consultar BD
-    const brands = [
-      'Steinway & Sons', 'Yamaha', 'Kawai', 'Bösendorfer', 
-      'Bechstein', 'Fazioli', 'Petrof', 'Otros'
-    ];
+    const db = getDb();
 
-    let total = 0;
-    const results: PianosByBrand[] = [];
+    const result = await db
+      .select({
+        brand: pianos.brand,
+        count: count(),
+        avgYear: avg(pianos.year),
+      })
+      .from(pianos)
+      .groupBy(pianos.brand)
+      .orderBy(desc(count()));
 
-    for (const brand of brands) {
-      const count = Math.floor(Math.random() * 30) + 5;
-      total += count;
-      results.push({
-        brand,
-        count,
-        percentage: 0,
-        averageAge: Math.floor(Math.random() * 40) + 5,
-      });
-    }
+    const total = result.reduce((sum, r) => sum + (r.count || 0), 0);
+    const currentYear = new Date().getFullYear();
 
-    return results.map(r => ({
-      ...r,
-      percentage: (r.count / total) * 100,
-    })).sort((a: any, b: any) => b.count - a.count);
+    return result.map(r => ({
+      brand: r.brand,
+      count: r.count || 0,
+      percentage: total > 0 ? ((r.count || 0) / total) * 100 : 0,
+      averageAge: r.avgYear ? currentYear - Number(r.avgYear) : 0,
+    }));
   }
 
   /**
@@ -352,13 +397,18 @@ export class AnalyticsService {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
+      const revenue = await this.getTotalRevenue(date, monthEnd);
+      const servicesCount = await this.getServiceCount(date, monthEnd);
+      const newClientsCount = await this.getNewClientsCount(date, monthEnd);
+      const newPianosCount = await this.getNewPianosCount(date, monthEnd);
+
       trends.push({
         month: date.toLocaleDateString('es-ES', { month: 'short' }),
         year: date.getFullYear(),
-        revenue: await this.getTotalRevenue(date, monthEnd),
-        services: await this.getServiceCount(date, monthEnd),
-        newClients: Math.floor(Math.random() * 10) + 1,
-        newPianos: Math.floor(Math.random() * 15) + 2,
+        revenue,
+        services: servicesCount,
+        newClients: newClientsCount,
+        newPianos: newPianosCount,
       });
     }
 
@@ -369,8 +419,26 @@ export class AnalyticsService {
    * Obtiene distribución geográfica
    */
   async getGeographicDistribution(): Promise<GeographicDistribution[]> {
-    // En producción, consultar BD agrupando por ciudad/región
-    return [];
+    const db = getDb();
+
+    const result = await db
+      .select({
+        city: clients.city,
+        region: clients.region,
+        clientCount: count(clients.id),
+      })
+      .from(clients)
+      .where(sql`${clients.city} IS NOT NULL`)
+      .groupBy(clients.city, clients.region)
+      .orderBy(desc(count(clients.id)));
+
+    return result.map(r => ({
+      city: r.city || '',
+      region: r.region || '',
+      clientCount: r.clientCount || 0,
+      pianoCount: 0,
+      revenue: 0,
+    }));
   }
 
   /**
@@ -436,42 +504,121 @@ export class AnalyticsService {
   // ============================================================================
 
   private async getTotalRevenue(startDate: Date, endDate: Date): Promise<number> {
-    // En producción, consultar tabla de facturas/servicios
-    // Placeholder: generar valor aleatorio basado en días
-    const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    return days * (Math.random() * 200 + 100);
+    const db = getDb();
+    
+    const result = await db
+      .select({
+        total: sum(services.cost),
+      })
+      .from(services)
+      .where(
+        and(
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString())
+        )
+      );
+
+    return Number(result[0]?.total || 0);
   }
 
   private async getServiceCount(startDate: Date, endDate: Date): Promise<number> {
-    // En producción, consultar BD
-    const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    return Math.floor(days * (Math.random() * 2 + 0.5));
+    const db = getDb();
+    
+    const result = await db
+      .select({
+        count: count(),
+      })
+      .from(services)
+      .where(
+        and(
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString())
+        )
+      );
+
+    return result[0]?.count || 0;
   }
 
   private async getServiceStats(startDate: Date, endDate: Date) {
-    // En producción, consultar BD
+    const db = getDb();
+    
+    // Total de servicios en el período
     const total = await this.getServiceCount(startDate, endDate);
-    const completed = Math.floor(total * 0.85);
-    const cancelled = Math.floor(total * 0.05);
-    const pending = total - completed - cancelled;
+    
+    // Por ahora, asumimos que todos los servicios están completados
+    // En el futuro, se puede agregar un campo 'status' a la tabla services
+    const completed = total;
+    const cancelled = 0;
+    const pending = 0;
 
     return { total, completed, pending, cancelled };
   }
 
   private async getClientStats(startDate: Date, endDate: Date) {
-    // En producción, consultar BD
+    const db = getDb();
+    
+    // Total de clientes
+    const totalResult = await db
+      .select({ count: count() })
+      .from(clients);
+    const total = totalResult[0]?.count || 0;
+
+    // Nuevos clientes en el período
+    const newResult = await db
+      .select({ count: count() })
+      .from(clients)
+      .where(
+        and(
+          gte(clients.createdAt, startDate.toISOString()),
+          lte(clients.createdAt, endDate.toISOString())
+        )
+      );
+    const newClients = newResult[0]?.count || 0;
+
+    // Clientes activos (con al menos un servicio en el período)
+    const activeResult = await db
+      .selectDistinct({ clientId: services.clientId })
+      .from(services)
+      .where(
+        and(
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString())
+        )
+      );
+    const active = activeResult.length;
+
+    // Retención (porcentaje de clientes activos vs total)
+    const retention = total > 0 ? (active / total) * 100 : 0;
+
     return {
-      total: Math.floor(Math.random() * 200) + 50,
-      new: Math.floor(Math.random() * 20) + 5,
-      active: Math.floor(Math.random() * 100) + 30,
-      retention: 75 + Math.random() * 20,
+      total,
+      new: newClients,
+      active,
+      retention,
     };
   }
 
   private async getPianoStats(startDate: Date, endDate: Date) {
-    // En producción, consultar BD
-    const total = Math.floor(Math.random() * 300) + 100;
-    const serviced = Math.floor(total * 0.6);
+    const db = getDb();
+    
+    // Total de pianos
+    const totalResult = await db
+      .select({ count: count() })
+      .from(pianos);
+    const total = totalResult[0]?.count || 0;
+
+    // Pianos con servicio en el período
+    const servicedResult = await db
+      .selectDistinct({ pianoId: services.pianoId })
+      .from(services)
+      .where(
+        and(
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString())
+        )
+      );
+    const serviced = servicedResult.length;
+
     return {
       total,
       serviced,
@@ -479,9 +626,42 @@ export class AnalyticsService {
     };
   }
 
+  private async getNewClientsCount(startDate: Date, endDate: Date): Promise<number> {
+    const db = getDb();
+    
+    const result = await db
+      .select({ count: count() })
+      .from(clients)
+      .where(
+        and(
+          gte(clients.createdAt, startDate.toISOString()),
+          lte(clients.createdAt, endDate.toISOString())
+        )
+      );
+
+    return result[0]?.count || 0;
+  }
+
+  private async getNewPianosCount(startDate: Date, endDate: Date): Promise<number> {
+    const db = getDb();
+    
+    const result = await db
+      .select({ count: count() })
+      .from(pianos)
+      .where(
+        and(
+          gte(pianos.createdAt, startDate.toISOString()),
+          lte(pianos.createdAt, endDate.toISOString())
+        )
+      );
+
+    return result[0]?.count || 0;
+  }
+
   private async getTechnicianCount(): Promise<number> {
-    // En producción, consultar BD
-    return Math.floor(Math.random() * 5) + 1;
+    // Por ahora retornamos 1 (el técnico principal)
+    // En el futuro se puede consultar la tabla de miembros del equipo
+    return 1;
   }
 
   private getWeekNumber(date: Date): number {
