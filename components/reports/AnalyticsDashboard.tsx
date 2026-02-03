@@ -1,5 +1,5 @@
 /**
- * Dashboard de Analytics
+ * Dashboard de Analytics - Diseño Moderno y Elegante
  * Piano Emotion Manager
  */
 
@@ -14,6 +14,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   useDashboardMetrics,
   useRevenueChart,
@@ -36,7 +37,8 @@ interface MetricCardProps {
   value: string | number;
   change?: number;
   icon: keyof typeof Ionicons.glyphMap;
-  color: string;
+  gradientColors: string[];
+  iconColor: string;
 }
 
 interface PeriodSelectorProps {
@@ -45,7 +47,7 @@ interface PeriodSelectorProps {
 }
 
 // ============================================================================
-// Metric Card Component
+// Metric Card Component - Rediseñado
 // ============================================================================
 
 const MetricCard: React.FC<MetricCardProps> = ({
@@ -53,40 +55,45 @@ const MetricCard: React.FC<MetricCardProps> = ({
   value,
   change,
   icon,
-  color,
+  gradientColors,
+  iconColor,
 }) => {
   const isPositive = change !== undefined && change >= 0;
 
   return (
     <View style={styles.metricCard}>
-      <View style={[styles.metricIcon, { backgroundColor: color + '15' }]}>
-        <Ionicons name={icon} size={24} color={color} />
-      </View>
-      <Text style={styles.metricValue}>{value}</Text>
-      <Text style={styles.metricTitle}>{title}</Text>
-      {change !== undefined && (
-        <View style={styles.changeContainer}>
-          <Ionicons
-            name={isPositive ? 'trending-up' : 'trending-down'}
-            size={14}
-            color={isPositive ? '#22c55e' : '#ef4444'}
-          />
-          <Text
-            style={[
-              styles.changeText,
-              { color: isPositive ? '#22c55e' : '#ef4444' },
-            ]}
-          >
-            {isPositive ? '+' : ''}{change.toFixed(1)}%
-          </Text>
+      <LinearGradient
+        colors={gradientColors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.metricGradient}
+      >
+        <View style={styles.metricHeader}>
+          <View style={[styles.metricIconContainer, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+            <Ionicons name={icon} size={24} color={iconColor} />
+          </View>
+          {change !== undefined && (
+            <View style={[styles.changeBadge, { backgroundColor: isPositive ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)' }]}>
+              <Ionicons
+                name={isPositive ? 'trending-up' : 'trending-down'}
+                size={12}
+                color={isPositive ? '#22c55e' : '#ef4444'}
+              />
+              <Text style={[styles.changeText, { color: isPositive ? '#22c55e' : '#ef4444' }]}>
+                {isPositive ? '+' : ''}{change.toFixed(1)}%
+              </Text>
+            </View>
+          )}
         </View>
-      )}
+        <Text style={styles.metricValue}>{value}</Text>
+        <Text style={styles.metricTitle}>{title}</Text>
+      </LinearGradient>
     </View>
   );
 };
 
 // ============================================================================
-// Period Selector Component
+// Period Selector Component - Rediseñado
 // ============================================================================
 
 const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) => {
@@ -101,7 +108,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
 
   return (
     <View style={styles.periodSelector}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.periodScrollContent}>
         {periods.map((period) => (
           <TouchableOpacity
             key={period.key}
@@ -110,6 +117,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
               selected === period.key && styles.periodButtonActive,
             ]}
             onPress={() => onSelect(period.key)}
+            activeOpacity={0.7}
           >
             <Text
               style={[
@@ -127,34 +135,56 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
 };
 
 // ============================================================================
-// Simple Chart Component (Placeholder)
+// Enhanced Bar Chart Component
 // ============================================================================
 
-interface SimpleBarChartProps {
+interface EnhancedBarChartProps {
   data: { label: string; value: number }[];
   color: string;
 }
 
-const SimpleBarChart: React.FC<SimpleBarChartProps> = ({ data, color }) => {
+const EnhancedBarChart: React.FC<EnhancedBarChartProps> = ({ data, color }) => {
+  if (!data || data.length === 0) {
+    return (
+      <View style={styles.emptyChart}>
+        <Ionicons name="bar-chart-outline" size={48} color="#d1d5db" />
+        <Text style={styles.emptyChartText}>No hay datos disponibles</Text>
+      </View>
+    );
+  }
+
   const maxValue = Math.max(...data.map((d) => d.value), 1);
+  const displayData = data.slice(-12); // Últimos 12 períodos
 
   return (
     <View style={styles.chartContainer}>
       <View style={styles.barsContainer}>
-        {data.slice(-7).map((item, index) => (
-          <View key={index} style={styles.barWrapper}>
-            <View
-              style={[
-                styles.bar,
-                {
-                  height: `${(item.value / maxValue) * 100}%`,
-                  backgroundColor: color,
-                },
-              ]}
-            />
-            <Text style={styles.barLabel}>{item.label}</Text>
-          </View>
-        ))}
+        {displayData.map((item, index) => {
+          const heightPercent = (item.value / maxValue) * 100;
+          return (
+            <View key={index} style={styles.barWrapper}>
+              <View style={styles.barColumn}>
+                <Text style={styles.barValue}>
+                  {item.value > 0 ? `${item.value.toFixed(0)}` : ''}
+                </Text>
+                <View style={styles.barTrack}>
+                  <LinearGradient
+                    colors={[color, color + '80']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={[
+                      styles.bar,
+                      {
+                        height: `${Math.max(heightPercent, 4)}%`,
+                      },
+                    ]}
+                  />
+                </View>
+              </View>
+              <Text style={styles.barLabel} numberOfLines={1}>{item.label}</Text>
+            </View>
+          );
+        })}
       </View>
     </View>
   );
@@ -212,119 +242,147 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t('reports.analytics')}</Text>
+        <View>
+          <Text style={styles.headerTitle}>{t('reports.analytics')}</Text>
+          <Text style={styles.headerSubtitle}>Resumen de rendimiento</Text>
+        </View>
         <TouchableOpacity
           style={styles.exportButton}
           onPress={() => downloadPDF('executive', dateRange)}
           disabled={isExporting}
+          activeOpacity={0.7}
         >
-          <Ionicons name="download-outline" size={20} color="#3b82f6" />
-          <Text style={styles.exportButtonText}>{t('reports.export')}</Text>
+          <Ionicons name="download-outline" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
 
       {/* Period Selector */}
       <PeriodSelector selected={preset} onSelect={changePeriod} />
 
-      {/* Main Metrics */}
+      {/* Main Metrics Grid */}
       <View style={styles.metricsGrid}>
         <MetricCard
           title={t('reports.revenue')}
           value={formatCurrency(metrics?.revenue.total || 0)}
           change={metrics?.revenue.changePercent}
           icon="cash-outline"
-          color="#3b82f6"
+          gradientColors={['#3b82f6', '#2563eb']}
+          iconColor="#fff"
         />
         <MetricCard
           title={t('reports.services')}
           value={metrics?.services.total || 0}
           icon="construct-outline"
-          color="#22c55e"
+          gradientColors={['#22c55e', '#16a34a']}
+          iconColor="#fff"
         />
         <MetricCard
           title={t('reports.clients')}
           value={metrics?.clients.total || 0}
           change={metrics?.clients.new ? (metrics.clients.new / metrics.clients.total) * 100 : 0}
           icon="people-outline"
-          color="#8b5cf6"
+          gradientColors={['#8b5cf6', '#7c3aed']}
+          iconColor="#fff"
         />
         <MetricCard
           title={t('reports.avgTicket')}
           value={formatCurrency(metrics?.averages.ticketValue || 0)}
           icon="receipt-outline"
-          color="#f59e0b"
+          gradientColors={['#f59e0b', '#d97706']}
+          iconColor="#fff"
         />
       </View>
 
-      {/* Revenue Chart */}
+      {/* Revenue Chart Section */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('reports.revenueEvolution')}</Text>
-          <TouchableOpacity onPress={() => downloadCSV('revenue', dateRange)}>
+          <View>
+            <Text style={styles.sectionTitle}>{t('reports.revenueEvolution')}</Text>
+            <Text style={styles.sectionSubtitle}>Últimos 12 períodos</Text>
+          </View>
+          <TouchableOpacity 
+            onPress={() => downloadCSV('revenue', dateRange)}
+            style={styles.iconButton}
+            activeOpacity={0.7}
+          >
             <Ionicons name="download-outline" size={20} color="#6b7280" />
           </TouchableOpacity>
         </View>
-        {revenueData && revenueData.length > 0 ? (
-          <SimpleBarChart
-            data={revenueData.map((d) => ({ label: d.period, value: d.revenue }))}
+        <View style={styles.chartCard}>
+          <EnhancedBarChart
+            data={revenueData?.map((d) => ({ label: d.period, value: d.revenue })) || []}
             color="#3b82f6"
           />
-        ) : (
-          <View style={styles.emptyChart}>
-            <Text style={styles.emptyChartText}>{t('reports.noData')}</Text>
-          </View>
-        )}
+        </View>
       </View>
 
-      {/* Services by Type */}
+      {/* Services by Type Section */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('reports.servicesByType')}</Text>
+          <View>
+            <Text style={styles.sectionTitle}>{t('reports.servicesByType')}</Text>
+            <Text style={styles.sectionSubtitle}>Top 5 servicios</Text>
+          </View>
         </View>
         {servicesData && servicesData.length > 0 ? (
-          <View style={styles.servicesList}>
-            {servicesData.slice(0, 5).map((service, index) => (
-              <View key={index} style={styles.serviceItem}>
-                <View style={styles.serviceInfo}>
-                  <View
-                    style={[
-                      styles.serviceDot,
-                      { backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6'][index] },
-                    ]}
-                  />
-                  <Text style={styles.serviceName}>{service.typeName}</Text>
+          <View style={styles.servicesCard}>
+            {servicesData.slice(0, 5).map((service, index) => {
+              const colors = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6'];
+              return (
+                <View key={index} style={styles.serviceItem}>
+                  <View style={styles.serviceLeft}>
+                    <View style={[styles.serviceDot, { backgroundColor: colors[index] }]} />
+                    <Text style={styles.serviceName}>{service.typeName}</Text>
+                  </View>
+                  <View style={styles.serviceRight}>
+                    <Text style={styles.serviceCount}>{service.count}</Text>
+                    <View style={styles.servicePercentBadge}>
+                      <Text style={styles.servicePercent}>{service.percentage.toFixed(1)}%</Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.serviceStats}>
-                  <Text style={styles.serviceCount}>{service.count}</Text>
-                  <Text style={styles.servicePercent}>{service.percentage.toFixed(1)}%</Text>
-                </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         ) : (
-          <View style={styles.emptyChart}>
-            <Text style={styles.emptyChartText}>{t('reports.noData')}</Text>
+          <View style={styles.emptyCard}>
+            <Ionicons name="construct-outline" size={48} color="#d1d5db" />
+            <Text style={styles.emptyCardText}>No hay datos de servicios</Text>
           </View>
         )}
       </View>
 
-      {/* Quick Stats */}
+      {/* Quick Stats Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('reports.quickStats')}</Text>
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionTitle}>{t('reports.quickStats')}</Text>
+            <Text style={styles.sectionSubtitle}>Indicadores clave</Text>
+          </View>
+        </View>
         <View style={styles.quickStatsGrid}>
           <View style={styles.quickStatCard}>
+            <View style={[styles.quickStatIcon, { backgroundColor: '#dbeafe' }]}>
+              <Ionicons name="checkmark-circle-outline" size={24} color="#3b82f6" />
+            </View>
             <Text style={styles.quickStatValue}>
               {metrics?.services.completionRate.toFixed(0)}%
             </Text>
             <Text style={styles.quickStatLabel}>{t('reports.completionRate')}</Text>
           </View>
           <View style={styles.quickStatCard}>
+            <View style={[styles.quickStatIcon, { backgroundColor: '#dcfce7' }]}>
+              <Ionicons name="repeat-outline" size={24} color="#22c55e" />
+            </View>
             <Text style={styles.quickStatValue}>
               {metrics?.clients.retention.toFixed(0)}%
             </Text>
             <Text style={styles.quickStatLabel}>{t('reports.retention')}</Text>
           </View>
           <View style={styles.quickStatCard}>
+            <View style={[styles.quickStatIcon, { backgroundColor: '#fef3c7' }]}>
+              <Ionicons name="musical-notes-outline" size={24} color="#f59e0b" />
+            </View>
             <Text style={styles.quickStatValue}>
               {metrics?.pianos.total || 0}
             </Text>
@@ -335,7 +393,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
       {/* View All Reports Button */}
       {onNavigateToReports && (
-        <TouchableOpacity style={styles.viewAllButton} onPress={onNavigateToReports}>
+        <TouchableOpacity 
+          style={styles.viewAllButton} 
+          onPress={onNavigateToReports}
+          activeOpacity={0.7}
+        >
           <Text style={styles.viewAllButtonText}>{t('reports.viewAllReports')}</Text>
           <Ionicons name="arrow-forward" size={20} color="#3b82f6" />
         </TouchableOpacity>
@@ -347,60 +409,79 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 };
 
 // ============================================================================
-// Styles
+// Styles - Diseño Moderno y Elegante
 // ============================================================================
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#f8fafc',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 16,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1f2937',
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#0f172a',
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#64748b',
+    marginTop: 4,
   },
   exportButton: {
-    flexDirection: 'row',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#3b82f6',
     alignItems: 'center',
-    backgroundColor: '#dbeafe',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  exportButtonText: {
-    color: '#3b82f6',
-    fontWeight: '600',
-    marginLeft: 4,
+    justifyContent: 'center',
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   periodSelector: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  periodScrollContent: {
+    gap: 8,
   },
   periodButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 24,
     backgroundColor: '#fff',
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderWidth: 1.5,
+    borderColor: '#e2e8f0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   periodButtonActive: {
     backgroundColor: '#3b82f6',
     borderColor: '#3b82f6',
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
   },
   periodButtonText: {
-    color: '#6b7280',
-    fontWeight: '500',
+    color: '#64748b',
+    fontWeight: '600',
+    fontSize: 14,
   },
   periodButtonTextActive: {
     color: '#fff',
@@ -408,51 +489,63 @@ const styles = StyleSheet.create({
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 12,
-    gap: 8,
+    paddingHorizontal: 16,
+    gap: 12,
   },
   metricCard: {
-    width: (SCREEN_WIDTH - 40) / 2,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    width: (SCREEN_WIDTH - 44) / 2,
+    borderRadius: 16,
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
   },
-  metricIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  metricGradient: {
+    padding: 20,
+    minHeight: 140,
+  },
+  metricHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  metricIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+  },
+  changeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  changeText: {
+    fontSize: 11,
+    fontWeight: '700',
   },
   metricValue: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#1f2937',
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#fff',
+    marginBottom: 4,
+    letterSpacing: -0.5,
   },
   metricTitle: {
     fontSize: 13,
-    color: '#6b7280',
-    marginTop: 4,
-  },
-  changeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  changeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginLeft: 4,
+    color: 'rgba(255,255,255,0.9)',
+    fontWeight: '500',
   },
   section: {
-    marginTop: 24,
-    paddingHorizontal: 16,
+    marginTop: 28,
+    paddingHorizontal: 20,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -461,127 +554,232 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1f2937',
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#0f172a',
+    letterSpacing: -0.3,
+  },
+  sectionSubtitle: {
+    fontSize: 13,
+    color: '#64748b',
+    marginTop: 2,
+  },
+  iconButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#f1f5f9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chartCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   chartContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    height: 200,
+    height: 220,
   },
   barsContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-end',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    paddingTop: 20,
   },
   barWrapper: {
     alignItems: 'center',
     flex: 1,
+    maxWidth: 40,
+  },
+  barColumn: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+  },
+  barValue: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#64748b',
+    marginBottom: 4,
+  },
+  barTrack: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#f1f5f9',
+    borderRadius: 6,
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+    minHeight: 100,
   },
   bar: {
-    width: 24,
-    borderRadius: 4,
-    minHeight: 4,
+    width: '100%',
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+    minHeight: 8,
   },
   barLabel: {
     fontSize: 10,
-    color: '#9ca3af',
+    color: '#94a3b8',
     marginTop: 8,
+    fontWeight: '500',
   },
   emptyChart: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 40,
+    height: 200,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f8fafc',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#e2e8f0',
+    borderStyle: 'dashed',
   },
   emptyChartText: {
-    color: '#9ca3af',
+    color: '#94a3b8',
     fontSize: 14,
+    marginTop: 12,
+    fontWeight: '500',
   },
-  servicesList: {
+  servicesCard: {
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   serviceItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: '#f1f5f9',
   },
-  serviceInfo: {
+  serviceLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   serviceDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginRight: 12,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 14,
   },
   serviceName: {
-    fontSize: 14,
-    color: '#374151',
+    fontSize: 15,
+    color: '#334155',
+    fontWeight: '500',
+    flex: 1,
   },
-  serviceStats: {
+  serviceRight: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
   },
   serviceCount: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1f2937',
-    marginRight: 8,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0f172a',
+    minWidth: 32,
+    textAlign: 'right',
+  },
+  servicePercentBadge: {
+    backgroundColor: '#f1f5f9',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    minWidth: 56,
   },
   servicePercent: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: '#64748b',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  emptyCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#e2e8f0',
+    borderStyle: 'dashed',
+  },
+  emptyCardText: {
+    color: '#94a3b8',
+    fontSize: 14,
+    marginTop: 12,
+    fontWeight: '500',
   },
   quickStatsGrid: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 12,
   },
   quickStatCard: {
     flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 20,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  quickStatIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
   },
   quickStatValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1f2937',
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#0f172a',
+    letterSpacing: -0.5,
   },
   quickStatLabel: {
     fontSize: 12,
-    color: '#6b7280',
-    marginTop: 4,
+    color: '#64748b',
+    marginTop: 6,
     textAlign: 'center',
+    fontWeight: '500',
   },
   viewAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginTop: 24,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
+    marginHorizontal: 20,
+    marginTop: 32,
+    padding: 18,
+    borderRadius: 16,
+    borderWidth: 2,
     borderColor: '#3b82f6',
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   viewAllButtonText: {
     color: '#3b82f6',
-    fontWeight: '600',
+    fontWeight: '700',
     marginRight: 8,
+    fontSize: 15,
   },
   bottomPadding: {
     height: 40,
