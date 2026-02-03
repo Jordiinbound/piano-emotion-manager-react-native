@@ -1070,6 +1070,19 @@
       "other": "Otros"
     }
   },
+  "reports": {
+    "analytics": "Analíticas",
+    "thisWeek": "Esta semana",
+    "thisMonth": "Este mes",
+    "thisQuarter": "Este trimestre",
+    "thisYear": "Este año",
+    "export": "Exportar",
+    "revenue": "Ingresos",
+    "services": "Servicios",
+    "clients": "Clientes",
+    "avgTicket": "Ticket medio",
+    "revenueEvolution": "Evolución de ingresos"
+  },
   "shop": {
     "noShops": "No hay tiendas disponibles",
     "noShopsDesc": "Actualmente no hay tiendas configuradas en el sistema",
