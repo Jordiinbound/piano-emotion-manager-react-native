@@ -422,7 +422,15 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     startDate: twelveMonthsAgo,
     endDate: now,
   };
-  const { data: revenueData } = useRevenueChart(last12MonthsRange, 'month');
+  const { data: revenueData, isLoading: revenueLoading } = useRevenueChart(last12MonthsRange, 'month');
+  
+  // Debug: verificar datos del gráfico
+  console.log('Revenue Chart Data:', {
+    revenueData,
+    revenueLoading,
+    last12MonthsRange,
+    dataLength: revenueData?.length,
+  });
   const { data: servicesData } = useServicesByType(dateRange);
   const { downloadPDF, isExporting } = useReportExport();
 
