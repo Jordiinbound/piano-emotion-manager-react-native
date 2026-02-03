@@ -21,6 +21,22 @@ export const debugRouter = router({
     const database = await db.getDb();
     const partnerId = (ctx as any).partnerId;
     
+    // Validar que partnerId no sea null
+    if (partnerId === null || partnerId === undefined) {
+      console.log('[DEBUG] ⚠️ partnerId es NULL - El usuario no tiene partnerId asignado');
+      return {
+        error: 'USER_HAS_NO_PARTNER_ID',
+        message: 'El usuario no tiene un partnerId asignado en la base de datos',
+        userInfo: {
+          userId: ctx.user?.id,
+          userEmail: ctx.user?.email,
+          userName: ctx.user?.name,
+          partnerId: null,
+        },
+        suggestion: 'Necesitas asignar un partnerId al usuario en la tabla users, o modificar las consultas para no filtrar por partnerId'
+      };
+    }
+    
     // 1. Información del usuario
     const userInfo = {
       userId: ctx.user?.id,
