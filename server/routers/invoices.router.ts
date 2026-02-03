@@ -182,11 +182,8 @@ export const invoicesRouter = router({
    */
   list: orgProcedure
     .input(paginationSchema.optional())
-    .query(async ({ ctx, input }) => {
-      // TEMPORAL: Caché desactivado para debug
-      console.log('[invoices.list] 🔍 Procedimiento ejecutado');
-      console.log('[invoices.list] 📥 Input recibido:', JSON.stringify(input));
-      console.log('[invoices.list] 👤 Usuario:', { partnerId: ctx.partnerId, userId: ctx.userId });
+    .query(withCache(
+      async ({ ctx, input }) => {
       const { 
         limit = 30, 
         cursor, 
@@ -238,8 +235,6 @@ export const invoicesRouter = router({
 
       // Consulta principal con paginación
       const offset = cursor || 0;
-      console.error('[invoices.list] 🔎 Ejecutando query con filtros:', JSON.stringify({ dateFrom, dateTo, status, clientId, search, partnerId: ctx.partnerId, organizationId: ctx.organizationId }));
-      console.error('[invoices.list] 📋 Total whereClauses:', whereClauses.length);
       let items = await database
         .select()
         .from(invoices)
@@ -247,10 +242,6 @@ export const invoicesRouter = router({
         .orderBy(orderByClause)
         .limit(limit)
         .offset(offset);
-      console.error('[invoices.list] ✅ Query completada. Facturas encontradas:', items.length);
-      if (items.length > 0) {
-        console.error('[invoices.list] 📄 Primera factura:', JSON.stringify({ id: items[0].id, date: items[0].date, status: items[0].status, invoiceNumber: items[0].invoiceNumber }));
-      }
 
       // Marcar facturas vencidas
       items = markOverdueInvoices(items);
@@ -277,9 +268,10 @@ export const invoicesRouter = router({
         nextCursor = offset + limit;
       }
 
-      console.error('[invoices.list] 📤 Retornando:', JSON.stringify({ itemsCount: items.length, total, nextCursor }));
       return { items, nextCursor, total, stats };
-    }),
+    },
+    { ttl: 60 } // Cache por 60 segundos
+  )),
   
   /**
    * Lista completa sin paginación (para selects)
