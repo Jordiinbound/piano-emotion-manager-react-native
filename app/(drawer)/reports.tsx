@@ -31,7 +31,7 @@ export default function ReportsScreen() {
   return (
     <View style={styles.container}>
       <AnalyticsDashboard
-        onNavigateToReports={() => router.push('/analytics/report')}
+        onNavigateToReports={() => router.push('/analytics')}
       />
     </View>
   );
