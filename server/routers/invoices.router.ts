@@ -66,6 +66,7 @@ const paginationSchema = z.object({
   clientId: z.number().optional(),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
+  direction: z.string().optional(), // Parámetro legacy de React Query, se ignora
 });
 
 /**
