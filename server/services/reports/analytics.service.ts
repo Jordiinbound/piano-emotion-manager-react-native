@@ -117,7 +117,7 @@ export class AnalyticsService {
   private partnerId: number;
 
   constructor(partnerId: number) {
-    this.partnerId = organizationId;
+    this.partnerId = partnerId;
   }
 
   /**
@@ -693,5 +693,5 @@ export class AnalyticsService {
 // ============================================================================
 
 export function createAnalyticsService(partnerId: number): AnalyticsService {
-  return new AnalyticsService(organizationId);
+  return new AnalyticsService(partnerId);
 }
