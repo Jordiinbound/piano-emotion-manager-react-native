@@ -36,6 +36,7 @@
     "appointments": "Citas",
     "inventory": "Inventario",
     "invoices": "Facturas",
+    "reports": "Reportes",
     "settings": "Configuración",
     "help": "Ayuda"
   },
@@ -1071,6 +1072,7 @@
     }
   },
   "reports": {
+    "subtitle": "Análisis y estadísticas del negocio",
     "analytics": "Analíticas",
     "thisWeek": "Esta semana",
     "thisMonth": "Este mes",

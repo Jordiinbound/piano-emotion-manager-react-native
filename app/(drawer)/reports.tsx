@@ -8,22 +8,24 @@ import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useHeader } from '@/contexts/HeaderContext';
+import { useTranslation } from '@/hooks/use-translation';
 import { AnalyticsDashboard } from '@/components/reports';
 
 export default function ReportsScreen() {
   const router = useRouter();
   const { setHeaderConfig } = useHeader();
+  const { t } = useTranslation();
 
   // Configurar header
   useFocusEffect(
     React.useCallback(() => {
     setHeaderConfig({
-      title: 'Reportes',
-      subtitle: 'Analisis y estadisticas del negocio',
+      title: t('navigation.reports'),
+      subtitle: t('reports.subtitle'),
       icon: 'chart.bar.fill',
       showBackButton: false,
     });
-    }, [setHeaderConfig])
+    }, [setHeaderConfig, t])
   );
 
   return (
