@@ -158,7 +158,7 @@ interface LineChartProps {
 }
 
 const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) => {
-  const [chartWidth, setChartWidth] = React.useState(0);
+  const [chartWidth, setChartWidth] = React.useState(300);
 
   const handleLayout = (event: any) => {
     const { width } = event.nativeEvent.layout;
@@ -329,11 +329,13 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
 
   const chartColors = [COLORS.primary, COLORS.success, COLORS.warning, COLORS.danger, COLORS.purple];
   const totalServices = data.reduce((sum, d) => sum + d.count, 0);
+  const maxValue = Math.max(...data.map(d => d.count));
 
   return (
     <View style={styles.horizontalBarContainer}>
       {data.slice(0, 5).map((item, index) => {
         const percentageOfTotal = (item.count / totalServices) * 100;
+        const barWidth = (item.count / maxValue) * 100;
         const color = chartColors[index % chartColors.length];
         
         return (
@@ -347,7 +349,7 @@ const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
                 style={[
                   styles.barFill, 
                   { 
-                    width: `${percentageOfTotal}%`,
+                    width: `${barWidth}%`,
                     backgroundColor: color 
                   }
                 ]} 
