@@ -182,7 +182,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   const range = maxValue - minValue || 1;
 
   const chartHeight = 280;
-  const padding = { top: 40, right: 10, bottom: 60, left: 50 };
+  const padding = { top: 40, right: 5, bottom: 60, left: 35 };
   const plotWidth = chartWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
 
@@ -686,6 +686,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.text.secondary,
     fontWeight: '500',
+    flexWrap: 'nowrap',
   },
   metricSubtitle: {
     fontSize: 11,
@@ -713,6 +714,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.card,
     borderRadius: 4,
     padding: 16,
+    paddingHorizontal: 8,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
