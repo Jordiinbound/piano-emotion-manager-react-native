@@ -185,6 +185,9 @@ export const invoicesRouter = router({
     .input(paginationSchema.optional())
     .query(withCache(
       async ({ ctx, input }) => {
+      console.log('[invoices.list] 🔍 Procedimiento ejecutado');
+      console.log('[invoices.list] 📥 Input recibido:', JSON.stringify(input));
+      console.log('[invoices.list] 👤 Usuario:', { partnerId: ctx.partnerId, userId: ctx.userId });
       const { 
         limit = 30, 
         cursor, 
@@ -236,6 +239,7 @@ export const invoicesRouter = router({
 
       // Consulta principal con paginación
       const offset = cursor || 0;
+      console.log('[invoices.list] 🔎 Ejecutando query con filtros:', { dateFrom, dateTo, status, clientId, search, partnerId: ctx.partnerId });
       let items = await database
         .select()
         .from(invoices)
@@ -243,6 +247,7 @@ export const invoicesRouter = router({
         .orderBy(orderByClause)
         .limit(limit)
         .offset(offset);
+      console.log('[invoices.list] ✅ Query completada. Facturas encontradas:', items.length);
 
       // Marcar facturas vencidas
       items = markOverdueInvoices(items);
@@ -269,6 +274,7 @@ export const invoicesRouter = router({
         nextCursor = offset + limit;
       }
 
+      console.log('[invoices.list] 📤 Retornando:', { itemsCount: items.length, total, nextCursor });
       return { items, nextCursor, total, stats };
     },
     { ttl: 300, prefix: 'invoices', includeUser: true, procedurePath: 'invoices.list' }
