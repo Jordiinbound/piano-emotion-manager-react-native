@@ -1,5 +1,5 @@
 /**
- * Dashboard de Analytics - Diseño Estructurado y Cohesivo
+ * Dashboard de Analytics - Diseño Estructurado y Cohesivo v2
  * Piano Emotion Manager
  */
 
@@ -14,7 +14,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Svg, { Path, Circle, Line, Text as SvgText } from 'react-native-svg';
+import Svg, { Path, Circle, Line, Text as SvgText, Rect } from 'react-native-svg';
 import {
   useDashboardMetrics,
   useRevenueChart,
@@ -144,7 +144,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
 };
 
 // ============================================================================
-// Line Chart Component - Con 12 meses completos
+// Line Chart Component - Mejorado con fuentes legibles
 // ============================================================================
 
 interface LineChartProps {
@@ -162,15 +162,27 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
     );
   }
 
-  // Asegurar que mostramos los últimos 12 meses
-  const displayData = data.slice(-12);
+  // Mostrar los últimos 12 meses o todos los datos disponibles
+  const displayData = data.length > 12 ? data.slice(-12) : data;
+  
+  // Si hay muy pocos datos, mostrar mensaje
+  if (displayData.length < 2) {
+    return (
+      <View style={styles.emptyChart}>
+        <Ionicons name="information-circle-outline" size={40} color={COLORS.text.tertiary} />
+        <Text style={styles.emptyChartText}>Datos insuficientes para mostrar gráfico</Text>
+        <Text style={styles.emptyChartSubtext}>Se necesitan al menos 2 períodos</Text>
+      </View>
+    );
+  }
+
   const maxValue = Math.max(...displayData.map(d => d.value), 1);
-  const minValue = 0; // Empezar desde 0 para mejor visualización
+  const minValue = 0;
   const range = maxValue - minValue || 1;
 
-  const chartWidth = SCREEN_WIDTH - 48; // Padding de 24px a cada lado
-  const chartHeight = 200;
-  const padding = { top: 20, right: 20, bottom: 40, left: 50 };
+  const chartWidth = SCREEN_WIDTH - 48;
+  const chartHeight = 220;
+  const padding = { top: 30, right: 20, bottom: 50, left: 60 };
   const plotWidth = chartWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
 
@@ -189,6 +201,14 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
       path += ` L ${points[i].x} ${points[i].y}`;
     }
     return path;
+  };
+
+  // Formatear valor como moneda
+  const formatValue = (value: number) => {
+    if (value >= 1000) {
+      return `${(value / 1000).toFixed(1)}k €`;
+    }
+    return `${Math.round(value)} €`;
   };
 
   // Líneas de grid horizontales
@@ -216,11 +236,12 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
             <SvgText
               x={padding.left - 8}
               y={line.y + 4}
-              fill={COLORS.text.tertiary}
-              fontSize="10"
+              fill={COLORS.text.secondary}
+              fontSize="12"
+              fontWeight="500"
               textAnchor="end"
             >
-              {Math.round(line.value)}
+              {formatValue(line.value)}
             </SvgText>
           </React.Fragment>
         ))}
@@ -229,36 +250,49 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
         <Path
           d={createLinePath()}
           stroke={color}
-          strokeWidth={2}
+          strokeWidth={2.5}
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         
-        {/* Puntos en la línea */}
+        {/* Puntos en la línea con valores */}
         {points.map((point, index) => (
-          <Circle
-            key={index}
-            cx={point.x}
-            cy={point.y}
-            r={3}
-            fill={COLORS.card}
-            stroke={color}
-            strokeWidth={2}
-          />
+          <React.Fragment key={index}>
+            <Circle
+              cx={point.x}
+              cy={point.y}
+              r={4}
+              fill={COLORS.card}
+              stroke={color}
+              strokeWidth={2}
+            />
+            {/* Mostrar valor encima del punto */}
+            <SvgText
+              x={point.x}
+              y={point.y - 12}
+              fill={COLORS.text.primary}
+              fontSize="11"
+              fontWeight="600"
+              textAnchor="middle"
+            >
+              {formatValue(point.value)}
+            </SvgText>
+          </React.Fragment>
         ))}
 
         {/* Etiquetas del eje X */}
         {points.map((point, index) => {
-          // Mostrar etiquetas alternadas para evitar solapamiento
+          // Mostrar todas las etiquetas si hay 6 o menos, sino alternadas
           const showLabel = displayData.length <= 6 || index % 2 === 0;
           return showLabel ? (
             <SvgText
               key={`label-${index}`}
               x={point.x}
-              y={chartHeight - 10}
-              fill={COLORS.text.tertiary}
-              fontSize="10"
+              y={chartHeight - 15}
+              fill={COLORS.text.secondary}
+              fontSize="11"
+              fontWeight="500"
               textAnchor="middle"
             >
               {point.label}
@@ -271,120 +305,65 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
 };
 
 // ============================================================================
-// Donut Chart Component
+// Horizontal Bar Chart Component - Para servicios por tipo
 // ============================================================================
 
-interface DonutChartProps {
+interface HorizontalBarChartProps {
   data: { label: string; value: number; percentage: number }[];
 }
 
-const DonutChart: React.FC<DonutChartProps> = ({ data }) => {
+const HorizontalBarChart: React.FC<HorizontalBarChartProps> = ({ data }) => {
   if (!data || data.length === 0) {
     return (
       <View style={styles.emptyChart}>
-        <Ionicons name="pie-chart-outline" size={40} color={COLORS.text.tertiary} />
+        <Ionicons name="bar-chart-outline" size={40} color={COLORS.text.tertiary} />
         <Text style={styles.emptyChartText}>No hay datos disponibles</Text>
       </View>
     );
   }
 
   const chartColors = [COLORS.primary, COLORS.success, COLORS.warning, COLORS.danger, COLORS.purple];
-  const size = 140;
-  const strokeWidth = 20;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  
-  let currentAngle = -90;
+  const maxValue = Math.max(...data.map(d => d.value), 1);
 
   return (
-    <View style={styles.donutContainer}>
-      <View style={styles.donutChart}>
-        <Svg width={size} height={size}>
-          {data.slice(0, 5).map((item, index) => {
-            const percentage = item.percentage;
-            const angle = (percentage / 100) * 360;
-            const color = chartColors[index % chartColors.length];
-            
-            const startAngle = currentAngle;
-            const endAngle = currentAngle + angle;
-            currentAngle = endAngle;
-            
-            const startRad = (startAngle * Math.PI) / 180;
-            const endRad = (endAngle * Math.PI) / 180;
-            
-            const x1 = size / 2 + radius * Math.cos(startRad);
-            const y1 = size / 2 + radius * Math.sin(startRad);
-            const x2 = size / 2 + radius * Math.cos(endRad);
-            const y2 = size / 2 + radius * Math.sin(endRad);
-            
-            const largeArc = angle > 180 ? 1 : 0;
-            
-            const pathData = [
-              `M ${x1} ${y1}`,
-              `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
-            ].join(' ');
-            
-            return (
-              <Path
-                key={index}
-                d={pathData}
-                stroke={color}
-                strokeWidth={strokeWidth}
-                fill="none"
-                strokeLinecap="round"
+    <View style={styles.horizontalBarContainer}>
+      {data.slice(0, 5).map((item, index) => {
+        const percentage = (item.value / maxValue) * 100;
+        const color = chartColors[index % chartColors.length];
+        
+        return (
+          <View key={index} style={styles.barRow}>
+            <View style={styles.barLabelContainer}>
+              <View style={[styles.barDot, { backgroundColor: color }]} />
+              <Text style={styles.barLabel}>{item.label}</Text>
+            </View>
+            <View style={styles.barTrack}>
+              <View 
+                style={[
+                  styles.barFill, 
+                  { 
+                    width: `${percentage}%`,
+                    backgroundColor: color 
+                  }
+                ]} 
               />
-            );
-          })}
-          
-          <Circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius - strokeWidth / 2}
-            fill={COLORS.card}
-          />
-          
-          <SvgText
-            x={size / 2}
-            y={size / 2 - 8}
-            fill={COLORS.text.primary}
-            fontSize="24"
-            fontWeight="700"
-            textAnchor="middle"
-          >
-            {data.reduce((sum, item) => sum + item.value, 0)}
-          </SvgText>
-          <SvgText
-            x={size / 2}
-            y={size / 2 + 12}
-            fill={COLORS.text.secondary}
-            fontSize="12"
-            textAnchor="middle"
-          >
-            Total
-          </SvgText>
-        </Svg>
-      </View>
-      
-      <View style={styles.donutLegend}>
-        {data.slice(0, 5).map((item, index) => (
-          <View key={index} style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: chartColors[index % chartColors.length] }]} />
-            <View style={styles.legendTextContainer}>
-              <Text style={styles.legendLabel}>{item.label}</Text>
-              <Text style={styles.legendValue}>{item.value} ({item.percentage.toFixed(1)}%)</Text>
+            </View>
+            <View style={styles.barValueContainer}>
+              <Text style={styles.barValue}>{item.value}</Text>
+              <Text style={styles.barPercentage}>({item.percentage.toFixed(1)}%)</Text>
             </View>
           </View>
-        ))}
-      </View>
+        );
+      })}
     </View>
   );
 };
 
 // ============================================================================
-// Quick Stats Component
+// Quick Stat Card Component
 // ============================================================================
 
-interface QuickStatProps {
+interface QuickStatCardProps {
   title: string;
   value: string | number;
   subtitle: string;
@@ -392,17 +371,17 @@ interface QuickStatProps {
   color: string;
 }
 
-const QuickStat: React.FC<QuickStatProps> = ({ title, value, subtitle, icon, color }) => {
+const QuickStatCard: React.FC<QuickStatCardProps> = ({ title, value, subtitle, icon, color }) => {
   return (
-    <View style={styles.quickStat}>
-      <View style={[styles.quickStatIcon, { backgroundColor: color + '15' }]}>
-        <Ionicons name={icon} size={20} color={color} />
+    <View style={styles.quickStatCard}>
+      <View style={styles.quickStatHeader}>
+        <View style={[styles.quickStatIcon, { backgroundColor: color + '15' }]}>
+          <Ionicons name={icon} size={18} color={color} />
+        </View>
       </View>
-      <View style={styles.quickStatContent}>
-        <Text style={styles.quickStatValue}>{value}</Text>
-        <Text style={styles.quickStatTitle}>{title}</Text>
-        <Text style={styles.quickStatSubtitle}>{subtitle}</Text>
-      </View>
+      <Text style={styles.quickStatValue}>{value}</Text>
+      <Text style={styles.quickStatTitle}>{title}</Text>
+      <Text style={styles.quickStatSubtitle}>{subtitle}</Text>
     </View>
   );
 };
@@ -520,44 +499,51 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </View>
       </View>
 
-      {/* Services by Type */}
+      {/* Services by Type - Barras horizontales */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>{t('reports.servicesByType')}</Text>
           <Text style={styles.sectionSubtitle}>Distribución de servicios realizados</Text>
         </View>
         <View style={styles.chartCard}>
-          <DonutChart data={servicesData || []} />
+          <HorizontalBarChart data={servicesData || []} />
         </View>
       </View>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - Grid 2x2 */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>{t('reports.quickStats')}</Text>
           <Text style={styles.sectionSubtitle}>Indicadores clave de rendimiento</Text>
         </View>
         <View style={styles.quickStatsGrid}>
-          <QuickStat
+          <QuickStatCard
             title={t('reports.completionRate')}
-            value={`${metrics?.services.completionRate || 0}%`}
-            subtitle="Servicios completados exitosamente"
+            value={`${(metrics?.services.completionRate || 0).toFixed(1)}%`}
+            subtitle="Servicios completados"
             icon="checkmark-circle-outline"
             color={COLORS.success}
           />
-          <QuickStat
+          <QuickStatCard
             title={t('reports.retention')}
-            value={`${metrics?.clients.retention || 0}%`}
-            subtitle="Clientes que repiten servicios"
+            value={`${(metrics?.clients.retention || 0).toFixed(1)}%`}
+            subtitle="Clientes recurrentes"
             icon="repeat-outline"
             color={COLORS.primary}
           />
-          <QuickStat
+          <QuickStatCard
             title={t('reports.pianos')}
             value={metrics?.pianos.total || 0}
-            subtitle="Total de pianos en la base de datos"
+            subtitle="Pianos registrados"
             icon="musical-notes-outline"
             color={COLORS.warning}
+          />
+          <QuickStatCard
+            title="Ingresos medios"
+            value={formatCurrency(metrics?.revenue.total ? metrics.revenue.total / Math.max(metrics.services.total, 1) : 0)}
+            subtitle="Por servicio"
+            icon="trending-up-outline"
+            color={COLORS.purple}
           />
         </View>
       </View>
@@ -728,85 +714,104 @@ const styles = StyleSheet.create({
     height: 200,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
   emptyChartText: {
     fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.text.secondary,
+  },
+  emptyChartSubtext: {
+    fontSize: 12,
     color: COLORS.text.tertiary,
   },
-  donutContainer: {
+  horizontalBarContainer: {
+    gap: 16,
+  },
+  barRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20,
+    gap: 12,
   },
-  donutChart: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  donutLegend: {
-    flex: 1,
-    gap: 10,
-  },
-  legendItem: {
+  barLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: 120,
     gap: 8,
   },
-  legendDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+  barDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
-  legendTextContainer: {
-    flex: 1,
-  },
-  legendLabel: {
+  barLabel: {
     fontSize: 13,
     fontWeight: '600',
     color: COLORS.text.primary,
-    marginBottom: 2,
+    flex: 1,
   },
-  legendValue: {
-    fontSize: 12,
+  barTrack: {
+    flex: 1,
+    height: 28,
+    backgroundColor: COLORS.background,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  barFill: {
+    height: '100%',
+    borderRadius: 6,
+  },
+  barValueContainer: {
+    width: 80,
+    alignItems: 'flex-end',
+  },
+  barValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.text.primary,
+  },
+  barPercentage: {
+    fontSize: 11,
     color: COLORS.text.secondary,
   },
   quickStatsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12,
   },
-  quickStat: {
-    flexDirection: 'row',
+  quickStatCard: {
+    flex: 1,
+    minWidth: (SCREEN_WIDTH - 60) / 2,
     backgroundColor: COLORS.card,
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
-    gap: 12,
-    alignItems: 'center',
+  },
+  quickStatHeader: {
+    marginBottom: 12,
   },
   quickStatIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  quickStatContent: {
-    flex: 1,
-  },
   quickStatValue: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     color: COLORS.text.primary,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   quickStatTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: COLORS.text.primary,
     marginBottom: 2,
   },
   quickStatSubtitle: {
-    fontSize: 12,
+    fontSize: 11,
     color: COLORS.text.secondary,
   },
   viewAllButton: {
