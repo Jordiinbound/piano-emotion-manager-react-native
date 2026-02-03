@@ -153,6 +153,13 @@ interface LineChartProps {
 }
 
 const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) => {
+  const [chartWidth, setChartWidth] = React.useState(SCREEN_WIDTH - 48);
+
+  const handleLayout = (event: any) => {
+    const { width } = event.nativeEvent.layout;
+    setChartWidth(width);
+  };
+
   if (!data || data.length === 0) {
     return (
       <View style={styles.emptyChart}>
@@ -180,7 +187,6 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
   const minValue = 0;
   const range = maxValue - minValue || 1;
 
-  const chartWidth = SCREEN_WIDTH - 48;
   const chartHeight = 220;
   const padding = { top: 30, right: 20, bottom: 50, left: 60 };
   const plotWidth = chartWidth - padding.left - padding.right;
@@ -219,7 +225,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
   });
 
   return (
-    <View style={styles.chartContainer}>
+    <View style={styles.chartContainer} onLayout={handleLayout}>
       <Svg width={chartWidth} height={chartHeight}>
         {/* Grid lines */}
         {gridLines.map((line, index) => (
