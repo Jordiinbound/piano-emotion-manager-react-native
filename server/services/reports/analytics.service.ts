@@ -512,24 +512,40 @@ export class AnalyticsService {
   // ============================================================================
 
   private async getTotalRevenue(startDate: Date, endDate: Date): Promise<number> {
-    const db = getDb();
-    
-    // Calcular ingresos desde facturas pagadas, no desde costos de servicios
-    const result = await db
-      .select({
-        total: sum(invoices.total),
-      })
-      .from(invoices)
-      .where(
-        and(
-          eq(invoices.partnerId, this.partnerId),
-          eq(invoices.status, 'paid'),
-          gte(invoices.date, startDate.toISOString()),
-          lte(invoices.date, endDate.toISOString())
-        )
-      );
+    try {
+      console.log('[getTotalRevenue] Starting with params:', {
+        partnerId: this.partnerId,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+      });
 
-    return Number(result[0]?.total || 0);
+      const db = getDb();
+      
+      // Calcular ingresos desde facturas pagadas, no desde costos de servicios
+      const result = await db
+        .select({
+          total: sum(invoices.total),
+        })
+        .from(invoices)
+        .where(
+          and(
+            eq(invoices.partnerId, this.partnerId),
+            eq(invoices.status, 'paid'),
+            gte(invoices.date, startDate.toISOString()),
+            lte(invoices.date, endDate.toISOString())
+          )
+        );
+
+      console.log('[getTotalRevenue] Query result:', result);
+      const total = Number(result[0]?.total || 0);
+      console.log('[getTotalRevenue] Returning total:', total);
+      
+      return total;
+    } catch (error) {
+      console.error('[getTotalRevenue] ERROR:', error);
+      console.error('[getTotalRevenue] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      throw error;
+    }
   }
 
   private async getServiceCount(startDate: Date, endDate: Date): Promise<number> {
