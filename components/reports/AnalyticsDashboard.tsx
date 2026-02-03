@@ -641,8 +641,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   metricCard: {
-    flex: 1,
-    minWidth: (SCREEN_WIDTH - 60) / 2,
+    width: '48%',
     backgroundColor: COLORS.card,
     borderRadius: 12,
     padding: 16,
