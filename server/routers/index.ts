@@ -32,6 +32,7 @@ export { usageRouter } from './usage.router.js';
 export { alertsRouter } from './alerts.router.js';
 export { alertSettingsRouter } from './alert-settings.router.js';
 export { dashboardRouter } from './dashboard.router.js';
+export { debugRouter } from './debug.router.js';
 
 
 
