@@ -1,9 +1,9 @@
 /**
- * Dashboard de Analytics
+ * Dashboard de Analytics - Diseño Elegante y Sofisticado
  * Piano Emotion Manager
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,11 +14,12 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Path, Circle, G, Text as SvgText, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import {
   useDashboardMetrics,
   useRevenueChart,
   useServicesByType,
-  useMonthlyTrends,
   useReportExport,
   type PeriodPreset,
   type DateRange,
@@ -26,6 +27,30 @@ import {
 import { useTranslation } from '@/hooks/use-translation';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = SCREEN_WIDTH > 768 ? (SCREEN_WIDTH - 64) / 4 : (SCREEN_WIDTH - 48) / 2;
+
+// Paleta de colores elegante
+const COLORS = {
+  primary: '#1e3a8a',      // Azul profundo
+  secondary: '#3b82f6',    // Azul brillante
+  accent: '#60a5fa',       // Azul claro
+  success: '#10b981',      // Verde esmeralda
+  warning: '#f59e0b',      // Ámbar
+  danger: '#ef4444',       // Rojo
+  purple: '#8b5cf6',       // Púrpura
+  gray: {
+    50: '#f8fafc',
+    100: '#f1f5f9',
+    200: '#e2e8f0',
+    300: '#cbd5e1',
+    400: '#94a3b8',
+    500: '#64748b',
+    600: '#475569',
+    700: '#334155',
+    800: '#1e293b',
+    900: '#0f172a',
+  },
+};
 
 // ============================================================================
 // Types
@@ -45,7 +70,7 @@ interface PeriodSelectorProps {
 }
 
 // ============================================================================
-// Metric Card Component
+// Metric Card Component - Elegante
 // ============================================================================
 
 const MetricCard: React.FC<MetricCardProps> = ({
@@ -59,28 +84,29 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   return (
     <View style={styles.metricCard}>
-      <View style={[styles.metricIcon, { backgroundColor: color + '15' }]}>
-        <Ionicons name={icon} size={24} color={color} />
+      <View style={styles.metricHeader}>
+        <View style={[styles.metricIconContainer, { backgroundColor: color + '15' }]}>
+          <Ionicons name={icon} size={20} color={color} />
+        </View>
+        {change !== undefined && (
+          <View style={[styles.changeBadge, { 
+            backgroundColor: isPositive ? '#ecfdf5' : '#fef2f2' 
+          }]}>
+            <Ionicons
+              name={isPositive ? 'arrow-up' : 'arrow-down'}
+              size={10}
+              color={isPositive ? COLORS.success : COLORS.danger}
+            />
+            <Text style={[styles.changeText, { 
+              color: isPositive ? COLORS.success : COLORS.danger 
+            }]}>
+              {Math.abs(change).toFixed(1)}%
+            </Text>
+          </View>
+        )}
       </View>
       <Text style={styles.metricValue}>{value}</Text>
       <Text style={styles.metricTitle}>{title}</Text>
-      {change !== undefined && (
-        <View style={styles.changeContainer}>
-          <Ionicons
-            name={isPositive ? 'trending-up' : 'trending-down'}
-            size={14}
-            color={isPositive ? '#22c55e' : '#ef4444'}
-          />
-          <Text
-            style={[
-              styles.changeText,
-              { color: isPositive ? '#22c55e' : '#ef4444' },
-            ]}
-          >
-            {isPositive ? '+' : ''}{change.toFixed(1)}%
-          </Text>
-        </View>
-      )}
     </View>
   );
 };
@@ -101,58 +127,250 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
 
   return (
     <View style={styles.periodSelector}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {periods.map((period) => (
-          <TouchableOpacity
-            key={period.key}
+      {periods.map((period) => (
+        <TouchableOpacity
+          key={period.key}
+          style={[
+            styles.periodButton,
+            selected === period.key && styles.periodButtonActive,
+          ]}
+          onPress={() => onSelect(period.key)}
+          activeOpacity={0.7}
+        >
+          <Text
             style={[
-              styles.periodButton,
-              selected === period.key && styles.periodButtonActive,
+              styles.periodButtonText,
+              selected === period.key && styles.periodButtonTextActive,
             ]}
-            onPress={() => onSelect(period.key)}
           >
-            <Text
-              style={[
-                styles.periodButtonText,
-                selected === period.key && styles.periodButtonTextActive,
-              ]}
-            >
-              {period.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+            {period.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
 
 // ============================================================================
-// Simple Chart Component (Placeholder)
+// Line Chart Component - Elegante
 // ============================================================================
 
-interface SimpleBarChartProps {
+interface LineChartProps {
   data: { label: string; value: number }[];
-  color: string;
+  color?: string;
 }
 
-const SimpleBarChart: React.FC<SimpleBarChartProps> = ({ data, color }) => {
-  const maxValue = Math.max(...data.map((d) => d.value), 1);
+const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.secondary }) => {
+  if (!data || data.length === 0) {
+    return (
+      <View style={styles.emptyChart}>
+        <Ionicons name="trending-up-outline" size={48} color={COLORS.gray[300]} />
+        <Text style={styles.emptyChartText}>No hay datos disponibles</Text>
+      </View>
+    );
+  }
+
+  const displayData = data.slice(-12); // Últimos 12 períodos
+  const maxValue = Math.max(...displayData.map(d => d.value), 1);
+  const minValue = Math.min(...displayData.map(d => d.value), 0);
+  const range = maxValue - minValue || 1;
+
+  const chartWidth = SCREEN_WIDTH - 80;
+  const chartHeight = 180;
+  const padding = 20;
+  const plotWidth = chartWidth - padding * 2;
+  const plotHeight = chartHeight - padding * 2;
+
+  // Calcular puntos del gráfico
+  const points = displayData.map((item, index) => {
+    const x = padding + (index / (displayData.length - 1)) * plotWidth;
+    const y = padding + plotHeight - ((item.value - minValue) / range) * plotHeight;
+    return { x, y, value: item.value };
+  });
+
+  // Crear path suave (curva de Bézier)
+  const createSmoothPath = () => {
+    if (points.length < 2) return '';
+    
+    let path = `M ${points[0].x} ${points[0].y}`;
+    
+    for (let i = 0; i < points.length - 1; i++) {
+      const current = points[i];
+      const next = points[i + 1];
+      const controlX = (current.x + next.x) / 2;
+      
+      path += ` Q ${controlX} ${current.y}, ${controlX} ${(current.y + next.y) / 2}`;
+      path += ` Q ${controlX} ${next.y}, ${next.x} ${next.y}`;
+    }
+    
+    return path;
+  };
+
+  // Crear área bajo la curva
+  const createAreaPath = () => {
+    const linePath = createSmoothPath();
+    const lastPoint = points[points.length - 1];
+    const firstPoint = points[0];
+    return `${linePath} L ${lastPoint.x} ${chartHeight - padding} L ${firstPoint.x} ${chartHeight - padding} Z`;
+  };
 
   return (
     <View style={styles.chartContainer}>
-      <View style={styles.barsContainer}>
-        {data.slice(-7).map((item, index) => (
-          <View key={index} style={styles.barWrapper}>
-            <View
-              style={[
-                styles.bar,
-                {
-                  height: `${(item.value / maxValue) * 100}%`,
-                  backgroundColor: color,
-                },
-              ]}
+      <Svg width={chartWidth} height={chartHeight}>
+        <Defs>
+          <SvgLinearGradient
+            id="areaGradient"
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="1"
+          >
+            <Stop offset="0%" stopColor={color} stopOpacity="0.2" />
+            <Stop offset="100%" stopColor={color} stopOpacity="0.02" />
+          </SvgLinearGradient>
+        </Defs>
+        
+        <Path
+          d={createAreaPath()}
+          fill="url(#areaGradient)"
+        />
+        
+        {/* Línea principal */}
+        <Path
+          d={createSmoothPath()}
+          stroke={color}
+          strokeWidth={2.5}
+          fill="none"
+          strokeLinecap="round"
+        />
+        
+        {/* Puntos en la línea */}
+        {points.map((point, index) => (
+          <G key={index}>
+            <Circle
+              cx={point.x}
+              cy={point.y}
+              r={4}
+              fill="#fff"
+              stroke={color}
+              strokeWidth={2}
             />
-            <Text style={styles.barLabel}>{item.label}</Text>
+          </G>
+        ))}
+      </Svg>
+      
+      {/* Etiquetas del eje X */}
+      <View style={styles.chartLabels}>
+        {displayData.map((item, index) => {
+          // Mostrar solo algunas etiquetas para evitar solapamiento
+          const showLabel = displayData.length <= 6 || index % Math.ceil(displayData.length / 6) === 0;
+          return showLabel ? (
+            <Text key={index} style={styles.chartLabel} numberOfLines={1}>
+              {item.label}
+            </Text>
+          ) : <View key={index} style={styles.chartLabel} />;
+        })}
+      </View>
+    </View>
+  );
+};
+
+// ============================================================================
+// Donut Chart Component - Elegante
+// ============================================================================
+
+interface DonutChartProps {
+  data: { label: string; value: number; percentage: number }[];
+}
+
+const DonutChart: React.FC<DonutChartProps> = ({ data }) => {
+  if (!data || data.length === 0) {
+    return (
+      <View style={styles.emptyChart}>
+        <Ionicons name="pie-chart-outline" size={48} color={COLORS.gray[300]} />
+        <Text style={styles.emptyChartText}>No hay datos disponibles</Text>
+      </View>
+    );
+  }
+
+  const chartColors = [COLORS.secondary, COLORS.success, COLORS.warning, COLORS.danger, COLORS.purple];
+  const size = 160;
+  const strokeWidth = 24;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  
+  let currentAngle = -90; // Empezar desde arriba
+
+  return (
+    <View style={styles.donutContainer}>
+      <View style={styles.donutChart}>
+        <Svg width={size} height={size}>
+          {data.slice(0, 5).map((item, index) => {
+            const percentage = item.percentage;
+            const angle = (percentage / 100) * 360;
+            const color = chartColors[index % chartColors.length];
+            
+            // Calcular el arco
+            const startAngle = currentAngle;
+            const endAngle = currentAngle + angle;
+            currentAngle = endAngle;
+            
+            const startRad = (startAngle * Math.PI) / 180;
+            const endRad = (endAngle * Math.PI) / 180;
+            
+            const x1 = size / 2 + radius * Math.cos(startRad);
+            const y1 = size / 2 + radius * Math.sin(startRad);
+            const x2 = size / 2 + radius * Math.cos(endRad);
+            const y2 = size / 2 + radius * Math.sin(endRad);
+            
+            const largeArc = angle > 180 ? 1 : 0;
+            
+            const pathData = [
+              `M ${x1} ${y1}`,
+              `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+            ].join(' ');
+            
+            return (
+              <Path
+                key={index}
+                d={pathData}
+                stroke={color}
+                strokeWidth={strokeWidth}
+                fill="none"
+                strokeLinecap="round"
+              />
+            );
+          })}
+          
+          {/* Centro blanco */}
+          <Circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius - strokeWidth / 2}
+            fill="#fff"
+          />
+        </Svg>
+        
+        {/* Total en el centro */}
+        <View style={styles.donutCenter}>
+          <Text style={styles.donutCenterValue}>{data.reduce((sum, d) => sum + d.value, 0)}</Text>
+          <Text style={styles.donutCenterLabel}>Total</Text>
+        </View>
+      </View>
+      
+      {/* Leyenda */}
+      <View style={styles.donutLegend}>
+        {data.slice(0, 5).map((item, index) => (
+          <View key={index} style={styles.legendItem}>
+            <View style={[styles.legendDot, { 
+              backgroundColor: chartColors[index % chartColors.length] 
+            }]} />
+            <View style={styles.legendText}>
+              <Text style={styles.legendLabel}>{item.label}</Text>
+              <Text style={styles.legendValue}>
+                {item.value} ({item.percentage.toFixed(1)}%)
+              </Text>
+            </View>
           </View>
         ))}
       </View>
@@ -185,7 +403,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
   const { data: revenueData } = useRevenueChart(dateRange, 'month');
   const { data: servicesData } = useServicesByType(dateRange);
-  const { downloadCSV, downloadPDF, isExporting } = useReportExport();
+  const { downloadPDF, isExporting } = useReportExport();
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -212,132 +430,152 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t('reports.analytics')}</Text>
+        <View>
+          <Text style={styles.headerTitle}>Panel de Control</Text>
+          <Text style={styles.headerSubtitle}>Resumen de rendimiento del negocio</Text>
+        </View>
         <TouchableOpacity
           style={styles.exportButton}
           onPress={() => downloadPDF('executive', dateRange)}
           disabled={isExporting}
+          activeOpacity={0.8}
         >
-          <Ionicons name="download-outline" size={20} color="#3b82f6" />
-          <Text style={styles.exportButtonText}>{t('reports.export')}</Text>
+          <Ionicons name="download-outline" size={18} color={COLORS.primary} />
         </TouchableOpacity>
       </View>
 
       {/* Period Selector */}
       <PeriodSelector selected={preset} onSelect={changePeriod} />
 
-      {/* Main Metrics */}
+      {/* Main Metrics Grid */}
       <View style={styles.metricsGrid}>
         <MetricCard
           title={t('reports.revenue')}
           value={formatCurrency(metrics?.revenue.total || 0)}
           change={metrics?.revenue.changePercent}
           icon="cash-outline"
-          color="#3b82f6"
+          color={COLORS.secondary}
         />
         <MetricCard
           title={t('reports.services')}
           value={metrics?.services.total || 0}
           icon="construct-outline"
-          color="#22c55e"
+          color={COLORS.success}
         />
         <MetricCard
           title={t('reports.clients')}
           value={metrics?.clients.total || 0}
           change={metrics?.clients.new ? (metrics.clients.new / metrics.clients.total) * 100 : 0}
           icon="people-outline"
-          color="#8b5cf6"
+          color={COLORS.purple}
         />
         <MetricCard
           title={t('reports.avgTicket')}
           value={formatCurrency(metrics?.averages.ticketValue || 0)}
           icon="receipt-outline"
-          color="#f59e0b"
+          color={COLORS.warning}
         />
       </View>
 
-      {/* Revenue Chart */}
+      {/* Revenue Evolution Chart */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('reports.revenueEvolution')}</Text>
-          <TouchableOpacity onPress={() => downloadCSV('revenue', dateRange)}>
-            <Ionicons name="download-outline" size={20} color="#6b7280" />
-          </TouchableOpacity>
-        </View>
-        {revenueData && revenueData.length > 0 ? (
-          <SimpleBarChart
-            data={revenueData.map((d) => ({ label: d.period, value: d.revenue }))}
-            color="#3b82f6"
-          />
-        ) : (
-          <View style={styles.emptyChart}>
-            <Text style={styles.emptyChartText}>{t('reports.noData')}</Text>
+          <View>
+            <Text style={styles.sectionTitle}>{t('reports.revenueEvolution')}</Text>
+            <Text style={styles.sectionSubtitle}>Últimos 12 meses</Text>
           </View>
-        )}
+        </View>
+        <View style={styles.chartCard}>
+          <LineChart
+            data={revenueData?.map((d) => ({ label: d.period, value: d.revenue })) || []}
+            color={COLORS.secondary}
+          />
+        </View>
       </View>
 
       {/* Services by Type */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('reports.servicesByType')}</Text>
+          <View>
+            <Text style={styles.sectionTitle}>{t('reports.servicesByType')}</Text>
+            <Text style={styles.sectionSubtitle}>Distribución de servicios realizados</Text>
+          </View>
         </View>
-        {servicesData && servicesData.length > 0 ? (
-          <View style={styles.servicesList}>
-            {servicesData.slice(0, 5).map((service, index) => (
-              <View key={index} style={styles.serviceItem}>
-                <View style={styles.serviceInfo}>
-                  <View
-                    style={[
-                      styles.serviceDot,
-                      { backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6'][index] },
-                    ]}
-                  />
-                  <Text style={styles.serviceName}>{service.typeName}</Text>
-                </View>
-                <View style={styles.serviceStats}>
-                  <Text style={styles.serviceCount}>{service.count}</Text>
-                  <Text style={styles.servicePercent}>{service.percentage.toFixed(1)}%</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        ) : (
-          <View style={styles.emptyChart}>
-            <Text style={styles.emptyChartText}>{t('reports.noData')}</Text>
-          </View>
-        )}
+        <View style={styles.chartCard}>
+          {servicesData && servicesData.length > 0 ? (
+            <DonutChart
+              data={servicesData.map(s => ({
+                label: s.typeName,
+                value: s.count,
+                percentage: s.percentage,
+              }))}
+            />
+          ) : (
+            <View style={styles.emptyChart}>
+              <Ionicons name="pie-chart-outline" size={48} color={COLORS.gray[300]} />
+              <Text style={styles.emptyChartText}>No hay datos de servicios</Text>
+            </View>
+          )}
+        </View>
       </View>
 
       {/* Quick Stats */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t('reports.quickStats')}</Text>
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionTitle}>{t('reports.quickStats')}</Text>
+            <Text style={styles.sectionSubtitle}>Indicadores clave de rendimiento</Text>
+          </View>
+        </View>
         <View style={styles.quickStatsGrid}>
           <View style={styles.quickStatCard}>
+            <View style={[styles.quickStatIcon, { backgroundColor: COLORS.secondary + '15' }]}>
+              <Ionicons name="checkmark-circle-outline" size={24} color={COLORS.secondary} />
+            </View>
             <Text style={styles.quickStatValue}>
               {metrics?.services.completionRate.toFixed(0)}%
             </Text>
-            <Text style={styles.quickStatLabel}>{t('reports.completionRate')}</Text>
+            <Text style={styles.quickStatLabel}>Tasa de finalización</Text>
+            <Text style={styles.quickStatDescription}>
+              Servicios completados exitosamente
+            </Text>
           </View>
           <View style={styles.quickStatCard}>
+            <View style={[styles.quickStatIcon, { backgroundColor: COLORS.success + '15' }]}>
+              <Ionicons name="repeat-outline" size={24} color={COLORS.success} />
+            </View>
             <Text style={styles.quickStatValue}>
               {metrics?.clients.retention.toFixed(0)}%
             </Text>
-            <Text style={styles.quickStatLabel}>{t('reports.retention')}</Text>
+            <Text style={styles.quickStatLabel}>Retención de clientes</Text>
+            <Text style={styles.quickStatDescription}>
+              Clientes que repiten servicios
+            </Text>
           </View>
           <View style={styles.quickStatCard}>
+            <View style={[styles.quickStatIcon, { backgroundColor: COLORS.warning + '15' }]}>
+              <Ionicons name="musical-notes-outline" size={24} color={COLORS.warning} />
+            </View>
             <Text style={styles.quickStatValue}>
               {metrics?.pianos.total || 0}
             </Text>
-            <Text style={styles.quickStatLabel}>{t('reports.pianos')}</Text>
+            <Text style={styles.quickStatLabel}>Pianos registrados</Text>
+            <Text style={styles.quickStatDescription}>
+              Total de pianos en la base de datos
+            </Text>
           </View>
         </View>
       </View>
 
       {/* View All Reports Button */}
       {onNavigateToReports && (
-        <TouchableOpacity style={styles.viewAllButton} onPress={onNavigateToReports}>
+        <TouchableOpacity 
+          style={styles.viewAllButton} 
+          onPress={onNavigateToReports}
+          activeOpacity={0.8}
+        >
           <Text style={styles.viewAllButtonText}>{t('reports.viewAllReports')}</Text>
-          <Ionicons name="arrow-forward" size={20} color="#3b82f6" />
+          <Ionicons name="arrow-forward" size={18} color={COLORS.primary} />
         </TouchableOpacity>
       )}
 
@@ -347,60 +585,70 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 };
 
 // ============================================================================
-// Styles
+// Styles - Diseño Elegante y Sofisticado
 // ============================================================================
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: COLORS.gray[50],
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 16,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#1f2937',
+    color: COLORS.gray[900],
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: COLORS.gray[500],
+    marginTop: 4,
   },
   exportButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#dbeafe',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  exportButtonText: {
-    color: '#3b82f6',
-    fontWeight: '600',
-    marginLeft: 4,
-  },
-  periodSelector: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  periodButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: '#fff',
-    marginRight: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  periodSelector: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  periodButton: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: COLORS.gray[200],
+    alignItems: 'center',
   },
   periodButtonActive: {
-    backgroundColor: '#3b82f6',
-    borderColor: '#3b82f6',
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
   },
   periodButtonText: {
-    color: '#6b7280',
-    fontWeight: '500',
+    color: COLORS.gray[600],
+    fontWeight: '600',
+    fontSize: 13,
   },
   periodButtonTextActive: {
     color: '#fff',
@@ -408,51 +656,63 @@ const styles = StyleSheet.create({
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 12,
-    gap: 8,
+    paddingHorizontal: 16,
+    gap: 12,
+    marginTop: 8,
   },
   metricCard: {
-    width: (SCREEN_WIDTH - 40) / 2,
+    width: CARD_WIDTH,
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: COLORS.gray[100],
   },
-  metricIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+  metricHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 12,
   },
-  metricValue: {
-    fontSize: 22,
+  metricIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  changeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 8,
+    gap: 3,
+  },
+  changeText: {
+    fontSize: 10,
     fontWeight: '700',
-    color: '#1f2937',
+  },
+  metricValue: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: COLORS.gray[900],
+    marginBottom: 4,
+    letterSpacing: -0.5,
   },
   metricTitle: {
     fontSize: 13,
-    color: '#6b7280',
-    marginTop: 4,
-  },
-  changeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  changeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginLeft: 4,
+    color: COLORS.gray[500],
+    fontWeight: '500',
   },
   section: {
     marginTop: 24,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -462,126 +722,171 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#1f2937',
+    fontWeight: '700',
+    color: COLORS.gray[900],
+    letterSpacing: -0.3,
+  },
+  sectionSubtitle: {
+    fontSize: 13,
+    color: COLORS.gray[500],
+    marginTop: 2,
+  },
+  chartCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: COLORS.gray[100],
   },
   chartContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    height: 200,
-  },
-  barsContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-around',
-  },
-  barWrapper: {
     alignItems: 'center',
-    flex: 1,
   },
-  bar: {
-    width: 24,
-    borderRadius: 4,
-    minHeight: 4,
+  chartLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    paddingHorizontal: 20,
   },
-  barLabel: {
+  chartLabel: {
     fontSize: 10,
-    color: '#9ca3af',
-    marginTop: 8,
+    color: COLORS.gray[400],
+    fontWeight: '500',
+    flex: 1,
+    textAlign: 'center',
   },
   emptyChart: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 40,
+    height: 200,
     alignItems: 'center',
     justifyContent: 'center',
   },
   emptyChartText: {
-    color: '#9ca3af',
+    color: COLORS.gray[400],
     fontSize: 14,
+    marginTop: 12,
+    fontWeight: '500',
   },
-  servicesList: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-  },
-  serviceItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  donutContainer: {
+    flexDirection: SCREEN_WIDTH > 600 ? 'row' : 'column',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    gap: 24,
   },
-  serviceInfo: {
+  donutChart: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  donutCenter: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  donutCenterValue: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: COLORS.gray[900],
+  },
+  donutCenterLabel: {
+    fontSize: 12,
+    color: COLORS.gray[500],
+    marginTop: 2,
+  },
+  donutLegend: {
+    flex: 1,
+    gap: 12,
+  },
+  legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 12,
   },
-  serviceDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginRight: 12,
+  legendDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
-  serviceName: {
-    fontSize: 14,
-    color: '#374151',
+  legendText: {
+    flex: 1,
   },
-  serviceStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  serviceCount: {
+  legendLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1f2937',
-    marginRight: 8,
+    color: COLORS.gray[700],
   },
-  servicePercent: {
+  legendValue: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: COLORS.gray[500],
+    marginTop: 2,
   },
   quickStatsGrid: {
-    flexDirection: 'row',
+    flexDirection: SCREEN_WIDTH > 768 ? 'row' : 'column',
     gap: 12,
-    marginTop: 12,
   },
   quickStatCard: {
     flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: COLORS.gray[100],
+  },
+  quickStatIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
   },
   quickStatValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1f2937',
+    fontSize: 32,
+    fontWeight: '800',
+    color: COLORS.gray[900],
+    letterSpacing: -0.5,
   },
   quickStatLabel: {
-    fontSize: 12,
-    color: '#6b7280',
+    fontSize: 14,
+    color: COLORS.gray[700],
     marginTop: 4,
-    textAlign: 'center',
+    fontWeight: '600',
+  },
+  quickStatDescription: {
+    fontSize: 12,
+    color: COLORS.gray[500],
+    marginTop: 4,
+    lineHeight: 16,
   },
   viewAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#fff',
-    marginHorizontal: 16,
+    marginHorizontal: 20,
     marginTop: 24,
     padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#3b82f6',
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
   },
   viewAllButtonText: {
-    color: '#3b82f6',
-    fontWeight: '600',
+    color: COLORS.primary,
+    fontWeight: '700',
     marginRight: 8,
+    fontSize: 15,
   },
   bottomPadding: {
     height: 40,
