@@ -84,7 +84,7 @@ interface UseInvoicesDataOptions {
 }
 
 export function useInvoicesData(options: UseInvoicesDataOptions = {}) {
-  const { search, status, clientId, dateFrom, dateTo, pageSize = 1000 } = options;
+  const { search, status, clientId, dateFrom, dateTo, pageSize = 100 } = options;
   const utils = trpc.useUtils();
   const [error, setError] = useState<string | null>(null);
 
