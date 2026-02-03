@@ -83,7 +83,7 @@ export default function CustomHeader({
                 Platform.OS === 'web' && { fontSize: 24 }
               ]}
             >
-              {title.toUpperCase()}
+              {title}
             </ThemedText>
             {subtitle && (
               <ThemedText style={styles.subtitle}>
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: COLORS.white,
-    textTransform: 'uppercase',
+    // textTransform: 'uppercase',
     fontFamily: Platform.select({
       ios: 'System',
       android: 'sans-serif-medium',
