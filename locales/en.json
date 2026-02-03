@@ -894,5 +894,8 @@
   "accounting.expensesByCategory": "Expenses by category",
   "accounting.quickActions": "Quick actions",
   "shop.noShops": "No shops available",
-  "shop.noShopsDesc": "There are currently no shops configured"
+  "shop.noShopsDesc": "There are currently no shops configured",
+  "reports": {
+    "subtitle": "Business analytics and statistics"
+  }
 }
