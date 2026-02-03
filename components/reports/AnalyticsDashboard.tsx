@@ -88,7 +88,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           }]}>
             <Ionicons
               name={isPositive ? 'trending-up' : 'trending-down'}
-              size={10}
+              size={14}
               color={isPositive ? COLORS.success : COLORS.danger}
             />
             <Text style={[styles.changeText, { 
@@ -238,9 +238,10 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
               x={padding.left - 8}
               y={line.y + 4}
               fill={COLORS.text.secondary}
-              fontSize="12"
-              fontWeight="500"
+              fontSize="14"
+              fontWeight="600"
               textAnchor="end"
+              fontFamily="System"
             >
               {formatValue(line.value)}
             </SvgText>
@@ -273,9 +274,10 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
               x={point.x}
               y={point.y - 12}
               fill={COLORS.text.primary}
-              fontSize="11"
-              fontWeight="600"
+              fontSize="14"
+              fontWeight="700"
               textAnchor="middle"
+              fontFamily="System"
             >
               {formatValue(point.value)}
             </SvgText>
@@ -292,9 +294,10 @@ const LineChart: React.FC<LineChartProps> = ({ data, color = COLORS.primary }) =
               x={point.x}
               y={chartHeight - 15}
               fill={COLORS.text.secondary}
-              fontSize="11"
-              fontWeight="500"
+              fontSize="13"
+              fontWeight="600"
               textAnchor="middle"
+              fontFamily="System"
             >
               {point.label}
             </SvgText>
@@ -666,14 +669,14 @@ const styles = StyleSheet.create({
   changeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 4,
-    gap: 2,
+    gap: 4,
   },
   changeText: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
   },
   metricValue: {
     fontSize: 22,
