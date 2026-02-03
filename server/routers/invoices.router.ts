@@ -238,8 +238,8 @@ export const invoicesRouter = router({
 
       // Consulta principal con paginación
       const offset = cursor || 0;
-      console.log('[invoices.list] 🔎 Ejecutando query con filtros:', { dateFrom, dateTo, status, clientId, search, partnerId: ctx.partnerId });
-      console.log('[invoices.list] 📋 whereClauses:', whereClauses.map(c => c.toString()));
+      console.error('[invoices.list] 🔎 Ejecutando query con filtros:', JSON.stringify({ dateFrom, dateTo, status, clientId, search, partnerId: ctx.partnerId, organizationId: ctx.organizationId }));
+      console.error('[invoices.list] 📋 Total whereClauses:', whereClauses.length);
       let items = await database
         .select()
         .from(invoices)
@@ -247,9 +247,9 @@ export const invoicesRouter = router({
         .orderBy(orderByClause)
         .limit(limit)
         .offset(offset);
-      console.log('[invoices.list] ✅ Query completada. Facturas encontradas:', items.length);
+      console.error('[invoices.list] ✅ Query completada. Facturas encontradas:', items.length);
       if (items.length > 0) {
-        console.log('[invoices.list] 📄 Primera factura:', { id: items[0].id, date: items[0].date, status: items[0].status, invoiceNumber: items[0].invoiceNumber });
+        console.error('[invoices.list] 📄 Primera factura:', JSON.stringify({ id: items[0].id, date: items[0].date, status: items[0].status, invoiceNumber: items[0].invoiceNumber }));
       }
 
       // Marcar facturas vencidas
@@ -277,7 +277,7 @@ export const invoicesRouter = router({
         nextCursor = offset + limit;
       }
 
-      console.log('[invoices.list] 📤 Retornando:', { itemsCount: items.length, total, nextCursor });
+      console.error('[invoices.list] 📤 Retornando:', JSON.stringify({ itemsCount: items.length, total, nextCursor }));
       return { items, nextCursor, total, stats };
     },
     { ttl: 300, prefix: 'invoices', includeUser: true, procedurePath: 'invoices.list' }
