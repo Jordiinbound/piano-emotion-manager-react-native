@@ -133,7 +133,7 @@ export default function InvoicesScreen() {
   // Configurar header - DEBE estar después de filteredInvoices
   useFocusEffect(
     React.useCallback(() => {
-      let subtitle = `${filteredInvoices.length} ${filteredInvoices.length === 1 ? 'factura' : 'facturas'}`;
+      let subtitle = `${totalInvoices} ${totalInvoices === 1 ? 'factura' : 'facturas'}`;
       
       // Mostrar filtros activos en el subtítulo
       // Siempre mostrar mes y año en el subtítulo
@@ -146,7 +146,7 @@ export default function InvoicesScreen() {
         icon: 'doc.plaintext',
         showBackButton: false,
       });
-    }, [filteredInvoices.length, selectedMonth, selectedYear, setHeaderConfig])
+    }, [totalInvoices, selectedMonth, selectedYear, setHeaderConfig])
   );
 
 
