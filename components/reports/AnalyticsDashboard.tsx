@@ -637,6 +637,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
+    minWidth: 0,
+    overflow: 'hidden',
   },
   iconContainer: {
     width: 36,
@@ -649,16 +651,18 @@ const styles = StyleSheet.create({
   changeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 4,
-    gap: 4,
+    gap: 2,
     flexShrink: 1,
     minWidth: 0,
+    maxWidth: '50%',
   },
   changeText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '700',
+    flexShrink: 1,
   },
   metricValue: {
     fontSize: 22,
