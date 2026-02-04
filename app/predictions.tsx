@@ -50,6 +50,8 @@ export default function PredictionsScreen() {
   
   const textPrimary = themeColors.text;
   const textSecondary = themeColors.textSecondary || themeColors.text + '99';
+  const cardBg = themeColors.cardBackground;
+  const border = themeColors.border || themeColors.text + '20';
 
   const [activeTab, setActiveTab] = useState<TabType>('revenue');
   const [refreshing, setRefreshing] = useState(false);
@@ -103,6 +105,8 @@ export default function PredictionsScreen() {
     churn: churnQuery.data && churnQuery.data.length > 0
       ? churnQuery.data.slice(0, 12).map((c: any) => ({
           clientName: c.clientName,
+          clientEmail: c.clientEmail,
+          clientPhone: c.clientPhone,
           riskScore: c.riskScore,
           daysSince: c.daysSinceLastService,
           suggestedAction: c.suggestedAction,
@@ -112,9 +116,12 @@ export default function PredictionsScreen() {
       ? maintenanceQuery.data.slice(0, 6).map((m: any) => ({
           pianoInfo: m.pianoInfo,
           clientName: m.clientName,
+          clientEmail: m.clientEmail,
+          clientPhone: m.clientPhone,
           predictedDate: new Date(m.predictedDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }),
           serviceType: m.serviceType,
           confidence: m.confidence,
+          basedOn: m.basedOn,
         }))
       : [],
     workload: workloadQuery.data && workloadQuery.data.length > 0
@@ -328,11 +335,11 @@ export default function PredictionsScreen() {
             style={[styles.scheduleButton, { borderColor: colors.primary }]}
             onPress={() => {
               setSelectedContact({
-                name: service.clientName,
-                email: service.clientEmail,
-                phone: service.clientPhone,
+                name: item.clientName,
+                email: item.clientEmail,
+                phone: item.clientPhone,
                 context: 'maintenance',
-                details: `${service.serviceType} recomendado para ${service.pianoInfo}. ${service.basedOn}`,
+                details: `${item.serviceType} recomendado para ${item.pianoInfo}. ${item.basedOn}`,
               });
               setContactModalVisible(true);
             }}
