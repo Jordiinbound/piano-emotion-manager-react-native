@@ -23,11 +23,11 @@ type TabType = 'revenue' | 'churn' | 'maintenance' | 'workload' | 'inventory';
 
 // Paleta de colores suaves para cada pestaña (tonalidad matizada)
 const TAB_COLORS = {
-  revenue: '#3d8a62',      // Verde suave (oscurecido)
-  churn: '#8566b3',        // Púrpura suave (oscurecido)
-  maintenance: '#4a6bb0',  // Azul suave (oscurecido)
-  workload: '#c28a42',     // Naranja/dorado suave (oscurecido)
-  inventory: '#4a8d9f',    // Cian suave (oscurecido)
+  revenue: '#2d6b4a',      // Verde más oscuro
+  churn: '#6a4d8f',        // Púrpura más oscuro
+  maintenance: '#3a5590',  // Azul más oscuro
+  workload: '#a56d2a',     // Naranja/dorado más oscuro
+  inventory: '#3a6d7f',    // Cian más oscuro
 };
 
 // MOCK_DATA eliminado - solo usamos datos reales de la BD
@@ -435,7 +435,7 @@ export default function PredictionsScreen() {
                   styles.tabLabel, 
                   { 
                     color: TAB_COLORS[tab.id as TabType],
-                    opacity: activeTab === tab.id ? 1 : 0.6,
+                    opacity: activeTab === tab.id ? 1 : 0.8,  // Aumentado de 0.6 a 0.8
                     fontSize: isMobile ? 11 : 16,  // Solo reducir en móvil
                   }
                 ]}
@@ -490,20 +490,20 @@ const styles = StyleSheet.create({
   tabsContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',  // Centrar las pestañas
-    paddingHorizontal: 20,
+    justifyContent: 'space-evenly',  // Distribuir uniformemente
+    paddingHorizontal: 8,  // Reducido para más espacio
     paddingBottom: 15,
-    width: '100%',  // Ocupar todo el ancho disponible
+    width: '100%',
   },
   tabButton: {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 15,  // Original
-    paddingHorizontal: 10,  // Original
-    minWidth: 120,  // Original
+    paddingVertical: 15,
+    paddingHorizontal: 6,  // Reducido para móvil
+    flex: 1,  // Cada pestaña ocupa espacio igual
+    maxWidth: 90,  // Ancho máximo para móvil
     textAlign: 'center',
-    marginHorizontal: 10,  // Original
   },
   tabLabel: {
     marginTop: 8,

@@ -2,6 +2,13 @@
 
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
+### Previsiones sin Datos (04 Feb 2026)
+- [ ] **BUG CRÍTICO: Previsiones muestra "Datos insuficientes para previsión"**
+  - [ ] Investigar por qué no se calculan predicciones con datos históricos
+  - [ ] Verificar router forecasts.router.ts y algoritmos
+  - [ ] Revisar queries de datos históricos de servicios
+  - [ ] Verificar que haya suficientes datos en BD para calcular tendencias
+
 ### Sistema de Alertas y Filtros
 - [ ] Breadcrumb sigue mostrando ALERTS en lugar de ALERTAS:
   - [ ] Buscar dónde se define el título "Alerts" en el código
@@ -201,3 +208,9 @@
   - Causa REAL: Variable SCREEN_WIDTH eliminada pero aún usada en línea 843 (quickStatCard minWidth)
   - Solución: Reemplazar SCREEN_WIDTH por Dimensions.get('window').width
   - Nota: Los cambios de SQL y listener eran correctos, el problema era esta referencia olvidada
+
+### Pestañas de Previsiones (04 Feb 2026)
+- [ ] **BUG: Pestañas no centradas en móvil**
+  - [ ] Primera pestaña "Ingresos" se sale por la izquierda
+  - [ ] Pestañas no se distribuyen correctamente en el espacio disponible
+  - [ ] Ajustar layout para centrar pestañas en móvil
