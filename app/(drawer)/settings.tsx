@@ -13,6 +13,7 @@ import { Spacing } from '@/constants/theme';
 
 const SETTINGS_SECTIONS = [
   { key: 'ai', icon: 'brain.head.profile', label: 'Configuración IA', color: '#8B5CF6', route: '/ai-settings' },
+  { key: 'predictions', icon: 'chart.line.uptrend.xyaxis', label: 'Previsiones', color: '#10B981', route: '/settings/prediction-settings' },
   { key: 'calendar', icon: 'calendar', label: 'Calendario', color: '#A855F7', route: '/calendar-settings' },
   { key: 'inventory', icon: 'shippingbox.fill', label: 'Inventario', color: '#F59E0B', route: '/inventory-settings' },
   { key: 'notifications', icon: 'bell.fill', label: 'Notificaciones', color: '#F97316', route: '/notification-settings' },
