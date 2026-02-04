@@ -540,7 +540,7 @@ export class ForecastService {
           SUM(CASE WHEN im.type = 'out' THEN im.quantity ELSE 0 END) as total_used,
           AVG(CASE WHEN im.type = 'out' THEN im.quantity ELSE 0 END) as avg_per_service
         FROM inventory i
-        LEFT JOIN inventory_movements im ON im.inventoryId = i.id AND im.type = 'out' AND im.createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+        LEFT JOIN inventory_movements im ON im.item_id = i.id AND im.type = 'out' AND im.created_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
         WHERE i.partnerId = ${partnerId}
         GROUP BY i.id, i.name, i.quantity, i.minStock, i.unit
       `);
