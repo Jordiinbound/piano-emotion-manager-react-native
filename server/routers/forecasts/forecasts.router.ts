@@ -9,6 +9,7 @@ import { router, protectedProcedure, publicProcedure } from '../../_core/trpc.js
 import { z } from 'zod';
 import ForecastService from '../../services/analytics/forecast.service.js';
 import { getDb } from '../../db.js';
+import { cacheService } from '../../lib/cache.service.js';
 
 // Lazy initialization of forecast service
 let forecastService: ForecastService | null = null;
@@ -414,7 +415,6 @@ export const forecastsRouter = router({
    */
   tempClearCache: publicProcedure
     .mutation(async () => {
-      const { cacheService } = await import('../../lib/cache.service.js');
       
       try {
         // Limpiar todas las claves de predicciones
