@@ -25,6 +25,12 @@ type ServerAppointment = {
   address: string | null;
   createdAt: Date;
   updatedAt: Date;
+  // Campos eager loaded
+  clientName: string | null;
+  clientEmail: string | null;
+  clientPhone: string | null;
+  pianoBrand: string | null;
+  pianoModel: string | null;
 };
 
 // Convertir cita del servidor al formato local
@@ -59,6 +65,12 @@ function serverToLocalAppointment(server: ServerAppointment): Appointment {
     address: server.address || undefined,
     createdAt: server.createdAt instanceof Date ? server.createdAt.toISOString() : (typeof server.createdAt === 'string' ? server.createdAt : new Date().toISOString()),
     updatedAt: server.updatedAt instanceof Date ? server.updatedAt.toISOString() : (typeof server.updatedAt === 'string' ? server.updatedAt : new Date().toISOString()),
+    // Campos eager loaded
+    clientName: server.clientName || undefined,
+    clientEmail: server.clientEmail || undefined,
+    clientPhone: server.clientPhone || undefined,
+    pianoBrand: server.pianoBrand || undefined,
+    pianoModel: server.pianoModel || undefined,
   };
 }
 

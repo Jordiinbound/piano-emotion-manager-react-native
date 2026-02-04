@@ -417,8 +417,11 @@ interface AppointmentRowProps {
 }
 
 function AppointmentRow({ appointment, onPress }: AppointmentRowProps) {
-  const date = new Date(appointment.date);
-  const timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  // Usar startTime directamente en lugar de extraer de date
+  const timeStr = appointment.startTime || '00:00';
+  // Parsear la fecha correctamente (YYYY-MM-DD)
+  const [year, month, day] = appointment.date.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // month es 0-indexed
   const dateStr = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
 
   return (
