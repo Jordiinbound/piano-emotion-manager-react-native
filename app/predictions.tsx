@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
-    paddingVertical: 32,  // Aumentado de 20 a 32 para más espacio
+    paddingVertical: 40,  // Aumentado para más espacio superior
     borderBottomWidth: 1,
   },
   backButton: {
