@@ -406,7 +406,12 @@ export default function PredictionsScreen() {
         <ThemedText style={[styles.title, { color: textPrimary }]}>Previsiones</ThemedText>
       </View>
 
-      <View style={[styles.tabsContainer, { borderBottomColor: border }]}>
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={[styles.tabsContainer, { borderBottomColor: border }]}
+        contentContainerStyle={styles.tabsContent}
+      >
         {tabs.map((tab) => (
           <TouchableOpacity
             key={tab.id}
@@ -436,7 +441,7 @@ export default function PredictionsScreen() {
             </View>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
 
       <ScrollView
         ref={contentScrollRef}
@@ -474,25 +479,25 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   tabsContainer: {
-    height: 100,
+    maxHeight: 120,
     borderBottomWidth: 1,
+    paddingTop: 20,  // Añadido para más espacio entre título y pestañas
+  },
+  tabsContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingTop: 20,  // Añadido para más espacio entre título y pestañas
-    width: '100%',
-    display: 'flex',
+    paddingBottom: 15,
   },
   tabButton: {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    minWidth: 120,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    minWidth: 100,  // Reducido de 120 a 100 para mejor ajuste en móvil
     textAlign: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 8,  // Reducido de 10 a 8
   },
   tabLabel: {
     marginTop: 8,
