@@ -299,8 +299,8 @@ export class PredictionService {
       }
     }
 
-      // Ordenar por riesgo descendente
-      return churnRisks.sort((a: any, b: any) => b.riskScore - a.riskScore);
+      // Ordenar por días sin servicio descendente (más días primero)
+      return churnRisks.sort((a: any, b: any) => b.daysSinceLastService - a.daysSinceLastService);
     } catch (error) {
       console.error('[PredictionService] Error predicting client churn:', error);
       return [];

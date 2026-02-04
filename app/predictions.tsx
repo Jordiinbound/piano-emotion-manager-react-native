@@ -85,7 +85,7 @@ export default function PredictionsScreen() {
         }))
       : [],
     churn: churnQuery.data && churnQuery.data.length > 0
-      ? churnQuery.data.slice(0, 6).map((c: any) => ({
+      ? churnQuery.data.slice(0, 12).map((c: any) => ({
           clientName: c.clientName,
           riskScore: c.riskScore,
           daysSince: c.daysSinceLastService,
