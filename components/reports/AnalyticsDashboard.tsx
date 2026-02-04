@@ -408,8 +408,16 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   const { width: windowWidth } = useWindowDimensions();
 
   // Calcular ancho de tarjetas dinámicamente: 2 columnas en móvil, 4 en tablet/desktop
+  // Considerando gap de 12px y padding horizontal de 24px (48px total)
   const isTabletOrDesktop = windowWidth >= 768;
-  const cardWidth = isTabletOrDesktop ? '23%' : '48%';
+  const horizontalPadding = 48; // 24px * 2
+  const gap = 12;
+  
+  // Móvil: 2 columnas, Desktop: 4 columnas
+  const columns = isTabletOrDesktop ? 4 : 2;
+  const totalGaps = (columns - 1) * gap;
+  const availableWidth = windowWidth - horizontalPadding - totalGaps;
+  const cardWidth = availableWidth / columns;
 
   // Hook optimizado para métricas y servicios (período seleccionado)
   const {
@@ -684,6 +692,7 @@ const styles = StyleSheet.create({
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'space-between',
     paddingHorizontal: 24,
     gap: 12,
     marginBottom: 24,
