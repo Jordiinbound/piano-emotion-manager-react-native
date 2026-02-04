@@ -18,6 +18,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { useSnackbar } from '@/components/snackbar';
 import { useClientsData, usePianosData, useAppointmentsData } from '@/hooks/data';
+import { trpc } from '@/utils/trpc';
 
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 import { useCalendarSync } from '@/hooks/use-calendar-sync';
@@ -36,18 +37,16 @@ export default function AppointmentDetailScreen() {
   const insets = useSafeAreaInsets();
   const isNew = id === 'new';
 
-  // Lazy loading: solo cargar datos cuando sea necesario
-  const [dataEnabled, setDataEnabled] = useState(false);
-  
-  useEffect(() => {
-    // Habilitar carga de datos después de 100ms
-    const timer = setTimeout(() => setDataEnabled(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
+  // Cargar solo el detalle de esta cita específica
+  const { data: appointmentDetail, isLoading: loadingDetail } = trpc.appointments.getById.useQuery(
+    { id: parseInt(id, 10) },
+    { enabled: !isNew && !!id }
+  );
 
-  const { clients, getClient, loading: clientsLoading } = useClientsData({ enabled: dataEnabled });
-  const { pianos, getPiano, getPianosByClient, loading: pianosLoading } = usePianosData({ enabled: dataEnabled });
-  const { appointments, addAppointment, updateAppointment, deleteAppointment, getAppointment, loading: appointmentsLoading } = useAppointmentsData();
+  // Solo cargar listas completas si es cita nueva
+  const { clients, loading: clientsLoading } = useClientsData({ enabled: isNew });
+  const { pianos, getPianosByClient, loading: pianosLoading } = usePianosData({ enabled: isNew });
+  const { addAppointment, updateAppointment, deleteAppointment } = useAppointmentsData();
   const { error: showError } = useSnackbar();
   const { sendAppointmentReminder } = useWhatsApp();
   const { showExportOptions, exportToGoogleCalendar, exportToOutlookCalendar, exportToICS } = useCalendarSync();
@@ -74,17 +73,42 @@ export default function AppointmentDetailScreen() {
   const textColor = useThemeColor({}, 'text');
 
   useEffect(() => {
-    if (!isNew && id) {
-      const appointment = getAppointment(id);
-      if (appointment) {
-        setForm(appointment);
-      }
+    if (!isNew && appointmentDetail) {
+      // Convertir appointmentDetail al formato del formulario
+      setForm({
+        id: String(appointmentDetail.id),
+        clientId: String(appointmentDetail.clientId),
+        pianoId: appointmentDetail.pianoId ? String(appointmentDetail.pianoId) : '',
+        date: appointmentDetail.date,
+        startTime: appointmentDetail.startTime,
+        estimatedDuration: appointmentDetail.duration,
+        serviceType: appointmentDetail.serviceType as ServiceType,
+        status: appointmentDetail.status as AppointmentStatus,
+        reminderSent: appointmentDetail.reminderSent || false,
+        notes: appointmentDetail.notes || '',
+        title: appointmentDetail.title || '',
+      });
     }
-  }, [id, isNew, appointments]);
+  }, [appointmentDetail, isNew]);
 
-  const selectedClient = form.clientId ? getClient(form.clientId) : null;
-  const selectedPiano = form.pianoId ? getPiano(form.pianoId) : null;
-  const clientPianos = form.clientId ? getPianosByClient(form.clientId) : [];
+  // Para citas existentes, usar datos de appointmentDetail
+  const selectedClient = !isNew && appointmentDetail ? {
+    id: String(appointmentDetail.clientId),
+    firstName: appointmentDetail.clientName?.split(' ')[0] || '',
+    lastName1: appointmentDetail.clientName?.split(' ')[1],
+    phone: appointmentDetail.clientPhone || '',
+    email: appointmentDetail.clientEmail || undefined,
+    addressText: appointmentDetail.clientAddress || undefined,
+  } : null;
+
+  const selectedPiano = !isNew && appointmentDetail && appointmentDetail.pianoId ? {
+    id: String(appointmentDetail.pianoId),
+    brand: appointmentDetail.pianoBrand || '',
+    model: appointmentDetail.pianoModel || '',
+    serialNumber: appointmentDetail.pianoSerialNumber || '',
+  } : null;
+
+  const clientPianos = isNew && form.clientId ? getPianosByClient(form.clientId) : [];
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -167,7 +191,7 @@ export default function AppointmentDetailScreen() {
   const statuses: AppointmentStatus[] = ['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled'];
 
   // Mostrar loading mientras cargan los datos
-  const isLoading = clientsLoading || pianosLoading || appointmentsLoading;
+  const isLoading = loadingDetail || (isNew && (clientsLoading || pianosLoading));
 
   return (
     <ThemedView style={styles.container}>
