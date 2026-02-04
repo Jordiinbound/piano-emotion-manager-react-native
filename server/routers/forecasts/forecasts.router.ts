@@ -5,7 +5,7 @@
  * Endpoints para analíticas predictivas
  */
 
-import { router, protectedProcedure } from '../../trpc';
+import { router, protectedProcedure } from '../../_core/trpc.js';
 import { z } from 'zod';
 import ForecastService from '../../services/analytics/forecast.service';
 import { getDb } from '../../db';
