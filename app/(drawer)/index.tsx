@@ -212,7 +212,10 @@ export default function DashboardScreen() {
                   >
                     <Ionicons name="chevron-forward" size={20} color={COLORS.textSecondary} />
                   </Pressable>
-                  <Pressable style={styles.calendarButton as any}>
+                  <Pressable 
+                    style={styles.calendarButton as any}
+                    onPress={() => router.push('/calendar')}
+                  >
                     <Ionicons name="calendar-outline" size={20} color={COLORS.aiWarning} />
                   </Pressable>
                 </View>
