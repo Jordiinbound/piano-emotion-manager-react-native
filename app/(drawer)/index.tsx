@@ -337,7 +337,12 @@ export default function DashboardScreen() {
                   <AppointmentRow
                     key={apt.id}
                     appointment={apt}
-                    onPress={() => router.push(`/appointment/${apt.id}`)}
+                    onPress={() => {
+                      // Navegación asíncrona para evitar bloqueo de UI
+                      setTimeout(() => {
+                        router.push(`/appointment/${apt.id}`);
+                      }, 0);
+                    }}
                   />
                 ))
               ) : (
