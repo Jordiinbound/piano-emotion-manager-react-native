@@ -408,16 +408,12 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   const { width: windowWidth } = useWindowDimensions();
 
   // Calcular ancho de tarjetas dinámicamente: 2 columnas en móvil, 4 en tablet/desktop
-  // Considerando gap de 12px y padding horizontal de 24px (48px total)
+  // Usar porcentajes para que funcione correctamente con flexbox y gap
   const isTabletOrDesktop = windowWidth >= 768;
-  const horizontalPadding = 48; // 24px * 2
-  const gap = 12;
   
-  // Móvil: 2 columnas, Desktop: 4 columnas
-  const columns = isTabletOrDesktop ? 4 : 2;
-  const totalGaps = (columns - 1) * gap;
-  const availableWidth = windowWidth - horizontalPadding - totalGaps;
-  const cardWidth = availableWidth / columns;
+  // Móvil: 2 columnas (48%), Desktop: 4 columnas (23.5%)
+  // Los porcentajes dejan espacio para los gaps de 12px
+  const cardWidth = isTabletOrDesktop ? '23.5%' : '48%';
 
   // Hook optimizado para métricas y servicios (período seleccionado)
   const {
