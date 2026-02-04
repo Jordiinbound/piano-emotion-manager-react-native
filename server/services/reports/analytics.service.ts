@@ -587,8 +587,8 @@ export class AnalyticsService {
     const result = await db
       .select({
         total: count(),
-        completed: sql<number>`SUM(CASE WHEN ${services.clientSignature} IS NOT NULL AND ${services.clientSignature} != '' THEN 1 ELSE 0 END)`,
-        pending: sql<number>`SUM(CASE WHEN ${services.clientSignature} IS NULL OR ${services.clientSignature} = '' THEN 1 ELSE 0 END)`,
+        completed: sql<number>`SUM(CASE WHEN COALESCE(${services.clientSignature}, '') != '' THEN 1 ELSE 0 END)`,
+        pending: sql<number>`SUM(CASE WHEN COALESCE(${services.clientSignature}, '') = '' THEN 1 ELSE 0 END)`,
       })
       .from(services)
       .where(

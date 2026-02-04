@@ -167,7 +167,12 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
       setScreenWidth(window.width);
     });
     
-    return () => subscription?.remove();
+    // Cleanup: remover listener al desmontar
+    return () => {
+      if (subscription && typeof subscription.remove === 'function') {
+        subscription.remove();
+      }
+    };
   }, []);
   
   // Calcular ancho real del contenedor: ancho de pantalla - padding horizontal de la sección

@@ -194,3 +194,11 @@
   - Solución: Cambiar metricCard width de 23.5% a 48% (2 columnas)
 - [x] Descripciones de métricas truncadas ("Ticket m...", "Ingresos...") - deben mostrarse completas
   - Solución: Cambiar flexWrap de 'nowrap' a 'wrap' en metricTitle
+
+## 🚨 BUG CRÍTICO - Página en Blanco Post-Despliegue (30 Enero 2026)
+
+- [x] Página de Reportes carga en blanco después del último despliegue (layout móvil)
+  - Causa 1: Sintaxis SQL incorrecta en clientSignature (IS NOT NULL AND != '')
+  - Solución 1: Usar COALESCE(clientSignature, '') != ''
+  - Causa 2: Listener de dimensiones sin validación de remove()
+  - Solución 2: Validar typeof subscription.remove === 'function' antes de llamar
