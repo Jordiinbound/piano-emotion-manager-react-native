@@ -3,7 +3,7 @@
  * Piano Emotion Manager
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -24,7 +24,7 @@ import {
 } from '@/hooks/reports';
 import { useTranslation } from '@/hooks/use-translation';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Se eliminó la constante SCREEN_WIDTH - ahora se usa state reactivo
 
 // Paleta de colores profesional (tonos matizados y suaves)
 const COLORS = {
@@ -158,9 +158,21 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
+  // State para ancho de pantalla responsive
+  const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
+  
+  // Listener para cambios de dimensiones (rotación, resize)
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setScreenWidth(window.width);
+    });
+    
+    return () => subscription?.remove();
+  }, []);
+  
   // Calcular ancho real del contenedor: ancho de pantalla - padding horizontal de la sección
   const containerPadding = 24 * 2; // padding horizontal de la sección (24px cada lado)
-  const chartWidth = SCREEN_WIDTH - containerPadding;
+  const chartWidth = screenWidth - containerPadding;
 
   if (!data || data.length === 0) {
     return (

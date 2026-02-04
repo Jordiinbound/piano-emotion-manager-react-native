@@ -583,12 +583,12 @@ export class AnalyticsService {
     const now = new Date().toISOString();
     
     // UNA SOLA query con agregaciones condicionales para obtener todas las estadísticas
-    // Criterio: Un servicio está completado si su fecha es anterior a HOY
+    // Criterio: Un servicio está completado si tiene firma del cliente (clientSignature)
     const result = await db
       .select({
         total: count(),
-        completed: sql<number>`SUM(CASE WHEN ${services.date} < ${now} THEN 1 ELSE 0 END)`,
-        pending: sql<number>`SUM(CASE WHEN ${services.date} >= ${now} THEN 1 ELSE 0 END)`,
+        completed: sql<number>`SUM(CASE WHEN ${services.clientSignature} IS NOT NULL AND ${services.clientSignature} != '' THEN 1 ELSE 0 END)`,
+        pending: sql<number>`SUM(CASE WHEN ${services.clientSignature} IS NULL OR ${services.clientSignature} = '' THEN 1 ELSE 0 END)`,
       })
       .from(services)
       .where(

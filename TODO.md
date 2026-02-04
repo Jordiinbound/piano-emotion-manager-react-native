@@ -177,3 +177,13 @@
   - Solución: Ya era responsive con Dimensions.get('window').width
 - [x] Matizar colores (menos vibrantes, más profesionales)
   - Solución: Paleta actualizada con tonos suaves (#5b7fc7, #52a67d, #d9a05b, #9b7fc9)
+
+## 🐛 BUG - Tasa de Finalización Siempre 100% (30 Enero 2026)
+
+- [x] Tasa de finalización muestra siempre 100% (debería variar según servicios realmente completados)
+  - Causa: Usaba fecha del servicio (< hoy = completado) en lugar de clientSignature
+  - Solución: Cambiar a clientSignature IS NOT NULL AND != ''
+  - Criterio correcto: Servicio completado = tiene firma del cliente
+- [x] Gráfico de evolución NO es responsive (no se actualiza al rotar pantalla)
+  - Causa: Dimensions.get('window').width solo se ejecuta una vez al montar
+  - Solución: Agregar listener con Dimensions.addEventListener('change') + state
