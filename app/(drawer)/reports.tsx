@@ -16,7 +16,17 @@ export default function ReportsScreen() {
   const { setHeaderConfig } = useHeader();
   const { t } = useTranslation();
 
-  // Configurar header
+  // Configurar header en montaje inicial (para hard refresh)
+  useEffect(() => {
+    setHeaderConfig({
+      title: t('navigation.reports'),
+      subtitle: t('reports.subtitle'),
+      icon: 'chart.bar.fill',
+      showBackButton: false,
+    });
+  }, [setHeaderConfig, t]);
+
+  // Configurar header cuando la pantalla recibe foco (navegación)
   useFocusEffect(
     React.useCallback(() => {
     setHeaderConfig({
