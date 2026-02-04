@@ -199,7 +199,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   const range = maxValue - minValue || 1;
 
   const chartHeight = 280;
-  const padding = { top: 40, right: 10, bottom: 60, left: 35 };
+  const padding = { top: 40, right: 10, bottom: 60, left: 50 };  // Aumentado left de 35 a 50 para etiquetas Y
   const plotWidth = chartWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
 
