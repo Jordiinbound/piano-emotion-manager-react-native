@@ -408,4 +408,40 @@ export const forecastsRouter = router({
         totalMovements: movements.length,
       };
     }),
+  
+  /**
+   * TEMP PUBLIC: Limpiar caché de predicciones (SIN AUTENTICACIÓN)
+   */
+  tempClearCache: publicProcedure
+    .mutation(async () => {
+      const { default: cacheService } = await import('../../lib/cache.service.js');
+      
+      try {
+        // Limpiar todas las claves de predicciones
+        const keys = [
+          'predictions:summary:1',
+          'forecast:revenue:1',
+          'forecast:churn:1',
+          'forecast:maintenance:1',
+          'forecast:workload:1',
+          'forecast:inventory:1',
+        ];
+        
+        for (const key of keys) {
+          await cacheService.delete(key);
+        }
+        
+        return {
+          success: true,
+          message: 'Caché de predicciones limpiada exitosamente',
+          clearedKeys: keys.length,
+        };
+      } catch (error) {
+        console.error('[tempClearCache] Error:', error);
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : 'Error desconocido',
+        };
+      }
+    }),
 });
