@@ -75,9 +75,17 @@ export const alertSettings = mysqlTable("alert_settings", {
     inventoryExpiryNoticeDays: int().default(30),
     // Mantenimiento
     toolsMaintenanceDays: int().default(180),
+    // Predicción de Mantenimiento de Pianos
+    maintenanceTuningIntervalDays: int().default(180), // Intervalo recomendado para afinación (6 meses)
+    maintenanceRegulationIntervalDays: int().default(730), // Intervalo recomendado para regulación (2 años)
+    maintenancePredictionWindowMonths: int().default(6), // Ventana de predicción hacia adelante (meses)
     // Clientes
     clientFollowupDays: int().default(90),
     clientInactiveMonths: int().default(12),
+    // Predicción de Riesgo de Pérdida de Clientes
+    churnRiskMinDays: int().default(180), // Días mínimos sin servicio para considerar riesgo
+    churnRiskIntervalMultiplier: decimal({ precision: 3, scale: 1 }).default('1.5'), // Multiplicador del intervalo promedio (ej: 1.5x)
+    churnRiskMinScore: int().default(25), // Umbral mínimo de puntuación de riesgo para mostrar
     // Preferencias de Notificaciones
     emailNotificationsEnabled: tinyint().default(1),
     pushNotificationsEnabled: tinyint().default(0),
@@ -1009,6 +1017,22 @@ export const serviceTasks = mysqlTable("service_tasks", {
 }, (table) => [
     index("service_tasks_type_idx").on(table.serviceTypeId),
     index("service_tasks_order_idx").on(table.serviceTypeId, table.orderIndex),
+]);
+// ============================================================================
+// SERVICE INTERVAL SETTINGS BY CLIENT TYPE
+// ============================================================================
+export const serviceIntervalSettings = mysqlTable("service_interval_settings", {
+    id: int().autoincrement().notNull(),
+    partnerId: int().notNull().default(1),
+    clientType: mysqlEnum(['particular', 'student', 'professional', 'music_school', 'conservatory', 'concert_hall']).notNull(),
+    tuningIntervalDays: int().default(180).notNull(),
+    regulationIntervalDays: int().default(730).notNull(),
+    createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+    updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+    index("service_interval_partner_idx").on(table.partnerId),
+    index("service_interval_client_type_idx").on(table.clientType),
+    index("service_interval_unique_idx").on(table.partnerId, table.clientType),
 ]);
 // ============================================================================
 // ACCOUNTING TABLES
