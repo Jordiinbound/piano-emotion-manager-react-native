@@ -14,11 +14,11 @@
   - [x] Solución: Eliminar paddingHorizontal, usar padding: 16 uniforme
 
 ### Previsiones sin Datos (04 Feb 2026)
-- [ ] **BUG CRÍTICO: Previsiones muestra "Datos insuficientes para previsión"**
-  - [ ] Investigar por qué no se calculan predicciones con datos históricos
-  - [ ] Verificar router forecasts.router.ts y algoritmos
-  - [ ] Revisar queries de datos históricos de servicios
-  - [ ] Verificar que haya suficientes datos en BD para calcular tendencias
+- [x] **BUG CRÍTICO: Previsiones muestra "Datos insuficientes para previsión"**
+  - [x] CAUSA: Endpoints usaban `ctx.user.partnerId` (no existe)
+  - [x] SOLUCIÓN: Cambiar a `ctx.partnerId` (existe en el contexto)
+  - [x] Corregidos todos los endpoints: getRevenue, getChurnRisk, getMaintenance, getWorkload, getInventoryDemand, getSummary, debugHistoricalData
+  - [x] Agregado endpoint de debug para diagnosticar problemas futuros
 
 ### Sistema de Alertas y Filtros
 - [ ] Breadcrumb sigue mostrando ALERTS en lugar de ALERTAS:

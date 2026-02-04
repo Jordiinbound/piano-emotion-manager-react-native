@@ -32,7 +32,7 @@ export const forecastsRouter = router({
     .query(async ({ ctx, input }) => {
       const service = await getForecastService();
       const forecasts = await service.forecastRevenue(
-        ctx.user.partnerId,
+        ctx.partnerId,
         input.months
       );
       return forecasts;
@@ -44,7 +44,7 @@ export const forecastsRouter = router({
   getChurnRisk: protectedProcedure
     .query(async ({ ctx }) => {
       const service = await getForecastService();
-      const risks = await service.forecastClientChurn(ctx.user.partnerId);
+      const risks = await service.forecastClientChurn(ctx.partnerId);
       return risks;
     }),
 
@@ -54,7 +54,7 @@ export const forecastsRouter = router({
   getMaintenance: protectedProcedure
     .query(async ({ ctx }) => {
       const service = await getForecastService();
-      const forecasts = await service.forecastMaintenance(ctx.user.partnerId);
+      const forecasts = await service.forecastMaintenance(ctx.partnerId);
       return forecasts;
     }),
 
@@ -68,7 +68,7 @@ export const forecastsRouter = router({
     .query(async ({ ctx, input }) => {
       const service = await getForecastService();
       const forecasts = await service.forecastWorkload(
-        ctx.user.partnerId,
+        ctx.partnerId,
         input.weeks
       );
       return forecasts;
@@ -80,7 +80,7 @@ export const forecastsRouter = router({
   getInventoryDemand: protectedProcedure
     .query(async ({ ctx }) => {
       const service = await getForecastService();
-      const forecasts = await service.forecastInventoryDemand(ctx.user.partnerId);
+      const forecasts = await service.forecastInventoryDemand(ctx.partnerId);
       return forecasts;
     }),
 
@@ -90,7 +90,7 @@ export const forecastsRouter = router({
   getSummary: protectedProcedure
     .query(async ({ ctx }) => {
       const service = await getForecastService();
-      const summary = await service.getForecastsSummary(ctx.user.partnerId);
+      const summary = await service.getForecastsSummary(ctx.partnerId);
       return summary;
     }),
 
@@ -104,7 +104,7 @@ export const forecastsRouter = router({
       // Query 1: Total de servicios
       const totalResult = await db.execute(
         'SELECT COUNT(*) as total FROM services WHERE partnerId = ?',
-        [ctx.user.partnerId]
+        [ctx.partnerId]
       );
       
       // Query 2: Servicios por mes (últimos 12 meses)
@@ -118,7 +118,7 @@ export const forecastsRouter = router({
           AND date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
         GROUP BY DATE_FORMAT(date, '%Y-%m-01')
         ORDER BY month
-      `, [ctx.user.partnerId]);
+      `, [ctx.partnerId]);
       
       // Query 3: Rango de fechas
       const dateRangeResult = await db.execute(`
@@ -128,10 +128,10 @@ export const forecastsRouter = router({
           TIMESTAMPDIFF(MONTH, MIN(date), MAX(date)) as months_of_data
         FROM services
         WHERE partnerId = ?
-      `, [ctx.user.partnerId]);
+      `, [ctx.partnerId]);
       
       return {
-        partnerId: ctx.user.partnerId,
+        partnerId: ctx.partnerId,
         totalServices: totalResult.rows?.[0],
         monthlyData: monthlyResult.rows,
         dateRange: dateRangeResult.rows?.[0],
