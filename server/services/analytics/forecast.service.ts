@@ -248,8 +248,8 @@ export class ForecastService {
             s.date
           )) as avg_interval_days
         FROM clients c
-        LEFT JOIN services s ON s.client_id = c.id
-        WHERE c.partner_id = ${partnerId}
+        LEFT JOIN services s ON s.clientId = c.id
+        WHERE c.partnerId = ${partnerId}
         GROUP BY c.id, c.name, c.email
         HAVING COUNT(s.id) > 0
       `);
@@ -354,15 +354,15 @@ export class ForecastService {
           p.id as piano_id,
           p.brand,
           p.model,
-          p.type,
+          p.pianoType as type,
           c.name as client_name,
-          s.service_type,
+          s.serviceType,
           s.date as service_date
         FROM pianos p
         JOIN clients c ON p.clientId = c.id
         LEFT JOIN services s ON s.pianoId = p.id
         WHERE p.partnerId = ${partnerId}
-        ORDER BY p.id, s.service_type, s.date DESC
+        ORDER BY p.id, s.serviceType, s.date DESC
       `);
 
       const forecasts: MaintenanceForecast[] = [];
@@ -376,7 +376,7 @@ export class ForecastService {
           pianoServices.set(pianoKey, new Map());
         }
 
-        const serviceType = (row as any).service_type || 'general';
+        const serviceType = (row as any).serviceType || 'general';
         if (!pianoServices.get(pianoKey)!.has(serviceType)) {
           pianoServices.get(pianoKey)!.set(serviceType, []);
         }
@@ -442,8 +442,8 @@ export class ForecastService {
           DATE_FORMAT(date, '%Y-%m-%d') as week,
           COUNT(*) as appointments
         FROM appointments
-        WHERE partner_id = ${partnerId} AND date >= CURDATE()
-        GROUP BY WEEK(date, 1)
+        WHERE partnerId = ${partnerId} AND date >= CURDATE()
+        GROUP BY WEEK(date, 1), DATE_FORMAT(date, '%Y-%m-%d')
         ORDER BY week
       `);
 
@@ -452,7 +452,7 @@ export class ForecastService {
           DAYOFWEEK(date) as day_of_week,
           COUNT(*) as services
         FROM services
-        WHERE partner_id = ${partnerId} AND date >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+        WHERE partnerId = ${partnerId} AND date >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
         GROUP BY DAYOFWEEK(date)
       `);
 
@@ -532,21 +532,19 @@ export class ForecastService {
 
   async forecastInventoryDemand(partnerId: string): Promise<any[]> {
     try {
-      const result = await this.db.execute(sql`
+      // TODO: Implementar cuando exista tabla inventory_movements
+      // La tabla inventory existe pero no tiene sistema de movimientos
+      return [];
+      
+      /* const result = await this.db.execute(sql`
         SELECT 
           i.id,
           i.name,
-          i.current_stock,
-          i.min_stock,
-          i.unit,
-          COUNT(im.id) as usage_count,
-          SUM(im.quantity) as total_used,
-          AVG(im.quantity) as avg_per_service
-        FROM inventory_items i
-        LEFT JOIN inventory_movements im ON im.item_id = i.id AND im.type = 'out' AND im.created_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
-        WHERE i.partner_id = ${partnerId}
-        GROUP BY i.id, i.name, i.current_stock, i.min_stock, i.unit
-        HAVING COUNT(im.id) > 0
+          i.quantity as current_stock,
+          i.minStock as min_stock,
+          i.unit
+        FROM inventory i
+        WHERE i.partnerId = ${partnerId}
       `);
 
       const forecasts = [];
