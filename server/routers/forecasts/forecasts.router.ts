@@ -8,7 +8,7 @@
 import { router, protectedProcedure } from '../../_core/trpc.js';
 import { z } from 'zod';
 import ForecastService from '../../services/analytics/forecast.service.js';
-import { getDb } from '../../db';
+import { getDb } from '../../db.js';
 
 // Lazy initialization of forecast service
 let forecastService: ForecastService | null = null;
