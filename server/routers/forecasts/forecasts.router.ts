@@ -96,6 +96,7 @@ export const forecastsRouter = router({
 
   /**
    * DEBUG: Verifica datos históricos de servicios
+   * Actualizado: 2026-02-04 - Fix ctx.partnerId
    */
   debugHistoricalData: protectedProcedure
     .query(async ({ ctx }) => {

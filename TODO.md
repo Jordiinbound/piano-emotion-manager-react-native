@@ -242,7 +242,14 @@
   - [x] Resultado: Etiquetas compactas, columnas más separadas
 
 ### Gráfico de Reportes - Formato de Moneda (04 Feb 2026)
-- [ ] **Mejora: Reducir espacio entre número y símbolo €**
-  - [ ] Actualmente: "25.0k €" (con espacio)
-  - [ ] Deseado: "25.0k€" (sin espacio)
-  - [ ] Ajustar formato en AnalyticsDashboard.tsx
+- [x] **Mejora: Reducir espacio entre número y símbolo €**
+  - [x] Antes: "25.0k €" (con espacio)
+  - [x] Ahora: "25.0k€" (sin espacio)
+  - [x] Ajustado en formatValue() de AnalyticsDashboard.tsx
+
+### Grid de Métricas en Reportes (04 Feb 2026)
+- [ ] **BUG: Grid pasa por 3 columnas en ancho intermedio**
+  - [ ] En cierto ancho, las tarjetas se muestran en 3 columnas
+  - [ ] Los porcentajes de cambio se cortan (↘6.7%, ↗87.5%)
+  - [ ] Debe saltar directamente de 2 a 4 columnas
+  - [ ] Ajustar breakpoints del grid

@@ -21,6 +21,21 @@ const { width: screenWidth } = Dimensions.get('window');
 
 type TimeRange = 'month' | 'quarter' | 'year';
 
+// Calcular ancho de tarjetas KPI para evitar 3 columnas
+// Saltar directamente de 2 columnas a 4 columnas
+const getKpiCardWidth = () => {
+  if (screenWidth < 768) {
+    // Móvil: 2 columnas (48% cada una)
+    return '48%';
+  } else if (screenWidth < 1200) {
+    // Tablet: 2 columnas (48% cada una) - evitar 3 columnas
+    return '48%';
+  } else {
+    // Desktop: 4 columnas (23% cada una)
+    return '23%';
+  }
+};
+
 export default function AnalyticsDashboardScreen() {
   const router = useRouter();
   const invoicesResult = useInvoices();
@@ -210,7 +225,7 @@ export default function AnalyticsDashboardScreen() {
             )}
           </View>
 
-          <View style={[styles.kpiCard, { backgroundColor: cardBg }]}>
+          <View style={[styles.kpiCard, { backgroundColor: cardBg, width: getKpiCardWidth() }]}>
             <View style={[styles.kpiIcon, { backgroundColor: warning + '20' }]}>
               <IconSymbol name="clock" size={18} color={warning} />
             </View>
@@ -220,7 +235,7 @@ export default function AnalyticsDashboardScreen() {
             </ThemedText>
           </View>
 
-          <View style={[styles.kpiCard, { backgroundColor: cardBg }]}>
+          <View style={[styles.kpiCard, { backgroundColor: cardBg, width: getKpiCardWidth() }]}>
             <View style={[styles.kpiIcon, { backgroundColor: success + '20' }]}>
               <IconSymbol name="wrench.and.screwdriver" size={18} color={success} />
             </View>
@@ -228,7 +243,7 @@ export default function AnalyticsDashboardScreen() {
             <ThemedText style={styles.kpiSmallValue}>{stats.totalServices}</ThemedText>
           </View>
 
-          <View style={[styles.kpiCard, { backgroundColor: cardBg }]}>
+          <View style={[styles.kpiCard, { backgroundColor: cardBg, width: getKpiCardWidth() }]}>
             <View style={[styles.kpiIcon, { backgroundColor: primary + '20' }]}>
               <IconSymbol name="person.2" size={18} color={primary} />
             </View>
@@ -236,7 +251,7 @@ export default function AnalyticsDashboardScreen() {
             <ThemedText style={styles.kpiSmallValue}>{stats.activeClients}</ThemedText>
           </View>
 
-          <View style={[styles.kpiCard, { backgroundColor: cardBg }]}>
+          <View style={[styles.kpiCard, { backgroundColor: cardBg, width: getKpiCardWidth() }]}>
             <View style={[styles.kpiIcon, { backgroundColor: success + '20' }]}>
               <IconSymbol name="eurosign.circle" size={18} color={success} />
             </View>
