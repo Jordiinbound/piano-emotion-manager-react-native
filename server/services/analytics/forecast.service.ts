@@ -543,7 +543,6 @@ export class ForecastService {
         LEFT JOIN inventory_movements im ON im.inventoryId = i.id AND im.type = 'out' AND im.createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
         WHERE i.partnerId = ${partnerId}
         GROUP BY i.id, i.name, i.quantity, i.minStock, i.unit
-        HAVING COUNT(CASE WHEN im.type = 'out' THEN im.id END) > 0
       `);
 
       const forecasts = [];
@@ -568,6 +567,20 @@ export class ForecastService {
             monthsUntilEmpty: Math.max(0, Math.round(monthsUntilEmpty * 10) / 10),
             suggestedOrder: Math.max(0, Math.ceil(monthlyUsage * 3 - currentStock)),
             urgency: monthsUntilMin < 1 ? 'high' : monthsUntilMin < 2 ? 'medium' : 'low',
+          });
+        } else if (currentStock <= minStock) {
+          // Si no tiene movimientos pero está bajo mínimo, mostrar como urgente
+          forecasts.push({
+            itemId: (item as any).id,
+            itemName: (item as any).name,
+            currentStock,
+            minStock,
+            unit: (item as any).unit,
+            monthlyUsage: 0,
+            monthsUntilMin: 0,
+            monthsUntilEmpty: 0,
+            suggestedOrder: Math.max(0, Math.ceil(minStock * 2 - currentStock)),
+            urgency: currentStock === 0 ? 'high' : 'medium',
           });
         }
       }
