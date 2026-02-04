@@ -162,7 +162,7 @@ interface BarChartProps {
 
 const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
   // State para ancho del contenedor (medido con onLayout)
-  const [containerWidth, setContainerWidth] = useState(Dimensions.get('window').width - 48);
+  const [containerWidth, setContainerWidth] = useState(0);  // Iniciar en 0 para forzar medición
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
   
   // Listener para cambios de dimensiones (rotación, resize)

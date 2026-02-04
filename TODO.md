@@ -2,6 +2,13 @@
 
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
+### Gráfico de Reportes con Sidebar (04 Feb 2026)
+- [ ] **BUG CRÍTICO: Gráfico se corta por ambos lados con barra lateral**
+  - [ ] El gráfico pierde responsividad en tablet/desktop con sidebar
+  - [ ] Se corta por izquierda y derecha
+  - [ ] onLayout no está funcionando correctamente
+  - [ ] Revisar cálculo de ancho en BarChart component
+
 ### Previsiones sin Datos (04 Feb 2026)
 - [ ] **BUG CRÍTICO: Previsiones muestra "Datos insuficientes para previsión"**
   - [ ] Investigar por qué no se calculan predicciones con datos históricos
@@ -210,7 +217,8 @@
   - Nota: Los cambios de SQL y listener eran correctos, el problema era esta referencia olvidada
 
 ### Pestañas de Previsiones (04 Feb 2026)
-- [ ] **BUG: Pestañas no centradas en móvil**
-  - [ ] Primera pestaña "Ingresos" se sale por la izquierda
-  - [ ] Pestañas no se distribuyen correctamente en el espacio disponible
-  - [ ] Ajustar layout para centrar pestañas en móvil
+- [x] **BUG: Pestañas no centradas en móvil**
+  - [x] Primera pestaña "Ingresos" se sale por la izquierda
+  - [x] Pestañas no se distribuyen correctamente en el espacio disponible
+  - [x] Ajustar layout para centrar pestañas en móvil
+  - [x] Oscurecer colores de texto para mejor legibilidad
