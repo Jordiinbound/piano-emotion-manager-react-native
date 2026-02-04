@@ -6,6 +6,7 @@
  */
 
 import type { MySql2Database } from 'drizzle-orm/mysql2';
+import { sql } from 'drizzle-orm';
 
 // Tipos de previsión
 type ForecastType = 
@@ -120,16 +121,16 @@ export class ForecastService {
     try {
       console.log('[DEBUG] getHistoricalRevenue called with:', { partnerId, months });
       
-      const result = await this.db.execute(`
+      const result = await this.db.execute(sql`
         SELECT 
           DATE_FORMAT(date, '%Y-%m-01') as month,
           COALESCE(SUM(cost), 0) as total
         FROM services
-        WHERE partnerId = ?
-          AND date >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+        WHERE partnerId = ${partnerId}
+          AND date >= DATE_SUB(NOW(), INTERVAL ${months} MONTH)
         GROUP BY DATE_FORMAT(date, '%Y-%m-01')
         ORDER BY month
-      `, [partnerId, months]);
+      `);
 
       console.log('[DEBUG] Query result rows:', result.rows);
       console.log('[DEBUG] Number of rows:', result.rows?.length || 0);
@@ -234,7 +235,7 @@ export class ForecastService {
    */
   async forecastClientChurn(partnerId: string): Promise<ChurnRisk[]> {
     try {
-      const result = await this.db.execute(`
+      const result = await this.db.execute(sql`
         SELECT 
           c.id,
           c.name,
@@ -248,10 +249,10 @@ export class ForecastService {
           )) as avg_interval_days
         FROM clients c
         LEFT JOIN services s ON s.client_id = c.id
-        WHERE c.partner_id = ?
+        WHERE c.partner_id = ${partnerId}
         GROUP BY c.id, c.name, c.email
         HAVING COUNT(s.id) > 0
-      `, [partnerId]);
+      `);
 
       const churnRisks: ChurnRisk[] = [];
       const now = new Date();
@@ -348,7 +349,7 @@ export class ForecastService {
 
   async forecastMaintenance(partnerId: string): Promise<MaintenanceForecast[]> {
     try {
-      const result = await this.db.execute(`
+      const result = await this.db.execute(sql`
         SELECT 
           p.id as piano_id,
           p.brand,
@@ -360,9 +361,9 @@ export class ForecastService {
         FROM pianos p
         JOIN clients c ON p.clientId = c.id
         LEFT JOIN services s ON s.pianoId = p.id
-        WHERE p.partnerId = ?
+        WHERE p.partnerId = ${partnerId}
         ORDER BY p.id, s.service_type, s.date DESC
-      `, [partnerId]);
+      `);
 
       const forecasts: MaintenanceForecast[] = [];
       const pianoServices: Map<string, Map<string, Date[]>> = new Map();
@@ -436,24 +437,24 @@ export class ForecastService {
 
   async forecastWorkload(partnerId: string, weeks: number = 4): Promise<any[]> {
     try {
-      const upcomingResult = await this.db.execute(`
+      const upcomingResult = await this.db.execute(sql`
         SELECT 
           DATE_FORMAT(date, '%Y-%m-%d') as week,
           COUNT(*) as appointments
         FROM appointments
-        WHERE partner_id = ? AND date >= CURDATE()
+        WHERE partner_id = ${partnerId} AND date >= CURDATE()
         GROUP BY WEEK(date, 1)
         ORDER BY week
-      `, [partnerId]);
+      `);
 
-      const historicalResult = await this.db.execute(`
+      const historicalResult = await this.db.execute(sql`
         SELECT 
           DAYOFWEEK(date) as day_of_week,
           COUNT(*) as services
         FROM services
-        WHERE partner_id = ? AND date >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+        WHERE partner_id = ${partnerId} AND date >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
         GROUP BY DAYOFWEEK(date)
-      `, [partnerId]);
+      `);
 
       const dayDistribution = new Array(7).fill(0);
       let totalServices = 0;
@@ -531,7 +532,7 @@ export class ForecastService {
 
   async forecastInventoryDemand(partnerId: string): Promise<any[]> {
     try {
-      const result = await this.db.execute(`
+      const result = await this.db.execute(sql`
         SELECT 
           i.id,
           i.name,
@@ -543,10 +544,10 @@ export class ForecastService {
           AVG(im.quantity) as avg_per_service
         FROM inventory_items i
         LEFT JOIN inventory_movements im ON im.item_id = i.id AND im.type = 'out' AND im.created_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
-        WHERE i.partner_id = ?
+        WHERE i.partner_id = ${partnerId}
         GROUP BY i.id, i.name, i.current_stock, i.min_stock, i.unit
         HAVING COUNT(im.id) > 0
-      `, [partnerId]);
+      `);
 
       const forecasts = [];
 
