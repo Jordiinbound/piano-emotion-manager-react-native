@@ -622,16 +622,17 @@ export class ForecastService {
       },
       maintenance: {
         upcomingCount: maintenance.length,
-        thisMonth: maintenance.filter(m => {
+        nextMonth: maintenance.filter(m => {
           const now = new Date();
-          const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-          return m.predictedDate <= endOfMonth;
+          const next30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+          return m.predictedDate >= now && m.predictedDate <= next30Days;
         }).length,
         forecasts: maintenance.slice(0, 10),
       },
       workload: {
         forecasts: workload,
-        busiestWeek: workload.reduce((max, w) => w.estimatedTotal > max.estimatedTotal ? w : max, workload[0]),
+        totalNext30Days: workload.reduce((sum, w) => sum + w.estimatedTotal, 0),
+        busiestWeek: workload.length > 0 ? workload.reduce((max, w) => w.estimatedTotal > max.estimatedTotal ? w : max, workload[0]) : null,
       },
       inventory: {
         urgentItems: inventory.filter(i => i.urgency === 'high').length,
