@@ -11,7 +11,7 @@ import { PredictionService } from '../../services/analytics/prediction.service.j
 import { db } from '../../db.js';
 
 // Crear instancia del servicio de predicciones
-const createPredictionService = (organizationId: string) => {
+const createPredictionService = (partnerId: number) => {
   return new PredictionService(db);
 };
 
@@ -28,8 +28,8 @@ export const predictionsRouter = router({
     const { requireAIFeature, recordAIUsage } = await import('../../_core/subscription-middleware.js');
     await requireAIFeature(ctx.user.openId, 'prediction');
     
-    const service = createPredictionService((ctx as any).organizationId);
-    const result = await service.getPredictionsSummary((ctx as any).organizationId);
+    const service = createPredictionService(ctx.partnerId!);
+    const result = await service.getPredictionsSummary(ctx.partnerId!);
     
     // ✅ REGISTRAR USO
     await recordAIUsage(ctx.user.openId, 'prediction');
@@ -47,24 +47,24 @@ export const predictionsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const service = createPredictionService((ctx as any).organizationId);
-      return service.predictRevenue((ctx as any).organizationId, input.months);
+      const service = createPredictionService(ctx.partnerId!);
+      return service.predictRevenue(ctx.partnerId!, input.months);
     }),
 
   /**
    * Obtiene clientes en riesgo de pérdida (churn)
    */
   getChurnRisk: protectedProcedure.query(async ({ ctx }) => {
-    const service = createPredictionService((ctx as any).organizationId);
-    return service.predictClientChurn((ctx as any).organizationId);
+    const service = createPredictionService(ctx.partnerId!);
+    return service.predictClientChurn(ctx.partnerId!);
   }),
 
   /**
    * Obtiene predicciones de mantenimiento de pianos
    */
   getMaintenance: protectedProcedure.query(async ({ ctx }) => {
-    const service = createPredictionService((ctx as any).organizationId);
-    return service.predictMaintenance((ctx as any).organizationId);
+    const service = createPredictionService(ctx.partnerId!);
+    return service.predictMaintenance(ctx.partnerId!);
   }),
 
   /**
@@ -77,16 +77,16 @@ export const predictionsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const service = createPredictionService((ctx as any).organizationId);
-      return service.predictWorkload((ctx as any).organizationId, input.weeks);
+      const service = createPredictionService(ctx.partnerId!);
+      return service.predictWorkload(ctx.partnerId!, input.weeks);
     }),
 
   /**
    * Obtiene predicciones de demanda de inventario
    */
   getInventoryDemand: protectedProcedure.query(async ({ ctx }) => {
-    const service = createPredictionService((ctx as any).organizationId);
-    return service.predictInventoryDemand((ctx as any).organizationId);
+    const service = createPredictionService(ctx.partnerId!);
+    return service.predictInventoryDemand(ctx.partnerId!);
   }),
 });
 
