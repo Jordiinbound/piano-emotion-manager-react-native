@@ -92,6 +92,13 @@ export default function PredictionsScreen() {
     { staleTime: 5 * 60 * 1000, refetchOnWindowFocus: false }
   );
 
+  // Debug logs
+  console.log('[Predictions] Revenue data length:', revenueQuery.data?.length);
+  console.log('[Predictions] Churn data length:', churnQuery.data?.length);
+  console.log('[Predictions] Maintenance data length:', maintenanceQuery.data?.length);
+  console.log('[Predictions] Workload data length:', workloadQuery.data?.length);
+  console.log('[Predictions] Inventory data length:', inventoryQuery.data?.length);
+
   const data = {
     revenue: revenueQuery.data && revenueQuery.data.length > 0 
       ? revenueQuery.data.slice(0, 12).map(r => ({
