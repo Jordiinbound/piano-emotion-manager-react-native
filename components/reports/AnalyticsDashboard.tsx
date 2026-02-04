@@ -220,7 +220,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
 
   // Calcular tamaño de fuente responsive basado en ancho de pantalla
   // Móvil: 10px, Tablet: 11px, Desktop: 12px
-  const labelFontSize = screenWidth < 768 ? '10' : screenWidth < 1024 ? '11' : '12';
+  const labelFontSize = screenWidth < 768 ? '9' : screenWidth < 1024 ? '11' : '12';
 
   // Líneas de grid horizontales
   const gridLines = [0, 0.25, 0.5, 0.75, 1].map(ratio => {
