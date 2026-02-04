@@ -94,7 +94,7 @@ export default function PredictionsScreen() {
 
   const data = {
     revenue: revenueQuery.data && revenueQuery.data.length > 0 
-      ? revenueQuery.data.slice(0, 6).map(r => ({
+      ? revenueQuery.data.slice(0, 12).map(r => ({
           period: r.period,
           value: r.value,
           confidence: r.confidence,
@@ -113,7 +113,7 @@ export default function PredictionsScreen() {
         }))
       : [],
     maintenance: maintenanceQuery.data && maintenanceQuery.data.length > 0
-      ? maintenanceQuery.data.slice(0, 6).map((m: any) => ({
+      ? maintenanceQuery.data.slice(0, 12).map((m: any) => ({
           pianoInfo: m.pianoInfo,
           clientName: m.clientName,
           clientEmail: m.clientEmail,
@@ -125,7 +125,7 @@ export default function PredictionsScreen() {
         }))
       : [],
     workload: workloadQuery.data && workloadQuery.data.length > 0
-      ? workloadQuery.data.slice(0, 6).map((w: any) => ({
+      ? workloadQuery.data.slice(0, 12).map((w: any) => ({
           week: w.week,
           scheduled: w.scheduledAppointments,
           estimated: w.estimatedTotal,
@@ -133,7 +133,7 @@ export default function PredictionsScreen() {
         }))
       : [],
     inventory: inventoryQuery.data && inventoryQuery.data.length > 0
-      ? inventoryQuery.data.slice(0, 6).map((i: any) => ({
+      ? inventoryQuery.data.slice(0, 12).map((i: any) => ({
           itemName: i.itemName,
           currentStock: i.currentStock,
           monthlyUsage: i.monthlyUsage,
