@@ -132,10 +132,10 @@ export class ForecastService {
         ORDER BY month
       `);
 
-      console.log('[DEBUG] Query result rows:', result.rows);
-      console.log('[DEBUG] Number of rows:', result.rows?.length || 0);
+      console.log('[DEBUG] Query result:', result[0]);
+      console.log('[DEBUG] Number of rows:', result[0]?.length || 0);
       
-      const values = (result.rows || []).map((r: any) => parseFloat(r.total) || 0);
+      const values = (result[0] || []).map((r: any) => parseFloat(r.total) || 0);
       console.log('[DEBUG] Parsed values:', values);
       
       return values;
@@ -243,10 +243,7 @@ export class ForecastService {
           MAX(s.date) as last_service,
           COUNT(s.id) as service_count,
           COALESCE(SUM(s.cost), 0) as total_spent,
-          AVG(TIMESTAMPDIFF(DAY, 
-            LAG(s.date) OVER (PARTITION BY c.id ORDER BY s.date),
-            s.date
-          )) as avg_interval_days
+          180 as avg_interval_days
         FROM clients c
         LEFT JOIN services s ON s.clientId = c.id
         WHERE c.partnerId = ${partnerId}
@@ -257,7 +254,7 @@ export class ForecastService {
       const churnRisks: ChurnRisk[] = [];
       const now = new Date();
 
-      for (const client of result.rows || []) {
+      for (const client of result[0] || []) {
         const lastServiceDate = new Date((client as any).last_service);
         const daysSinceLastService = Math.floor((now.getTime() - lastServiceDate.getTime()) / (1000 * 60 * 60 * 24));
         const avgInterval = parseFloat((client as any).avg_interval_days) || 180;
@@ -368,7 +365,7 @@ export class ForecastService {
       const forecasts: MaintenanceForecast[] = [];
       const pianoServices: Map<string, Map<string, Date[]>> = new Map();
 
-      for (const row of result.rows || []) {
+      for (const row of result[0] || []) {
         if (!(row as any).service_date) continue;
 
         const pianoKey = (row as any).piano_id;
@@ -387,7 +384,7 @@ export class ForecastService {
       const now = new Date();
       const processedPianos = new Set<string>();
 
-      for (const row of result.rows || []) {
+      for (const row of result[0] || []) {
         if (!(row as any).piano_id || processedPianos.has((row as any).piano_id)) continue;
         processedPianos.add((row as any).piano_id);
 
@@ -458,7 +455,7 @@ export class ForecastService {
 
       const dayDistribution = new Array(7).fill(0);
       let totalServices = 0;
-      for (const row of historicalResult.rows || []) {
+      for (const row of historicalResult[0] || []) {
         dayDistribution[parseInt((row as any).day_of_week)] = parseInt((row as any).services);
         totalServices += parseInt((row as any).services);
       }
@@ -476,7 +473,7 @@ export class ForecastService {
         const weekStart = new Date(now.getTime() + w * 7 * 24 * 60 * 60 * 1000);
         const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
 
-        const scheduledAppointments = (upcomingResult.rows || []).find((r: any) => {
+        const scheduledAppointments = (upcomingResult[0] || []).find((r: any) => {
           const weekDate = new Date(r.week);
           return weekDate >= weekStart && weekDate <= weekEnd;
         });
@@ -551,7 +548,7 @@ export class ForecastService {
 
       const forecasts = [];
 
-      for (const item of result.rows || []) {
+      for (const item of result[0] || []) {
         const monthlyUsage = (parseFloat((item as any).total_used) || 0) / 3;
         const currentStock = parseFloat((item as any).current_stock) || 0;
         const minStock = parseFloat((item as any).min_stock) || 0;
