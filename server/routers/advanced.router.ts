@@ -8,9 +8,7 @@ import { getServices } from "../db.js";
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc.js";
 import { getUserByClerkId } from "../db.js";
 import { storageRouter } from "./storage/index.js";
-import PredictionService from "../services/analytics/prediction.service.js";
-import { getDb } from "../db.js";
-import { predictionsRouter } from "./predictions/predictions.router.js";
+import { forecastsRouter } from "./forecasts/forecasts.router.js";
 
 // Funciones auxiliares para el chat
 function generateSuggestions(message: string): string[] {
@@ -152,101 +150,8 @@ export const advancedRouter = router({
       .query(async () => []),
   }),
 
-  // Predictions - Analíticas predictivas locales (sin coste de API)
-  // TEMPORALMENTE DESHABILITADO - Queries SQL con errores de nomenclatura
-  /* predictions: router({
-    getSummary: protectedProcedure.query(async ({ ctx }) => {
-      console.log('[DEBUG] getSummary called for partnerId:', ctx.user.partnerId);
-      try {
-        const db = await getDb();
-        console.log('[DEBUG] Database instance obtained');
-        const service = new PredictionService(db);
-        console.log('[DEBUG] PredictionService instantiated');
-        const summary = await service.getPredictionsSummary(ctx.user.partnerId.toString());
-        console.log('[DEBUG] Summary received:', JSON.stringify(summary, null, 2));
-        return summary;
-      } catch (error) {
-        console.error('[Predictions] Error getting summary:', error);
-        // Retornar datos vacíos en caso de error
-        return {
-          revenue: {
-            predictions: [],
-            trend: 'stable' as const,
-            nextMonthValue: 0,
-          },
-          clientChurn: {
-            atRiskCount: 0,
-            highRiskCount: 0,
-            topRiskClients: [],
-          },
-          maintenance: {
-            upcomingCount: 0,
-            thisMonth: 0,
-            predictions: [],
-          },
-          workload: {
-            predictions: [],
-            busiestWeek: null,
-          },
-          inventory: {
-            urgentItems: 0,
-            predictions: [],
-          },
-          generatedAt: new Date(),
-        };
-      }
-    }),
-
-    getRevenue: protectedProcedure
-      .input(z.object({
-        months: z.number().min(1).max(12).optional().default(3),
-      }))
-      .query(async ({ input }) => {
-        const predictions = [];
-        const now = new Date();
-        
-        for (let i = 1; i <= input.months; i++) {
-          const targetMonth = new Date(now.getFullYear(), now.getMonth() + i, 1);
-          predictions.push({
-            type: 'revenue' as const,
-            period: targetMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }),
-            value: 0,
-            confidence: 0,
-            trend: 'stable' as const,
-            factors: ['Datos insuficientes para predicción'],
-            recommendations: ['Registra más servicios para obtener predicciones precisas'],
-          });
-        }
-        return predictions;
-      }),
-
-    getChurnRisk: protectedProcedure.query(async () => []),
-
-    getMaintenance: protectedProcedure.query(async () => []),
-
-    getWorkload: protectedProcedure
-      .input(z.object({
-        weeks: z.number().min(1).max(12).optional().default(4),
-      }))
-      .query(async ({ input }) => {
-        const predictions = [];
-        const now = new Date();
-        
-        for (let w = 0; w < input.weeks; w++) {
-          const weekStart = new Date(now.getTime() + w * 7 * 24 * 60 * 60 * 1000);
-          predictions.push({
-            week: `Semana del ${weekStart.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}`,
-            scheduledAppointments: 0,
-            estimatedTotal: 0,
-            busyDays: [],
-            recommendation: 'Sin datos suficientes',
-          });
-        }
-        return predictions;
-      }),
-
-    getInventoryDemand: protectedProcedure.query(async () => []),
-  }), */
+  // Forecasts - Previsiones con algoritmos optimizados
+  predictions: forecastsRouter,
 
   // Chat con IA usando Gemini
   chat: router({
