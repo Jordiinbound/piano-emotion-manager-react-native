@@ -486,22 +486,26 @@ const styles = StyleSheet.create({
   tabsContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',  // Centrar las pestañas
     paddingHorizontal: 20,
     paddingBottom: 15,
+    width: '100%',  // Ocupar todo el ancho disponible
   },
   tabButton: {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    paddingHorizontal: 12,
-    minWidth: 100,  // Reducido de 120 a 100 para mejor ajuste en móvil
+    paddingHorizontal: 8,  // Reducido para móvil
+    flex: 1,  // Distribuir espacio equitativamente
+    maxWidth: 120,  // Límite en pantallas grandes
+    minWidth: 60,  // Mínimo en móvil
     textAlign: 'center',
-    marginHorizontal: 8,  // Reducido de 10 a 8
+    marginHorizontal: 4  // Reducido para más compacto
   },
   tabLabel: {
-    marginTop: 8,
-    fontSize: 16,
+    marginTop: 6,
+    fontSize: 14,  // Reducido de 16 a 14 para móvil
     fontWeight: '600',  // Aumentado de 500 a 600 para mejor legibilidad con colores matizados
     textAlign: 'center',
     width: '100%',
