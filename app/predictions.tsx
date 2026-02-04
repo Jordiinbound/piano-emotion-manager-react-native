@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
   tabLabel: {
     marginTop: 8,
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',  // Aumentado de 500 a 600 para mejor legibilidad con colores matizados
     textAlign: 'center',
     width: '100%',
   },
