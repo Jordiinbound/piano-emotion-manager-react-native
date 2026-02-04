@@ -240,3 +240,9 @@
   - [x] Valores sobre columnas: fontSize 9 → 8
   - [x] Separación de columnas: barWidthRatio 0.6 → 0.5
   - [x] Resultado: Etiquetas compactas, columnas más separadas
+
+### Gráfico de Reportes - Formato de Moneda (04 Feb 2026)
+- [ ] **Mejora: Reducir espacio entre número y símbolo €**
+  - [ ] Actualmente: "25.0k €" (con espacio)
+  - [ ] Deseado: "25.0k€" (sin espacio)
+  - [ ] Ajustar formato en AnalyticsDashboard.tsx

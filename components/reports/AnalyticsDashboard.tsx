@@ -213,9 +213,9 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   // Formatear valor como moneda
   const formatValue = (value: number) => {
     if (value >= 1000) {
-      return `${(value / 1000).toFixed(1)}k €`;
+      return `${(value / 1000).toFixed(1)}k€`;
     }
-    return `${Math.round(value)} €`;
+    return `${Math.round(value)}€`;
   };
 
   // Calcular tamaño de fuente responsive basado en ancho de pantalla
