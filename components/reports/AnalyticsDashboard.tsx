@@ -88,7 +88,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           }]}>
             <Ionicons
               name={isPositive ? 'trending-up' : 'trending-down'}
-              size={14}
+              size={16}
               color={isPositive ? COLORS.success : COLORS.danger}
             />
             <Text style={[styles.changeText, { 
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
     maxWidth: '50%',
   },
   changeText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '700',
     flexShrink: 1,
   },
