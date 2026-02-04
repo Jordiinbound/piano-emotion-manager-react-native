@@ -22,11 +22,11 @@ type TabType = 'revenue' | 'churn' | 'maintenance' | 'workload' | 'inventory';
 
 // Paleta de colores suaves para cada pestaña (tonalidad matizada)
 const TAB_COLORS = {
-  revenue: '#52a67d',      // Verde suave
-  churn: '#9b7fc9',        // Púrpura suave
-  maintenance: '#5b7fc7',  // Azul suave
-  workload: '#d9a05b',     // Naranja/dorado suave
-  inventory: '#5ba3b8',    // Cian suave
+  revenue: '#3d8a62',      // Verde suave (oscurecido)
+  churn: '#8566b3',        // Púrpura suave (oscurecido)
+  maintenance: '#4a6bb0',  // Azul suave (oscurecido)
+  workload: '#c28a42',     // Naranja/dorado suave (oscurecido)
+  inventory: '#4a8d9f',    // Cian suave (oscurecido)
 };
 
 // MOCK_DATA eliminado - solo usamos datos reales de la BD
