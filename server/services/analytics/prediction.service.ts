@@ -510,7 +510,7 @@ export class PredictionService {
       const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
 
       // Buscar citas programadas para esta semana
-      const scheduledAppointments = (appointmentsResult.rows || []).find((r: { week: string; appointments?: string }) => {
+      const scheduledAppointments = (upcomingResult.rows || []).find((r: { week: string; appointments?: string }) => {
         const weekDate = new Date(r.week);
         return weekDate >= weekStart && weekDate <= weekEnd;
       });
@@ -583,7 +583,7 @@ export class PredictionService {
         COALESCE(SUM(im.quantity), 0) as total_used,
         COALESCE(AVG(im.quantity), 0) as avg_per_service
       FROM inventory i
-      LEFT JOIN inventory_movements im ON im.inventoryId = i.id AND im.type = 'out' AND im.createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+      LEFT JOIN inventory_movements im ON im.item_id = i.id AND im.type = 'out' AND im.createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
       WHERE i.partnerId = ${partnerId}
       GROUP BY i.id, i.name, i.quantity, i.minStock, i.unit
     `);
