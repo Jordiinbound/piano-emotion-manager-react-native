@@ -665,11 +665,26 @@ export class PredictionService {
       this.predictInventoryDemand(partnerId),
     ]);
 
-    return {
+    // Filtrar mantenimientos del próximo mes
+    const now = new Date();
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+    const nextMonthMaintenance = maintenance.filter(m => {
+      return m.predictedDate >= startOfNextMonth && m.predictedDate <= endOfNextMonth;
+    });
+
+    // Filtrar ingresos: encontrar el mes que corresponde al próximo mes
+    const nextMonthRevenue = revenue.find(r => {
+      const period = r.period.toLowerCase();
+      const nextMonthName = startOfNextMonth.toLocaleDateString('es-ES', { month: 'long' }).toLowerCase();
+      return period.includes(nextMonthName);
+    }) || revenue[0];
+
+    const result = {
       revenue: {
         predictions: revenue,
-        trend: revenue[0]?.trend || 'stable',
-        nextMonthValue: revenue[0]?.value || 0,
+        trend: nextMonthRevenue?.trend || 'stable',
+        nextMonthValue: nextMonthRevenue?.value || 0,
       },
       clientChurn: {
         atRiskCount: churn.length,
@@ -678,12 +693,7 @@ export class PredictionService {
       },
       maintenance: {
         upcomingCount: maintenance.length,
-        nextMonth: maintenance.filter(m => {
-          const now = new Date();
-          const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-          const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0);
-          return m.predictedDate >= startOfNextMonth && m.predictedDate <= endOfNextMonth;
-        }).length,
+        nextMonth: nextMonthMaintenance.length,
         predictions: maintenance.slice(0, 10),
       },
       workload: {
