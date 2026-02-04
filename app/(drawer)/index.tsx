@@ -36,7 +36,7 @@ import { useAllAlerts } from '@/hooks/use-all-alerts';
 import { usePredictionsSummary, useChurnRisk, useMaintenancePredictions, useInventoryPredictions, useWorkloadPredictions } from '@/hooks/use-predictions';
 import { formatCompactNumber } from '@/utils/format';
 
-// Colores del diseño Elegant Professional (tonalidad suave de Analytics)
+// Colores del diseño Elegant Professional (tonalidad suave)
 const COLORS = {
   primary: '#003a8c',      // Azul Cobalto (mantener cabecera)
   accent: '#e07a5f',       // Terracota
@@ -44,17 +44,17 @@ const COLORS = {
   background: '#f5f5f5',
   
   // Alertas (tonos suaves)
-  alertSuccess: '#52a67d', // Verde suave (Analytics)
-  alertDanger: '#d66b6b',  // Rojo suave (Analytics)
+  alertSuccess: '#52a67d', // Verde suave
+  alertDanger: '#d66b6b',  // Rojo suave
   
-  // Métricas (tonos suaves de Analytics)
-  services: '#52a67d',     // Verde suave (antes Azul Cobalto)
-  income: '#52a67d',       // Verde suave (Analytics success)
-  clients: '#9b7fc9',      // Púrpura suave (Analytics purple)
-  pianos: '#d9a05b',       // Naranja/dorado suave (Analytics warning)
+  // Métricas (tonos suaves manteniendo colores originales)
+  services: '#5b7fc7',     // Azul suave (antes #003a8c)
+  income: '#52a67d',       // Verde suave (antes #10b981)
+  clients: '#5ba3b8',      // Cian suave (antes #0891b2)
+  pianos: '#9b7fc9',       // Violeta suave (antes #7c3aed)
   
   // IA (tono suave)
-  aiWarning: '#d9a05b',    // Naranja/dorado suave (Analytics)
+  aiWarning: '#d9a05b',    // Naranja/dorado suave (antes #f59e0b)
   
   // Textos
   textPrimary: '#1a1a1a',
