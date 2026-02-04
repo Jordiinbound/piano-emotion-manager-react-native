@@ -158,11 +158,13 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
-  const [chartWidth, setChartWidth] = React.useState(300);
+  const [chartWidth, setChartWidth] = React.useState(0);
 
   const handleLayout = (event: any) => {
     const { width } = event.nativeEvent.layout;
-    setChartWidth(width);
+    if (width > 0 && width !== chartWidth) {
+      setChartWidth(width);
+    }
   };
 
   if (!data || data.length === 0) {
