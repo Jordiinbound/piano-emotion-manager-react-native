@@ -414,7 +414,7 @@ export const forecastsRouter = router({
    */
   tempClearCache: publicProcedure
     .mutation(async () => {
-      const { default: cacheService } = await import('../../lib/cache.service.js');
+      const { cacheService } = await import('../../lib/cache.service.js');
       
       try {
         // Limpiar todas las claves de predicciones
