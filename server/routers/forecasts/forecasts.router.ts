@@ -5,7 +5,7 @@
  * Endpoints para analíticas predictivas
  */
 
-import { router, protectedProcedure } from '../../_core/trpc.js';
+import { router, protectedProcedure, publicProcedure } from '../../_core/trpc.js';
 import { z } from 'zod';
 import ForecastService from '../../services/analytics/forecast.service.js';
 import { getDb } from '../../db.js';
@@ -304,6 +304,108 @@ export const forecastsRouter = router({
         totalItems: inventoryResult.rows?.length || 0,
         totalMovements: movements.length,
         movements: movements.slice(0, 20), // Mostrar solo los primeros 20
+      };
+    }),
+
+  /**
+   * TEMP PUBLIC: Poblar contactos de clientes (SIN AUTENTICACIÓN)
+   */
+  tempPopulateContacts: publicProcedure
+    .input(z.object({ partnerId: z.string() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      
+      const clientsResult = await db.execute(`
+        SELECT id, name, email, phone
+        FROM clients
+        WHERE partnerId = ?
+          AND (email IS NULL OR email = '' OR phone IS NULL OR phone = '')
+      `, [input.partnerId]);
+      
+      const updates = [];
+      
+      for (const client of clientsResult.rows || []) {
+        const clientData = client as any;
+        const needsEmail = !clientData.email || clientData.email === '';
+        const needsPhone = !clientData.phone || clientData.phone === '';
+        
+        if (needsEmail || needsPhone) {
+          const sanitizedName = clientData.name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9\s]/g, '')
+            .replace(/\s+/g, '');
+          
+          const newEmail = needsEmail ? `${sanitizedName}@example.com` : clientData.email;
+          const newPhone = needsPhone ? `+34 ${Math.floor(600000000 + Math.random() * 99999999)}` : clientData.phone;
+          
+          await db.execute(`
+            UPDATE clients
+            SET email = ?, phone = ?
+            WHERE id = ?
+          `, [newEmail, newPhone, clientData.id]);
+          
+          updates.push({
+            id: clientData.id,
+            name: clientData.name,
+            newEmail,
+            newPhone,
+          });
+        }
+      }
+      
+      return {
+        success: true,
+        totalUpdated: updates.length,
+        updates: updates.slice(0, 10),
+      };
+    }),
+
+  /**
+   * TEMP PUBLIC: Crear movimientos de inventario (SIN AUTENTICACIÓN)
+   */
+  tempPopulateMovements: publicProcedure
+    .input(z.object({ partnerId: z.string() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      
+      const inventoryResult = await db.execute(`
+        SELECT id, name, quantity
+        FROM inventory
+        WHERE partnerId = ?
+      `, [input.partnerId]);
+      
+      const movements = [];
+      const now = new Date();
+      
+      for (const item of inventoryResult.rows || []) {
+        const itemData = item as any;
+        const numMovements = Math.floor(5 + Math.random() * 10);
+        
+        for (let i = 0; i < numMovements; i++) {
+          const daysAgo = Math.floor(Math.random() * 365);
+          const movementDate = new Date(now);
+          movementDate.setDate(movementDate.getDate() - daysAgo);
+          const quantity = Math.floor(1 + Math.random() * 10);
+          
+          await db.execute(`
+            INSERT INTO inventory_movements (inventoryId, type, quantity, createdAt, updatedAt)
+            VALUES (?, 'out', ?, ?, ?)
+          `, [itemData.id, quantity, movementDate, movementDate]);
+          
+          movements.push({
+            inventoryId: itemData.id,
+            itemName: itemData.name,
+            quantity,
+          });
+        }
+      }
+      
+      return {
+        success: true,
+        totalItems: inventoryResult.rows?.length || 0,
+        totalMovements: movements.length,
       };
     }),
 });
