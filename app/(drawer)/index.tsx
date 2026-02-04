@@ -22,6 +22,7 @@ import {
   StyleSheet,
   useWindowDimensions,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -89,7 +90,7 @@ export default function DashboardScreen() {
   const { alerts, stats: alertStats } = useAllAlerts(pianos, services, appointments, invoices, quotes);
   
   // Predicciones
-  const { data: predictionsSummary } = usePredictionsSummary();
+  const { data: predictionsSummary, isLoading: isPredictionsLoading } = usePredictionsSummary();
   const { data: churnRisk } = useChurnRisk();
   const { data: maintenancePredictions } = useMaintenancePredictions();
   const { data: inventoryPredictions } = useInventoryPredictions();
@@ -222,6 +223,12 @@ export default function DashboardScreen() {
               </View>
 
               {/* Grid de métricas 2x2 */}
+              {isLoadingStats ? (
+                <View style={[styles.metricsGrid as any, { justifyContent: 'center', alignItems: 'center', minHeight: 200 }]}>
+                  <ActivityIndicator size="large" color={COLORS.primary} />
+                  <Text style={{ marginTop: 12, color: COLORS.textSecondary, fontSize: 14 }}>Cargando métricas...</Text>
+                </View>
+              ) : (
               <View style={styles.metricsGrid as any}>
                 <MetricCard
                   icon="construct-outline"
@@ -252,6 +259,7 @@ export default function DashboardScreen() {
                   onPress={() => router.push('/(drawer)/inventory')}
                 />
               </View>
+              )}
             </View>
 
             {/* Predicciones IA */}
@@ -266,6 +274,13 @@ export default function DashboardScreen() {
                 </Pressable>
               </View>
 
+              {isPredictionsLoading ? (
+                <View style={{ justifyContent: 'center', alignItems: 'center', minHeight: 200, paddingVertical: 40 }}>
+                  <ActivityIndicator size="large" color={COLORS.pianos} />
+                  <Text style={{ marginTop: 12, color: COLORS.textSecondary, fontSize: 14 }}>Calculando previsiones...</Text>
+                </View>
+              ) : (
+                <>
               <View style={styles.predictionsRow as any}>
                 <CircularIndicator
                   color={COLORS.income}
@@ -283,7 +298,7 @@ export default function DashboardScreen() {
                   color={COLORS.pianos}
                   icon="build-outline"
                   label="Mant. próximo"
-                  value={predictionsSummary?.maintenance?.thisMonth?.toString() || '0'}
+                  value={predictionsSummary?.maintenance?.nextMonth?.toString() || '0'}
                 />
               </View>
               
@@ -302,6 +317,8 @@ export default function DashboardScreen() {
                   value={predictionsSummary?.workload?.busiestWeek?.estimatedTotal?.toString() || '0'}
                 />
               </View>
+                </>
+              )}
             </View>
           </View>
 

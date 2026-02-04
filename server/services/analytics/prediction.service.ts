@@ -1,6 +1,7 @@
 /**
 import type { MySql2Database } from 'drizzle-orm/mysql2';
 import { getDb } from "../../db.js";
+import { cacheService } from '../../lib/cache.service.js';
 type any = MySql2Database<Record<string, never>>;
  * Servicio de Predicción de Demanda
  * 
@@ -540,13 +541,12 @@ export class PredictionService {
         i.minStock as min_stock,
         i.unit,
         COUNT(im.id) as usage_count,
-        SUM(im.quantity) as total_used,
-        AVG(im.quantity) as avg_per_service
+        COALESCE(SUM(im.quantity), 0) as total_used,
+        COALESCE(AVG(im.quantity), 0) as avg_per_service
       FROM inventory i
       LEFT JOIN inventory_movements im ON im.inventoryId = i.id AND im.type = 'out' AND im.createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
       WHERE i.partnerId = ${partnerId}
       GROUP BY i.id, i.name, i.quantity, i.minStock, i.unit
-      HAVING COUNT(im.id) > 0
     `);
 
     const predictions = [];
@@ -556,6 +556,7 @@ export class PredictionService {
       const currentStock = parseFloat(item.current_stock) || 0;
       const minStock = parseFloat(item.min_stock) || 0;
 
+      // Si tiene movimientos, calcular basado en uso histórico
       if (monthlyUsage > 0) {
         const monthsUntilEmpty = currentStock / monthlyUsage;
         const monthsUntilMin = (currentStock - minStock) / monthlyUsage;
@@ -569,8 +570,22 @@ export class PredictionService {
           monthlyUsage: Math.round(monthlyUsage * 10) / 10,
           monthsUntilMin: Math.max(0, Math.round(monthsUntilMin * 10) / 10),
           monthsUntilEmpty: Math.max(0, Math.round(monthsUntilEmpty * 10) / 10),
-          suggestedOrder: Math.max(0, Math.ceil(monthlyUsage * 3 - currentStock)), // Stock para 3 meses
+          suggestedOrder: Math.max(0, Math.ceil(monthlyUsage * 3 - currentStock)),
           urgency: monthsUntilMin < 1 ? 'high' : monthsUntilMin < 2 ? 'medium' : 'low',
+        });
+      } else if (currentStock <= minStock) {
+        // Si no tiene movimientos pero está bajo mínimo, mostrar como urgente
+        predictions.push({
+          itemId: item.id,
+          itemName: item.name,
+          currentStock,
+          minStock,
+          unit: item.unit,
+          monthlyUsage: 0,
+          monthsUntilMin: 0,
+          monthsUntilEmpty: 0,
+          suggestedOrder: Math.max(0, Math.ceil(minStock * 2 - currentStock)),
+          urgency: currentStock === 0 ? 'high' : 'medium',
         });
       }
     }
@@ -594,8 +609,17 @@ export class PredictionService {
    * Obtiene un resumen de todas las predicciones
    */
   async getPredictionsSummary(partnerId: string): Promise<any> {
+    // Intentar obtener del caché
+    const cacheKey = `predictions:summary:${partnerId}`;
+    const cached = await cacheService.get<any>(cacheKey);
+    if (cached) {
+      console.log('[PredictionService] Returning cached predictions summary');
+      return cached;
+    }
+
+    console.log('[PredictionService] Calculating fresh predictions summary...');
     const [revenue, churn, maintenance, workload, inventory] = await Promise.all([
-      this.predictRevenue(partnerId, 3),
+      this.predictRevenue(partnerId, 6),
       this.predictClientChurn(partnerId),
       this.predictMaintenance(partnerId),
       this.predictWorkload(partnerId, 4),
@@ -615,10 +639,11 @@ export class PredictionService {
       },
       maintenance: {
         upcomingCount: maintenance.length,
-        thisMonth: maintenance.filter(m => {
+        nextMonth: maintenance.filter(m => {
           const now = new Date();
-          const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-          return m.predictedDate <= endOfMonth;
+          const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+          const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+          return m.predictedDate >= startOfNextMonth && m.predictedDate <= endOfNextMonth;
         }).length,
         predictions: maintenance.slice(0, 10),
       },
@@ -632,6 +657,12 @@ export class PredictionService {
       },
       generatedAt: new Date(),
     };
+
+    // Guardar en caché por 5 minutos
+    await cacheService.set(cacheKey, result, 300);
+    console.log('[PredictionService] Predictions summary cached for 5 minutes');
+
+    return result;
   }
 }
 
