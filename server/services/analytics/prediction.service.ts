@@ -665,26 +665,29 @@ export class PredictionService {
       this.predictInventoryDemand(partnerId),
     ]);
 
-    // Filtrar mantenimientos del próximo mes
+    // Calcular para los PRÓXIMOS 30 DÍAS (no mes calendario)
     const now = new Date();
-    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const endOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0);
-    const nextMonthMaintenance = maintenance.filter(m => {
-      return m.predictedDate >= startOfNextMonth && m.predictedDate <= endOfNextMonth;
+    const next30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    
+    // Filtrar mantenimientos de próximos 30 días
+    const next30DaysMaintenance = maintenance.filter(m => {
+      return m.predictedDate >= now && m.predictedDate <= next30Days;
     });
 
-    // Filtrar ingresos: encontrar el mes que corresponde al próximo mes
-    const nextMonthRevenue = revenue.find(r => {
-      const period = r.period.toLowerCase();
-      const nextMonthName = startOfNextMonth.toLocaleDateString('es-ES', { month: 'long' }).toLowerCase();
-      return period.includes(nextMonthName);
-    }) || revenue[0];
+    // Calcular ingresos de próximos 30 días (promedio de los primeros meses)
+    const avgMonthlyRevenue = revenue.length > 0 
+      ? revenue.slice(0, 2).reduce((sum, r) => sum + r.value, 0) / Math.min(2, revenue.length)
+      : 0;
+    const next30DaysRevenue = avgMonthlyRevenue; // Aproximación para 30 días
+
+    // Calcular carga de trabajo TOTAL de próximos 30 días (4 semanas)
+    const totalWorkload = workload.reduce((sum, w) => sum + w.estimatedTotal, 0);
 
     const result = {
       revenue: {
         predictions: revenue,
-        trend: nextMonthRevenue?.trend || 'stable',
-        nextMonthValue: nextMonthRevenue?.value || 0,
+        trend: revenue[0]?.trend || 'stable',
+        nextMonthValue: next30DaysRevenue,
       },
       clientChurn: {
         atRiskCount: churn.length,
@@ -693,12 +696,13 @@ export class PredictionService {
       },
       maintenance: {
         upcomingCount: maintenance.length,
-        nextMonth: nextMonthMaintenance.length,
+        nextMonth: next30DaysMaintenance.length,
         predictions: maintenance.slice(0, 10),
       },
       workload: {
         predictions: workload,
-        busiestWeek: workload.reduce((max, w) => w.estimatedTotal > max.estimatedTotal ? w : max, workload[0]),
+        totalNext30Days: totalWorkload,
+        busiestWeek: workload.length > 0 ? workload.reduce((max, w) => w.estimatedTotal > max.estimatedTotal ? w : max, workload[0]) : null,
       },
       inventory: {
         urgentItems: inventory.filter(i => i.urgency === 'high').length,

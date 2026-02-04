@@ -267,7 +267,7 @@ export default function DashboardScreen() {
               <View style={styles.sectionHeader as any}>
                 <View style={styles.aiHeaderLeft as any}>
                   <Ionicons name="bulb-outline" size={22} color={COLORS.pianos} />
-                  <Text style={styles.sectionTitle as any}>Previsión próximo mes</Text>
+                  <Text style={styles.sectionTitle as any}>Previsión próximos 30 días</Text>
                 </View>
                 <Pressable onPress={() => router.push('/predictions')}>
                   <Text style={styles.linkText as any}>Ver todo →</Text>
@@ -314,7 +314,7 @@ export default function DashboardScreen() {
                   color={COLORS.services}
                   icon="calendar-outline"
                   label="Carga trabajo"
-                  value={predictionsSummary?.workload?.busiestWeek?.estimatedTotal?.toString() || '0'}
+                  value={predictionsSummary?.workload?.totalNext30Days?.toString() || '0'}
                 />
               </View>
                 </>
