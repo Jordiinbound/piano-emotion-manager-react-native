@@ -532,19 +532,21 @@ export class ForecastService {
 
   async forecastInventoryDemand(partnerId: string): Promise<any[]> {
     try {
-      // TODO: Implementar cuando exista tabla inventory_movements
-      // La tabla inventory existe pero no tiene sistema de movimientos
-      return [];
-      
-      /* const result = await this.db.execute(sql`
+      const result = await this.db.execute(sql`
         SELECT 
           i.id,
           i.name,
           i.quantity as current_stock,
           i.minStock as min_stock,
-          i.unit
+          i.unit,
+          COUNT(im.id) as usage_count,
+          SUM(CASE WHEN im.type = 'out' THEN im.quantity ELSE 0 END) as total_used,
+          AVG(CASE WHEN im.type = 'out' THEN im.quantity ELSE 0 END) as avg_per_service
         FROM inventory i
+        LEFT JOIN inventory_movements im ON im.inventoryId = i.id AND im.type = 'out' AND im.createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
         WHERE i.partnerId = ${partnerId}
+        GROUP BY i.id, i.name, i.quantity, i.minStock, i.unit
+        HAVING COUNT(CASE WHEN im.type = 'out' THEN im.id END) > 0
       `);
 
       const forecasts = [];
