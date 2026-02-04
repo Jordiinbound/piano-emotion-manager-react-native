@@ -36,9 +36,19 @@ const DEFAULT_SETTINGS = {
   // Mantenimiento
   toolsMaintenanceDays: 180,
   
+  // Predicción de Mantenimiento de Pianos
+  maintenanceTuningIntervalDays: 180,
+  maintenanceRegulationIntervalDays: 730,
+  maintenancePredictionWindowMonths: 6,
+  
   // Clientes
   clientFollowupDays: 90,
   clientInactiveMonths: 12,
+  
+  // Predicción de Riesgo de Pérdida de Clientes
+  churnRiskMinDays: 180,
+  churnRiskIntervalMultiplier: 1.5,
+  churnRiskMinScore: 25,
   
   // Preferencias de Notificaciones
   emailNotificationsEnabled: 1,
@@ -72,9 +82,19 @@ const updateSettingsSchema = z.object({
   // Mantenimiento
   toolsMaintenanceDays: z.number().int().min(0).max(730).optional(),
   
+  // Predicción de Mantenimiento de Pianos
+  maintenanceTuningIntervalDays: z.number().int().min(30).max(730).optional(),
+  maintenanceRegulationIntervalDays: z.number().int().min(180).max(3650).optional(),
+  maintenancePredictionWindowMonths: z.number().int().min(1).max(24).optional(),
+  
   // Clientes
   clientFollowupDays: z.number().int().min(0).max(365).optional(),
   clientInactiveMonths: z.number().int().min(0).max(36).optional(),
+  
+  // Predicción de Riesgo de Pérdida de Clientes
+  churnRiskMinDays: z.number().int().min(30).max(730).optional(),
+  churnRiskIntervalMultiplier: z.number().min(1.0).max(5.0).optional(),
+  churnRiskMinScore: z.number().int().min(0).max(100).optional(),
   
   // Preferencias de Notificaciones
   emailNotificationsEnabled: z.number().int().min(0).max(1).optional(),

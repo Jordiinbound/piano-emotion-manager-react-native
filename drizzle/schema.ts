@@ -87,9 +87,19 @@ export const alertSettings = mysqlTable("alert_settings", {
 	// Mantenimiento
 	toolsMaintenanceDays: int().default(180),
 	
+	// Predicción de Mantenimiento de Pianos
+	maintenanceTuningIntervalDays: int().default(180), // Intervalo recomendado para afinación (6 meses)
+	maintenanceRegulationIntervalDays: int().default(730), // Intervalo recomendado para regulación (2 años)
+	maintenancePredictionWindowMonths: int().default(6), // Ventana de predicción hacia adelante (meses)
+	
 	// Clientes
 	clientFollowupDays: int().default(90),
 	clientInactiveMonths: int().default(12),
+	
+	// Predicción de Riesgo de Pérdida de Clientes
+	churnRiskMinDays: int().default(180), // Días mínimos sin servicio para considerar riesgo
+	churnRiskIntervalMultiplier: decimal({ precision: 3, scale: 1 }).default('1.5'), // Multiplicador del intervalo promedio (ej: 1.5x)
+	churnRiskMinScore: int().default(25), // Umbral mínimo de puntuación de riesgo para mostrar
 	
 	// Preferencias de Notificaciones
 	emailNotificationsEnabled: tinyint().default(1),

@@ -225,6 +225,20 @@ export class PredictionService {
    */
   async predictClientChurn(partnerId: string): Promise<ChurnRisk[]> {
     try {
+      // Obtener configuración del usuario
+      const settingsResult = await this.db.execute(`
+        SELECT churnRiskMinDays, churnRiskIntervalMultiplier, churnRiskMinScore
+        FROM alert_settings
+        WHERE partnerId = ${partnerId}
+        LIMIT 1
+      `);
+      
+      const settings = settingsResult.rows?.[0] || {
+        churnRiskMinDays: 180,
+        churnRiskIntervalMultiplier: 1.5,
+        churnRiskMinScore: 25
+      };
+      
       // Obtener clientes con su historial de servicios
       const result = await this.db.execute(`
       SELECT 
@@ -256,26 +270,28 @@ export class PredictionService {
       let riskScore = 0;
       const factors: string[] = [];
 
-      // Factor 1: Tiempo desde último servicio vs intervalo promedio
+      // Factor 1: Tiempo desde último servicio vs intervalo promedio (configurable)
       const intervalRatio = daysSinceLastService / avgInterval;
-      if (intervalRatio > 2) {
+      const multiplier = parseFloat(settings.churnRiskIntervalMultiplier) || 1.5;
+      if (intervalRatio > (multiplier * 1.33)) { // ej: 2x si multiplier es 1.5
         riskScore += 40;
         factors.push('Muy por encima del intervalo habitual');
-      } else if (intervalRatio > 1.5) {
+      } else if (intervalRatio > multiplier) {
         riskScore += 25;
         factors.push('Por encima del intervalo habitual');
-      } else if (intervalRatio > 1) {
+      } else if (intervalRatio > (multiplier * 0.67)) {
         riskScore += 10;
         factors.push('Cerca del intervalo habitual');
       }
 
-      // Factor 2: Días absolutos sin servicio
-      if (daysSinceLastService > 365) {
+      // Factor 2: Días absolutos sin servicio (configurable)
+      const minDays = parseInt(settings.churnRiskMinDays) || 180;
+      if (daysSinceLastService > (minDays * 2)) {
         riskScore += 30;
-        factors.push('Más de 1 año sin servicio');
-      } else if (daysSinceLastService > 180) {
+        factors.push(`Más de ${Math.round(minDays * 2 / 30)} meses sin servicio`);
+      } else if (daysSinceLastService > minDays) {
         riskScore += 15;
-        factors.push('Más de 6 meses sin servicio');
+        factors.push(`Más de ${Math.round(minDays / 30)} meses sin servicio`);
       }
 
       // Factor 3: Frecuencia histórica
@@ -284,8 +300,9 @@ export class PredictionService {
         factors.push('Pocos servicios históricos');
       }
 
-      // Solo incluir clientes con riesgo significativo
-      if (riskScore >= 25) {
+      // Solo incluir clientes con riesgo significativo (configurable)
+      const minScore = parseInt(settings.churnRiskMinScore) || 25;
+      if (riskScore >= minScore) {
         churnRisks.push({
           clientId: client.id,
           clientName: client.name,
@@ -327,6 +344,20 @@ export class PredictionService {
    */
   async predictMaintenance(partnerId: string): Promise<MaintenancePrediction[]> {
     try {
+      // Obtener configuración del usuario
+      const settingsResult = await this.db.execute(`
+        SELECT maintenanceTuningIntervalDays, maintenanceRegulationIntervalDays, maintenancePredictionWindowMonths
+        FROM alert_settings
+        WHERE partnerId = ${partnerId}
+        LIMIT 1
+      `);
+      
+      const settings = settingsResult.rows?.[0] || {
+        maintenanceTuningIntervalDays: 180,
+        maintenanceRegulationIntervalDays: 730,
+        maintenancePredictionWindowMonths: 6
+      };
+      
       // Obtener pianos con su historial de servicios
       const result = await this.db.execute(`
       SELECT 
@@ -396,16 +427,17 @@ export class PredictionService {
         const predictedDate = new Date(lastService.getTime() + avgInterval * 24 * 60 * 60 * 1000);
 
         // Solo incluir si la fecha predicha está en el futuro cercano (próximos 6 meses)
-        const sixMonthsFromNow = new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000);
-        if (predictedDate > now && predictedDate < sixMonthsFromNow) {
+        const predictionWindowDays = (settings.maintenancePredictionWindowMonths || 6) * 30;
+        const predictionWindowEnd = new Date(now.getTime() + predictionWindowDays * 24 * 60 * 60 * 1000);
+        if (predictedDate > now && predictedDate < predictionWindowEnd) {
           predictions.push({
             pianoId: row.piano_id,
             pianoInfo: `${row.brand} ${row.model} (${row.type})`,
             clientName: row.client_name,
             predictedDate,
-            serviceType: serviceType === 'general' ? 'Mantenimiento general' : serviceType,
+            serviceType: serviceType === 'general' ? 'Mantenimiento general' : serviceType === 'tuning' ? 'Afinación' : serviceType === 'regulation' ? 'Regulación' : serviceType,
             confidence: Math.min(90, 50 + dates.length * 10),
-            basedOn: `${dates.length} servicios anteriores, intervalo promedio: ${Math.round(avgInterval)} días`,
+            basedOn: `Basado en ${dates.length} ${dates.length === 1 ? 'servicio anterior' : 'servicios anteriores'}. Intervalo promedio: ${Math.round(avgInterval)} días (${(avgInterval / 30).toFixed(1)} meses)`,
           });
         }
       }
