@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
-    paddingVertical: 20,
+    paddingVertical: 32,  // Aumentado de 20 a 32 para más espacio
     borderBottomWidth: 1,
   },
   backButton: {
@@ -480,6 +480,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
+    paddingTop: 20,  // Añadido para más espacio entre título y pestañas
     width: '100%',
     display: 'flex',
   },
