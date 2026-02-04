@@ -527,8 +527,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               cardWidth={cardWidth}
             />
             <MetricCard
-              title="Ticket medio por servicio"
+              title="Ticket medio"
               value={formatCurrency(metrics?.averages.ticketValue || 0)}
+              subtitle="por servicio"
               icon="receipt-outline"
               color={COLORS.warning}
               cardWidth={cardWidth}
@@ -558,8 +559,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               cardWidth={cardWidth}
             />
             <MetricCard
-              title="Ingresos medios por factura"
+              title="Ingresos medios"
               value={formatCurrency(metrics?.averages.revenuePerService || 0)}
+              subtitle="por factura"
               icon="trending-up-outline"
               color={COLORS.purple}
               cardWidth={cardWidth}
