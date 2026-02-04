@@ -506,6 +506,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           <MetricCard
             title={t('reports.clients')}
             value={metrics?.clients.new || 0}
+            change={metrics?.clients.changePercent}
             subtitle="Nuevos en el período"
             icon="people-outline"
             color={COLORS.purple}
@@ -672,13 +673,17 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   metricCard: {
-    width: '48%', // 2 columnas en móvil (48% x 2 + gap)
+    width: '48%', // 2 columnas en móvil, 4 columnas en tablet/desktop
     backgroundColor: COLORS.card,
     borderRadius: 4,
     padding: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
     minWidth: 0,
+    // Responsive: 4 columnas en tablet/desktop (23% x 4 + gaps)
+    ...(Dimensions.get('window').width >= 768 && {
+      width: '23%',
+    }),
   },
   metricHeader: {
     flexDirection: 'row',

@@ -37,6 +37,9 @@ export interface DashboardMetrics {
     new: number;
     active: number;
     retention: number;
+    previousNew: number;
+    change: number;
+    changePercent: number;
   };
   pianos: {
     total: number;
@@ -138,15 +141,19 @@ export class AnalyticsService {
       previousRevenue,
       serviceStats,
       clientStats,
+      previousClientStats,
       pianoStats,
       technicianCount,
+      paidInvoicesCount,
     ] = await Promise.all([
       this.getTotalRevenue(startDate, endDate),
       this.getTotalRevenue(previousStartDate, previousEndDate),
       this.getServiceStats(startDate, endDate),
       this.getClientStats(startDate, endDate),
+      this.getClientStats(previousStartDate, previousEndDate),
       this.getPianoStats(startDate, endDate),
       this.getTechnicianCount(),
+      this.getPaidInvoicesCount(startDate, endDate),
     ]);
 
     // Calcular métricas derivadas
@@ -158,9 +165,10 @@ export class AnalyticsService {
     // Ticket medio: promedio del costo de TODOS los servicios (independiente de si están cobrados)
     const averageTicket = await this.getAverageServiceCost(startDate, endDate);
     
-    // Ingresos medios por servicio: ingresos de facturas / servicios completados
-    const averageRevenuePerService = serviceStats.completed > 0 
-      ? currentRevenue / serviceStats.completed 
+    // Ingresos medios por factura: ingresos totales / número de facturas pagadas
+    // Independiente de servicios completados o firmas
+    const averageRevenuePerService = paidInvoicesCount > 0 
+      ? currentRevenue / paidInvoicesCount 
       : 0;
 
     const servicesPerClient = clientStats.active > 0 
@@ -192,6 +200,11 @@ export class AnalyticsService {
         new: clientStats.new,
         active: clientStats.active,
         retention: clientStats.retention,
+        previousNew: previousClientStats.new,
+        change: clientStats.new - previousClientStats.new,
+        changePercent: previousClientStats.new > 0
+          ? ((clientStats.new - previousClientStats.new) / previousClientStats.new) * 100
+          : 0,
       },
       pianos: {
         total: pianoStats.total,
@@ -555,6 +568,33 @@ export class AnalyticsService {
     } catch (error) {
       console.error('[getTotalRevenue] ERROR:', error);
       console.error('[getTotalRevenue] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      throw error;
+    }
+  }
+
+  private async getPaidInvoicesCount(startDate: Date, endDate: Date): Promise<number> {
+    try {
+      const db = await getDb();
+      
+      // Contar facturas pagadas en el período
+      const result = await db
+        .select({
+          count: count(),
+        })
+        .from(invoices)
+        .where(
+          and(
+            eq(invoices.partnerId, this.partnerId),
+            eq(invoices.status, 'paid'),
+            gte(invoices.date, startDate.toISOString()),
+            lte(invoices.date, endDate.toISOString())
+          )
+        );
+
+      const total = Number(result[0]?.count || 0);
+      return total;
+    } catch (error) {
+      console.error('[getPaidInvoicesCount] ERROR:', error);
       throw error;
     }
   }
