@@ -230,6 +230,14 @@
   - [x] "Mantenimiento" se cortaba en "Manteni" / "miento"
   - [x] "Inventario" se cortaba en "Inventari" / "o"
   - [x] Solución: Reducir fontSize de 11px a 9px en móvil
-- [ ] **BUG: Palabras cortadas en tablet/desktop**
-  - [ ] maxWidth: 90 también se aplica en tablet/desktop
-  - [ ] Necesita maxWidth condicional solo para móvil
+- [x] **BUG: Palabras cortadas en tablet/desktop**
+  - [x] maxWidth: 90 se aplicaba en todos los tamaños
+  - [x] Solución: maxWidth condicional solo para móvil (isMobile)
+
+### Gráfico de Reportes - Tamaños de Fuente en Móvil (04 Feb 2026)
+- [ ] **BUG: Etiquetas del gráfico demasiado grandes en móvil**
+  - [ ] Guía de valores del eje Y (25.0k €, 18.8k €, etc.) muy grande
+  - [ ] Valores sobre columnas (25.0k €, 16.6k €, etc.) muy anchos
+  - [ ] Se solaparían si dos meses tienen valores similares
+  - [ ] Reducir fontSize en móvil para liberar espacio
+  - [ ] Aumentar separación entre columnas

@@ -203,8 +203,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   const plotWidth = chartWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
 
-  // Calcular ancho de cada barra (60% del espacio disponible para hacerlas más estrechas)
-  const barWidthRatio = 0.6; // 60% del espacio para barras, 40% para spacing
+  // Calcular ancho de cada barra (50% del espacio disponible para más separación)
+  const barWidthRatio = 0.5; // 50% del espacio para barras, 50% para spacing
   const totalBars = displayData.length;
   const availableWidthPerBar = plotWidth / totalBars;
   const barWidth = availableWidthPerBar * barWidthRatio;
@@ -219,8 +219,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   };
 
   // Calcular tamaño de fuente responsive basado en ancho de pantalla
-  // Móvil: 10px, Tablet: 11px, Desktop: 12px
-  const labelFontSize = screenWidth < 768 ? '9' : screenWidth < 1024 ? '11' : '12';
+  // Móvil: 8px, Tablet: 11px, Desktop: 12px
+  const labelFontSize = screenWidth < 768 ? '8' : screenWidth < 1024 ? '11' : '12';
 
   // Líneas de grid horizontales
   const gridLines = [0, 0.25, 0.5, 0.75, 1].map(ratio => {
@@ -255,7 +255,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
                 x={padding.left - 8}
                 y={line.y + 4}
                 fill={COLORS.text.secondary}
-                fontSize="12"
+                fontSize={labelFontSize}  // Responsive
                 fontWeight="600"
                 textAnchor="end"
                 fontFamily="System"
