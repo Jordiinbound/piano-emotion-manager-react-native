@@ -76,7 +76,7 @@ export default function PredictionsScreen() {
 
   const data = {
     revenue: revenueQuery.data && revenueQuery.data.length > 0 
-      ? revenueQuery.data.map(r => ({
+      ? revenueQuery.data.slice(0, 6).map(r => ({
           period: r.period,
           value: r.value,
           confidence: r.confidence,
@@ -85,7 +85,7 @@ export default function PredictionsScreen() {
         }))
       : [],
     churn: churnQuery.data && churnQuery.data.length > 0
-      ? churnQuery.data.map((c: any) => ({
+      ? churnQuery.data.slice(0, 6).map((c: any) => ({
           clientName: c.clientName,
           riskScore: c.riskScore,
           daysSince: c.daysSinceLastService,
@@ -93,7 +93,7 @@ export default function PredictionsScreen() {
         }))
       : [],
     maintenance: maintenanceQuery.data && maintenanceQuery.data.length > 0
-      ? maintenanceQuery.data.map((m: any) => ({
+      ? maintenanceQuery.data.slice(0, 6).map((m: any) => ({
           pianoInfo: m.pianoInfo,
           clientName: m.clientName,
           predictedDate: new Date(m.predictedDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }),
@@ -102,7 +102,7 @@ export default function PredictionsScreen() {
         }))
       : [],
     workload: workloadQuery.data && workloadQuery.data.length > 0
-      ? workloadQuery.data.map((w: any) => ({
+      ? workloadQuery.data.slice(0, 6).map((w: any) => ({
           week: w.week,
           scheduled: w.scheduledAppointments,
           estimated: w.estimatedTotal,
@@ -110,7 +110,7 @@ export default function PredictionsScreen() {
         }))
       : [],
     inventory: inventoryQuery.data && inventoryQuery.data.length > 0
-      ? inventoryQuery.data.map((i: any) => ({
+      ? inventoryQuery.data.slice(0, 6).map((i: any) => ({
           itemName: i.itemName,
           currentStock: i.currentStock,
           monthlyUsage: i.monthlyUsage,
@@ -271,11 +271,11 @@ export default function PredictionsScreen() {
         <View style={styles.summaryHeader}>
           <Ionicons name="construct" size={24} color={colors.primary} />
           <ThemedText style={[styles.summaryTitle, { color: textPrimary }]}>
-            Mantenimiento Predictivo
+            Mantenimiento Previsto
           </ThemedText>
         </View>
         <ThemedText style={[styles.summaryDescription, { color: textSecondary }]}>
-          Próximos servicios recomendados por la IA
+          Próximos servicios recomendados
         </ThemedText>
       </View>
 
@@ -299,9 +299,7 @@ export default function PredictionsScreen() {
               <Ionicons name="settings-outline" size={16} color={textSecondary} />
               <ThemedText style={{ marginLeft: 4, color: textSecondary, fontSize: 13 }}>{item.serviceType}</ThemedText>
             </View>
-            <View style={[styles.confidenceSmall, { backgroundColor: '#22C55E20' }]}>
-              <ThemedText style={{ color: '#22C55E', fontSize: 11, fontWeight: '600' }}>{item.confidence}% confianza</ThemedText>
-            </View>
+
           </View>
           <TouchableOpacity style={[styles.scheduleButton, { borderColor: colors.primary }]}>
             <ThemedText style={{ color: colors.primary, fontWeight: '600' }}>Programar Cita</ThemedText>
@@ -333,11 +331,11 @@ export default function PredictionsScreen() {
             <View style={styles.workloadStats}>
               <View style={styles.workloadStat}>
                 <ThemedText style={[styles.statValue, { color: textPrimary }]}>{week.scheduled}</ThemedText>
-                <ThemedText style={[styles.statLabel, { color: textSecondary }]}>Agendadas</ThemedText>
+                <ThemedText style={[styles.statLabel, { color: textSecondary }]}>Citas Agendadas</ThemedText>
               </View>
               <View style={styles.workloadStat}>
                 <ThemedText style={[styles.statValue, { color: colors.primary }]}>{week.estimated}</ThemedText>
-                <ThemedText style={[styles.statLabel, { color: textSecondary }]}>Estimadas</ThemedText>
+                <ThemedText style={[styles.statLabel, { color: textSecondary }]}>Citas Estimadas</ThemedText>
               </View>
             </View>
             <View style={[styles.workloadBar, { backgroundColor: `${colors.primary}10` }]}>

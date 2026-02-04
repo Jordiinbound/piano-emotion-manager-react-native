@@ -259,7 +259,7 @@ export default function DashboardScreen() {
               <View style={styles.sectionHeader as any}>
                 <View style={styles.aiHeaderLeft as any}>
                   <Ionicons name="bulb-outline" size={22} color={COLORS.pianos} />
-                  <Text style={styles.sectionTitle as any}>Previsión</Text>
+                  <Text style={styles.sectionTitle as any}>Previsión próximo mes</Text>
                 </View>
                 <Pressable onPress={() => router.push('/predictions')}>
                   <Text style={styles.linkText as any}>Ver todo →</Text>
