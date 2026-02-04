@@ -73,6 +73,7 @@ async function createSessionJWT(user: User): Promise<string> {
  */
 export async function createContext(opts: CreateContextOptions): Promise<TrpcContext> {
   let user: User | null = null;
+  let partnerId: number | null = null;
   let debugLog: Record<string, string> = {};
 
   // TEMPORARY: Stress test bypass
@@ -126,7 +127,7 @@ export async function createContext(opts: CreateContextOptions): Promise<TrpcCon
         user = dbUser as User;
         console.log("[DEBUG] [Context] dbUser object:", JSON.stringify(dbUser));
         console.log("[DEBUG] [Context] dbUser.partnerId value:", dbUser.partnerId, "type:", typeof dbUser.partnerId);
-        const partnerId = dbUser.partnerId || null;
+        partnerId = dbUser.partnerId || null;
         console.log("[DEBUG] [Context] User set with partnerId:", partnerId, "type:", typeof partnerId);
         
         // Create a session JWT compatible with SDK legacy

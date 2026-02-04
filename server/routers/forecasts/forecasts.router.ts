@@ -30,11 +30,14 @@ export const forecastsRouter = router({
       months: z.number().min(1).max(12).default(3),
     }))
     .query(async ({ ctx, input }) => {
+      console.log('[forecasts.getRevenue] ctx.partnerId:', ctx.partnerId, 'type:', typeof ctx.partnerId);
+      console.log('[forecasts.getRevenue] ctx.user:', ctx.user ? { id: ctx.user.id, email: ctx.user.email } : null);
       const service = await getForecastService();
       const forecasts = await service.forecastRevenue(
         ctx.partnerId,
         input.months
       );
+      console.log('[forecasts.getRevenue] forecasts result:', forecasts);
       return forecasts;
     }),
 
@@ -43,8 +46,10 @@ export const forecastsRouter = router({
    */
   getChurnRisk: protectedProcedure
     .query(async ({ ctx }) => {
+      console.log('[forecasts.getChurnRisk] ctx.partnerId:', ctx.partnerId, 'type:', typeof ctx.partnerId);
       const service = await getForecastService();
       const risks = await service.forecastClientChurn(ctx.partnerId);
+      console.log('[forecasts.getChurnRisk] risks result:', risks);
       return risks;
     }),
 
@@ -92,6 +97,29 @@ export const forecastsRouter = router({
       const service = await getForecastService();
       const summary = await service.getForecastsSummary(ctx.partnerId);
       return summary;
+    }),
+
+  /**
+   * DEBUG: Muestra el contexto completo
+   */
+  debugContext: protectedProcedure
+    .query(async ({ ctx }) => {
+      return {
+        hasUser: !!ctx.user,
+        userId: ctx.user?.id,
+        userEmail: ctx.user?.email,
+        userName: ctx.user?.name,
+        partnerId: ctx.partnerId,
+        partnerIdType: typeof ctx.partnerId,
+        language: ctx.language,
+        userObject: ctx.user ? {
+          id: ctx.user.id,
+          email: ctx.user.email,
+          name: ctx.user.name,
+          openId: ctx.user.openId,
+          role: ctx.user.role,
+        } : null,
+      };
     }),
 
   /**
