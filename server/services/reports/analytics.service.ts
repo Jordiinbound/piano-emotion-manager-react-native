@@ -131,24 +131,29 @@ export class AnalyticsService {
     const previousStartDate = new Date(startDate.getTime() - periodLength);
     const previousEndDate = new Date(startDate.getTime() - 1);
 
-    // Métricas de ingresos
-    const currentRevenue = await this.getTotalRevenue(startDate, endDate);
-    const previousRevenue = await this.getTotalRevenue(previousStartDate, previousEndDate);
+    // Ejecutar todas las queries en paralelo para mejorar el rendimiento
+    const [
+      currentRevenue,
+      previousRevenue,
+      serviceStats,
+      clientStats,
+      pianoStats,
+      technicianCount,
+    ] = await Promise.all([
+      this.getTotalRevenue(startDate, endDate),
+      this.getTotalRevenue(previousStartDate, previousEndDate),
+      this.getServiceStats(startDate, endDate),
+      this.getClientStats(startDate, endDate),
+      this.getPianoStats(startDate, endDate),
+      this.getTechnicianCount(),
+    ]);
+
+    // Calcular métricas derivadas
     const revenueChange = currentRevenue - previousRevenue;
     const revenueChangePercent = previousRevenue > 0 
       ? (revenueChange / previousRevenue) * 100 
       : 0;
 
-    // Métricas de servicios
-    const serviceStats = await this.getServiceStats(startDate, endDate);
-
-    // Métricas de clientes
-    const clientStats = await this.getClientStats(startDate, endDate);
-
-    // Métricas de pianos
-    const pianoStats = await this.getPianoStats(startDate, endDate);
-
-    // Promedios
     const averageTicket = serviceStats.completed > 0 
       ? currentRevenue / serviceStats.completed 
       : 0;
@@ -157,7 +162,6 @@ export class AnalyticsService {
       ? serviceStats.total / clientStats.active 
       : 0;
 
-    const technicianCount = await this.getTechnicianCount();
     const revenuePerTechnician = technicianCount > 0 
       ? currentRevenue / technicianCount 
       : currentRevenue;
