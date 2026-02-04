@@ -161,7 +161,8 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
-  // State para ancho de pantalla responsive
+  // State para ancho del contenedor (medido con onLayout)
+  const [containerWidth, setContainerWidth] = useState(Dimensions.get('window').width - 48);
   const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
   
   // Listener para cambios de dimensiones (rotación, resize)
@@ -178,9 +179,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
     };
   }, []);
   
-  // Calcular ancho real del contenedor: ancho de pantalla - padding horizontal de la sección
-  const containerPadding = 24 * 2; // padding horizontal de la sección (24px cada lado)
-  const chartWidth = screenWidth - containerPadding;
+  // Usar ancho del contenedor medido con onLayout
+  const chartWidth = containerWidth;
 
   if (!data || data.length === 0) {
     return (
@@ -230,7 +230,13 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   });
 
   return (
-    <View style={styles.chartContainer}>
+    <View 
+      style={styles.chartContainer}
+      onLayout={(event) => {
+        const { width } = event.nativeEvent.layout;
+        setContainerWidth(width);
+      }}
+    >
       {chartWidth > 0 && (
         <Svg width={chartWidth} height={chartHeight}>
           {/* Grid lines */}
