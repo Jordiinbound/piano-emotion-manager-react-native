@@ -9,6 +9,9 @@ import {
   ActivityIndicator,
   useColorScheme,
   useWindowDimensions,
+  Modal,
+  Linking,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,10 +47,23 @@ export default function PredictionsScreen() {
     primary: themeColors.tint,
     card: themeColors.cardBackground,
   };
+  
+  const textPrimary = themeColors.text;
+  const textSecondary = themeColors.textSecondary || themeColors.text + '99';
 
   const [activeTab, setActiveTab] = useState<TabType>('revenue');
   const [refreshing, setRefreshing] = useState(false);
   const contentScrollRef = useRef<ScrollView>(null);
+  
+  // Estados para modal de contacto
+  const [contactModalVisible, setContactModalVisible] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<{
+    name: string;
+    email?: string;
+    phone?: string;
+    context: 'churn' | 'maintenance';
+    details?: string;
+  } | null>(null);
 
   const revenueQuery = trpc.advanced.predictions.getRevenue.useQuery(
     { months: 3 },
@@ -256,7 +272,19 @@ export default function PredictionsScreen() {
           <View style={[styles.riskBar, { backgroundColor: `${getRiskColor(client.riskScore)}10` }]}>
             <View style={[styles.riskBarFill, { width: `${client.riskScore}%`, backgroundColor: getRiskColor(client.riskScore) }]} />
           </View>
-          <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.primary }]}>
+          <TouchableOpacity 
+            style={[styles.actionButton, { backgroundColor: colors.primary }]}
+            onPress={() => {
+              setSelectedContact({
+                name: client.clientName,
+                email: client.clientEmail,
+                phone: client.clientPhone,
+                context: 'churn',
+                details: `Cliente en riesgo (${client.riskScore}% riesgo). Último servicio hace ${client.daysSince} días.`,
+              });
+              setContactModalVisible(true);
+            }}
+          >
             <Ionicons name="mail-outline" size={18} color="#fff" />
             <ThemedText style={styles.actionButtonText}>{client.suggestedAction}</ThemedText>
           </TouchableOpacity>
@@ -301,7 +329,19 @@ export default function PredictionsScreen() {
             </View>
 
           </View>
-          <TouchableOpacity style={[styles.scheduleButton, { borderColor: colors.primary }]}>
+          <TouchableOpacity 
+            style={[styles.scheduleButton, { borderColor: colors.primary }]}
+            onPress={() => {
+              setSelectedContact({
+                name: service.clientName,
+                email: service.clientEmail,
+                phone: service.clientPhone,
+                context: 'maintenance',
+                details: `${service.serviceType} recomendado para ${service.pianoInfo}. ${service.basedOn}`,
+              });
+              setContactModalVisible(true);
+            }}
+          >
             <ThemedText style={{ color: colors.primary, fontWeight: '600' }}>Programar Cita</ThemedText>
           </TouchableOpacity>
         </View>
@@ -458,6 +498,93 @@ export default function PredictionsScreen() {
         {renderTabContent()}
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      {/* Modal de contacto */}
+      <Modal
+        visible={contactModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setContactModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <View style={styles.modalHeader}>
+              <ThemedText style={[styles.modalTitle, { color: textPrimary }]}>
+                Contactar con {selectedContact?.name}
+              </ThemedText>
+              <TouchableOpacity onPress={() => setContactModalVisible(false)}>
+                <Ionicons name="close" size={24} color={textPrimary} />
+              </TouchableOpacity>
+            </View>
+
+            {selectedContact?.details && (
+              <ThemedText style={[styles.modalDetails, { color: textSecondary }]}>
+                {selectedContact.details}
+              </ThemedText>
+            )}
+
+            <View style={styles.contactOptions}>
+              {selectedContact?.email && (
+                <TouchableOpacity
+                  style={[styles.contactOption, { backgroundColor: `${colors.primary}15` }]}
+                  onPress={() => {
+                    Linking.openURL(`mailto:${selectedContact.email}`);
+                    setContactModalVisible(false);
+                  }}
+                >
+                  <Ionicons name="mail-outline" size={24} color={colors.primary} />
+                  <ThemedText style={[styles.contactOptionText, { color: colors.primary }]}>
+                    Enviar Email
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
+
+              {selectedContact?.phone && (
+                <>
+                  <TouchableOpacity
+                    style={[styles.contactOption, { backgroundColor: `${colors.primary}15` }]}
+                    onPress={() => {
+                      Linking.openURL(`https://wa.me/${selectedContact.phone.replace(/\D/g, '')}`);
+                      setContactModalVisible(false);
+                    }}
+                  >
+                    <Ionicons name="logo-whatsapp" size={24} color={colors.primary} />
+                    <ThemedText style={[styles.contactOptionText, { color: colors.primary }]}>
+                      WhatsApp
+                    </ThemedText>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.contactOption, { backgroundColor: `${colors.primary}15` }]}
+                    onPress={() => {
+                      Linking.openURL(`tel:${selectedContact.phone}`);
+                      setContactModalVisible(false);
+                    }}
+                  >
+                    <Ionicons name="call-outline" size={24} color={colors.primary} />
+                    <ThemedText style={[styles.contactOptionText, { color: colors.primary }]}>
+                      Llamar
+                    </ThemedText>
+                  </TouchableOpacity>
+                </>
+              )}
+
+              <TouchableOpacity
+                style={[styles.contactOption, { backgroundColor: `${colors.primary}15` }]}
+                onPress={() => {
+                  setContactModalVisible(false);
+                  router.push('/appointments?action=new');
+                }}
+              >
+                <Ionicons name="calendar-outline" size={24} color={colors.primary} />
+                <ThemedText style={[styles.contactOptionText, { color: colors.primary }]}>
+                  Agendar Cita
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ThemedView>
   );
 }
@@ -790,5 +917,54 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 14,
     textAlign: 'center',
+  },
+  // Estilos del modal de contacto
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    width: '100%',
+    maxWidth: 400,
+    borderRadius: 16,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    flex: 1,
+  },
+  modalDetails: {
+    fontSize: 14,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  contactOptions: {
+    gap: 12,
+  },
+  contactOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+  },
+  contactOptionText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

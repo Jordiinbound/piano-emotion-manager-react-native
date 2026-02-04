@@ -245,6 +245,7 @@ export class PredictionService {
         c.id,
         c.name,
         c.email,
+        c.phone,
         MAX(s.date) as last_service,
         COUNT(s.id) as service_count,
         AVG(TIMESTAMPDIFF(DAY, 
@@ -254,7 +255,7 @@ export class PredictionService {
       FROM clients c
       LEFT JOIN services s ON s.client_id = c.id
       WHERE c.partner_id = ${partnerId}
-      GROUP BY c.id, c.name, c.email
+      GROUP BY c.id, c.name, c.email, c.phone
       HAVING COUNT(s.id) > 0
     `);
 
@@ -306,6 +307,8 @@ export class PredictionService {
         churnRisks.push({
           clientId: client.id,
           clientName: client.name,
+          clientEmail: client.email,
+          clientPhone: client.phone,
           riskScore: Math.min(100, riskScore),
           lastServiceDate,
           daysSinceLastService,
@@ -366,6 +369,8 @@ export class PredictionService {
         p.model,
         p.type,
         c.name as client_name,
+        c.email as client_email,
+        c.phone as client_phone,
         s.service_type,
         s.date as service_date,
         LAG(s.date) OVER (PARTITION BY p.id, s.service_type ORDER BY s.date) as prev_service_date
@@ -434,6 +439,8 @@ export class PredictionService {
             pianoId: row.piano_id,
             pianoInfo: `${row.brand} ${row.model} (${row.type})`,
             clientName: row.client_name,
+            clientEmail: row.client_email,
+            clientPhone: row.client_phone,
             predictedDate,
             serviceType: serviceType === 'general' ? 'Mantenimiento general' : serviceType === 'tuning' ? 'Afinación' : serviceType === 'regulation' ? 'Regulación' : serviceType,
             confidence: Math.min(90, 50 + dates.length * 10),
