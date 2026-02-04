@@ -240,6 +240,7 @@ export class ForecastService {
           c.id,
           c.name,
           c.email,
+          c.phone,
           MAX(s.date) as last_service,
           COUNT(s.id) as service_count,
           COALESCE(SUM(s.cost), 0) as total_spent,
@@ -247,7 +248,7 @@ export class ForecastService {
         FROM clients c
         LEFT JOIN services s ON s.clientId = c.id
         WHERE c.partnerId = ${partnerId}
-        GROUP BY c.id, c.name, c.email
+        GROUP BY c.id, c.name, c.email, c.phone
         HAVING COUNT(s.id) > 0
       `);
 
@@ -308,6 +309,8 @@ export class ForecastService {
           churnRisks.push({
             clientId: (client as any).id,
             clientName: (client as any).name,
+            clientEmail: (client as any).email,
+            clientPhone: (client as any).phone,
             riskScore: Math.min(100, riskScore),
             lastServiceDate,
             daysSinceLastService,
@@ -320,7 +323,7 @@ export class ForecastService {
         }
       }
 
-      return churnRisks.sort((a, b) => b.riskScore - a.riskScore);
+      return churnRisks.sort((a, b) => b.daysSinceLastService - a.daysSinceLastService);
     } catch (error) {
       console.error('[ForecastService] Error forecasting client churn:', error);
       return [];
@@ -353,6 +356,8 @@ export class ForecastService {
           p.model,
           p.pianoType as type,
           c.name as client_name,
+          c.email as client_email,
+          c.phone as client_phone,
           s.serviceType,
           s.date as service_date
         FROM pianos p
@@ -413,6 +418,8 @@ export class ForecastService {
               pianoId: (row as any).piano_id,
               pianoInfo: `${(row as any).brand} ${(row as any).model} (${(row as any).type})`,
               clientName: (row as any).client_name,
+              clientEmail: (row as any).client_email,
+              clientPhone: (row as any).client_phone,
               predictedDate,
               serviceType: serviceType === 'general' ? 'Mantenimiento general' : serviceType,
               basedOn: `${dates.length} servicios anteriores, intervalo promedio: ${Math.round(avgInterval)} días`,
