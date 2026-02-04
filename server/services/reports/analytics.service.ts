@@ -580,43 +580,32 @@ export class AnalyticsService {
 
   private async getServiceStats(startDate: Date, endDate: Date) {
     const db = await getDb();
-    
-    // Total de servicios en el período
-    const total = await this.getServiceCount(startDate, endDate);
-    
-    // Servicios completados: aquellos con firma del cliente (clientSignature no null)
-    const completedResult = await db
-      .select({ count: count() })
-      .from(services)
-      .where(
-        and(
-          eq(services.partnerId, this.partnerId),
-          gte(services.date, startDate.toISOString()),
-          lte(services.date, endDate.toISOString()),
-          sql`${services.clientSignature} IS NOT NULL AND ${services.clientSignature} != ''`
-        )
-      );
-    const completed = completedResult[0]?.count || 0;
-    
-    // Servicios pendientes: fecha futura o sin firma
     const now = new Date();
-    const pendingResult = await db
-      .select({ count: count() })
+    
+    // UNA SOLA query con agregaciones condicionales para obtener todas las estadísticas
+    const result = await db
+      .select({
+        total: count(),
+        completed: sql<number>`SUM(CASE WHEN ${services.clientSignature} IS NOT NULL AND ${services.clientSignature} != '' THEN 1 ELSE 0 END)`,
+        pending: sql<number>`SUM(CASE WHEN (${services.clientSignature} IS NULL OR ${services.clientSignature} = '' OR ${services.date} > ${now.toISOString()}) THEN 1 ELSE 0 END)`,
+      })
       .from(services)
       .where(
         and(
           eq(services.partnerId, this.partnerId),
           gte(services.date, startDate.toISOString()),
-          lte(services.date, endDate.toISOString()),
-          sql`(${services.clientSignature} IS NULL OR ${services.clientSignature} = '' OR ${services.date} > ${now.toISOString()})`
+          lte(services.date, endDate.toISOString())
         )
       );
-    const pending = pendingResult[0]?.count || 0;
-    
-    // Por ahora no hay servicios cancelados (se podría agregar un campo status en el futuro)
-    const cancelled = 0;
 
-    return { total, completed, pending, cancelled };
+    const stats = result[0] || { total: 0, completed: 0, pending: 0 };
+    
+    return {
+      total: Number(stats.total) || 0,
+      completed: Number(stats.completed) || 0,
+      pending: Number(stats.pending) || 0,
+      cancelled: 0, // Por ahora no hay servicios cancelados
+    };
   }
 
   private async getClientStats(startDate: Date, endDate: Date) {

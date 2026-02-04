@@ -148,3 +148,12 @@
 - [x] Ticket medio debe ser precio medio de servicios (independiente de si están cobrados)
   - Solución: Ahora usa AVG(services.cost)
 - [x] Ingresos medios ahora es un campo separado (averages.revenuePerService)
+
+## 🚨 CRÍTICO - Problemas Persistentes (30 Enero 2026)
+
+- [x] Gráfico de barras SIGUE sin ocupar todo el ancho del contenedor
+  - Solución: Usar Dimensions.get('window').width directamente sin onLayout
+  - Ahora calcula: SCREEN_WIDTH - (padding 24px * 2) = ancho real
+- [x] Métricas principales tardan demasiado en cargar (rendimiento no mejorado)
+  - Solución: Optimizado getServiceStats para hacer 1 query con agregaciones en lugar de 3
+  - Reducción de queries: 66% menos (3→1)

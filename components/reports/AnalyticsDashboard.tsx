@@ -157,12 +157,9 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
-  const [chartWidth, setChartWidth] = React.useState(300);
-
-  const handleLayout = (event: any) => {
-    const { width } = event.nativeEvent.layout;
-    setChartWidth(width);
-  };
+  // Calcular ancho real del contenedor: ancho de pantalla - padding horizontal de la sección
+  const containerPadding = 24 * 2; // padding horizontal de la sección (24px cada lado)
+  const chartWidth = SCREEN_WIDTH - containerPadding;
 
   if (!data || data.length === 0) {
     return (
@@ -207,7 +204,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   });
 
   return (
-    <View style={styles.chartContainer} onLayout={handleLayout}>
+    <View style={styles.chartContainer}>
       {chartWidth > 0 && (
         <Svg width={chartWidth} height={chartHeight}>
           {/* Grid lines */}
