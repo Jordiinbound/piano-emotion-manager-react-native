@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'stretch',
   },
   emptyChart: {
     height: 200,
