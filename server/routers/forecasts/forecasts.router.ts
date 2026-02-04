@@ -8,9 +8,18 @@
 import { router, protectedProcedure } from '../../trpc';
 import { z } from 'zod';
 import ForecastService from '../../services/analytics/forecast.service';
-import { db } from '../../db';
+import { getDb } from '../../db';
 
-const forecastService = new ForecastService(db);
+// Lazy initialization of forecast service
+let forecastService: ForecastService | null = null;
+
+async function getForecastService() {
+  if (!forecastService) {
+    const db = await getDb();
+    forecastService = new ForecastService(db);
+  }
+  return forecastService;
+}
 
 export const forecastsRouter = router({
   /**
@@ -21,7 +30,8 @@ export const forecastsRouter = router({
       months: z.number().min(1).max(12).default(3),
     }))
     .query(async ({ ctx, input }) => {
-      const forecasts = await forecastService.forecastRevenue(
+      const service = await getForecastService();
+      const forecasts = await service.forecastRevenue(
         ctx.user.partnerId,
         input.months
       );
@@ -33,7 +43,8 @@ export const forecastsRouter = router({
    */
   getChurnRisk: protectedProcedure
     .query(async ({ ctx }) => {
-      const risks = await forecastService.forecastClientChurn(ctx.user.partnerId);
+      const service = await getForecastService();
+      const risks = await service.forecastClientChurn(ctx.user.partnerId);
       return risks;
     }),
 
@@ -42,7 +53,8 @@ export const forecastsRouter = router({
    */
   getMaintenance: protectedProcedure
     .query(async ({ ctx }) => {
-      const forecasts = await forecastService.forecastMaintenance(ctx.user.partnerId);
+      const service = await getForecastService();
+      const forecasts = await service.forecastMaintenance(ctx.user.partnerId);
       return forecasts;
     }),
 
@@ -54,7 +66,8 @@ export const forecastsRouter = router({
       weeks: z.number().min(1).max(12).default(4),
     }))
     .query(async ({ ctx, input }) => {
-      const forecasts = await forecastService.forecastWorkload(
+      const service = await getForecastService();
+      const forecasts = await service.forecastWorkload(
         ctx.user.partnerId,
         input.weeks
       );
@@ -66,7 +79,8 @@ export const forecastsRouter = router({
    */
   getInventoryDemand: protectedProcedure
     .query(async ({ ctx }) => {
-      const forecasts = await forecastService.forecastInventoryDemand(ctx.user.partnerId);
+      const service = await getForecastService();
+      const forecasts = await service.forecastInventoryDemand(ctx.user.partnerId);
       return forecasts;
     }),
 
@@ -75,7 +89,8 @@ export const forecastsRouter = router({
    */
   getSummary: protectedProcedure
     .query(async ({ ctx }) => {
-      const summary = await forecastService.getForecastsSummary(ctx.user.partnerId);
+      const service = await getForecastService();
+      const summary = await service.getForecastsSummary(ctx.user.partnerId);
       return summary;
     }),
 });

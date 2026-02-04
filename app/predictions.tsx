@@ -29,34 +29,7 @@ const TAB_COLORS = {
   inventory: '#5ba3b8',    // Cian suave
 };
 
-const MOCK_DATA = {
-  revenue: [
-    { period: 'Enero 2026', value: 4250, confidence: 78, trend: 'up' as const, factors: ['Tendencia de crecimiento', 'Temporada alta'] },
-    { period: 'Febrero 2026', value: 3980, confidence: 72, trend: 'stable' as const, factors: ['Estabilidad histórica'] },
-    { period: 'Marzo 2026', value: 4520, confidence: 65, trend: 'up' as const, factors: ['Temporada de conciertos'] },
-  ],
-  churn: [
-    { clientName: 'María García', riskScore: 85, daysSince: 245, suggestedAction: 'Contactar urgentemente' },
-    { clientName: 'Conservatorio Municipal', riskScore: 72, daysSince: 198, suggestedAction: 'Enviar recordatorio' },
-    { clientName: 'Carlos Rodríguez', riskScore: 58, daysSince: 156, suggestedAction: 'Programar seguimiento' },
-  ],
-  maintenance: [
-    { pianoInfo: 'Yamaha U3 (Vertical)', clientName: 'Ana López', predictedDate: '15 Ene 2026', serviceType: 'Afinación', confidence: 85 },
-    { pianoInfo: 'Steinway D (Cola)', clientName: 'Teatro Nacional', predictedDate: '22 Ene 2026', serviceType: 'Regulación', confidence: 78 },
-    { pianoInfo: 'Kawai K-500 (Vertical)', clientName: 'Escuela de Música', predictedDate: '28 Ene 2026', serviceType: 'Afinación', confidence: 82 },
-  ],
-  workload: [
-    { week: 'Semana del 30 Dic', scheduled: 8, estimated: 10, recommendation: 'Semana ocupada' },
-    { week: 'Semana del 6 Ene', scheduled: 5, estimated: 7, recommendation: 'Carga normal' },
-    { week: 'Semana del 13 Ene', scheduled: 12, estimated: 14, recommendation: 'Muy ocupada - reorganizar' },
-    { week: 'Semana del 20 Ene', scheduled: 3, estimated: 5, recommendation: 'Semana tranquila' },
-  ],
-  inventory: [
-    { itemName: 'Cuerdas de bajo', currentStock: 5, monthlyUsage: 3, monthsUntilMin: 0.8, urgency: 'high' as const },
-    { itemName: 'Fieltro de martillos', currentStock: 12, monthlyUsage: 4, monthsUntilMin: 1.5, urgency: 'medium' as const },
-    { itemName: 'Clavijas de afinación', currentStock: 45, monthlyUsage: 8, monthsUntilMin: 4.2, urgency: 'low' as const },
-  ],
-};
+// MOCK_DATA eliminado - solo usamos datos reales de la BD
 
 export default function PredictionsScreen() {
   const router = useRouter();
@@ -107,7 +80,7 @@ export default function PredictionsScreen() {
           trend: r.trend,
           factors: r.factors,
         }))
-      : MOCK_DATA.revenue,
+      : [],
     churn: churnQuery.data && churnQuery.data.length > 0
       ? churnQuery.data.map((c: any) => ({
           clientName: c.clientName,
@@ -115,7 +88,7 @@ export default function PredictionsScreen() {
           daysSince: c.daysSinceLastService,
           suggestedAction: c.suggestedAction,
         }))
-      : MOCK_DATA.churn,
+      : [],
     maintenance: maintenanceQuery.data && maintenanceQuery.data.length > 0
       ? maintenanceQuery.data.map((m: any) => ({
           pianoInfo: m.pianoInfo,
@@ -124,7 +97,7 @@ export default function PredictionsScreen() {
           serviceType: m.serviceType,
           confidence: m.confidence,
         }))
-      : MOCK_DATA.maintenance,
+      : [],
     workload: workloadQuery.data && workloadQuery.data.length > 0
       ? workloadQuery.data.map((w: any) => ({
           week: w.week,
@@ -132,7 +105,7 @@ export default function PredictionsScreen() {
           estimated: w.estimatedTotal,
           recommendation: w.recommendation,
         }))
-      : MOCK_DATA.workload,
+      : [],
     inventory: inventoryQuery.data && inventoryQuery.data.length > 0
       ? inventoryQuery.data.map((i: any) => ({
           itemName: i.itemName,
@@ -141,7 +114,7 @@ export default function PredictionsScreen() {
           monthsUntilMin: i.monthsUntilMin,
           urgency: i.urgency,
         }))
-      : MOCK_DATA.inventory,
+      : [],
   };
 
   const textPrimary = colors.text;
