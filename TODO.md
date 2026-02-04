@@ -3,11 +3,11 @@
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Gráfico de Reportes con Sidebar (04 Feb 2026)
-- [ ] **BUG CRÍTICO: Gráfico se corta por ambos lados con barra lateral**
-  - [ ] El gráfico pierde responsividad en tablet/desktop con sidebar
-  - [ ] Se corta por izquierda y derecha
-  - [ ] onLayout no está funcionando correctamente
-  - [ ] Revisar cálculo de ancho en BarChart component
+- [x] **BUG CRÍTICO: Gráfico se corta por ambos lados con barra lateral**
+  - [x] El gráfico pierde responsividad en tablet/desktop con sidebar
+  - [x] Se corta por izquierda y derecha
+  - [x] onLayout no estaba funcionando correctamente
+  - [x] Solución: Inicializar containerWidth en 0 para forzar medición correcta
 
 ### Previsiones sin Datos (04 Feb 2026)
 - [ ] **BUG CRÍTICO: Previsiones muestra "Datos insuficientes para previsión"**
@@ -222,3 +222,7 @@
   - [x] Pestañas no se distribuyen correctamente en el espacio disponible
   - [x] Ajustar layout para centrar pestañas en móvil
   - [x] Oscurecer colores de texto para mejor legibilidad
+- [ ] **BUG: Palabras cortadas en pestañas**
+  - [ ] "Mantenimiento" se corta en "Manteni" / "miento"
+  - [ ] "Inventario" se corta en "Inventari" / "o"
+  - [ ] Reducir tamaño de fuente o aumentar ancho de pestañas

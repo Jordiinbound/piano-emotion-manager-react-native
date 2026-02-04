@@ -436,7 +436,7 @@ export default function PredictionsScreen() {
                   { 
                     color: TAB_COLORS[tab.id as TabType],
                     opacity: activeTab === tab.id ? 1 : 0.8,  // Aumentado de 0.6 a 0.8
-                    fontSize: isMobile ? 11 : 16,  // Solo reducir en móvil
+                    fontSize: isMobile ? 9 : 16,  // Reducido a 9 para evitar corte de palabras
                   }
                 ]}
               >
