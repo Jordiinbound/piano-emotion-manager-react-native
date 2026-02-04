@@ -235,9 +235,8 @@
   - [x] Solución: maxWidth condicional solo para móvil (isMobile)
 
 ### Gráfico de Reportes - Tamaños de Fuente en Móvil (04 Feb 2026)
-- [ ] **BUG: Etiquetas del gráfico demasiado grandes en móvil**
-  - [ ] Guía de valores del eje Y (25.0k €, 18.8k €, etc.) muy grande
-  - [ ] Valores sobre columnas (25.0k €, 16.6k €, etc.) muy anchos
-  - [ ] Se solaparían si dos meses tienen valores similares
-  - [ ] Reducir fontSize en móvil para liberar espacio
-  - [ ] Aumentar separación entre columnas
+- [x] **BUG: Etiquetas del gráfico demasiado grandes en móvil**
+  - [x] Guía de valores del eje Y: fontSize 12 → 8 (responsive)
+  - [x] Valores sobre columnas: fontSize 9 → 8
+  - [x] Separación de columnas: barWidthRatio 0.6 → 0.5
+  - [x] Resultado: Etiquetas compactas, columnas más separadas

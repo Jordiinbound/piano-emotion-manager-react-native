@@ -93,4 +93,48 @@ export const forecastsRouter = router({
       const summary = await service.getForecastsSummary(ctx.user.partnerId);
       return summary;
     }),
+
+  /**
+   * DEBUG: Verifica datos históricos de servicios
+   */
+  debugHistoricalData: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      
+      // Query 1: Total de servicios
+      const totalResult = await db.execute(
+        'SELECT COUNT(*) as total FROM services WHERE partnerId = ?',
+        [ctx.user.partnerId]
+      );
+      
+      // Query 2: Servicios por mes (últimos 12 meses)
+      const monthlyResult = await db.execute(`
+        SELECT 
+          DATE_FORMAT(date, '%Y-%m-01') as month,
+          COALESCE(SUM(cost), 0) as total,
+          COUNT(*) as service_count
+        FROM services
+        WHERE partnerId = ?
+          AND date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+        GROUP BY DATE_FORMAT(date, '%Y-%m-01')
+        ORDER BY month
+      `, [ctx.user.partnerId]);
+      
+      // Query 3: Rango de fechas
+      const dateRangeResult = await db.execute(`
+        SELECT 
+          MIN(date) as first_service,
+          MAX(date) as last_service,
+          TIMESTAMPDIFF(MONTH, MIN(date), MAX(date)) as months_of_data
+        FROM services
+        WHERE partnerId = ?
+      `, [ctx.user.partnerId]);
+      
+      return {
+        partnerId: ctx.user.partnerId,
+        totalServices: totalResult.rows?.[0],
+        monthlyData: monthlyResult.rows,
+        dateRange: dateRangeResult.rows?.[0],
+      };
+    }),
 });

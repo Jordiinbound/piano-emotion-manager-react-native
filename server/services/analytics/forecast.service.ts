@@ -65,9 +65,13 @@ export class ForecastService {
    * Predice los ingresos para los próximos meses usando regresión logarítmica mejorada
    */
   async forecastRevenue(partnerId: string, months: number = 3): Promise<Forecast[]> {
+    console.log('[DEBUG] forecastRevenue called with:', { partnerId, months });
     const historicalData = await this.getHistoricalRevenue(partnerId, 12);
+    console.log('[DEBUG] historicalData length:', historicalData.length);
+    console.log('[DEBUG] historicalData:', historicalData);
     
     if (historicalData.length < 3) {
+      console.log('[DEBUG] Insufficient data, returning empty forecast');
       return [{
         type: 'revenue',
         period: 'Próximos meses',
@@ -114,6 +118,8 @@ export class ForecastService {
 
   private async getHistoricalRevenue(partnerId: string, months: number): Promise<number[]> {
     try {
+      console.log('[DEBUG] getHistoricalRevenue called with:', { partnerId, months });
+      
       const result = await this.db.execute(`
         SELECT 
           DATE_FORMAT(date, '%Y-%m-01') as month,
@@ -125,7 +131,13 @@ export class ForecastService {
         ORDER BY month
       `, [partnerId, months]);
 
-      return (result.rows || []).map((r: any) => parseFloat(r.total) || 0);
+      console.log('[DEBUG] Query result rows:', result.rows);
+      console.log('[DEBUG] Number of rows:', result.rows?.length || 0);
+      
+      const values = (result.rows || []).map((r: any) => parseFloat(r.total) || 0);
+      console.log('[DEBUG] Parsed values:', values);
+      
+      return values;
     } catch (error) {
       console.error('[ForecastService] Error getting historical revenue:', error);
       return [];
