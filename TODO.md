@@ -166,3 +166,14 @@
 - [x] Ingresos medios muestra 0 € (debería mostrar valor real)
   - Causa: serviceStats.completed era 0, causando división por cero
   - Solución: Se resuelve automáticamente con el fix de tasa de finalización
+
+## 🎨 UX - Mejoras de Experiencia de Usuario (30 Enero 2026)
+
+- [x] Agregar spinners de carga en cada sección del dashboard (carga tarda 6+ segundos)
+  - Solución: ActivityIndicator con mensaje "Cargando..." en métricas y gráfico
+- [x] Ajustar ancho de columnas del gráfico para que sean más estrechas
+  - Solución: Barras ocupan 60% del espacio, 40% para spacing
+- [x] Hacer el gráfico totalmente responsive
+  - Solución: Ya era responsive con Dimensions.get('window').width
+- [x] Matizar colores (menos vibrantes, más profesionales)
+  - Solución: Paleta actualizada con tonos suaves (#5b7fc7, #52a67d, #d9a05b, #9b7fc9)

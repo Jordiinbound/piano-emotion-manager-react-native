@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Path, Circle, Line, Text as SvgText, Rect } from 'react-native-svg';
@@ -25,14 +26,14 @@ import { useTranslation } from '@/hooks/use-translation';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Paleta de colores profesional
+// Paleta de colores profesional (tonos matizados y suaves)
 const COLORS = {
-  primary: '#2563eb',
-  secondary: '#64748b',
-  success: '#10b981',
-  warning: '#f59e0b',
-  danger: '#ef4444',
-  purple: '#8b5cf6',
+  primary: '#5b7fc7',      // Azul matizado (antes #2563eb)
+  secondary: '#6b7a8f',    // Gris azulado suave (antes #64748b)
+  success: '#52a67d',      // Verde suave (antes #10b981)
+  warning: '#d9a05b',      // Naranja/dorado suave (antes #f59e0b)
+  danger: '#d66b6b',       // Rojo suave (antes #ef4444)
+  purple: '#9b7fc9',       // Púrpura suave (antes #8b5cf6)
   background: '#f8fafc',
   card: '#ffffff',
   border: '#e2e8f0',
@@ -182,11 +183,12 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
   const plotWidth = chartWidth - padding.left - padding.right;
   const plotHeight = chartHeight - padding.top - padding.bottom;
 
-  // Calcular ancho de cada barra para ocupar el 100% del espacio disponible
-  const barSpacing = 8; // Espacio entre barras
+  // Calcular ancho de cada barra (60% del espacio disponible para hacerlas más estrechas)
+  const barWidthRatio = 0.6; // 60% del espacio para barras, 40% para spacing
   const totalBars = displayData.length;
-  const totalSpacing = (totalBars - 1) * barSpacing;
-  const barWidth = (plotWidth - totalSpacing) / totalBars;
+  const availableWidthPerBar = plotWidth / totalBars;
+  const barWidth = availableWidthPerBar * barWidthRatio;
+  const barSpacing = availableWidthPerBar * (1 - barWidthRatio);
 
   // Formatear valor como moneda
   const formatValue = (value: number) => {
@@ -236,7 +238,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
           {/* Barras */}
           {displayData.map((item, index) => {
             const barHeight = ((item.value - minValue) / range) * plotHeight;
-            const x = padding.left + index * (barWidth + barSpacing);
+            // Centrar cada barra en su espacio asignado
+            const x = padding.left + index * availableWidthPerBar + (availableWidthPerBar - barWidth) / 2;
             const y = padding.top + plotHeight - barHeight;
             
             return (
@@ -462,10 +465,16 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           <Text style={styles.sectionTitle}>Métricas Principales</Text>
           <Text style={styles.sectionSubtitle}>Indicadores clave de rendimiento del período seleccionado</Text>
         </View>
-        <View style={styles.metricsGrid}>
-          <MetricCard
-            title={t('reports.revenue')}
-            value={formatCurrency(metrics?.revenue.total || 0)}
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+            <Text style={styles.loadingText}>Cargando métricas...</Text>
+          </View>
+        ) : (
+          <View style={styles.metricsGrid}>
+            <MetricCard
+              title={t('reports.revenue')}
+              value={formatCurrency(metrics?.revenue.total || 0)}
             change={metrics?.revenue.changePercent}
             subtitle="vs período anterior"
             icon="cash-outline"
@@ -519,6 +528,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             color={COLORS.purple}
           />
         </View>
+        )}
       </View>
 
       {/* Revenue Evolution Chart */}
@@ -527,12 +537,21 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           <Text style={styles.sectionTitle}>{t('reports.revenueEvolution')}</Text>
           <Text style={styles.sectionSubtitle}>Últimos 12 meses</Text>
         </View>
-        <View style={styles.chartCard}>
-          <BarChart
-            data={revenueData?.map((d) => ({ label: d.period, value: d.revenue })) || []}
-            color={COLORS.primary}
-          />
-        </View>
+        {revenueLoading ? (
+          <View style={styles.chartCard}>
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={COLORS.primary} />
+              <Text style={styles.loadingText}>Cargando gráfico...</Text>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.chartCard}>
+            <BarChart
+              data={revenueData?.map((d) => ({ label: d.period, value: d.revenue })) || []}
+              color={COLORS.primary}
+            />
+          </View>
+        )}
       </View>
 
       {/* Services by Type - Barras horizontales */}
@@ -721,6 +740,17 @@ const styles = StyleSheet.create({
   chartContainer: {
     width: '100%',
     alignItems: 'stretch',
+  },
+  loadingContainer: {
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: COLORS.text.secondary,
+    marginTop: 8,
   },
   emptyChart: {
     height: 200,
