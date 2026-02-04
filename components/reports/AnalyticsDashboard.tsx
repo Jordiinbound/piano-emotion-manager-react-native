@@ -840,7 +840,7 @@ const styles = StyleSheet.create({
   },
   quickStatCard: {
     flex: 1,
-    minWidth: (SCREEN_WIDTH - 60) / 2,
+    minWidth: (Dimensions.get('window').width - 60) / 2,
     backgroundColor: COLORS.card,
     borderRadius: 4,
     padding: 16,
