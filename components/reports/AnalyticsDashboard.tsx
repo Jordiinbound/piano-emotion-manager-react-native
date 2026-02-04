@@ -218,6 +218,56 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
     return `${Math.round(value)} €`;
   };
 
+  // Calcular posiciones Y ajustadas para evitar solapamiento de etiquetas
+  const calculateLabelPositions = () => {
+    const minLabelSpacing = 20; // Espacio mínimo entre etiquetas (en píxeles)
+    const labelHeight = 16; // Altura aproximada de cada etiqueta
+    
+    // Calcular posiciones iniciales (encima de cada barra)
+    const positions = displayData.map((item, index) => {
+      const barHeight = ((item.value - minValue) / range) * plotHeight;
+      const y = padding.top + plotHeight - barHeight;
+      return {
+        index,
+        originalY: y - 8,
+        adjustedY: y - 8,
+        value: item.value,
+      };
+    });
+
+    // Algoritmo de ajuste: revisar pares consecutivos y separar si colisionan
+    let adjusted = true;
+    let iterations = 0;
+    const maxIterations = 10; // Prevenir loops infinitos
+
+    while (adjusted && iterations < maxIterations) {
+      adjusted = false;
+      iterations++;
+
+      for (let i = 0; i < positions.length - 1; i++) {
+        const current = positions[i];
+        const next = positions[i + 1];
+        const distance = Math.abs(next.adjustedY - current.adjustedY);
+
+        // Si las etiquetas están muy cerca, ajustar
+        if (distance < minLabelSpacing) {
+          adjusted = true;
+          
+          // Mover la etiqueta más baja hacia abajo
+          if (current.adjustedY < next.adjustedY) {
+            next.adjustedY = current.adjustedY + minLabelSpacing;
+          } else {
+            current.adjustedY = next.adjustedY + minLabelSpacing;
+          }
+        }
+      }
+    }
+
+    return positions;
+  };
+
+  const labelPositions = calculateLabelPositions();
+
   // Líneas de grid horizontales
   const gridLines = [0, 0.25, 0.5, 0.75, 1].map(ratio => {
     const y = padding.top + plotHeight * (1 - ratio);
@@ -262,6 +312,9 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
             const x = padding.left + index * availableWidthPerBar + (availableWidthPerBar - barWidth) / 2;
             const y = padding.top + plotHeight - barHeight;
             
+            // Obtener posición Y ajustada para evitar solapamiento
+            const labelY = labelPositions[index].adjustedY;
+            
             return (
               <React.Fragment key={index}>
                 {/* Barra */}
@@ -274,10 +327,10 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
                   rx={4}
                 />
                 
-                {/* Valor encima de la barra */}
+                {/* Valor encima de la barra (con posición ajustada) */}
                 <SvgText
                   x={x + barWidth / 2}
-                  y={y - 8}
+                  y={labelY}
                   fill={COLORS.text.primary}
                   fontSize="12"
                   fontWeight="700"
