@@ -193,4 +193,62 @@ export const forecastsRouter = router({
         totalClients: result.rows?.length || 0,
       };
     }),
+
+  /**
+   * DEBUG: Poblar email y teléfono para clientes que no los tengan
+   */
+  populateClientContacts: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const db = await getDb();
+      
+      // Obtener clientes sin email o teléfono
+      const clientsResult = await db.execute(`
+        SELECT id, name, email, phone
+        FROM clients
+        WHERE partnerId = ?
+          AND (email IS NULL OR email = '' OR phone IS NULL OR phone = '')
+      `, [ctx.partnerId]);
+      
+      const updates = [];
+      
+      for (const client of clientsResult.rows || []) {
+        const clientData = client as any;
+        const needsEmail = !clientData.email || clientData.email === '';
+        const needsPhone = !clientData.phone || clientData.phone === '';
+        
+        if (needsEmail || needsPhone) {
+          // Generar email y teléfono basados en el nombre del cliente
+          const sanitizedName = clientData.name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') // Eliminar acentos
+            .replace(/[^a-z0-9\s]/g, '') // Eliminar caracteres especiales
+            .replace(/\s+/g, ''); // Eliminar espacios
+          
+          const newEmail = needsEmail ? `${sanitizedName}@example.com` : clientData.email;
+          const newPhone = needsPhone ? `+34 ${Math.floor(600000000 + Math.random() * 99999999)}` : clientData.phone;
+          
+          await db.execute(`
+            UPDATE clients
+            SET email = ?, phone = ?
+            WHERE id = ?
+          `, [newEmail, newPhone, clientData.id]);
+          
+          updates.push({
+            id: clientData.id,
+            name: clientData.name,
+            oldEmail: clientData.email,
+            newEmail,
+            oldPhone: clientData.phone,
+            newPhone,
+          });
+        }
+      }
+      
+      return {
+        partnerId: ctx.partnerId,
+        totalUpdated: updates.length,
+        updates,
+      };
+    }),
 });
