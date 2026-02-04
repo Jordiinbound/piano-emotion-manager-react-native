@@ -136,11 +136,6 @@ export default function PredictionsScreen() {
       : [],
   };
 
-  const textPrimary = colors.text;
-  const textSecondary = colors.textSecondary;
-  const border = colors.border;
-  const cardBg = colors.card;
-
   const onRefresh = async () => {
     setRefreshing(true);
     await Promise.all([
