@@ -783,7 +783,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.card,
     borderRadius: 4,
     padding: 16,
-    paddingHorizontal: 8,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
