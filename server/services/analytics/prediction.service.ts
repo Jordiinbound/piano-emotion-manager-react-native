@@ -2,6 +2,7 @@
 import type { MySql2Database } from 'drizzle-orm/mysql2';
 import { getDb } from "../../db.js";
 import { cacheService } from '../../lib/cache.service.js';
+import { getVersionedCacheKey } from '../../lib/cache-version.js';
 type any = MySql2Database<Record<string, never>>;
  * Servicio de Predicción de Demanda
  * 
@@ -648,8 +649,8 @@ export class PredictionService {
    * Obtiene un resumen de todas las predicciones
    */
   async getPredictionsSummary(partnerId: string): Promise<any> {
-    // Intentar obtener del caché
-    const cacheKey = `predictions:summary:${partnerId}`;
+    // Intentar obtener del caché (con versión automática)
+    const cacheKey = getVersionedCacheKey(`predictions:summary:${partnerId}`);
     const cached = await cacheService.get<any>(cacheKey);
     if (cached) {
       console.log('[PredictionService] Returning cached predictions summary');
