@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   metricCard: {
-    width: '23.5%',
+    width: '48%', // 2 columnas en móvil (48% x 2 + gap)
     backgroundColor: COLORS.card,
     borderRadius: 4,
     padding: 16,
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.text.secondary,
     fontWeight: '500',
-    flexWrap: 'nowrap',
+    flexWrap: 'wrap', // Permitir múltiples líneas para texto completo
   },
   metricSubtitle: {
     fontSize: 11,

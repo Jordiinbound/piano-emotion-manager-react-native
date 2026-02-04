@@ -187,3 +187,10 @@
 - [x] Gráfico de evolución NO es responsive (no se actualiza al rotar pantalla)
   - Causa: Dimensions.get('window').width solo se ejecuta una vez al montar
   - Solución: Agregar listener con Dimensions.addEventListener('change') + state
+
+## 📱 Layout Móvil - Métricas (30 Enero 2026)
+
+- [x] Métricas deben disponerse en 2 columnas x 4 filas en formato móvil (actualmente 3 columnas)
+  - Solución: Cambiar metricCard width de 23.5% a 48% (2 columnas)
+- [x] Descripciones de métricas truncadas ("Ticket m...", "Ingresos...") - deben mostrarse completas
+  - Solución: Cambiar flexWrap de 'nowrap' a 'wrap' en metricTitle
