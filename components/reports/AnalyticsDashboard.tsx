@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Svg, { Path, Circle, Line, Text as SvgText, Rect } from 'react-native-svg';
 import {
   useDashboardData,
+  useRevenueChart,
   useReportExport,
   type PeriodPreset,
 } from '@/hooks/reports';
@@ -156,7 +157,7 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
-  const [chartWidth, setChartWidth] = React.useState(0);
+  const [chartWidth, setChartWidth] = React.useState(300);
 
   const handleLayout = (event: any) => {
     const { width } = event.nativeEvent.layout;
@@ -207,7 +208,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
 
   return (
     <View style={styles.chartContainer} onLayout={handleLayout}>
-      {chartWidth > 100 ? (
+      {chartWidth > 0 && (
         <Svg width={chartWidth} height={chartHeight}>
           {/* Grid lines */}
           {gridLines.map((line, index) => (
@@ -283,10 +284,6 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
             );
           })}
         </Svg>
-      ) : (
-        <View style={[styles.emptyChart, { height: chartHeight }]}>
-          <Text style={styles.emptyChartText}>Cargando gráfico...</Text>
-        </View>
       )}
     </View>
   );
@@ -389,10 +386,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
 
-  // Hook optimizado: 1 sola llamada HTTP en lugar de 3
+  // Hook optimizado para métricas y servicios (período seleccionado)
   const {
     metrics,
-    revenueByPeriod: revenueData,
     servicesByType: servicesData,
     isLoading,
     refetch,
@@ -400,6 +396,16 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     preset,
     changePeriod,
   } = useDashboardData('thisMonth', 'month');
+
+  // Gráfico de evolución SIEMPRE últimos 12 meses (independiente del selector)
+  const now = new Date();
+  const twelveMonthsAgo = new Date();
+  twelveMonthsAgo.setMonth(now.getMonth() - 12);
+  const last12MonthsRange = {
+    startDate: twelveMonthsAgo,
+    endDate: now,
+  };
+  const { data: revenueData, isLoading: revenueLoading } = useRevenueChart(last12MonthsRange, 'month');
   
   // Debug: verificar datos
   console.log('Dashboard Data (optimizado):', {
@@ -407,6 +413,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     revenueData,
     servicesData,
     isLoading,
+    revenueLoading,
   });
   const { downloadPDF, isExporting } = useReportExport();
 

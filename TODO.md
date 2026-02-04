@@ -127,3 +127,12 @@
 - [x] Página de Reportes va a blanco después de los cambios de optimización
   - Causa: useDashboardData no estaba exportado en hooks/reports/index.ts
   - Solución: Agregado a las exportaciones
+
+## 🚨 BUG CRÍTICO - Gráfico en Carga Infinita (30 Enero 2026)
+
+- [x] Gráfico de evolución de ingresos se queda en 'Cargando gráfico...' indefinidamente
+  - Causa: chartWidth inicial en 0 impedía renderizado
+  - Solución: Revertido a chartWidth=300
+- [x] Optimización de rendimiento no funciona - carga sigue igual de lenta
+  - Causa: Gráfico necesita 12 meses fijos, no el período seleccionado
+  - Solución: Separadas llamadas - métricas optimizadas (1 call) + gráfico (1 call) = 2 calls en lugar de 3
