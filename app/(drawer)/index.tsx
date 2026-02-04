@@ -83,7 +83,7 @@ export default function DashboardScreen() {
 
   // Datos
   const { services } = useServicesData();
-  const { appointments, upcomingAppointments: hookUpcomingAppointments } = useAppointmentsData();
+  const { appointments, upcomingAppointments: hookUpcomingAppointments, loading: appointmentsLoading } = useAppointmentsData();
   const { pianos } = usePianosData({ pageSize: 5000 });
   const { invoices } = useInvoicesData();
   const { quotes } = useQuotesData();
@@ -327,7 +327,12 @@ export default function DashboardScreen() {
             {/* Próximas Citas */}
             <View style={[styles.appointmentsContainer, isDesktop && styles.appointmentsDesktop]}>
               <Text style={styles.sectionTitle as any}>Próximas Citas</Text>
-              {upcomingAppointments.length > 0 ? (
+              {appointmentsLoading ? (
+                <View style={styles.loadingContainer as any}>
+                  <ActivityIndicator size="large" color={COLORS.primary} />
+                  <Text style={styles.loadingText as any}>Cargando citas...</Text>
+                </View>
+              ) : upcomingAppointments.length > 0 ? (
                 upcomingAppointments.map((apt, index) => (
                   <AppointmentRow
                     key={apt.id}
@@ -799,6 +804,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.textSecondary,
     marginTop: 7,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 30,
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
   },
 
   // Acciones rápidas
