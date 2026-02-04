@@ -68,7 +68,7 @@ export default function PredictionsScreen() {
   } | null>(null);
 
   const revenueQuery = trpc.advanced.predictions.getRevenue.useQuery(
-    { months: 6 },
+    { months: 12 },
     { staleTime: 5 * 60 * 1000, refetchOnWindowFocus: false }
   );
   
@@ -83,7 +83,7 @@ export default function PredictionsScreen() {
   );
   
   const workloadQuery = trpc.advanced.predictions.getWorkload.useQuery(
-    { weeks: 4 },
+    { weeks: 12 },
     { staleTime: 5 * 60 * 1000, refetchOnWindowFocus: false }
   );
   
