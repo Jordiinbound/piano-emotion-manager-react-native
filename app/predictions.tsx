@@ -420,6 +420,7 @@ export default function PredictionsScreen() {
             key={tab.id}
             style={[
               styles.tabButton,
+              isMobile && { maxWidth: 90 },  // maxWidth solo en móvil
               activeTab === tab.id && { borderBottomColor: TAB_COLORS[tab.id as TabType], borderBottomWidth: 2 }
             ]}
             onPress={() => setActiveTab(tab.id as TabType)}
@@ -500,9 +501,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 15,
-    paddingHorizontal: 6,  // Reducido para móvil
+    paddingHorizontal: 6,
     flex: 1,  // Cada pestaña ocupa espacio igual
-    maxWidth: 90,  // Ancho máximo para móvil
     textAlign: 'center',
   },
   tabLabel: {

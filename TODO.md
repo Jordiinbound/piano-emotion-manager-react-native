@@ -8,10 +8,10 @@
   - [x] Se corta por izquierda y derecha
   - [x] onLayout no estaba funcionando correctamente
   - [x] Solución: Inicializar containerWidth en 0 para forzar medición correcta
-- [ ] **BUG: Gráfico se corta por la izquierda**
-  - [ ] Primera barra "mar 25" parcialmente cortada
-  - [ ] Eje Y también se corta
-  - [ ] Aumentar padding izquierdo del gráfico
+- [x] **BUG: Gráfico se corta por la izquierda**
+  - [x] Etiquetas del eje Y se cortaban por la izquierda
+  - [x] Causa: chartCard tenía paddingHorizontal: 8 conflictivo
+  - [x] Solución: Eliminar paddingHorizontal, usar padding: 16 uniforme
 
 ### Previsiones sin Datos (04 Feb 2026)
 - [ ] **BUG CRÍTICO: Previsiones muestra "Datos insuficientes para previsión"**
@@ -226,7 +226,10 @@
   - [x] Pestañas no se distribuyen correctamente en el espacio disponible
   - [x] Ajustar layout para centrar pestañas en móvil
   - [x] Oscurecer colores de texto para mejor legibilidad
-- [x] **BUG: Palabras cortadas en pestañas**
+- [x] **BUG: Palabras cortadas en pestañas (móvil)**
   - [x] "Mantenimiento" se cortaba en "Manteni" / "miento"
   - [x] "Inventario" se cortaba en "Inventari" / "o"
   - [x] Solución: Reducir fontSize de 11px a 9px en móvil
+- [ ] **BUG: Palabras cortadas en tablet/desktop**
+  - [ ] maxWidth: 90 también se aplica en tablet/desktop
+  - [ ] Necesita maxWidth condicional solo para móvil
