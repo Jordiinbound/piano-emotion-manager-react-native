@@ -33,6 +33,7 @@ import {
   usageRouter,
   alertsRouter,
   alertSettingsRouter,
+  serviceIntervalSettingsRouter,
   dashboardRouter,
 } from "./routers/index.js";
 import { licenseRouter } from "./routers/license/index.js";
@@ -115,6 +116,7 @@ export const appRouter = router({
   // Sistema de alertas
   alerts: alertsRouter,
   alertSettings: alertSettingsRouter,
+  serviceIntervalSettings: serviceIntervalSettingsRouter,
 
   // Dashboard y métricas
   dashboard: dashboardRouter,

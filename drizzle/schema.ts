@@ -1119,6 +1119,25 @@ export const serviceTasks = mysqlTable("service_tasks", {
 ]);
 
 // ============================================================================
+// SERVICE INTERVAL SETTINGS BY CLIENT TYPE
+// ============================================================================
+
+export const serviceIntervalSettings = mysqlTable("service_interval_settings", {
+	id: int().autoincrement().notNull(),
+	partnerId: int().notNull().default(1),
+	clientType: mysqlEnum(['particular','student','professional','music_school','conservatory','concert_hall']).notNull(),
+	tuningIntervalDays: int().default(180).notNull(),
+	regulationIntervalDays: int().default(730).notNull(),
+	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+	index("service_interval_partner_idx").on(table.partnerId),
+	index("service_interval_client_type_idx").on(table.clientType),
+	index("service_interval_unique_idx").on(table.partnerId, table.clientType),
+]);
+
+// ============================================================================
 // ACCOUNTING TABLES
 // ============================================================================
 

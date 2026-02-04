@@ -2,8 +2,7 @@
  * Configuración de Previsiones
  * Piano Emotion Manager
  * 
- * Configuración personalizada de parámetros para predicciones de riesgo de clientes
- * e intervalos de servicio por tipo de cliente.
+ * Configuración personalizada de parámetros para predicciones de riesgo de clientes y mantenimiento.
  */
 
 import { useRouter, Stack } from 'expo-router';
@@ -32,24 +31,11 @@ interface PredictionSettingsForm {
   churnRiskIntervalMultiplier: number;
   churnRiskMinScore: number;
   
-  // Ventana de predicción
+  // Predicción de mantenimiento
+  maintenanceTuningIntervalDays: number;
+  maintenanceRegulationIntervalDays: number;
   maintenancePredictionWindowMonths: number;
 }
-
-interface ServiceInterval {
-  clientType: string;
-  tuningIntervalDays: number;
-  regulationIntervalDays: number;
-}
-
-const CLIENT_TYPE_LABELS: Record<string, string> = {
-  particular: 'Particular',
-  student: 'Estudiante',
-  professional: 'Profesional',
-  music_school: 'Escuela de Música',
-  conservatory: 'Conservatorio',
-  concert_hall: 'Sala de Conciertos',
-};
 
 export default function PredictionSettingsScreen() {
   const router = useRouter();
@@ -66,16 +52,15 @@ export default function PredictionSettingsScreen() {
     churnRiskMinDays: 180,
     churnRiskIntervalMultiplier: 1.5,
     churnRiskMinScore: 25,
+    maintenanceTuningIntervalDays: 180,
+    maintenanceRegulationIntervalDays: 730,
     maintenancePredictionWindowMonths: 6,
   });
 
-  const [serviceIntervals, setServiceIntervals] = useState<ServiceInterval[]>([]);
-  const [expandedTypes, setExpandedTypes] = useState<Set<string>>(new Set());
   const [isSaving, setIsSaving] = useState(false);
 
   // Obtener configuración actual
-  const { data: settings, isLoading: isLoadingSettings } = trpc.alertSettings.get.useQuery();
-  const { data: intervals, isLoading: isLoadingIntervals } = trpc.serviceIntervalSettings.get.useQuery({});
+  const { data: settings, isLoading } = trpc.alertSettings.get.useQuery();
   
   useEffect(() => {
     if (settings) {
@@ -83,59 +68,30 @@ export default function PredictionSettingsScreen() {
         churnRiskMinDays: settings.churnRiskMinDays || 180,
         churnRiskIntervalMultiplier: parseFloat(settings.churnRiskIntervalMultiplier || '1.5'),
         churnRiskMinScore: settings.churnRiskMinScore || 25,
+        maintenanceTuningIntervalDays: settings.maintenanceTuningIntervalDays || 180,
+        maintenanceRegulationIntervalDays: settings.maintenanceRegulationIntervalDays || 730,
         maintenancePredictionWindowMonths: settings.maintenancePredictionWindowMonths || 6,
       });
     }
   }, [settings]);
 
-  useEffect(() => {
-    if (intervals && Array.isArray(intervals)) {
-      setServiceIntervals(intervals);
-    }
-  }, [intervals]);
-
   const saveMutation = trpc.alertSettings.update.useMutation({
     onSuccess: () => {
-      console.log('Alert settings saved successfully');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setIsSaving(false);
+      router.back();
     },
     onError: (error) => {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setIsSaving(false);
       console.error('Error al guardar configuración:', error);
     },
   });
 
-  const saveIntervalMutation = trpc.serviceIntervalSettings.update.useMutation({
-    onSuccess: () => {
-      console.log('Interval settings saved successfully');
-    },
-    onError: (error) => {
-      console.error('Error al guardar intervalos:', error);
-    },
-  });
-
-  const handleSave = async () => {
+  const handleSave = () => {
     setIsSaving(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
-    try {
-      // Guardar configuración general
-      await saveMutation.mutateAsync(formData);
-      
-      // Guardar intervalos por tipo de cliente
-      for (const interval of serviceIntervals) {
-        await saveIntervalMutation.mutateAsync({
-          clientType: interval.clientType as any,
-          tuningIntervalDays: interval.tuningIntervalDays,
-          regulationIntervalDays: interval.regulationIntervalDays,
-        });
-      }
-      
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      setIsSaving(false);
-      router.back();
-    } catch (error) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      setIsSaving(false);
-    }
+    saveMutation.mutate(formData);
   };
 
   const updateField = (field: keyof PredictionSettingsForm, value: string) => {
@@ -143,35 +99,12 @@ export default function PredictionSettingsScreen() {
     setFormData(prev => ({ ...prev, [field]: numValue }));
   };
 
-  const updateInterval = (clientType: string, field: 'tuningIntervalDays' | 'regulationIntervalDays', value: string) => {
-    const numValue = parseInt(value) || 0;
-    setServiceIntervals(prev =>
-      prev.map(interval =>
-        interval.clientType === clientType
-          ? { ...interval, [field]: numValue }
-          : interval
-      )
-    );
-  };
-
-  const toggleExpanded = (clientType: string) => {
-    setExpandedTypes(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(clientType)) {
-        newSet.delete(clientType);
-      } else {
-        newSet.add(clientType);
-      }
-      return newSet;
-    });
-  };
-
-  if (isLoadingSettings || isLoadingIntervals) {
+  if (isLoading) {
     return (
       <ThemedView style={[styles.container, { backgroundColor }]}>
         <Stack.Screen
           options={{
-            title: 'Configuracion de Previsiones',
+            title: 'Configuración de Previsiones',
             headerShown: true,
           }}
         />
@@ -186,7 +119,7 @@ export default function PredictionSettingsScreen() {
     <ThemedView style={[styles.container, { backgroundColor }]}>
       <Stack.Screen
         options={{
-          title: 'Configuracion de Previsiones',
+          title: 'Configuración de Previsiones',
           headerShown: true,
           headerRight: () => (
             <Pressable
@@ -243,6 +176,8 @@ export default function PredictionSettingsScreen() {
             </View>
             <ThemedText style={[styles.fieldDescription, { color: textSecondary }]}>
               Si un cliente no recibe servicio durante este período, se considera en riesgo inicial.
+              {'\n\n'}
+              <ThemedText style={{ fontWeight: '600' }}>Ejemplo:</ThemedText> Con 180 días, un cliente sin servicio durante 6 meses empezará a acumular puntos de riesgo.
             </ThemedText>
             <TextInput
               style={[styles.input, { backgroundColor, borderColor, color: textColor }]}
@@ -267,7 +202,9 @@ export default function PredictionSettingsScreen() {
               </View>
             </View>
             <ThemedText style={[styles.fieldDescription, { color: textSecondary }]}>
-              Detecta clientes que superan su intervalo habitual de servicios.
+              Detecta clientes que superan su intervalo habitual de servicios. El sistema calcula cuántos días pasan normalmente entre servicios para cada cliente.
+              {'\n\n'}
+              <ThemedText style={{ fontWeight: '600' }}>Ejemplo:</ThemedText> Con 1.5x, si un cliente normalmente viene cada 6 meses (180 días), se considera en riesgo a los 9 meses (270 días).
             </ThemedText>
             <TextInput
               style={[styles.input, { backgroundColor, borderColor, color: textColor }]}
@@ -292,7 +229,9 @@ export default function PredictionSettingsScreen() {
               </View>
             </View>
             <ThemedText style={[styles.fieldDescription, { color: textSecondary }]}>
-              Solo se mostrarán clientes que superen este umbral de riesgo.
+              Solo se mostrarán clientes que superen este umbral de riesgo. El sistema asigna puntos según múltiples factores (días sin servicio, intervalo promedio, etc.).
+              {'\n\n'}
+              <ThemedText style={{ fontWeight: '600' }}>Escala:</ThemedText> 0-24 (bajo), 25-49 (medio), 50-74 (alto), 75-100 (crítico)
             </ThemedText>
             <TextInput
               style={[styles.input, { backgroundColor, borderColor, color: textColor }]}
@@ -305,89 +244,75 @@ export default function PredictionSettingsScreen() {
           </View>
         </View>
 
-        {/* Sección: Previsión de Servicios por Tipo de Cliente */}
+        {/* Sección: Predicción de Mantenimiento */}
         <View style={[styles.section, { backgroundColor: cardBackground }]}>
           <View style={styles.sectionHeader}>
             <IconSymbol name="wrench.and.screwdriver" size={24} color={tintColor} />
             <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
-              Prevision de Servicios por Tipo de Cliente
+              Predicción de Mantenimiento
             </ThemedText>
           </View>
           
           <ThemedText style={[styles.sectionDescription, { color: textSecondary }]}>
-            Configura intervalos personalizados de afinación y regulación para cada tipo de cliente.
+            Configura los intervalos recomendados para cada tipo de servicio y la ventana de predicción.
           </ThemedText>
 
-          {serviceIntervals.map((interval) => {
-            const isExpanded = expandedTypes.has(interval.clientType);
-            
-            return (
-              <View key={interval.clientType} style={styles.clientTypeCard}>
-                <Pressable
-                  style={[styles.clientTypeHeader, { borderBottomColor: borderColor }]}
-                  onPress={() => toggleExpanded(interval.clientType)}
-                >
-                  <ThemedText style={[styles.clientTypeTitle, { color: textColor }]}>
-                    {CLIENT_TYPE_LABELS[interval.clientType]}
-                  </ThemedText>
-                  <IconSymbol
-                    name={isExpanded ? 'chevron.up' : 'chevron.down'}
-                    size={20}
-                    color={textSecondary}
-                  />
-                </Pressable>
-
-                {isExpanded && (
-                  <View style={styles.clientTypeContent}>
-                    {/* Afinación */}
-                    <View style={styles.intervalField}>
-                      <View style={styles.fieldHeader}>
-                        <ThemedText style={[styles.fieldLabel, { color: textColor }]}>
-                          Afinación
-                        </ThemedText>
-                        <View style={[styles.badge, { backgroundColor: `${tintColor}15` }]}>
-                          <ThemedText style={[styles.badgeText, { color: tintColor }]}>
-                            {interval.tuningIntervalDays} días
-                          </ThemedText>
-                        </View>
-                      </View>
-                      <TextInput
-                        style={[styles.input, { backgroundColor, borderColor, color: textColor }]}
-                        value={interval.tuningIntervalDays.toString()}
-                        onChangeText={(value) => updateInterval(interval.clientType, 'tuningIntervalDays', value)}
-                        keyboardType="numeric"
-                        placeholderTextColor={textSecondary}
-                      />
-                    </View>
-
-                    {/* Regulación */}
-                    <View style={styles.intervalField}>
-                      <View style={styles.fieldHeader}>
-                        <ThemedText style={[styles.fieldLabel, { color: textColor }]}>
-                          Regulación
-                        </ThemedText>
-                        <View style={[styles.badge, { backgroundColor: `${tintColor}15` }]}>
-                          <ThemedText style={[styles.badgeText, { color: tintColor }]}>
-                            {interval.regulationIntervalDays} días
-                          </ThemedText>
-                        </View>
-                      </View>
-                      <TextInput
-                        style={[styles.input, { backgroundColor, borderColor, color: textColor }]}
-                        value={interval.regulationIntervalDays.toString()}
-                        onChangeText={(value) => updateInterval(interval.clientType, 'regulationIntervalDays', value)}
-                        keyboardType="numeric"
-                        placeholderTextColor={textSecondary}
-                      />
-                    </View>
-                  </View>
-                )}
+          {/* Intervalo de afinación */}
+          <View style={styles.fieldGroup}>
+            <View style={styles.fieldHeader}>
+              <ThemedText style={[styles.fieldLabel, { color: textColor }]}>
+                Intervalo recomendado para Afinación
+              </ThemedText>
+              <View style={[styles.badge, { backgroundColor: `${tintColor}15` }]}>
+                <ThemedText style={[styles.badgeText, { color: tintColor }]}>
+                  {formData.maintenanceTuningIntervalDays} días
+                </ThemedText>
               </View>
-            );
-          })}
+            </View>
+            <ThemedText style={[styles.fieldDescription, { color: textSecondary }]}>
+              Intervalo estándar entre afinaciones. El sistema predice cuándo tocará la próxima afinación basándose en el historial de cada piano.
+              {'\n\n'}
+              <ThemedText style={{ fontWeight: '600' }}>Recomendación:</ThemedText> 180 días (6 meses) para uso doméstico, 90 días (3 meses) para uso profesional.
+            </ThemedText>
+            <TextInput
+              style={[styles.input, { backgroundColor, borderColor, color: textColor }]}
+              value={formData.maintenanceTuningIntervalDays.toString()}
+              onChangeText={(value) => updateField('maintenanceTuningIntervalDays', value)}
+              keyboardType="numeric"
+              placeholder="180"
+              placeholderTextColor={textSecondary}
+            />
+          </View>
+
+          {/* Intervalo de regulación */}
+          <View style={styles.fieldGroup}>
+            <View style={styles.fieldHeader}>
+              <ThemedText style={[styles.fieldLabel, { color: textColor }]}>
+                Intervalo recomendado para Regulación
+              </ThemedText>
+              <View style={[styles.badge, { backgroundColor: `${tintColor}15` }]}>
+                <ThemedText style={[styles.badgeText, { color: tintColor }]}>
+                  {formData.maintenanceRegulationIntervalDays} días
+                </ThemedText>
+              </View>
+            </View>
+            <ThemedText style={[styles.fieldDescription, { color: textSecondary }]}>
+              Intervalo estándar entre regulaciones. La regulación es un mantenimiento más profundo que la afinación.
+              {'\n\n'}
+              <ThemedText style={{ fontWeight: '600' }}>Recomendación:</ThemedText> 730 días (2 años) para uso doméstico, 365 días (1 año) para uso profesional.
+            </ThemedText>
+            <TextInput
+              style={[styles.input, { backgroundColor, borderColor, color: textColor }]}
+              value={formData.maintenanceRegulationIntervalDays.toString()}
+              onChangeText={(value) => updateField('maintenanceRegulationIntervalDays', value)}
+              keyboardType="numeric"
+              placeholder="730"
+              placeholderTextColor={textSecondary}
+            />
+          </View>
 
           {/* Ventana de predicción */}
-          <View style={[styles.fieldGroup, { marginTop: 16 }]}>
+          <View style={styles.fieldGroup}>
             <View style={styles.fieldHeader}>
               <ThemedText style={[styles.fieldLabel, { color: textColor }]}>
                 Ventana de predicción (meses)
@@ -400,6 +325,8 @@ export default function PredictionSettingsScreen() {
             </View>
             <ThemedText style={[styles.fieldDescription, { color: textSecondary }]}>
               Define cuántos meses hacia adelante se mostrarán las predicciones de mantenimiento.
+              {'\n\n'}
+              <ThemedText style={{ fontWeight: '600' }}>Ejemplo:</ThemedText> Con 6 meses, solo se mostrarán servicios predichos para los próximos 6 meses.
             </ThemedText>
             <TextInput
               style={[styles.input, { backgroundColor, borderColor, color: textColor }]}
@@ -420,16 +347,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     padding: Spacing.md,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   saveButton: {
     paddingHorizontal: 16,
@@ -460,7 +387,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   fieldGroup: {
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   fieldHeader: {
     flexDirection: 'row',
@@ -471,11 +398,7 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 15,
     fontWeight: '600',
-  },
-  fieldDescription: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: Spacing.sm,
+    flex: 1,
   },
   badge: {
     paddingHorizontal: 10,
@@ -483,37 +406,19 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
+  },
+  fieldDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: Spacing.sm,
   },
   input: {
     borderWidth: 1,
     borderRadius: BorderRadius.md,
-    padding: Spacing.sm,
-    fontSize: 15,
-  },
-  clientTypeCard: {
-    marginBottom: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    overflow: 'hidden',
-  },
-  clientTypeHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    borderBottomWidth: 1,
-  },
-  clientTypeTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  clientTypeContent: {
-    padding: Spacing.md,
-    gap: Spacing.md,
-  },
-  intervalField: {
-    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    fontSize: 15,
   },
 });

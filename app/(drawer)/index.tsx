@@ -297,7 +297,7 @@ export default function DashboardScreen() {
                 <CircularIndicator
                   color={COLORS.pianos}
                   icon="build-outline"
-                  label="Mant. próximo"
+                  label="Servic. Próximos"
                   value={predictionsSummary?.maintenance?.nextMonth?.toString() || '0'}
                 />
               </View>

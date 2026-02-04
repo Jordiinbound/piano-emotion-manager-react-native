@@ -358,6 +358,7 @@ export class ForecastService {
           c.name as client_name,
           c.email as client_email,
           c.phone as client_phone,
+          c.clientType as client_type,
           s.serviceType,
           s.date as service_date
         FROM pianos p
@@ -366,6 +367,32 @@ export class ForecastService {
         WHERE p.partnerId = ${partnerId}
         ORDER BY p.id, s.serviceType, s.date DESC
       `);
+      
+      // Obtener configuración de intervalos por tipo de cliente
+      const intervalsResult = await this.db.execute(sql`
+        SELECT clientType, tuningIntervalDays, regulationIntervalDays
+        FROM service_interval_settings
+        WHERE partnerId = ${partnerId}
+      `);
+      
+      // Crear mapa de intervalos por tipo de cliente
+      const intervalsByClientType = new Map<string, { tuning: number; regulation: number }>();
+      for (const row of intervalsResult[0] || []) {
+        intervalsByClientType.set((row as any).clientType, {
+          tuning: (row as any).tuningIntervalDays,
+          regulation: (row as any).regulationIntervalDays,
+        });
+      }
+      
+      // Valores por defecto si no hay configuración
+      const defaultIntervals = {
+        particular: { tuning: 180, regulation: 730 },
+        student: { tuning: 120, regulation: 365 },
+        professional: { tuning: 90, regulation: 365 },
+        music_school: { tuning: 60, regulation: 180 },
+        conservatory: { tuning: 45, regulation: 180 },
+        concert_hall: { tuning: 30, regulation: 120 },
+      };
 
       const forecasts: MaintenanceForecast[] = [];
       const pianoServices: Map<string, Map<string, Date[]>> = new Map();
@@ -399,7 +426,18 @@ export class ForecastService {
         for (const [serviceType, dates] of pianoData.entries()) {
           if (dates.length < 1) continue;
 
-          let avgInterval = 180;
+          // Obtener intervalo configurado según tipo de cliente y tipo de servicio
+          const clientType = (row as any).client_type || 'particular';
+          const isRegulation = serviceType.toLowerCase().includes('regulaci') || serviceType.toLowerCase().includes('regulation');
+          
+          let defaultInterval = 180;
+          const clientIntervals = intervalsByClientType.get(clientType) || 
+                                  (defaultIntervals as any)[clientType] || 
+                                  { tuning: 180, regulation: 730 };
+          
+          defaultInterval = isRegulation ? clientIntervals.regulation : clientIntervals.tuning;
+          
+          let avgInterval = defaultInterval;
           if (dates.length >= 2) {
             const intervals: number[] = [];
             for (let i = 1; i < dates.length; i++) {

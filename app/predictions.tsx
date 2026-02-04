@@ -165,7 +165,7 @@ export default function PredictionsScreen() {
   const tabs = [
     { id: 'revenue', label: 'Ingresos', icon: 'cash-outline' },
     { id: 'churn', label: 'Clientes', icon: 'people-outline' },
-    { id: 'maintenance', label: 'Mantenimiento', icon: 'construct-outline' },
+    { id: 'maintenance', label: 'Servicios', icon: 'construct-outline' },
     { id: 'workload', label: 'Carga', icon: 'calendar-outline' },
     { id: 'inventory', label: 'Inventario', icon: 'cube-outline' },
   ];
@@ -308,7 +308,7 @@ export default function PredictionsScreen() {
         <View style={styles.summaryHeader}>
           <Ionicons name="construct" size={24} color={colors.primary} />
           <ThemedText style={[styles.summaryTitle, { color: textPrimary }]}>
-            Mantenimiento Previsto
+            Servicios Previstos
           </ThemedText>
         </View>
         <ThemedText style={[styles.summaryDescription, { color: textSecondary }]}>
