@@ -513,7 +513,7 @@ export class ForecastService {
       .map((value, index) => ({ day: days[index], value }))
       .filter(d => d.value > threshold * 1.2)
       .sort((a, b) => b.value - a.value)
-      .slice(0, 3)
+      .slice(0, 12)
       .map(d => d.day);
   }
 
@@ -625,7 +625,7 @@ export class ForecastService {
       clientChurn: {
         atRiskCount: churn.length,
         highRiskCount: churn.filter(c => c.riskScore >= 70).length,
-        topRiskClients: churn.slice(0, 5),
+        topRiskClients: churn.slice(0, 12),
       },
       maintenance: {
         upcomingCount: maintenance.length,
@@ -634,7 +634,7 @@ export class ForecastService {
           const next30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
           return m.predictedDate >= now && m.predictedDate <= next30Days;
         }).length,
-        forecasts: maintenance.slice(0, 10),
+        forecasts: maintenance.slice(0, 12),
       },
       workload: {
         forecasts: workload,
@@ -643,7 +643,7 @@ export class ForecastService {
       },
       inventory: {
         urgentItems: inventory.filter(i => i.urgency === 'high').length,
-        forecasts: inventory.slice(0, 10),
+        forecasts: inventory.slice(0, 12),
       },
       generatedAt: new Date(),
     };
