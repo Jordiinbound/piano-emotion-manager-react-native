@@ -55,6 +55,7 @@ interface UsePianosDataOptions {
   category?: string | null;
   clientId?: string | null;
   pageSize?: number;
+  enabled?: boolean;
 }
 
 export function usePianosData(options: UsePianosDataOptions = {}) {
@@ -78,6 +79,7 @@ export function usePianosData(options: UsePianosDataOptions = {}) {
       clientId: clientId ? parseInt(clientId, 10) : undefined,
     },
     {
+      enabled: options.enabled !== false,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       staleTime: 5 * 60 * 1000, // 5 minutos
     }

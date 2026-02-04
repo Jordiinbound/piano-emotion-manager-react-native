@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Pressable,
   ScrollView,
@@ -35,9 +36,18 @@ export default function AppointmentDetailScreen() {
   const insets = useSafeAreaInsets();
   const isNew = id === 'new';
 
-  const { clients, getClient } = useClientsData();
-  const { pianos, getPiano, getPianosByClient } = usePianosData();
-  const { appointments, addAppointment, updateAppointment, deleteAppointment, getAppointment } = useAppointmentsData();
+  // Lazy loading: solo cargar datos cuando sea necesario
+  const [dataEnabled, setDataEnabled] = useState(false);
+  
+  useEffect(() => {
+    // Habilitar carga de datos después de 100ms
+    const timer = setTimeout(() => setDataEnabled(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const { clients, getClient, loading: clientsLoading } = useClientsData({ enabled: dataEnabled });
+  const { pianos, getPiano, getPianosByClient, loading: pianosLoading } = usePianosData({ enabled: dataEnabled });
+  const { appointments, addAppointment, updateAppointment, deleteAppointment, getAppointment, loading: appointmentsLoading } = useAppointmentsData();
   const { error: showError } = useSnackbar();
   const { sendAppointmentReminder } = useWhatsApp();
   const { showExportOptions, exportToGoogleCalendar, exportToOutlookCalendar, exportToICS } = useCalendarSync();
@@ -156,6 +166,9 @@ export default function AppointmentDetailScreen() {
   const serviceTypes: ServiceType[] = ['tuning', 'repair', 'regulation', 'maintenance', 'inspection'];
   const statuses: AppointmentStatus[] = ['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled'];
 
+  // Mostrar loading mientras cargan los datos
+  const isLoading = clientsLoading || pianosLoading || appointmentsLoading;
+
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen
@@ -176,6 +189,13 @@ export default function AppointmentDetailScreen() {
             ),
         }}
       />
+
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={accent} />
+          <ThemedText style={{ marginTop: 16, color: textSecondary }}>Cargando datos...</ThemedText>
+        </View>
+      )}
 
       <ScrollView
         style={styles.scrollView}
@@ -490,6 +510,17 @@ export default function AppointmentDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
   },
   scrollView: {
     flex: 1,

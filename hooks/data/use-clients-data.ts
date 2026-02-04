@@ -73,6 +73,7 @@ interface UseClientsDataOptions {
   region?: string | null;
   routeGroup?: string | null;
   pageSize?: number;
+  enabled?: boolean;
 }
 
 export function useClientsData(options: UseClientsDataOptions = {}) {
@@ -97,6 +98,7 @@ export function useClientsData(options: UseClientsDataOptions = {}) {
       routeGroup: routeGroup || undefined,
     },
     {
+      enabled: options.enabled !== false,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
       staleTime: 5 * 60 * 1000, // 5 minutos
       retry: 2,
