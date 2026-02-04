@@ -467,8 +467,10 @@ export class PredictionService {
    * Predice la carga de trabajo para las próximas semanas
    */
   async predictWorkload(partnerId: string, weeks: number = 4): Promise<any[]> {
+    console.log('[predictWorkload] START - partnerId:', partnerId, 'weeks:', weeks);
     try {
       // Obtener citas programadas
+      console.log('[predictWorkload] Executing upcoming appointments query...');
       const upcomingResult = await this.db.execute(`
       SELECT 
         DATE_FORMAT(date, '%Y-%m-%d') as week,
@@ -478,8 +480,11 @@ export class PredictionService {
       GROUP BY WEEK(date, 1)
       ORDER BY week
     `);
+    
+    console.log('[predictWorkload] Upcoming appointments rows:', upcomingResult.rows?.length || 0);
 
     // Obtener histórico de servicios por día de la semana
+    console.log('[predictWorkload] Executing historical services query...');
     const historicalResult = await this.db.execute(`
       SELECT 
         DAYOFWEEK(date) as day_of_week,
@@ -488,6 +493,8 @@ export class PredictionService {
       WHERE partner_id = ${partnerId} AND date >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
       GROUP BY DAYOFWEEK(date)
     `);
+    
+    console.log('[predictWorkload] Historical services rows:', historicalResult.rows?.length || 0);
 
     const dayDistribution = new Array(7).fill(0);
     let totalServices = 0;
@@ -531,9 +538,11 @@ export class PredictionService {
       });
     }
 
+      console.log('[predictWorkload] END - Returning', predictions.length, 'predictions');
       return predictions;
     } catch (error) {
-      console.error('[PredictionService] Error predicting workload:', error);
+      console.error('[predictWorkload] ERROR:', error);
+      console.error('[predictWorkload] Error stack:', error.stack);
       return [];
     }
   }
@@ -571,8 +580,10 @@ export class PredictionService {
    * Predice la demanda de inventario
    */
   async predictInventoryDemand(partnerId: string): Promise<any[]> {
+    console.log('[predictInventoryDemand] START - partnerId:', partnerId);
     try {
       // Obtener consumo histórico de inventario
+      console.log('[predictInventoryDemand] Executing SQL query...');
       const result = await this.db.execute(`
       SELECT 
         i.id,
@@ -588,6 +599,11 @@ export class PredictionService {
       WHERE i.partnerId = ${partnerId}
       GROUP BY i.id, i.name, i.quantity, i.minStock, i.unit
     `);
+    
+    console.log('[predictInventoryDemand] Query executed. Rows:', result.rows?.length || 0);
+    if (result.rows && result.rows.length > 0) {
+      console.log('[predictInventoryDemand] First row:', JSON.stringify(result.rows[0]));
+    }
 
     const predictions = [];
 
@@ -631,12 +647,16 @@ export class PredictionService {
     }
 
       // Ordenar por urgencia
-      return predictions.sort((a: any, b: any) => {
+      const sorted = predictions.sort((a: any, b: any) => {
         const urgencyOrder = { high: 0, medium: 1, low: 2 };
         return urgencyOrder[a.urgency as keyof typeof urgencyOrder] - urgencyOrder[b.urgency as keyof typeof urgencyOrder];
       });
+      
+      console.log('[predictInventoryDemand] END - Returning', sorted.length, 'predictions');
+      return sorted;
     } catch (error) {
-      console.error('[PredictionService] Error predicting inventory demand:', error);
+      console.error('[predictInventoryDemand] ERROR:', error);
+      console.error('[predictInventoryDemand] Error stack:', error.stack);
       return [];
     }
   }
@@ -649,15 +669,21 @@ export class PredictionService {
    * Obtiene un resumen de todas las predicciones
    */
   async getPredictionsSummary(partnerId: string): Promise<any> {
+    console.log('[getPredictionsSummary] ===== START =====');
+    console.log('[getPredictionsSummary] partnerId:', partnerId);
+    console.log('[getPredictionsSummary] partnerId type:', typeof partnerId);
+    
     // Intentar obtener del caché (con versión automática)
     const cacheKey = getVersionedCacheKey(`predictions:summary:${partnerId}`);
+    console.log('[getPredictionsSummary] cacheKey:', cacheKey);
+    
     const cached = await cacheService.get<any>(cacheKey);
     if (cached) {
-      console.log('[PredictionService] Returning cached predictions summary');
+      console.log('[getPredictionsSummary] Returning cached predictions summary');
       return cached;
     }
 
-    console.log('[PredictionService] Calculating fresh predictions summary...');
+    console.log('[getPredictionsSummary] Calculating fresh predictions summary...');
     const [revenue, churn, maintenance, workload, inventory] = await Promise.all([
       this.predictRevenue(partnerId, 6),
       this.predictClientChurn(partnerId),
@@ -665,6 +691,13 @@ export class PredictionService {
       this.predictWorkload(partnerId, 4),
       this.predictInventoryDemand(partnerId),
     ]);
+    
+    console.log('[getPredictionsSummary] Results:');
+    console.log('  - revenue:', revenue.length, 'predictions');
+    console.log('  - churn:', churn.length, 'clients at risk');
+    console.log('  - maintenance:', maintenance.length, 'predictions');
+    console.log('  - workload:', workload.length, 'weeks');
+    console.log('  - inventory:', inventory.length, 'items');
 
     // Calcular para los PRÓXIMOS 30 DÍAS (no mes calendario)
     const now = new Date();
