@@ -580,14 +580,15 @@ export class AnalyticsService {
 
   private async getServiceStats(startDate: Date, endDate: Date) {
     const db = await getDb();
-    const now = new Date();
+    const now = new Date().toISOString();
     
     // UNA SOLA query con agregaciones condicionales para obtener todas las estadísticas
+    // Criterio: Un servicio está completado si su fecha es anterior a HOY
     const result = await db
       .select({
         total: count(),
-        completed: sql<number>`SUM(CASE WHEN ${services.clientSignature} IS NOT NULL AND ${services.clientSignature} != '' THEN 1 ELSE 0 END)`,
-        pending: sql<number>`SUM(CASE WHEN (${services.clientSignature} IS NULL OR ${services.clientSignature} = '' OR ${services.date} > ${now.toISOString()}) THEN 1 ELSE 0 END)`,
+        completed: sql<number>`SUM(CASE WHEN ${services.date} < ${now} THEN 1 ELSE 0 END)`,
+        pending: sql<number>`SUM(CASE WHEN ${services.date} >= ${now} THEN 1 ELSE 0 END)`,
       })
       .from(services)
       .where(

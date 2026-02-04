@@ -157,3 +157,12 @@
 - [x] Métricas principales tardan demasiado en cargar (rendimiento no mejorado)
   - Solución: Optimizado getServiceStats para hacer 1 query con agregaciones en lugar de 3
   - Reducción de queries: 66% menos (3→1)
+
+## 🚨 BUGS CRÍTICOS Post-Despliegue (30 Enero 2026)
+
+- [x] Tasa de finalización muestra 0.0% (debería ser mayor)
+  - Causa: Lógica basada en clientSignature no funcionaba (campo vacío)
+  - Solución: Cambiar a usar fecha del servicio (< hoy = completado, >= hoy = pendiente)
+- [x] Ingresos medios muestra 0 € (debería mostrar valor real)
+  - Causa: serviceStats.completed era 0, causando división por cero
+  - Solución: Se resuelve automáticamente con el fix de tasa de finalización
