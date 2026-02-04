@@ -10,6 +10,7 @@ import { getUserByClerkId } from "../db.js";
 import { storageRouter } from "./storage/index.js";
 import PredictionService from "../services/analytics/prediction.service.js";
 import { getDb } from "../db.js";
+import { predictionsRouter } from "./predictions/predictions.router.js";
 
 // Funciones auxiliares para el chat
 function generateSuggestions(message: string): string[] {

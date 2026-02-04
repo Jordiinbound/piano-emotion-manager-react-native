@@ -224,11 +224,6 @@ export default function PredictionsScreen() {
               <ThemedText style={[styles.predictionPeriod, { color: textPrimary }]}>
                 {prediction.period}
               </ThemedText>
-              <View style={[styles.confidenceBadge, { backgroundColor: `${colors.primary}20` }]}>
-                <ThemedText style={{ color: colors.primary, fontSize: 12 }}>
-                  {prediction.confidence}% confianza
-                </ThemedText>
-              </View>
             </View>
 
             <View style={styles.predictionValue}>
@@ -452,12 +447,15 @@ export default function PredictionsScreen() {
               <Ionicons 
                 name={tab.icon as any} 
                 size={24} 
-                color={activeTab === tab.id ? TAB_COLORS[tab.id as TabType] : textSecondary} 
+                color={TAB_COLORS[tab.id as TabType]} 
               />
               <ThemedText 
                 style={[
                   styles.tabLabel, 
-                  { color: activeTab === tab.id ? TAB_COLORS[tab.id as TabType] : textSecondary }
+                  { 
+                    color: TAB_COLORS[tab.id as TabType],
+                    opacity: activeTab === tab.id ? 1 : 0.6
+                  }
                 ]}
               >
                 {tab.label}
