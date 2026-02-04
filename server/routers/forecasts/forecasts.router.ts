@@ -166,4 +166,31 @@ export const forecastsRouter = router({
         dateRange: dateRangeResult.rows?.[0],
       };
     }),
+
+  /**
+   * DEBUG: Verificar datos de clientes con email y teléfono
+   */
+  debugClientData: protectedProcedure
+    .query(async ({ ctx }) => {
+      const db = await getDb();
+      
+      const result = await db.execute(`
+        SELECT 
+          id,
+          name,
+          email,
+          phone,
+          createdAt
+        FROM clients
+        WHERE partnerId = ?
+        ORDER BY name
+        LIMIT 20
+      `, [ctx.partnerId]);
+      
+      return {
+        partnerId: ctx.partnerId,
+        clients: result.rows,
+        totalClients: result.rows?.length || 0,
+      };
+    }),
 });
