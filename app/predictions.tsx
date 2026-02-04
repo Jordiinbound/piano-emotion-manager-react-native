@@ -575,7 +575,7 @@ export default function PredictionsScreen() {
                 style={[styles.contactOption, { backgroundColor: `${colors.primary}15` }]}
                 onPress={() => {
                   setContactModalVisible(false);
-                  router.push('/appointments?action=new');
+                  router.push('/agenda');
                 }}
               >
                 <Ionicons name="calendar-outline" size={24} color={colors.primary} />

@@ -552,6 +552,7 @@ export class ForecastService {
         const currentStock = parseFloat((item as any).current_stock) || 0;
         const minStock = parseFloat((item as any).min_stock) || 0;
 
+        // Mostrar TODOS los items
         if (monthlyUsage > 0) {
           const monthsUntilEmpty = currentStock / monthlyUsage;
           const monthsUntilMin = (currentStock - minStock) / monthlyUsage;
@@ -568,8 +569,8 @@ export class ForecastService {
             suggestedOrder: Math.max(0, Math.ceil(monthlyUsage * 3 - currentStock)),
             urgency: monthsUntilMin < 1 ? 'high' : monthsUntilMin < 2 ? 'medium' : 'low',
           });
-        } else if (currentStock <= minStock) {
-          // Si no tiene movimientos pero está bajo mínimo, mostrar como urgente
+        } else {
+          // Items sin movimientos recientes: mostrar todos
           forecasts.push({
             itemId: (item as any).id,
             itemName: (item as any).name,
@@ -577,10 +578,10 @@ export class ForecastService {
             minStock,
             unit: (item as any).unit,
             monthlyUsage: 0,
-            monthsUntilMin: 0,
-            monthsUntilEmpty: 0,
-            suggestedOrder: Math.max(0, Math.ceil(minStock * 2 - currentStock)),
-            urgency: currentStock === 0 ? 'high' : 'medium',
+            monthsUntilMin: currentStock <= minStock ? 0 : 999,
+            monthsUntilEmpty: 999,
+            suggestedOrder: currentStock <= minStock ? Math.max(0, Math.ceil(minStock * 2 - currentStock)) : 0,
+            urgency: currentStock === 0 ? 'high' : currentStock <= minStock ? 'medium' : 'low',
           });
         }
       }
