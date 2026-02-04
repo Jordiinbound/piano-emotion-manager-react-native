@@ -427,7 +427,7 @@ export default function PredictionsScreen() {
             <View style={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}>
               <Ionicons 
                 name={tab.icon as any} 
-                size={isMobile ? 20 : 24} 
+                size={24} 
                 color={TAB_COLORS[tab.id as TabType]} 
               />
               <ThemedText 
@@ -436,7 +436,7 @@ export default function PredictionsScreen() {
                   { 
                     color: TAB_COLORS[tab.id as TabType],
                     opacity: activeTab === tab.id ? 1 : 0.6,
-                    fontSize: isMobile ? 12 : 16,
+                    fontSize: isMobile ? 11 : 16,  // Solo reducir en móvil
                   }
                 ]}
               >
@@ -499,17 +499,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    flex: 1,
-    maxWidth: 140,  // Más ancho en desktop para evitar cortes
-    minWidth: 70,   // Mínimo en móvil
+    paddingVertical: 15,  // Original
+    paddingHorizontal: 10,  // Original
+    minWidth: 120,  // Original
     textAlign: 'center',
-    marginHorizontal: 6,
+    marginHorizontal: 10,  // Original
   },
   tabLabel: {
     marginTop: 8,
-    fontWeight: '600',
+    fontSize: 16,  // Original (se sobrescribe en móvil con inline style)
+    fontWeight: '600',  // Mantenido para mejor legibilidad
     textAlign: 'center',
     width: '100%',
   },
