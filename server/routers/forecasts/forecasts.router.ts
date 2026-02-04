@@ -251,4 +251,59 @@ export const forecastsRouter = router({
         updates,
       };
     }),
+
+  /**
+   * DEBUG: Crear movimientos de inventario del último año
+   */
+  populateInventoryMovements: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      const db = await getDb();
+      
+      // Obtener todos los items de inventario
+      const inventoryResult = await db.execute(`
+        SELECT id, name, quantity
+        FROM inventory
+        WHERE partnerId = ?
+      `, [ctx.partnerId]);
+      
+      const movements = [];
+      const now = new Date();
+      
+      // Crear movimientos de salida (type='out') para los últimos 12 meses
+      for (const item of inventoryResult.rows || []) {
+        const itemData = item as any;
+        
+        // Generar entre 5-15 movimientos por item en el último año
+        const numMovements = Math.floor(5 + Math.random() * 10);
+        
+        for (let i = 0; i < numMovements; i++) {
+          // Fecha aleatoria en los últimos 12 meses
+          const daysAgo = Math.floor(Math.random() * 365);
+          const movementDate = new Date(now);
+          movementDate.setDate(movementDate.getDate() - daysAgo);
+          
+          // Cantidad aleatoria entre 1 y 10
+          const quantity = Math.floor(1 + Math.random() * 10);
+          
+          await db.execute(`
+            INSERT INTO inventory_movements (inventoryId, type, quantity, createdAt, updatedAt)
+            VALUES (?, 'out', ?, ?, ?)
+          `, [itemData.id, quantity, movementDate, movementDate]);
+          
+          movements.push({
+            inventoryId: itemData.id,
+            itemName: itemData.name,
+            quantity,
+            date: movementDate.toISOString(),
+          });
+        }
+      }
+      
+      return {
+        partnerId: ctx.partnerId,
+        totalItems: inventoryResult.rows?.length || 0,
+        totalMovements: movements.length,
+        movements: movements.slice(0, 20), // Mostrar solo los primeros 20
+      };
+    }),
 });
