@@ -428,7 +428,7 @@ export const forecastsRouter = router({
         ];
         
         for (const key of keys) {
-          await cacheService.delete(key);
+          await cacheService.del(key);
         }
         
         return {
