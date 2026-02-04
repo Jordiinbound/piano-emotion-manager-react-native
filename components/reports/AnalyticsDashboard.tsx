@@ -13,6 +13,7 @@ import {
   RefreshControl,
   Dimensions,
   ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Path, Circle, Line, Text as SvgText, Rect } from 'react-native-svg';
@@ -55,6 +56,7 @@ interface MetricCardProps {
   subtitle?: string;
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
+  cardWidth?: string;
 }
 
 interface PeriodSelectorProps {
@@ -73,11 +75,12 @@ const MetricCard: React.FC<MetricCardProps> = ({
   subtitle,
   icon,
   color,
+  cardWidth,
 }) => {
   const isPositive = change !== undefined && change >= 0;
 
   return (
-    <View style={styles.metricCard}>
+    <View style={[styles.metricCard, cardWidth ? { width: cardWidth } : {}]}>
       <View style={styles.metricHeader}>
         <View style={[styles.iconContainer, { backgroundColor: color + '15' }]}>
           <Ionicons name={icon} size={18} color={color} />
@@ -402,6 +405,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 }) => {
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
+  const { width: windowWidth } = useWindowDimensions();
+
+  // Calcular ancho de tarjetas dinámicamente: 2 columnas en móvil, 4 en tablet/desktop
+  const isTabletOrDesktop = windowWidth >= 768;
+  const cardWidth = isTabletOrDesktop ? '23%' : '48%';
 
   // Hook optimizado para métricas y servicios (período seleccionado)
   const {
@@ -492,59 +500,67 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             <MetricCard
               title={t('reports.revenue')}
               value={formatCurrency(metrics?.revenue.total || 0)}
-            change={metrics?.revenue.changePercent}
-            subtitle="vs período anterior"
-            icon="cash-outline"
-            color={COLORS.primary}
-          />
-          <MetricCard
-            title={t('reports.services')}
-            value={metrics?.services.total || 0}
-            icon="construct-outline"
-            color={COLORS.success}
-          />
-          <MetricCard
-            title={t('reports.clients')}
-            value={metrics?.clients.new || 0}
-            change={metrics?.clients.changePercent}
-            subtitle="Nuevos en el período"
-            icon="people-outline"
-            color={COLORS.purple}
-          />
-          <MetricCard
-            title={t('reports.avgTicket')}
-            value={formatCurrency(metrics?.averages.ticketValue || 0)}
-            icon="receipt-outline"
-            color={COLORS.warning}
-          />
-          <MetricCard
-            title={t('reports.completionRate')}
-            value={`${(metrics?.services.completionRate || 0).toFixed(1)}%`}
-            subtitle="Servicios completados"
-            icon="checkmark-circle-outline"
-            color={COLORS.success}
-          />
-          <MetricCard
-            title={t('reports.retention')}
-            value={`${(metrics?.clients.retention || 0).toFixed(1)}%`}
-            subtitle="Clientes recurrentes"
-            icon="repeat-outline"
-            color={COLORS.primary}
-          />
-          <MetricCard
-            title={t('reports.pianos')}
-            value={metrics?.pianos.new || 0}
-            subtitle="Nuevos en el período"
-            icon="musical-notes-outline"
-            color={COLORS.warning}
-          />
-          <MetricCard
-            title="Ingresos medios"
-            value={formatCurrency(metrics?.averages.revenuePerService || 0)}
-            subtitle="Por servicio"
-            icon="trending-up-outline"
-            color={COLORS.purple}
-          />
+              change={metrics?.revenue.changePercent}
+              subtitle="vs período anterior"
+              icon="cash-outline"
+              color={COLORS.primary}
+              cardWidth={cardWidth}
+            />
+            <MetricCard
+              title={t('reports.services')}
+              value={metrics?.services.total || 0}
+              icon="construct-outline"
+              color={COLORS.success}
+              cardWidth={cardWidth}
+            />
+            <MetricCard
+              title={t('reports.clients')}
+              value={metrics?.clients.new || 0}
+              change={metrics?.clients.changePercent}
+              subtitle="Nuevos en el período"
+              icon="people-outline"
+              color={COLORS.purple}
+              cardWidth={cardWidth}
+            />
+            <MetricCard
+              title={t('reports.avgTicket')}
+              value={formatCurrency(metrics?.averages.ticketValue || 0)}
+              icon="receipt-outline"
+              color={COLORS.warning}
+              cardWidth={cardWidth}
+            />
+            <MetricCard
+              title={t('reports.completionRate')}
+              value={`${(metrics?.services.completionRate || 0).toFixed(1)}%`}
+              subtitle="Servicios completados"
+              icon="checkmark-circle-outline"
+              color={COLORS.success}
+              cardWidth={cardWidth}
+            />
+            <MetricCard
+              title={t('reports.retention')}
+              value={`${(metrics?.clients.retention || 0).toFixed(1)}%`}
+              subtitle="Clientes recurrentes"
+              icon="repeat-outline"
+              color={COLORS.primary}
+              cardWidth={cardWidth}
+            />
+            <MetricCard
+              title={t('reports.pianos')}
+              value={metrics?.pianos.new || 0}
+              subtitle="Nuevos en el período"
+              icon="musical-notes-outline"
+              color={COLORS.warning}
+              cardWidth={cardWidth}
+            />
+            <MetricCard
+              title="Ingresos medios"
+              value={formatCurrency(metrics?.averages.revenuePerService || 0)}
+              subtitle="Por servicio"
+              icon="trending-up-outline"
+              color={COLORS.purple}
+              cardWidth={cardWidth}
+            />
         </View>
         )}
       </View>
@@ -673,17 +689,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   metricCard: {
-    width: '48%', // 2 columnas en móvil, 4 columnas en tablet/desktop
+    // width se pasa dinámicamente desde el componente padre
     backgroundColor: COLORS.card,
     borderRadius: 4,
     padding: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
     minWidth: 0,
-    // Responsive: 4 columnas en tablet/desktop (23% x 4 + gaps)
-    ...(Dimensions.get('window').width >= 768 && {
-      width: '23%',
-    }),
   },
   metricHeader: {
     flexDirection: 'row',
