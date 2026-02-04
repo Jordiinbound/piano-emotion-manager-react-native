@@ -20,6 +20,15 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 type TabType = 'revenue' | 'churn' | 'maintenance' | 'workload' | 'inventory';
 
+// Paleta de colores suaves para cada pestaña (tonalidad matizada)
+const TAB_COLORS = {
+  revenue: '#52a67d',      // Verde suave
+  churn: '#9b7fc9',        // Púrpura suave
+  maintenance: '#5b7fc7',  // Azul suave
+  workload: '#d9a05b',     // Naranja/dorado suave
+  inventory: '#5ba3b8',    // Cian suave
+};
+
 const MOCK_DATA = {
   revenue: [
     { period: 'Enero 2026', value: 4250, confidence: 78, trend: 'up' as const, factors: ['Tendencia de crecimiento', 'Temporada alta'] },
@@ -426,7 +435,7 @@ export default function PredictionsScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={textPrimary} />
         </TouchableOpacity>
-        <ThemedText style={[styles.title, { color: textPrimary }]}>Predicciones IA</ThemedText>
+        <ThemedText style={[styles.title, { color: textPrimary }]}>Previsiones</ThemedText>
       </View>
 
       <View style={[styles.tabsContainer, { borderBottomColor: border }]}>
@@ -435,7 +444,7 @@ export default function PredictionsScreen() {
             key={tab.id}
             style={[
               styles.tabButton,
-              activeTab === tab.id && { borderBottomColor: colors.primary, borderBottomWidth: 2 }
+              activeTab === tab.id && { borderBottomColor: TAB_COLORS[tab.id as TabType], borderBottomWidth: 2 }
             ]}
             onPress={() => setActiveTab(tab.id as TabType)}
           >
@@ -443,12 +452,12 @@ export default function PredictionsScreen() {
               <Ionicons 
                 name={tab.icon as any} 
                 size={24} 
-                color={activeTab === tab.id ? colors.primary : textSecondary} 
+                color={activeTab === tab.id ? TAB_COLORS[tab.id as TabType] : textSecondary} 
               />
               <ThemedText 
                 style={[
                   styles.tabLabel, 
-                  { color: activeTab === tab.id ? colors.primary : textSecondary }
+                  { color: activeTab === tab.id ? TAB_COLORS[tab.id as TabType] : textSecondary }
                 ]}
               >
                 {tab.label}
