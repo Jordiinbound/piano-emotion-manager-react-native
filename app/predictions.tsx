@@ -405,12 +405,7 @@ export default function PredictionsScreen() {
           <Ionicons name="arrow-back" size={24} color={textPrimary} />
         </TouchableOpacity>
         <ThemedText style={[styles.title, { color: textPrimary }]}>Previsiones</ThemedText>
-        <TouchableOpacity 
-          onPress={() => router.push('/debug-forecast')} 
-          style={styles.debugButton}
-        >
-          <Ionicons name="bug-outline" size={24} color="#EF4444" />
-        </TouchableOpacity>
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView 
@@ -482,10 +477,6 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: 24,
-  },
-  debugButton: {
-    position: 'absolute',
-    right: 24,
   },
   title: {
     fontSize: 22,
