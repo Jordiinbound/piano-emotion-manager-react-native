@@ -4,6 +4,7 @@
  */
 
 export {
+  useDashboardData,
   useDashboardMetrics,
   useRevenueChart,
   useServicesByType,

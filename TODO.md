@@ -121,3 +121,9 @@
 ## 🐛 Bug UI - Gráfico de Barras (30 Enero 2026)
 
 - [x] Corregir ancho del gráfico de barras en página de Reportes (columnas no ocupan todo el contenedor)
+
+## 🚨 BUG CRÍTICO - Página en Blanco (30 Enero 2026)
+
+- [x] Página de Reportes va a blanco después de los cambios de optimización
+  - Causa: useDashboardData no estaba exportado en hooks/reports/index.ts
+  - Solución: Agregado a las exportaciones
