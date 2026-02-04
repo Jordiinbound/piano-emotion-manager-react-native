@@ -536,16 +536,16 @@ export class PredictionService {
       SELECT 
         i.id,
         i.name,
-        i.current_stock,
-        i.min_stock,
+        i.quantity as current_stock,
+        i.minStock as min_stock,
         i.unit,
         COUNT(im.id) as usage_count,
         SUM(im.quantity) as total_used,
         AVG(im.quantity) as avg_per_service
-      FROM inventory_items i
-      LEFT JOIN inventory_movements im ON im.item_id = i.id AND im.type = 'out' AND im.created_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
-      WHERE i.partner_id = ${partnerId}
-      GROUP BY i.id, i.name, i.current_stock, i.min_stock, i.unit
+      FROM inventory i
+      LEFT JOIN inventory_movements im ON im.inventoryId = i.id AND im.type = 'out' AND im.createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+      WHERE i.partnerId = ${partnerId}
+      GROUP BY i.id, i.name, i.quantity, i.minStock, i.unit
       HAVING COUNT(im.id) > 0
     `);
 
