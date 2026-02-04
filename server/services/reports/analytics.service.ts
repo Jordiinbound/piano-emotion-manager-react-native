@@ -45,6 +45,7 @@ export interface DashboardMetrics {
   };
   averages: {
     ticketValue: number;
+    revenuePerService: number;
     servicesPerClient: number;
     revenuePerTechnician: number;
   };
@@ -154,7 +155,11 @@ export class AnalyticsService {
       ? (revenueChange / previousRevenue) * 100 
       : 0;
 
-    const averageTicket = serviceStats.completed > 0 
+    // Ticket medio: promedio del costo de TODOS los servicios (independiente de si están cobrados)
+    const averageTicket = await this.getAverageServiceCost(startDate, endDate);
+    
+    // Ingresos medios por servicio: ingresos de facturas / servicios completados
+    const averageRevenuePerService = serviceStats.completed > 0 
       ? currentRevenue / serviceStats.completed 
       : 0;
 
@@ -196,6 +201,7 @@ export class AnalyticsService {
       },
       averages: {
         ticketValue: averageTicket,
+        revenuePerService: averageRevenuePerService,
         servicesPerClient,
         revenuePerTechnician,
       },
@@ -578,11 +584,37 @@ export class AnalyticsService {
     // Total de servicios en el período
     const total = await this.getServiceCount(startDate, endDate);
     
-    // Por ahora, asumimos que todos los servicios están completados
-    // En el futuro, se puede agregar un campo 'status' a la tabla services
-    const completed = total;
+    // Servicios completados: aquellos con firma del cliente (clientSignature no null)
+    const completedResult = await db
+      .select({ count: count() })
+      .from(services)
+      .where(
+        and(
+          eq(services.partnerId, this.partnerId),
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString()),
+          sql`${services.clientSignature} IS NOT NULL AND ${services.clientSignature} != ''`
+        )
+      );
+    const completed = completedResult[0]?.count || 0;
+    
+    // Servicios pendientes: fecha futura o sin firma
+    const now = new Date();
+    const pendingResult = await db
+      .select({ count: count() })
+      .from(services)
+      .where(
+        and(
+          eq(services.partnerId, this.partnerId),
+          gte(services.date, startDate.toISOString()),
+          lte(services.date, endDate.toISOString()),
+          sql`(${services.clientSignature} IS NULL OR ${services.clientSignature} = '' OR ${services.date} > ${now.toISOString()})`
+        )
+      );
+    const pending = pendingResult[0]?.count || 0;
+    
+    // Por ahora no hay servicios cancelados (se podría agregar un campo status en el futuro)
     const cancelled = 0;
-    const pending = 0;
 
     return { total, completed, pending, cancelled };
   }
@@ -722,6 +754,35 @@ export class AnalyticsService {
     const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
     const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
     return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  }
+
+  /**
+   * Calcula el costo promedio de los servicios en el período
+   * (independiente de si están facturados o cobrados)
+   */
+  private async getAverageServiceCost(startDate: Date, endDate: Date): Promise<number> {
+    try {
+      const db = await getDb();
+      
+      const result = await db
+        .select({
+          average: avg(services.cost),
+        })
+        .from(services)
+        .where(
+          and(
+            eq(services.partnerId, this.partnerId),
+            gte(services.date, startDate.toISOString()),
+            lte(services.date, endDate.toISOString()),
+            sql`${services.cost} IS NOT NULL AND ${services.cost} > 0`
+          )
+        );
+
+      return Number(result[0]?.average || 0);
+    } catch (error) {
+      console.error('[getAverageServiceCost] ERROR:', error);
+      return 0;
+    }
   }
 }
 

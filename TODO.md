@@ -136,3 +136,15 @@
 - [x] Optimización de rendimiento no funciona - carga sigue igual de lenta
   - Causa: Gráfico necesita 12 meses fijos, no el período seleccionado
   - Solución: Separadas llamadas - métricas optimizadas (1 call) + gráfico (1 call) = 2 calls en lugar de 3
+
+## 🐛 Bugs en Métricas del Dashboard (30 Enero 2026)
+
+- [x] Tasa de finalización incorrecta (muestra 100% cuando no debería)
+  - Solución: Ahora cuenta servicios con clientSignature como completados
+- [x] Ticket medio e Ingresos medios son idénticos (128€) - sospechoso
+  - Solución: Separados los cálculos correctamente
+- [x] Ingresos deben calcularse por facturas COBRADAS, no por costo de servicios
+  - Solución: Ya estaba correcto (usa invoices.status = 'paid')
+- [x] Ticket medio debe ser precio medio de servicios (independiente de si están cobrados)
+  - Solución: Ahora usa AVG(services.cost)
+- [x] Ingresos medios ahora es un campo separado (averages.revenuePerService)

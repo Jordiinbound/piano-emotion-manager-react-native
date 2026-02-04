@@ -516,7 +516,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           />
           <MetricCard
             title="Ingresos medios"
-            value={formatCurrency(metrics?.revenue.total ? metrics.revenue.total / Math.max(metrics.services.total, 1) : 0)}
+            value={formatCurrency(metrics?.averages.revenuePerService || 0)}
             subtitle="Por servicio"
             icon="trending-up-outline"
             color={COLORS.purple}
