@@ -254,8 +254,8 @@ export class PredictionService {
           s.date
         )) as avg_interval_days
       FROM clients c
-      LEFT JOIN services s ON s.client_id = c.id
-      WHERE c.partner_id = ${partnerId}
+      LEFT JOIN services s ON s.clientId = c.id
+      WHERE c.partnerId = ${partnerId}
       GROUP BY c.id, c.name, c.email, c.phone
       HAVING COUNT(s.id) > 0
     `);
@@ -368,18 +368,18 @@ export class PredictionService {
         p.id as piano_id,
         p.brand,
         p.model,
-        p.type,
+        p.pianoType as type,
         c.name as client_name,
         c.email as client_email,
         c.phone as client_phone,
-        s.service_type,
+        s.serviceType as service_type,
         s.date as service_date,
-        LAG(s.date) OVER (PARTITION BY p.id, s.service_type ORDER BY s.date) as prev_service_date
+        LAG(s.date) OVER (PARTITION BY p.id, s.serviceType ORDER BY s.date) as prev_service_date
       FROM pianos p
       JOIN clients c ON p.clientId = c.id
       LEFT JOIN services s ON s.pianoId = p.id
       WHERE p.partnerId = ${partnerId}
-      ORDER BY p.id, s.service_type, s.date DESC
+      ORDER BY p.id, s.serviceType, s.date DESC
     `);
 
     const predictions: MaintenancePrediction[] = [];
@@ -584,7 +584,7 @@ export class PredictionService {
         COALESCE(SUM(im.quantity), 0) as total_used,
         COALESCE(AVG(im.quantity), 0) as avg_per_service
       FROM inventory i
-      LEFT JOIN inventory_movements im ON im.item_id = i.id AND im.type = 'out' AND im.createdAt >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
+      LEFT JOIN inventory_movements im ON im.item_id = i.id AND im.type = 'out' AND im.created_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
       WHERE i.partnerId = ${partnerId}
       GROUP BY i.id, i.name, i.quantity, i.minStock, i.unit
     `);
