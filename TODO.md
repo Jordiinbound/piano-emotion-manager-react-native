@@ -117,3 +117,7 @@
   - [x] Eliminadas funciones handlePrevMonth/handleNextMonth/handlePrevYear/handleNextYear
   - [x] Agregado import de @react-native-picker/picker
   - [x] Agregado estilo picker en styles
+
+## 🐛 Bug UI - Gráfico de Barras (30 Enero 2026)
+
+- [x] Corregir ancho del gráfico de barras en página de Reportes (columnas no ocupan todo el contenedor)

@@ -156,7 +156,7 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => {
-  const [chartWidth, setChartWidth] = React.useState(300);
+  const [chartWidth, setChartWidth] = React.useState(0);
 
   const handleLayout = (event: any) => {
     const { width } = event.nativeEvent.layout;
@@ -207,7 +207,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
 
   return (
     <View style={styles.chartContainer} onLayout={handleLayout}>
-      {chartWidth > 0 && (
+      {chartWidth > 100 ? (
         <Svg width={chartWidth} height={chartHeight}>
           {/* Grid lines */}
           {gridLines.map((line, index) => (
@@ -283,6 +283,10 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
             );
           })}
         </Svg>
+      ) : (
+        <View style={[styles.emptyChart, { height: chartHeight }]}>
+          <Text style={styles.emptyChartText}>Cargando gráfico...</Text>
+        </View>
       )}
     </View>
   );
