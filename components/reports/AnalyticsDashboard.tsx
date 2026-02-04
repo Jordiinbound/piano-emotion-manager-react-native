@@ -16,9 +16,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Path, Circle, Line, Text as SvgText, Rect } from 'react-native-svg';
 import {
-  useDashboardMetrics,
-  useRevenueChart,
-  useServicesByType,
+  useDashboardData,
   useReportExport,
   type PeriodPreset,
 } from '@/hooks/reports';
@@ -387,33 +385,25 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
 
+  // Hook optimizado: 1 sola llamada HTTP en lugar de 3
   const {
     metrics,
+    revenueByPeriod: revenueData,
+    servicesByType: servicesData,
     isLoading,
     refetch,
     dateRange,
     preset,
     changePeriod,
-  } = useDashboardMetrics('thisMonth');
-
-  // Gráfico de evolución SIEMPRE últimos 12 meses (independiente del selector)
-  const now = new Date();
-  const twelveMonthsAgo = new Date();
-  twelveMonthsAgo.setMonth(now.getMonth() - 12);
-  const last12MonthsRange = {
-    startDate: twelveMonthsAgo,
-    endDate: now,
-  };
-  const { data: revenueData, isLoading: revenueLoading } = useRevenueChart(last12MonthsRange, 'month');
+  } = useDashboardData('thisMonth', 'month');
   
-  // Debug: verificar datos del gráfico
-  console.log('Revenue Chart Data:', {
+  // Debug: verificar datos
+  console.log('Dashboard Data (optimizado):', {
+    metrics,
     revenueData,
-    revenueLoading,
-    last12MonthsRange,
-    dataLength: revenueData?.length,
+    servicesData,
+    isLoading,
   });
-  const { data: servicesData } = useServicesByType(dateRange);
   const { downloadPDF, isExporting } = useReportExport();
 
   const handleRefresh = useCallback(async () => {

@@ -94,6 +94,101 @@ function getDateRangeFromPreset(preset: PeriodPreset): DateRange {
 }
 
 // ============================================================================
+// useDashboardData Hook (OPTIMIZADO - 1 sola llamada HTTP)
+// ============================================================================
+
+export function useDashboardData(
+  initialPreset: PeriodPreset = 'thisMonth',
+  groupBy: 'day' | 'week' | 'month' = 'month'
+) {
+  const [preset, setPreset] = useState<PeriodPreset>(initialPreset);
+  const [customRange, setCustomRange] = useState<DateRange | null>(null);
+
+  const dateRange = useMemo(() => {
+    if (preset === 'custom' && customRange) {
+      return customRange;
+    }
+    return getDateRangeFromPreset(preset);
+  }, [preset, customRange]);
+
+  // Una sola llamada HTTP que trae TODOS los datos
+  const { data, isLoading, error, refetch } = trpc.analytics.getDashboardData.useQuery({
+    dateRange: {
+      startDate: dateRange.startDate.toISOString(),
+      endDate: dateRange.endDate.toISOString(),
+    },
+    groupBy,
+  });
+
+  // Procesar datos de revenue chart
+  const chartData = useMemo(() => {
+    if (!data?.revenueByPeriod) return { labels: [], datasets: [] };
+
+    return {
+      labels: data.revenueByPeriod.map((d) => d.period),
+      datasets: [
+        {
+          label: 'Ingresos',
+          data: data.revenueByPeriod.map((d) => d.revenue),
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          borderColor: 'rgb(59, 130, 246)',
+          borderWidth: 2,
+        },
+      ],
+    };
+  }, [data?.revenueByPeriod]);
+
+  // Procesar datos de services by type
+  const servicesByTypeChart = useMemo(() => {
+    if (!data?.servicesByType) return { labels: [], datasets: [] };
+
+    return {
+      labels: data.servicesByType.map((d) => d.typeName),
+      datasets: [
+        {
+          data: data.servicesByType.map((d) => d.count),
+          backgroundColor: [
+            '#3b82f6', '#22c55e', '#f59e0b', '#ef4444',
+            '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16',
+          ],
+        },
+      ],
+    };
+  }, [data?.servicesByType]);
+
+  const changePeriod = useCallback((newPreset: PeriodPreset) => {
+    setPreset(newPreset);
+  }, []);
+
+  const setCustomDateRange = useCallback((range: DateRange) => {
+    setCustomRange(range);
+    setPreset('custom');
+  }, []);
+
+  return {
+    // Datos principales
+    metrics: data?.metrics,
+    revenueByPeriod: data?.revenueByPeriod,
+    servicesByType: data?.servicesByType,
+    
+    // Datos procesados para gráficos
+    chartData,
+    servicesByTypeChart,
+    
+    // Estado
+    isLoading,
+    error,
+    refetch,
+    
+    // Controles
+    dateRange,
+    preset,
+    changePeriod,
+    setCustomDateRange,
+  };
+}
+
+// ============================================================================
 // useDashboardMetrics Hook
 // ============================================================================
 

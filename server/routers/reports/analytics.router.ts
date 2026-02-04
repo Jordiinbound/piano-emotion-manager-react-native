@@ -28,6 +28,34 @@ const exportFormatSchema = z.enum(['csv', 'pdf', 'excel']);
 
 export const analyticsRouter = router({
   /**
+   * Obtiene TODOS los datos del dashboard en una sola llamada (optimizado)
+   * Combina: metrics + revenue chart + services by type
+   */
+  getDashboardData: protectedProcedure
+    .input(
+      z.object({
+        dateRange: dateRangeSchema,
+        groupBy: periodSchema.optional().default('month'),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const analytics = createAnalyticsService((ctx as any).partnerId);
+      
+      // Ejecutar todas las queries en paralelo para máximo rendimiento
+      const [metrics, revenueByPeriod, servicesByType] = await Promise.all([
+        analytics.getDashboardMetrics(input.dateRange),
+        analytics.getRevenueByPeriod(input.dateRange, input.groupBy),
+        analytics.getServicesByType(input.dateRange),
+      ]);
+
+      return {
+        metrics,
+        revenueByPeriod,
+        servicesByType,
+      };
+    }),
+
+  /**
    * Obtiene métricas principales del dashboard
    */
   getDashboardMetrics: protectedProcedure
