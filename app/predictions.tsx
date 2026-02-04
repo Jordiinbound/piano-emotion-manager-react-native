@@ -8,6 +8,7 @@ import {
   Dimensions,
   ActivityIndicator,
   useColorScheme,
+  useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,6 +36,8 @@ export default function PredictionsScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme ?? 'light'];
+  const { width: windowWidth } = useWindowDimensions();
+  const isMobile = windowWidth < 768;
   
   const colors = {
     ...themeColors,
@@ -424,7 +427,7 @@ export default function PredictionsScreen() {
             <View style={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}>
               <Ionicons 
                 name={tab.icon as any} 
-                size={24} 
+                size={isMobile ? 20 : 24} 
                 color={TAB_COLORS[tab.id as TabType]} 
               />
               <ThemedText 
@@ -432,7 +435,8 @@ export default function PredictionsScreen() {
                   styles.tabLabel, 
                   { 
                     color: TAB_COLORS[tab.id as TabType],
-                    opacity: activeTab === tab.id ? 1 : 0.6
+                    opacity: activeTab === tab.id ? 1 : 0.6,
+                    fontSize: isMobile ? 12 : 16,
                   }
                 ]}
               >
@@ -496,17 +500,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    paddingHorizontal: 8,  // Reducido para móvil
-    flex: 1,  // Distribuir espacio equitativamente
-    maxWidth: 120,  // Límite en pantallas grandes
-    minWidth: 60,  // Mínimo en móvil
+    paddingHorizontal: 12,
+    flex: 1,
+    maxWidth: 140,  // Más ancho en desktop para evitar cortes
+    minWidth: 70,   // Mínimo en móvil
     textAlign: 'center',
-    marginHorizontal: 4  // Reducido para más compacto
+    marginHorizontal: 6,
   },
   tabLabel: {
-    marginTop: 6,
-    fontSize: 14,  // Reducido de 16 a 14 para móvil
-    fontWeight: '600',  // Aumentado de 500 a 600 para mejor legibilidad con colores matizados
+    marginTop: 8,
+    fontWeight: '600',
     textAlign: 'center',
     width: '100%',
   },
