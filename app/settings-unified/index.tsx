@@ -1193,8 +1193,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingTop: Spacing.md,
-    paddingBottom: 0,
+    // paddingTop controlado por dynamicStyles
   },
   sectionTitle: {
     fontSize: 20,
