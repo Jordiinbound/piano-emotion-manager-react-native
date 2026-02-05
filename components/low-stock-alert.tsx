@@ -75,11 +75,8 @@ export function LowStockAlert({ items, suppliers = [], onItemPress }: LowStockAl
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <IconSymbol name="exclamationmark.triangle.fill" size={20} color="#D97706" />
-          <Text style={styles.headerTitle}>Stock Bajo - Reponer</Text>
-        </View>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{items.length}</Text>
+          <IconSymbol name="exclamationmark.circle.fill" size={18} color="#EF4444" />
+          <Text style={styles.headerTitle}>{items.length} {items.length === 1 ? 'producto necesita' : 'productos necesitan'} reposición</Text>
         </View>
       </View>
 
@@ -193,30 +190,20 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     padding: 12,
     backgroundColor: '#FFFFFF',
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
+    flex: 1,
   },
   headerTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
-    color: '#92400E',
-  },
-  badge: {
-    backgroundColor: '#D97706',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#111827',
+    flex: 1,
   },
   itemsList: {
     padding: 12,
@@ -244,8 +231,8 @@ const styles = StyleSheet.create({
   },
   itemStock: {
     fontSize: 12,
-    color: '#D97706',
-    fontWeight: '500',
+    color: '#6B7280',
+    fontWeight: '400',
   },
   supplierName: {
     fontSize: 11,
