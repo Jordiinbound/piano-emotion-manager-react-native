@@ -481,4 +481,4 @@
 - [x] Aumentar tamaños de texto en alerta de stock bajo para que coincidan con el resto de la página
 - [x] Cambiar icono de interrogante por icono de cámara/escáner (qrcode.viewfinder)
 - [x] Hacer botón de escáner circular en lugar de cuadrado
-- [x] Reducir tamaño de los botones de filtro
+- [x] Reducir tamaño de los botones de filtro (fontSize: 11px, padding: 10/4px)

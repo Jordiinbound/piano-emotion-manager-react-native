@@ -407,18 +407,18 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   filterGradient: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     height: '100%',
   },
   filterText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
   },
   list: {
     paddingHorizontal: Spacing.md,
