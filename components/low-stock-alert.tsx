@@ -189,22 +189,27 @@ export function OrderFromStoreButton({ item, supplier, size = 'medium' }: OrderB
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFBEB',
-    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#EF4444',
     borderWidth: 1,
-    borderColor: '#FCD34D',
+    borderColor: '#E5E7EB',
     marginHorizontal: 16,
     marginVertical: 8,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 12,
-    backgroundColor: '#FEF3C7',
-    borderBottomWidth: 1,
-    borderBottomColor: '#FCD34D',
+    backgroundColor: '#FFFFFF',
   },
   headerLeft: {
     flexDirection: 'row',
