@@ -13,7 +13,7 @@ export default function SettingsIndexScreen() {
 
   useEffect(() => {
     // Redirigir inmediatamente a la pantalla unificada
-    router.replace('/settings-unified');
+    router.replace('/(drawer)/settings-unified');
   }, []);
 
   return null;

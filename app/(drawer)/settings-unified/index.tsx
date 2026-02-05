@@ -289,8 +289,8 @@ export default function SettingsUnifiedScreen() {
       <Switch
         value={value}
         onValueChange={onToggle}
-        trackColor={{ false: borderColor, true: `${accent}80` }}
-        thumbColor={value ? accent : '#f4f3f4'}
+        trackColor={{ false: borderColor, true: '#fca5a5' }}
+        thumbColor={value ? '#ef4444' : '#f4f3f4'}
       />
     </View>
   );
@@ -304,7 +304,7 @@ export default function SettingsUnifiedScreen() {
       {/* Cabecera con CustomHeader */}
       <CustomHeader
         title="Configuracion"
-        subtitle="Centro de control de la aplicacion"
+        subtitle="Centro de control de la aplicación"
         icon="gearshape.fill"
         showBackButton={false}
         showMenuButton={width < 768}
@@ -891,8 +891,8 @@ export default function SettingsUnifiedScreen() {
                         : [...settings.activeModules, module.code];
                       updateSettings({ activeModules: newModules });
                     }}
-                    trackColor={{ false: borderColor, true: `${accent}80` }}
-                    thumbColor={isActive ? accent : '#f4f3f4'}
+                    trackColor={{ false: borderColor, true: '#fca5a5' }}
+                    thumbColor={isActive ? '#ef4444' : '#f4f3f4'}
                     disabled={module.premium}
                   />
                 </View>
