@@ -16,6 +16,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path, Circle, Line, Text as SvgText, Rect } from 'react-native-svg';
 import {
   useDashboardData,
@@ -132,19 +133,27 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
           key={period.key}
           style={[
             styles.periodButton,
-            selected === period.key && styles.periodButtonActive,
+            selected === period.key && { overflow: 'hidden' },
           ]}
           onPress={() => onSelect(period.key)}
           activeOpacity={0.7}
         >
-          <Text
-            style={[
-              styles.periodButtonText,
-              selected === period.key && styles.periodButtonTextActive,
-            ]}
-          >
-            {period.label}
-          </Text>
+          {selected === period.key ? (
+            <LinearGradient
+              colors={['#d66b4f', '#e07a5f', '#ed9178']} // Coral: oscuro izquierda → claro derecha
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.periodButtonGradient as any}
+            >
+              <Text style={[styles.periodButtonText, styles.periodButtonTextActive]}>
+                {period.label}
+              </Text>
+            </LinearGradient>
+          ) : (
+            <Text style={styles.periodButtonText}>
+              {period.label}
+            </Text>
+          )}
         </TouchableOpacity>
       ))}
     </View>
@@ -676,13 +685,20 @@ const styles = StyleSheet.create({
   },
   periodButton: {
     flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
     borderRadius: 4,
     backgroundColor: COLORS.card,
     borderWidth: 1,
     borderColor: COLORS.border,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  periodButtonGradient: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
   },
   periodButtonActive: {
     backgroundColor: COLORS.primary,
