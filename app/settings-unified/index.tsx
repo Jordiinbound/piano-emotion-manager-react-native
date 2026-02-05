@@ -1259,7 +1259,10 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
   tabIndicator: {
-    marginTop: 2,
+    position: 'absolute',
+    bottom: 0,
+    left: '10%',
+    right: '10%',
     height: 3,
     borderRadius: 3,
   },
