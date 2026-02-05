@@ -192,10 +192,10 @@ export default function SettingsUnifiedScreen() {
     tabsContent: {
       paddingHorizontal: width > 600 ? Spacing.lg : Spacing.sm,
     },
-  contentContainer: {
-    paddingTop: Spacing.md,
-    paddingBottom: 0,
-  },
+    contentContainer: {
+      paddingTop: Spacing.md,
+      paddingBottom: 0,
+    },
     optionsRow: {
       flexDirection: width > 600 ? 'row' as const : 'column' as const,
     },
