@@ -93,10 +93,10 @@ export const Spacing = {
 
 // Radio de bordes
 export const BorderRadius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
+  sm: 4,
+  md: 4,
+  lg: 4,
+  xl: 4,
   full: 9999,
 };
 
