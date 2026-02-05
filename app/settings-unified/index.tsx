@@ -193,7 +193,7 @@ export default function SettingsUnifiedScreen() {
       paddingHorizontal: width > 600 ? Spacing.lg : Spacing.sm,
     },
     contentContainer: {
-      paddingTop: Spacing.md,
+      paddingTop: 0,
       paddingBottom: 0,
     },
     optionsRow: {
@@ -1199,6 +1199,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
+    marginTop: Spacing.md,
     marginBottom: Spacing.sm,
     marginHorizontal: Spacing.md,
   },
