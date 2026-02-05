@@ -517,14 +517,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       web: {
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        boxShadow: '0 3px 10px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 5,
       },
     }),
   },
@@ -577,14 +577,14 @@ const styles = StyleSheet.create({
     width: '100%',
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+        elevation: 6,
       },
     }),
   },
@@ -647,14 +647,14 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
     ...Platform.select({
       web: {
-        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.06,
-        shadowRadius: 3,
-        elevation: 2,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
       },
     }),
   },
@@ -684,14 +684,14 @@ const styles = StyleSheet.create({
     minHeight: 160,
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+        elevation: 6,
       },
     }),
   },
@@ -766,14 +766,14 @@ const styles = StyleSheet.create({
     minHeight: 250,
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+        elevation: 6,
       },
     }),
   },
@@ -848,14 +848,14 @@ const styles = StyleSheet.create({
     width: '100%',
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+        elevation: 6,
       },
     }),
   },
@@ -877,14 +877,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 6px rgba(224, 122, 95, 0.3)',
+        boxShadow: '0 4px 12px rgba(224, 122, 95, 0.4), 0 2px 4px rgba(224, 122, 95, 0.2)',
       },
       default: {
         shadowColor: COLORS.accent,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 6,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
+        elevation: 8,
       },
     }),
   },
