@@ -8,7 +8,6 @@
 
 import { useRouter, Stack } from 'expo-router';
 import { useState, useEffect, useMemo } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Alert,
@@ -301,14 +300,11 @@ export default function SettingsUnifiedScreen() {
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
       
-      {/* Cabecera azul con degradado */}
-      <LinearGradient
-        colors={['#7A8B99', '#8E9DAA', '#A2B1BD']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
+      {/* Cabecera azul */}
+      <View
         style={[
-          styles.headerGradient,
-          { marginTop: Math.max(insets.top, 20) }
+          styles.headerBar,
+          { paddingTop: Math.max(insets.top, 20) + Spacing.md }
         ]}
       >
         <View style={styles.headerRow}>
@@ -331,7 +327,7 @@ export default function SettingsUnifiedScreen() {
             </ThemedText>
           </View>
         </View>
-      </LinearGradient>
+      </View>
       
       {/* Barra de búsqueda */}
       <View style={[styles.searchContainer, { backgroundColor: background, paddingTop: Spacing.sm }]}>
@@ -1216,16 +1212,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerGradient: {
-    marginHorizontal: Spacing.md,
-    marginBottom: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
+  headerBar: {
+    backgroundColor: '#003a8c',
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.md,
   },
   headerRow: {
     flexDirection: 'row',
