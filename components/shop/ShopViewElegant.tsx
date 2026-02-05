@@ -13,7 +13,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import { useShops, useShopProducts, useShopBlog, useShopBlogCategories } from '@/hooks/shop';
+import { useShops, useShopProducts, useShopBlog } from '@/hooks/shop';
 import { BlogSection } from './BlogSection';
 import { Colors, BorderRadius, Spacing, Shadows } from '@/constants/theme';
 
@@ -27,11 +27,9 @@ export function ShopViewElegant() {
   const shop = shops?.[0];
   
   const [activeTab, setActiveTab] = useState<TabType>('products');
-  const [selectedBlogCategory, setSelectedBlogCategory] = useState<number | undefined>();
   
   const { products, isLoading: productsLoading, category: selectedCategory, setCategory: setSelectedCategory } = useShopProducts(shop?.id || null);
-  const { posts, isLoading: blogLoading, refetch: refetchBlog } = useShopBlog(shop?.id || null, 10, selectedBlogCategory?.toString());
-  const { categories: blogCategories, isLoading: categoriesLoading } = useShopBlogCategories(shop?.id || null);
+  const { posts, isLoading: blogLoading, refetch: refetchBlog } = useShopBlog(shop?.id || null, 10);
 
   const categories = [
     { id: 'macillos', name: 'Macillos', description: 'Macillos de precisión para mecanismos de piano' },
@@ -184,55 +182,6 @@ export function ShopViewElegant() {
         </>
       ) : (
         <>
-          {/* Selector de categorías del blog */}
-          {!categoriesLoading && blogCategories && blogCategories.length > 0 && (
-            <View style={styles.blogCategoriesSection}>
-              <Text style={styles.sectionTitle}>Categorías</Text>
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false}
-                style={styles.blogCategoriesScroll}
-              >
-                <TouchableOpacity
-                  style={[
-                    styles.blogCategoryChip,
-                    !selectedBlogCategory && styles.blogCategoryChipActive,
-                  ]}
-                  onPress={() => setSelectedBlogCategory(undefined)}
-                >
-                  <Text
-                    style={[
-                      styles.blogCategoryChipText,
-                      !selectedBlogCategory && styles.blogCategoryChipTextActive,
-                    ]}
-                  >
-                    Todas
-                  </Text>
-                </TouchableOpacity>
-                {blogCategories.map((category) => (
-                  <TouchableOpacity
-                    key={category.id}
-                    style={[
-                      styles.blogCategoryChip,
-                      selectedBlogCategory === category.id && styles.blogCategoryChipActive,
-                    ]}
-                    onPress={() => setSelectedBlogCategory(
-                      selectedBlogCategory === category.id ? undefined : category.id
-                    )}
-                  >
-                    <Text
-                      style={[
-                        styles.blogCategoryChipText,
-                        selectedBlogCategory === category.id && styles.blogCategoryChipTextActive,
-                      ]}
-                    >
-                      {category.name} ({category.count})
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          )}
           <BlogSection posts={posts} isLoading={blogLoading} onRefresh={refetchBlog} />
         </>
       )}
@@ -459,36 +408,4 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 
-   // Blog Categories
-  blogCategoriesSection: {
-    paddingHorizontal: isDesktop ? 60 : Spacing.lg,
-    paddingTop: Spacing.xxl,
-    paddingBottom: Spacing.md,
-  },
-  blogCategoriesScroll: {
-    marginTop: Spacing.md,
-  },
-  blogCategoryChip: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.light.surface,
-    borderWidth: 1,
-    borderColor: Colors.light.border,
-    marginRight: Spacing.sm,
-    ...Shadows.sm,
-  },
-  blogCategoryChipActive: {
-    backgroundColor: Colors.light.accent,
-    borderColor: Colors.light.accent,
-  },
-  blogCategoryChipText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: Colors.light.text,
-  },
-  blogCategoryChipTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
 });
