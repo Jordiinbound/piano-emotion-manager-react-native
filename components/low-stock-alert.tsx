@@ -75,7 +75,7 @@ export function LowStockAlert({ items, suppliers = [], onItemPress }: LowStockAl
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <IconSymbol name="exclamationmark.circle.fill" size={18} color="#EF4444" />
+          <IconSymbol name="exclamationmark.triangle.fill" size={16} color="#EF4444" />
           <Text style={styles.headerTitle}>{items.length} {items.length === 1 ? 'producto necesita' : 'productos necesitan'} reposición</Text>
         </View>
       </View>
@@ -178,33 +178,31 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     marginHorizontal: 16,
     marginVertical: 8,
-    overflow: 'hidden',
+    padding: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    backgroundColor: '#FFFFFF',
+    marginBottom: 12,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     flex: 1,
   },
   headerTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: '#111827',
     flex: 1,
   },
   itemsList: {
-    padding: 12,
     gap: 8,
   },
   itemRow: {
@@ -212,53 +210,60 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
+    paddingVertical: 4,
   },
   itemInfo: {
     flex: 1,
   },
   itemName: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#1F2937',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
   },
   itemMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     flexWrap: 'wrap',
+    marginTop: 2,
   },
   itemStock: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#6B7280',
-    fontWeight: '400',
   },
   supplierName: {
-    fontSize: 11,
-    color: '#6B7280',
+    fontSize: 12,
+    color: '#9CA3AF',
     maxWidth: 100,
   },
   orderButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#5B9A8B',
+    backgroundColor: '#e07a5f',
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius: 4,
     gap: 4,
+    shadowColor: '#e07a5f',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   orderButtonSupplier: {
     backgroundColor: '#3B82F6',
+    shadowColor: '#3B82F6',
   },
   orderButtonText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     color: '#FFFFFF',
   },
   moreItems: {
-    fontSize: 11,
-    color: '#6B7280',
+    fontSize: 12,
+    color: '#9CA3AF',
     textAlign: 'center',
-    paddingVertical: 8,
+    marginTop: 8,
   },
   orderFromStoreButton: {
     flexDirection: 'row',
