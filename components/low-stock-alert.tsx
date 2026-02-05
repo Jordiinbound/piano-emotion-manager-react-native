@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Linking } from 'react-native';
+import { View, StyleSheet, Pressable, Linking } from 'react-native';
+import { ThemedText } from './themed-text';
 import { IconSymbol } from './ui/icon-symbol';
 import { Supplier } from '@/types/supplier';
 
@@ -76,7 +77,7 @@ export function LowStockAlert({ items, suppliers = [], onItemPress }: LowStockAl
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <IconSymbol name="exclamationmark.triangle.fill" size={16} color="#EF4444" />
-          <Text style={styles.headerTitle}>{items.length} {items.length === 1 ? 'producto necesita' : 'productos necesitan'} reposición</Text>
+          <ThemedText style={styles.headerTitle}>{items.length} {items.length === 1 ? 'producto necesita' : 'productos necesitan'} reposición</ThemedText>
         </View>
       </View>
 
@@ -91,15 +92,15 @@ export function LowStockAlert({ items, suppliers = [], onItemPress }: LowStockAl
                 style={styles.itemInfo}
                 onPress={() => onItemPress?.(item)}
               >
-                <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+                <ThemedText style={styles.itemName} numberOfLines={1}>{item.name}</ThemedText>
                 <View style={styles.itemMeta}>
-                  <Text style={styles.itemStock}>
+                  <ThemedText style={styles.itemStock}>
                     {item.quantity} / {item.minStock} {item.unit}
-                  </Text>
+                  </ThemedText>
                   {supplier && (
-                    <Text style={styles.supplierName} numberOfLines={1}>
+                    <ThemedText style={styles.supplierName} numberOfLines={1}>
                       · {supplier.name}
-                    </Text>
+                    </ThemedText>
                   )}
                 </View>
               </Pressable>
@@ -111,7 +112,7 @@ export function LowStockAlert({ items, suppliers = [], onItemPress }: LowStockAl
                 onPress={() => openStore(item)}
               >
                 <IconSymbol name="cart.fill" size={14} color="#FFFFFF" />
-                <Text style={styles.orderButtonText}>{getOrderButtonText(item)}</Text>
+                <ThemedText style={styles.orderButtonText}>{getOrderButtonText(item)}</ThemedText>
               </Pressable>
             </View>
           );
@@ -119,9 +120,9 @@ export function LowStockAlert({ items, suppliers = [], onItemPress }: LowStockAl
       </View>
 
       {items.length > 5 && (
-        <Text style={styles.moreItems}>
+        <ThemedText style={styles.moreItems}>
           +{items.length - 5} más
-        </Text>
+        </ThemedText>
       )}
     </View>
   );
@@ -163,9 +164,9 @@ export function OrderFromStoreButton({ item, supplier, size = 'medium' }: OrderB
       onPress={openStore}
     >
       <IconSymbol name="cart.fill" size={isSmall ? 14 : 16} color="#FFFFFF" />
-      <Text style={[styles.orderFromStoreText, isSmall && styles.orderFromStoreTextSmall]}>
+      <ThemedText style={[styles.orderFromStoreText, isSmall && styles.orderFromStoreTextSmall]}>
         {buttonText}
-      </Text>
+      </ThemedText>
     </Pressable>
   );
 }
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#111827',
   },
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   itemStock: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#6B7280',
   },
   supplierName: {

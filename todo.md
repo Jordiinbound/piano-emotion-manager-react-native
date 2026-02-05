@@ -482,3 +482,4 @@
 - [x] Cambiar icono de interrogante por icono de cámara/escáner (qrcode.viewfinder)
 - [x] Hacer botón de escáner circular en lugar de cuadrado
 - [x] Reducir tamaño de los botones de filtro (fontSize: 11px, padding: 10/4px)
+- [x] Unificar estilos de texto entre alerta de stock bajo y listado de inventario (ThemedText, fontSize 16/13)
