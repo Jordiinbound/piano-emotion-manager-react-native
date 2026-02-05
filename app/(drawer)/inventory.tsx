@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   scanButton: {
     width: 44,
     height: 44,
-    borderRadius: BorderRadius.sm,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#e07a5f',
@@ -401,10 +401,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   filterGradient: {
     paddingHorizontal: Spacing.md,
@@ -415,10 +415,10 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   filterText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '500',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
   list: {
     paddingHorizontal: Spacing.md,

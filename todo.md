@@ -475,3 +475,9 @@
 
 - [ ] Selectores de mes/año deben permitir solo selección específica (eliminar opción "Todos")
 - [ ] Facturas limitadas a 30 por mes - problema de paginación no resuelto
+
+## Ajustes de Diseño Inventario
+- [x] Aumentar tamaños de texto en alerta de stock bajo para que coincidan con el resto de la página
+- [x] Cambiar icono de interrogante por icono de cámara/escáner (ya estaba correcto) (barcode o qrcode)
+- [x] Hacer botón de escáner circular en lugar de cuadrado
+- [x] Reducir tamaño de los botones de filtro

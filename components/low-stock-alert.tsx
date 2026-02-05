@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
     color: '#111827',
     flex: 1,
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: '#111827',
   },
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   itemStock: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#6B7280',
   },
   supplierName: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     shadowColor: '#3B82F6',
   },
   orderButtonText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: '#FFFFFF',
   },
