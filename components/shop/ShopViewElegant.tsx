@@ -13,7 +13,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import { useShops, useShopProducts } from '@/hooks/shop';
+import { useShops, useShopProducts, useShopBlog } from '@/hooks/shop';
 import { BlogSection } from './BlogSection';
 import { Colors, BorderRadius, Spacing, Shadows } from '@/constants/theme';
 
@@ -29,6 +29,7 @@ export function ShopViewElegant() {
   const [activeTab, setActiveTab] = useState<TabType>('products');
   
   const { products, isLoading: productsLoading, category: selectedCategory, setCategory: setSelectedCategory } = useShopProducts(shop?.id || null);
+  const { posts, isLoading: blogLoading, refetch: refetchBlog } = useShopBlog(shop?.id || null, 10);
 
   const categories = [
     { id: 'macillos', name: 'Macillos', description: 'Macillos de precisión para mecanismos de piano' },
@@ -180,7 +181,7 @@ export function ShopViewElegant() {
           {renderProducts()}
         </>
       ) : (
-        <BlogSection shopId={shop.id} />
+        <BlogSection posts={posts} isLoading={blogLoading} onRefresh={refetchBlog} />
       )}
     </ScrollView>
   );
