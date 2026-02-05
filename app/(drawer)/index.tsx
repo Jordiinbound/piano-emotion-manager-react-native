@@ -171,8 +171,8 @@ export default function DashboardScreen() {
               ? ['#d66b6b', '#c85a5a', '#b94949'] // Rojo degradado
               : ['#52a67d', '#479668', '#3c8653'] // Verde degradado
             }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 0, y: 0 }}
             style={styles.alertGradient as any}
           >
             <View style={styles.alertContent as any}>
@@ -483,8 +483,8 @@ function ActionButton({ icon, label, onPress }: ActionButtonProps) {
     >
       <LinearGradient
         colors={['#e07a5f', '#d66b4f', '#cc5c3f']} // Terracota degradado
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        start={{ x: 1, y: 1 }}
+        end={{ x: 0, y: 0 }}
         style={styles.actionButtonGradient as any}
       >
         <Ionicons name={icon as any} size={24} color={COLORS.white} />
