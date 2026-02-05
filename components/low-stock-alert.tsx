@@ -123,23 +123,9 @@ export function LowStockAlert({ items, suppliers = [], onItemPress }: LowStockAl
 
       {items.length > 5 && (
         <Text style={styles.moreItems}>
-          +{items.length - 5} materiales más con stock bajo
+          +{items.length - 5} más
         </Text>
       )}
-
-      <Pressable 
-        style={styles.storeLink}
-        onPress={() => Linking.openURL('https://www.pianoemotion.es')}
-      >
-        <View style={styles.storeLinkContent}>
-          <Text style={styles.storeLinkIcon}>🎹</Text>
-          <View style={styles.storeLinkText}>
-            <Text style={styles.storeLinkTitle}>Piano Emotion Store</Text>
-            <Text style={styles.storeLinkSubtitle}>Renner • Klinke • Röslau • Hainsworth</Text>
-          </View>
-        </View>
-        <IconSymbol name="arrow.right" size={16} color="#5B9A8B" />
-      </Pressable>
     </View>
   );
 }
@@ -284,39 +270,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   moreItems: {
-    fontSize: 12,
-    color: '#92400E',
-    textAlign: 'center',
-    paddingBottom: 12,
-  },
-  storeLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 12,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#FCD34D',
-  },
-  storeLinkContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  storeLinkIcon: {
-    fontSize: 24,
-  },
-  storeLinkText: {
-    gap: 2,
-  },
-  storeLinkTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
-  },
-  storeLinkSubtitle: {
     fontSize: 11,
     color: '#6B7280',
+    textAlign: 'center',
+    paddingVertical: 8,
   },
   orderFromStoreButton: {
     flexDirection: 'row',
