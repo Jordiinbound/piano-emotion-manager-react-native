@@ -240,7 +240,7 @@ export function ShopViewElegant() {
                     </Text>
                   </TouchableOpacity>
                 ))}
-              </ScrollView>
+              </View>
             </View>
           )}
           <BlogSection posts={posts} isLoading={blogLoading} onRefresh={refetchBlog} />
