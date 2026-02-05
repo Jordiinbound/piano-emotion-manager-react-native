@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
     width: 63,
     height: 63,
     borderRadius: 32, // Circular
-    borderWidth: 3,
+    borderWidth: 4,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.white,
