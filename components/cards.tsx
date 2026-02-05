@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     marginBottom: Spacing.sm,
-    ...Shadows.sm,
+    ...Shadows.md,
   },
   cardPressed: {
     opacity: 0.7,
