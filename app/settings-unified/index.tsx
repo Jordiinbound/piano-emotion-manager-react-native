@@ -18,6 +18,7 @@ import {
   Switch,
   TextInput,
   Platform,
+  Dimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -1124,11 +1125,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Dimensions.get('window').width > 600 ? Spacing.lg : Spacing.md,
     paddingBottom: Spacing.md,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: Dimensions.get('window').width > 600 ? 28 : 24,
     fontFamily: 'Montserrat-Bold',
     marginBottom: Spacing.md,
   },
@@ -1150,8 +1151,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   tabsContent: {
-    paddingHorizontal: Spacing.lg,
-    gap: Spacing.md,
+    paddingHorizontal: Dimensions.get('window').width > 600 ? Spacing.lg : Spacing.sm,
+    gap: Spacing.sm,
   },
   tab: {
     paddingVertical: Spacing.md,
@@ -1176,7 +1177,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: Spacing.md,
+    padding: Dimensions.get('window').width > 600 ? Spacing.md : Spacing.sm,
     paddingTop: Spacing.sm,
   },
   sectionTitle: {
@@ -1257,7 +1258,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
   },
   optionsRow: {
-    flexDirection: 'row',
+    flexDirection: Dimensions.get('window').width > 600 ? 'row' : 'column',
     gap: Spacing.sm,
   },
   optionButton: {
@@ -1279,7 +1280,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   formRow: {
-    flexDirection: 'row',
+    flexDirection: Dimensions.get('window').width > 600 ? 'row' : 'column',
     gap: Spacing.sm,
   },
   inputLabel: {
@@ -1335,7 +1336,8 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   moduleCard: {
-    width: '48%',
+    width: Dimensions.get('window').width > 768 ? '31%' : '48%',
+    minWidth: 150,
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
