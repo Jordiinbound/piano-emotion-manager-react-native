@@ -8,8 +8,7 @@
 
 import { useRouter, Stack } from 'expo-router';
 import { useState, useEffect, useMemo } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useContext, createContext } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Alert,
@@ -171,16 +170,7 @@ export default function SettingsUnifiedScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  // Intentar usar HeaderContext si está disponible, sino usar cabecera personalizada
-  let setHeaderConfig: ((config: any) => void) | undefined;
-  try {
-    const HeaderContext = createContext<any>(undefined);
-    const context = useContext(HeaderContext);
-    setHeaderConfig = context?.setHeaderConfig;
-  } catch (e) {
-    // HeaderContext no disponible, continuar sin él
-    setHeaderConfig = undefined;
-  }
+
   const [activeTab, setActiveTab] = useState<TabId>('general');
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [hasChanges, setHasChanges] = useState(false);
@@ -193,19 +183,7 @@ export default function SettingsUnifiedScreen() {
   const textColor = useThemeColor({}, 'text');
   const background = useThemeColor({}, 'background');
 
-  // Configurar header con estilo de Herramientas Avanzadas (solo si HeaderContext está disponible)
-  useFocusEffect(
-    React.useCallback(() => {
-      if (setHeaderConfig) {
-        setHeaderConfig({
-          title: 'Configuracion',
-          subtitle: 'Centro de control de la aplicacion',
-          icon: 'gearshape.fill',
-          showBackButton: false,
-        });
-      }
-    }, [setHeaderConfig])
-  );
+
 
   // Estilos dinámicos basados en ancho de pantalla
   const dynamicStyles = useMemo(() => ({
@@ -322,6 +300,38 @@ export default function SettingsUnifiedScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
+      
+      {/* Cabecera azul con degradado */}
+      <LinearGradient
+        colors={['#7A8B99', '#8E9DAA', '#A2B1BD']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={[
+          styles.headerGradient,
+          { marginTop: Math.max(insets.top, 20) }
+        ]}
+      >
+        <View style={styles.headerRow}>
+          <View style={styles.iconContainer}>
+            <IconSymbol name="gearshape.fill" size={32} color="#FFFFFF" />
+          </View>
+          <View style={styles.headerText}>
+            <ThemedText 
+              type="title" 
+              style={[
+                styles.headerTitle, 
+                { color: '#FFFFFF' },
+                width > 600 && { fontSize: 32 }
+              ]}
+            >
+              Configuracion
+            </ThemedText>
+            <ThemedText style={styles.subtitle}>
+              Centro de control de la aplicacion
+            </ThemedText>
+          </View>
+        </View>
+      </LinearGradient>
       
       {/* Barra de búsqueda */}
       <View style={[styles.searchContainer, { backgroundColor: background, paddingTop: Spacing.sm }]}>
@@ -1205,6 +1215,44 @@ export default function SettingsUnifiedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerGradient: {
+    marginHorizontal: Spacing.md,
+    marginBottom: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontFamily: 'Arkhip',
+    fontSize: 24,
+    lineHeight: 32,
+    textTransform: 'none',
+  },
+  subtitle: {
+    color: 'rgba(255,255,255,0.85)',
+    marginTop: 4,
+    fontSize: 14,
   },
   searchContainer: {
     paddingHorizontal: Spacing.md,
