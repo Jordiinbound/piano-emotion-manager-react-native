@@ -1,43 +1,80 @@
 /**
  * Página de Accesos Rápidos
- * Piano Emotion Manager
+ * Piano Emotion Manager - Diseño moderno y elegante
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, StyleSheet, ScrollView, Pressable, useWindowDimensions } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useHeader } from '@/contexts/HeaderContext';
-import { AnimatedCard } from '@/components/animated-card';
-import { Spacing } from '@/constants/theme';
+import { ThemedText } from '@/components/themed-text';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { useDashboardPreferences, type AccessShortcutModule } from '@/hooks/use-dashboard-preferences';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
-// Definición de módulos principales
-const MODULE_ACTIONS = [
-  { key: 'clients', icon: 'person.2.fill', label: 'Clientes', color: '#3B82F6' },
-  { key: 'pianos', icon: 'pianokeys', label: 'Pianos', color: '#8B5CF6' },
-  { key: 'services', icon: 'wrench.and.screwdriver.fill', label: 'Servicios', color: '#10B981' },
-  { key: 'suppliers', icon: 'building.2.fill', label: 'Proveedores', color: '#F97316' },
-  { key: 'dashboard', icon: 'chart.pie.fill', label: 'Panel Control', color: '#2D5A27' },
-  { key: 'inventory', icon: 'shippingbox.fill', label: 'Inventario', color: '#F59E0B' },
-  { key: 'stats', icon: 'chart.bar.fill', label: 'Estadísticas', color: '#10B981' },
-  { key: 'analytics', icon: 'chart.xyaxis.line', label: 'Analíticas', color: '#0EA5E9' },
-  { key: 'quotes', icon: 'doc.plaintext', label: 'Presupuestos', color: '#9333EA' },
-  { key: 'invoices', icon: 'doc.text.fill', label: 'Facturas', color: '#3B82F6' },
-  { key: 'billing_summary', icon: 'dollarsign.circle.fill', label: 'Resumen Fact.', color: '#059669' },
-  { key: 'rates', icon: 'list.bullet', label: 'Tarifas', color: '#EC4899' },
-  { key: 'service_catalog', icon: 'list.clipboard.fill', label: 'Catálogo Serv.', color: '#7C3AED' },
-  { key: 'clients_map', icon: 'map.fill', label: 'Mapa Clientes', color: '#DC2626' },
-  { key: 'business', icon: 'person.fill', label: 'Datos Fiscales', color: '#6B7280' },
-  { key: 'reminders', icon: 'bell.badge.fill', label: 'Recordatorios', color: '#F59E0B' },
-  { key: 'contracts', icon: 'doc.badge.clock.fill', label: 'Contratos', color: '#059669' },
-  { key: 'predictions', icon: 'brain.head.profile', label: 'Predicciones IA', color: '#8B5CF6' },
-  { key: 'import', icon: 'square.and.arrow.down.fill', label: 'Importar', color: '#22C55E' },
-  { key: 'routes', icon: 'map.fill', label: 'Rutas', color: '#F97316' },
-  { key: 'modules', icon: 'square.grid.2x2.fill', label: 'Módulos y Plan', color: '#8B5CF6' },
-  { key: 'settings', icon: 'gearshape.fill', label: 'Configuración', color: '#64748B' },
+// Definición de módulos principales organizados por categorías
+const CATEGORIES = [
+  {
+    id: 'core',
+    title: 'Gestión Principal',
+    modules: [
+      { key: 'clients', icon: 'person.2.fill', label: 'Clientes', color: '#E07856' },
+      { key: 'pianos', icon: 'pianokeys', label: 'Pianos', color: '#8B5CF6' },
+      { key: 'services', icon: 'wrench.and.screwdriver.fill', label: 'Servicios', color: '#10B981' },
+      { key: 'inventory', icon: 'shippingbox.fill', label: 'Inventario', color: '#F59E0B' },
+    ],
+  },
+  {
+    id: 'financial',
+    title: 'Finanzas y Facturación',
+    modules: [
+      { key: 'invoices', icon: 'doc.text.fill', label: 'Facturas', color: '#3B82F6' },
+      { key: 'quotes', icon: 'doc.plaintext', label: 'Presupuestos', color: '#9333EA' },
+      { key: 'billing_summary', icon: 'dollarsign.circle.fill', label: 'Resumen Facturación', color: '#059669' },
+      { key: 'rates', icon: 'list.bullet', label: 'Tarifas', color: '#EC4899' },
+    ],
+  },
+  {
+    id: 'analytics',
+    title: 'Análisis y Reportes',
+    modules: [
+      { key: 'dashboard', icon: 'chart.pie.fill', label: 'Panel Control', color: '#2D5A27' },
+      { key: 'stats', icon: 'chart.bar.fill', label: 'Estadísticas', color: '#10B981' },
+      { key: 'analytics', icon: 'chart.xyaxis.line', label: 'Analíticas', color: '#0EA5E9' },
+      { key: 'predictions', icon: 'brain.head.profile', label: 'Predicciones IA', color: '#8B5CF6' },
+    ],
+  },
+  {
+    id: 'operations',
+    title: 'Operaciones',
+    modules: [
+      { key: 'suppliers', icon: 'building.2.fill', label: 'Proveedores', color: '#F97316' },
+      { key: 'service_catalog', icon: 'list.clipboard.fill', label: 'Catálogo Servicios', color: '#7C3AED' },
+      { key: 'contracts', icon: 'doc.badge.clock.fill', label: 'Contratos', color: '#059669' },
+      { key: 'reminders', icon: 'bell.badge.fill', label: 'Recordatorios', color: '#F59E0B' },
+    ],
+  },
+  {
+    id: 'tools',
+    title: 'Herramientas',
+    modules: [
+      { key: 'clients_map', icon: 'map.fill', label: 'Mapa Clientes', color: '#DC2626' },
+      { key: 'routes', icon: 'map.fill', label: 'Rutas', color: '#F97316' },
+      { key: 'import', icon: 'square.and.arrow.down.fill', label: 'Importar', color: '#22C55E' },
+      { key: 'business', icon: 'person.fill', label: 'Datos Fiscales', color: '#6B7280' },
+    ],
+  },
+  {
+    id: 'settings',
+    title: 'Configuración',
+    modules: [
+      { key: 'modules', icon: 'square.grid.2x2.fill', label: 'Módulos y Plan', color: '#8B5CF6' },
+      { key: 'settings', icon: 'gearshape.fill', label: 'Configuración', color: '#64748B' },
+    ],
+  },
 ];
 
 // Mapeo de rutas
@@ -70,16 +107,22 @@ export default function QuickAccessScreen() {
   const router = useRouter();
   const { setHeaderConfig } = useHeader();
   const { visibleShortcuts } = useDashboardPreferences();
+  const { width } = useWindowDimensions();
+  
+  const background = useThemeColor({}, 'background');
+  const cardBg = useThemeColor({}, 'cardBackground');
+  const borderColor = useThemeColor({}, 'border');
+  const textSecondary = useThemeColor({}, 'textSecondary');
 
   // Configurar header
   useFocusEffect(
     React.useCallback(() => {
-    setHeaderConfig({
-      title: 'Accesos Rapidos',
-      subtitle: 'Accede rapidamente a las funciones principales',
-      icon: 'square.grid.2x2.fill',
-      showBackButton: false,
-    });
+      setHeaderConfig({
+        title: 'Accesos Rápidos',
+        subtitle: 'Accede rápidamente a las funciones principales',
+        icon: 'square.grid.2x2.fill',
+        showBackButton: false,
+      });
     }, [setHeaderConfig])
   );
 
@@ -91,43 +134,54 @@ export default function QuickAccessScreen() {
     }
   };
 
-  // Filtrar y ordenar módulos según configuración
-  const visibleModules = MODULE_ACTIONS
-    .filter(action => {
-      const shortcut = visibleShortcuts.find(s => s.id === action.key as AccessShortcutModule);
-      return shortcut?.visible !== false; // Mostrar por defecto si no está en la configuración
-    })
-    .sort((a, b) => {
-      const orderA = visibleShortcuts.find(s => s.id === a.key as AccessShortcutModule)?.order ?? 999;
-      const orderB = visibleShortcuts.find(s => s.id === b.key as AccessShortcutModule)?.order ?? 999;
-      return orderA - orderB;
-    });
+  const isModuleVisible = (key: string) => {
+    const shortcut = visibleShortcuts.find(s => s.id === key as AccessShortcutModule);
+    return shortcut?.visible !== false;
+  };
+
+  // Responsive: determinar número de columnas
+  const numColumns = width > 1024 ? 4 : width > 768 ? 3 : width > 600 ? 2 : 2;
+  const cardWidth = width > 600 ? `${(100 / numColumns) - 2}%` : '48%';
 
   return (
-    <LinearGradient
-      colors={['#F8F9FA', '#EEF2F7', '#E8EDF5']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0.5, y: 1 }}
-      style={styles.container}
-    >
+    <View style={[styles.container, { backgroundColor: background }]}>
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.centeredGrid}>
-          {visibleModules.map((action) => (
-            <AnimatedCard
-              key={action.key}
-              icon={action.icon}
-              label={action.label}
-              color={action.color}
-              onPress={() => handleAction(action.key)}
-            />
-          ))}
-        </View>
+        {CATEGORIES.map((category) => {
+          const visibleModules = category.modules.filter(m => isModuleVisible(m.key));
+          if (visibleModules.length === 0) return null;
+
+          return (
+            <View key={category.id} style={styles.categorySection}>
+              <ThemedText style={styles.categoryTitle}>{category.title}</ThemedText>
+              
+              <View style={styles.modulesGrid}>
+                {visibleModules.map((module) => (
+                  <Pressable
+                    key={module.key}
+                    style={[
+                      styles.moduleCard,
+                      { backgroundColor: cardBg, borderColor, width: cardWidth },
+                    ]}
+                    onPress={() => handleAction(module.key)}
+                  >
+                    <View style={[styles.iconContainer, { backgroundColor: `${module.color}15` }]}>
+                      <IconSymbol name={module.icon} size={28} color={module.color} />
+                    </View>
+                    <ThemedText style={styles.moduleLabel} numberOfLines={2}>
+                      {module.label}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          );
+        })}
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -142,11 +196,43 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     paddingBottom: 100,
   },
-  centeredGrid: {
-    width: '100%',
+  categorySection: {
+    marginBottom: Spacing.xl,
+  },
+  categoryTitle: {
+    fontSize: 18,
+    fontFamily: 'Montserrat-Bold',
+    marginBottom: Spacing.md,
+    paddingHorizontal: Spacing.xs,
+  },
+  modulesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
     gap: Spacing.md,
+  },
+  moduleCard: {
+    minWidth: 150,
+    padding: Spacing.lg,
+    borderRadius: 4,
+    borderWidth: 1,
+    alignItems: 'center',
+    gap: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  moduleLabel: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-SemiBold',
+    textAlign: 'center',
   },
 });

@@ -1,51 +1,57 @@
 /**
  * Página de Herramientas Avanzadas
- * Piano Emotion Manager
+ * Piano Emotion Manager - Diseño moderno y elegante
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, ScrollView, Modal, Pressable } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, StyleSheet, ScrollView, Modal, Pressable, useWindowDimensions } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useHeader } from '@/contexts/HeaderContext';
-import { AnimatedCard } from '@/components/animated-card';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Spacing, BorderRadius } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { useUserTier } from '@/hooks/use-user-tier';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 // Tipos de plan
 type PlanTier = 'free' | 'pro' | 'premium';
 
-// Definición de módulos avanzados con clasificación correcta
-const ADVANCED_MODULES: Array<{
-  key: string;
-  icon: string;
-  label: string;
-  color: string;
-  tier: PlanTier;
-}> = [
-  // FREE - Disponibles para todos
-  { key: 'shop', icon: 'cart.fill', label: 'Tienda', color: '#84CC16', tier: 'free' },
-  { key: 'calendar_adv', icon: 'calendar.badge.clock', label: 'Calendario+', color: '#A855F7', tier: 'free' },
-  { key: 'dashboard_editor', icon: 'square.grid.2x2', label: 'Dashboard+', color: '#EC4899', tier: 'free' },
-  { key: 'modules', icon: 'creditcard.fill', label: 'Gestionar Plan', color: '#8B5CF6', tier: 'free' },
-  
-  // PRO - Requieren suscripción Pro
-  { key: 'team', icon: 'person.3.fill', label: 'Equipos', color: '#10B981', tier: 'pro' },
-  { key: 'crm', icon: 'heart.fill', label: 'CRM', color: '#EF4444', tier: 'pro' },
-  { key: 'reports', icon: 'chart.pie.fill', label: 'Reportes', color: '#06B6D4', tier: 'pro' },
-  { key: 'client_portal', icon: 'globe', label: 'Portal Clientes', color: '#0891B2', tier: 'pro' },
-  { key: 'distributor', icon: 'building.columns.fill', label: 'Distribuidor', color: '#BE185D', tier: 'pro' },
-  { key: 'marketing', icon: 'megaphone.fill', label: 'Marketing', color: '#E91E63', tier: 'pro' },
-  { key: 'payments', icon: 'creditcard.fill', label: 'Pasarelas Pago', color: '#635BFF', tier: 'pro' },
-  
-  // PREMIUM - Solo para Premium
-  { key: 'accounting', icon: 'calculator', label: 'Contabilidad', color: '#F97316', tier: 'premium' },
-  { key: 'workflows', icon: 'arrow.triangle.branch', label: 'Workflows', color: '#6366F1', tier: 'premium' },
-  { key: 'predictions', icon: 'brain.head.profile', label: 'IA Avanzada', color: '#8B5CF6', tier: 'premium' },
+// Definición de módulos avanzados organizados por categorías
+const CATEGORIES = [
+  {
+    id: 'free',
+    title: 'Herramientas Gratuitas',
+    modules: [
+      { key: 'shop', icon: 'cart.fill', label: 'Tienda', color: '#84CC16', tier: 'free' as PlanTier },
+      { key: 'calendar_adv', icon: 'calendar.badge.clock', label: 'Calendario+', color: '#A855F7', tier: 'free' as PlanTier },
+      { key: 'dashboard_editor', icon: 'square.grid.2x2', label: 'Dashboard+', color: '#EC4899', tier: 'free' as PlanTier },
+      { key: 'modules', icon: 'creditcard.fill', label: 'Gestionar Plan', color: '#8B5CF6', tier: 'free' as PlanTier },
+    ],
+  },
+  {
+    id: 'pro',
+    title: 'Herramientas Pro',
+    modules: [
+      { key: 'team', icon: 'person.3.fill', label: 'Equipos', color: '#10B981', tier: 'pro' as PlanTier },
+      { key: 'crm', icon: 'heart.fill', label: 'CRM', color: '#EF4444', tier: 'pro' as PlanTier },
+      { key: 'reports', icon: 'chart.pie.fill', label: 'Reportes', color: '#06B6D4', tier: 'pro' as PlanTier },
+      { key: 'client_portal', icon: 'globe', label: 'Portal Clientes', color: '#0891B2', tier: 'pro' as PlanTier },
+      { key: 'distributor', icon: 'building.columns.fill', label: 'Distribuidor', color: '#BE185D', tier: 'pro' as PlanTier },
+      { key: 'marketing', icon: 'megaphone.fill', label: 'Marketing', color: '#E91E63', tier: 'pro' as PlanTier },
+      { key: 'payments', icon: 'creditcard.fill', label: 'Pasarelas Pago', color: '#635BFF', tier: 'pro' as PlanTier },
+    ],
+  },
+  {
+    id: 'premium',
+    title: 'Herramientas Premium',
+    modules: [
+      { key: 'accounting', icon: 'calculator', label: 'Contabilidad', color: '#F97316', tier: 'premium' as PlanTier },
+      { key: 'workflows', icon: 'arrow.triangle.branch', label: 'Workflows', color: '#6366F1', tier: 'premium' as PlanTier },
+      { key: 'predictions', icon: 'brain.head.profile', label: 'IA Avanzada', color: '#8B5CF6', tier: 'premium' as PlanTier },
+    ],
+  },
 ];
 
 // Mapeo de rutas
@@ -70,7 +76,7 @@ const ROUTE_MAP: Record<string, string> = {
 const PLAN_INFO = {
   pro: {
     name: 'Pro',
-    color: '#F59E0B',
+    color: '#E07856',
     price: '9,99€/mes',
     features: [
       'Gestión de equipos',
@@ -97,18 +103,23 @@ const PLAN_INFO = {
 export default function AdvancedToolsScreen() {
   const router = useRouter();
   const { setHeaderConfig } = useHeader();
-  const { tier: tierFromHook, isLoading } = useUserTier();
+  const { tier: tierFromHook } = useUserTier();
   const userTier = tierFromHook;
+  const { width } = useWindowDimensions();
+  
+  const background = useThemeColor({}, 'background');
+  const cardBg = useThemeColor({}, 'cardBackground');
+  const borderColor = useThemeColor({}, 'border');
 
   // Configurar header
   useFocusEffect(
     React.useCallback(() => {
-    setHeaderConfig({
-      title: 'Herramientas Avanzadas',
-      subtitle: 'Funciones premium y avanzadas',
-      icon: 'star.fill',
-      showBackButton: false,
-    });
+      setHeaderConfig({
+        title: 'Herramientas Avanzadas',
+        subtitle: 'Funciones premium y avanzadas',
+        icon: 'star.fill',
+        showBackButton: false,
+      });
     }, [setHeaderConfig])
   );
   
@@ -118,26 +129,18 @@ export default function AdvancedToolsScreen() {
   });
 
   const canAccess = (moduleTier: PlanTier): boolean => {
-    // Normalizar el plan actual para asegurar compatibilidad
     const normalizedTier = userTier?.toLowerCase() || 'free';
-    
-    // 1. Premium tiene acceso a TODO
     if (normalizedTier.includes('premium')) return true;
-    
-    // 2. Pro tiene acceso a Pro y Free
     if (normalizedTier.includes('pro') || normalizedTier.includes('starter')) {
       return moduleTier === 'pro' || moduleTier === 'free';
     }
-    
-    // 3. Free solo tiene acceso a Free
     return moduleTier === 'free';
   };
 
-  const handleAction = (module: typeof ADVANCED_MODULES[0]) => {
+  const handleAction = (module: { key: string; tier: PlanTier }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
     if (!canAccess(module.tier)) {
-      // Mostrar modal de upgrade
       setUpgradeModal({
         visible: true,
         tier: module.tier === 'premium' ? 'premium' : 'pro',
@@ -156,47 +159,66 @@ export default function AdvancedToolsScreen() {
     router.push('/settings/modules' as any);
   };
 
-  const getBadgeForModule = (tier: PlanTier): string | undefined => {
-    // Solo mostrar badge si el usuario NO tiene acceso al módulo
-    if (tier === 'pro' && !canAccess('pro')) return 'PRO';
-    if (tier === 'premium' && !canAccess('premium')) return 'PREMIUM';
-    return undefined;
-  };
+  // Responsive: determinar número de columnas
+  const numColumns = width > 1024 ? 4 : width > 768 ? 3 : width > 600 ? 2 : 2;
+  const cardWidth = width > 600 ? `${(100 / numColumns) - 2}%` : '48%';
 
   return (
     <>
-      <LinearGradient
-        colors={['#F8F9FA', '#EEF2F7', '#E8EDF5']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.container}
-      >
+      <View style={[styles.container, { backgroundColor: background }]}>
         <ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.centeredGrid}>
-            {ADVANCED_MODULES.map((module) => {
-              const hasAccess = canAccess(module.tier);
-              const badge = getBadgeForModule(module.tier);
+          {CATEGORIES.map((category) => (
+            <View key={category.id} style={styles.categorySection}>
+              <ThemedText style={styles.categoryTitle}>{category.title}</ThemedText>
               
-              return (
-                <AnimatedCard
-                  key={module.key}
-                  icon={module.icon}
-                  label={module.label}
-                  color={hasAccess ? module.color : '#9CA3AF'}
-                  onPress={() => handleAction(module)}
-                  disabled={!hasAccess}
-                  badge={badge}
-                  badgeColor={module.tier === 'premium' ? '#8B5CF6' : '#F59E0B'}
-                />
-              );
-            })}
-          </View>
+              <View style={styles.modulesGrid}>
+                {category.modules.map((module) => {
+                  const hasAccess = canAccess(module.tier);
+                  const showBadge = !hasAccess;
+                  
+                  return (
+                    <Pressable
+                      key={module.key}
+                      style={[
+                        styles.moduleCard,
+                        { 
+                          backgroundColor: cardBg, 
+                          borderColor: hasAccess ? borderColor : '#E5E7EB',
+                          width: cardWidth,
+                          opacity: hasAccess ? 1 : 0.6,
+                        },
+                      ]}
+                      onPress={() => handleAction(module)}
+                    >
+                      <View style={[styles.iconContainer, { backgroundColor: `${module.color}15` }]}>
+                        <IconSymbol 
+                          name={module.icon} 
+                          size={28} 
+                          color={hasAccess ? module.color : '#9CA3AF'} 
+                        />
+                      </View>
+                      <ThemedText style={styles.moduleLabel} numberOfLines={2}>
+                        {module.label}
+                      </ThemedText>
+                      {showBadge && (
+                        <View style={[styles.badge, { backgroundColor: PLAN_INFO[module.tier === 'premium' ? 'premium' : 'pro'].color }]}>
+                          <ThemedText style={styles.badgeText}>
+                            {module.tier === 'premium' ? 'PREMIUM' : 'PRO'}
+                          </ThemedText>
+                        </View>
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          ))}
         </ScrollView>
-      </LinearGradient>
+      </View>
 
       {/* Modal de Upgrade */}
       <Modal
@@ -272,12 +294,58 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     paddingBottom: 100,
   },
-  centeredGrid: {
-    width: '100%',
+  categorySection: {
+    marginBottom: Spacing.xl,
+  },
+  categoryTitle: {
+    fontSize: 18,
+    fontFamily: 'Montserrat-Bold',
+    marginBottom: Spacing.md,
+    paddingHorizontal: Spacing.xs,
+  },
+  modulesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
     gap: Spacing.md,
+  },
+  moduleCard: {
+    minWidth: 150,
+    padding: Spacing.lg,
+    borderRadius: 4,
+    borderWidth: 1,
+    alignItems: 'center',
+    gap: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+    position: 'relative',
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  moduleLabel: {
+    fontSize: 14,
+    fontFamily: 'Montserrat-SemiBold',
+    textAlign: 'center',
+  },
+  badge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontFamily: 'Montserrat-Bold',
   },
   modalOverlay: {
     flex: 1,
@@ -288,7 +356,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
-    borderRadius: BorderRadius.xl,
+    borderRadius: 4,
     width: '100%',
     maxWidth: 400,
     overflow: 'hidden',
@@ -300,11 +368,12 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
     color: '#FFFFFF',
   },
   modalPrice: {
     fontSize: 18,
+    fontFamily: 'Montserrat-Regular',
     color: 'rgba(255, 255, 255, 0.9)',
   },
   modalBody: {
@@ -313,7 +382,7 @@ const styles = StyleSheet.create({
   },
   modalSubtitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
     marginBottom: Spacing.sm,
   },
   featureRow: {
@@ -323,6 +392,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 15,
+    fontFamily: 'Montserrat-Regular',
     flex: 1,
   },
   modalFooter: {
@@ -332,13 +402,13 @@ const styles = StyleSheet.create({
   },
   upgradeButton: {
     padding: Spacing.md,
-    borderRadius: BorderRadius.sm,
+    borderRadius: 4,
     alignItems: 'center',
   },
   upgradeButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
   },
   cancelButton: {
     padding: Spacing.md,
@@ -347,5 +417,6 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: '#6B7280',
     fontSize: 15,
+    fontFamily: 'Montserrat-Regular',
   },
 });

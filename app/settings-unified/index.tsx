@@ -206,10 +206,10 @@ export default function SettingsUnifiedScreen() {
       width: width > 768 ? '31%' : '48%',
     },
     tabText: {
-      fontSize: width > 600 ? 15 : 13,
+      fontSize: width > 600 ? 15 : 12,
     },
     tab: {
-      paddingHorizontal: width > 600 ? Spacing.md : Spacing.sm,
+      paddingHorizontal: width > 600 ? Spacing.md : Spacing.xs,
     },
   }), [width]);
 
