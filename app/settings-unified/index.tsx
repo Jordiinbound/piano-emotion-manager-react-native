@@ -1248,8 +1248,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   tabGridItem: {
-    minWidth: '30%',
-    maxWidth: '32%',
+    minWidth: '23%',
+    maxWidth: '24%',
     alignItems: 'center',
   },
   tabActive: {},
