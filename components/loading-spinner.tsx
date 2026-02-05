@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   circle: {
     width: '100%',
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 9999, // Circular
     borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 9999, // Circular
     borderWidth: 3,
     borderColor: 'transparent',
   },
