@@ -239,7 +239,7 @@ export default function InventoryScreen() {
             style={[styles.scanButton, { backgroundColor: accent }]}
             onPress={handleScanBarcode}
           >
-            <IconSymbol name="qrcode.viewfinder" size={22} color="#FFFFFF" />
+            <IconSymbol name="qrcode" size={22} color="#FFFFFF" />
           </Pressable>
         </View>
       </View>
