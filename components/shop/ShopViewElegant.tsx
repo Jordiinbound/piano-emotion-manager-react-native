@@ -26,16 +26,13 @@ export function ShopViewElegant() {
   const { shops, isLoading: shopsLoading } = useShops();
   const shop = shops?.[0];
   
-  console.log('[ShopViewElegant] DEBUG 1: shops=', shops, 'shop=', shop, 'shopsLoading=', shopsLoading);
   
   const [activeTab, setActiveTab] = useState<TabType>('products');
   const [selectedBlogCategory, setSelectedBlogCategory] = useState<number | undefined>();
   
-  console.log('[ShopViewElegant] DEBUG 2: selectedBlogCategory=', selectedBlogCategory);
   
   const { products, isLoading: productsLoading, category: selectedCategory, setCategory: setSelectedCategory } = useShopProducts(shop?.id || null);
   
-  console.log('[ShopViewElegant] DEBUG 3: Calling useShopBlog with shopId=', shop?.id, 'limit=10', 'categoryId=', selectedBlogCategory?.toString());
   
   const { posts, isLoading: blogLoading, refetch: refetchBlog } = useShopBlog(
     shop?.id || null, 
@@ -43,13 +40,10 @@ export function ShopViewElegant() {
     selectedBlogCategory?.toString()
   );
   
-  console.log('[ShopViewElegant] DEBUG 4: posts=', posts, 'blogLoading=', blogLoading);
   
-  console.log('[ShopViewElegant] DEBUG 5: Calling useShopBlogCategories with shopId=', shop?.id);
   
   const { categories: blogCategories, isLoading: categoriesLoading } = useShopBlogCategories(shop?.id || null);
   
-  console.log('[ShopViewElegant] DEBUG 6: blogCategories=', blogCategories, 'categoriesLoading=', categoriesLoading);
 
   const categories = [
     { id: 'macillos', name: 'Macillos', description: 'Macillos de precisión para mecanismos de piano' },
@@ -206,10 +200,8 @@ export function ShopViewElegant() {
           {!categoriesLoading && blogCategories && blogCategories.length > 0 && (
             <View style={styles.blogCategoriesSection}>
               <Text style={styles.sectionTitle}>Categorías</Text>
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false}
-                style={styles.blogCategoriesScroll}
+              <View 
+                style={styles.blogCategoriesContainer}
               >
                 <TouchableOpacity
                   style={[
@@ -380,7 +372,7 @@ const styles = StyleSheet.create({
     width: isDesktop ? 'calc(25% - 16px)' : 'calc(50% - 16px)',
     minWidth: isDesktop ? 240 : 150,
     backgroundColor: Colors.light.surface,
-    borderRadius: BorderRadius.sm,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: Colors.light.border,
     padding: Spacing.lg,
@@ -427,7 +419,7 @@ const styles = StyleSheet.create({
     width: isDesktop ? 'calc(33.333% - 16px)' : 'calc(50% - 16px)',
     minWidth: isDesktop ? 280 : 150,
     backgroundColor: Colors.light.surface,
-    borderRadius: BorderRadius.sm,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: Colors.light.border,
     margin: Spacing.sm,
@@ -469,7 +461,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.accent,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.lg,
-    borderRadius: BorderRadius.sm,
+    borderRadius: 4,
   },
   addToCartText: {
     fontSize: 14,
@@ -483,17 +475,19 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xxl,
     paddingBottom: Spacing.md,
   },
-  blogCategoriesScroll: {
+  blogCategoriesContainer: {
     marginTop: Spacing.md,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
   },
   blogCategoryChip: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.sm,
+    borderRadius: 4,
     backgroundColor: Colors.light.surface,
     borderWidth: 1,
     borderColor: Colors.light.border,
-    marginRight: Spacing.sm,
     ...Shadows.sm,
   },
   blogCategoryChipActive: {

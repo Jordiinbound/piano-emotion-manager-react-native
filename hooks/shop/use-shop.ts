@@ -219,14 +219,12 @@ export interface BlogPost {
 }
 
 export function useShopBlog(shopId: number | null, limit: number = 5, categoryId?: string) {
-  console.log('[useShopBlog] DEBUG 1: shopId=', shopId, 'limit=', limit, 'categoryId=', categoryId);
   
   const { data: posts, isLoading, refetch, error } = trpc.shop.getBlogPosts.useQuery(
     { limit, categoryId },
     { enabled: shopId !== null }
   );
   
-  console.log('[useShopBlog] DEBUG 2: posts=', posts, 'isLoading=', isLoading, 'error=', error);
 
   return {
     posts: (posts || []) as BlogPost[],
@@ -247,14 +245,12 @@ export interface BlogCategory {
 }
 
 export function useShopBlogCategories(shopId: number | null) {
-  console.log('[useShopBlogCategories] DEBUG 1: shopId=', shopId);
   
   const { data: categories, isLoading, error } = trpc.shop.getBlogCategories.useQuery(
     undefined,
     { enabled: shopId !== null }
   );
   
-  console.log('[useShopBlogCategories] DEBUG 2: categories=', categories, 'isLoading=', isLoading, 'error=', error);
 
   return {
     categories: (categories || []) as BlogCategory[],
