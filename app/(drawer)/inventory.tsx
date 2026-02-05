@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeader } from '@/contexts/HeaderContext';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
@@ -256,18 +257,26 @@ export default function InventoryScreen() {
               style={[
                 styles.filterChip,
                 { backgroundColor: cardBg, borderColor },
-                filter === f.key && { backgroundColor: accent, borderColor: accent },
+                filter === f.key && { overflow: 'hidden', borderColor: 'transparent' },
               ]}
               onPress={() => setFilter(f.key)}
             >
-              <ThemedText
-                style={[
-                  styles.filterText,
-                  { color: filter === f.key ? '#FFFFFF' : textSecondary },
-                ]}
-              >
-                {f.label}
-              </ThemedText>
+              {filter === f.key ? (
+                <LinearGradient
+                  colors={['#d66b4f', '#e07a5f', '#ed9178']} // Coral: oscuro izquierda → claro derecha
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.filterGradient as any}
+                >
+                  <ThemedText style={[styles.filterText, { color: '#FFFFFF' }]}>
+                    {f.label}
+                  </ThemedText>
+                </LinearGradient>
+              ) : (
+                <ThemedText style={[styles.filterText, { color: textSecondary }]}>
+                  {f.label}
+                </ThemedText>
+              )}
             </Pressable>
           )}
         />
@@ -372,6 +381,11 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#e07a5f',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
   },
   filtersWrapper: {
     marginBottom: Spacing.sm,
@@ -381,15 +395,30 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   filterChip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
     borderRadius: 4,
     borderWidth: 1,
     marginRight: Spacing.sm,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  filterGradient: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
   },
   filterText: {
     fontSize: 13,
     fontWeight: '500',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   list: {
     paddingHorizontal: Spacing.md,
@@ -402,6 +431,11 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   itemContent: {
     flex: 1,
