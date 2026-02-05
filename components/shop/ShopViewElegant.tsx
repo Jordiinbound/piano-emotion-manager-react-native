@@ -211,7 +211,7 @@ export function ShopViewElegant() {
                       !selectedBlogCategory && styles.blogTabTextActive,
                     ]}
                   >
-                    Todas <Text style={styles.blogTabCount}>({blogCategories.reduce((sum, cat) => sum + cat.count, 0)})</Text>
+                    Todas <Text style={[styles.blogTabCount, !selectedBlogCategory && styles.blogTabCountActive]}>({blogCategories.reduce((sum, cat) => sum + cat.count, 0)})</Text>
                   </Text>
                   {!selectedBlogCategory && <View style={styles.blogTabIndicator} />}
                 </TouchableOpacity>
@@ -229,7 +229,7 @@ export function ShopViewElegant() {
                         selectedBlogCategory === category.id && styles.blogTabTextActive,
                       ]}
                     >
-                      {category.name} <Text style={styles.blogTabCount}>({category.count})</Text>
+                      {category.name} <Text style={[styles.blogTabCount, selectedBlogCategory === category.id && styles.blogTabCountActive]}>({category.count})</Text>
                     </Text>
                     {selectedBlogCategory === category.id && <View style={styles.blogTabIndicator} />}
                   </TouchableOpacity>
@@ -472,6 +472,7 @@ const styles = StyleSheet.create({
   blogCategoriesTitle: {
     fontSize: 24,
     fontWeight: '700',
+    fontFamily: 'Arkhip',
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: Spacing.lg,
@@ -494,16 +495,22 @@ const styles = StyleSheet.create({
   blogTabText: {
     fontSize: 15,
     fontWeight: '500',
+    fontFamily: 'Montserrat-SemiBold',
     color: '#6B7280',
   },
   blogTabTextActive: {
     color: Colors.light.accent,
     fontWeight: '600',
+    fontFamily: 'Montserrat-Bold',
   },
   blogTabCount: {
     fontSize: 14,
     fontWeight: '400',
+    fontFamily: 'Montserrat-Regular',
     color: '#9CA3AF',
+  },
+  blogTabCountActive: {
+    color: Colors.light.accent,
   },
   blogTabIndicator: {
     position: 'absolute',
