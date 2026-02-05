@@ -9,8 +9,7 @@
 import { useRouter, Stack } from 'expo-router';
 import { useState, useEffect, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import React from 'react';
-import { useHeader } from '@/contexts/HeaderContext';
+import React, { useContext, createContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Alert,
@@ -173,8 +172,15 @@ export default function SettingsUnifiedScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   // Intentar usar HeaderContext si está disponible, sino usar cabecera personalizada
-  const headerContext = React.useContext(require('@/contexts/HeaderContext').default);
-  const setHeaderConfig = headerContext?.setHeaderConfig;
+  let setHeaderConfig: ((config: any) => void) | undefined;
+  try {
+    const HeaderContext = createContext<any>(undefined);
+    const context = useContext(HeaderContext);
+    setHeaderConfig = context?.setHeaderConfig;
+  } catch (e) {
+    // HeaderContext no disponible, continuar sin él
+    setHeaderConfig = undefined;
+  }
   const [activeTab, setActiveTab] = useState<TabId>('general');
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [hasChanges, setHasChanges] = useState(false);
