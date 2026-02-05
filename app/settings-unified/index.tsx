@@ -1198,7 +1198,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
-    marginTop: Spacing.md,
     marginBottom: Spacing.sm,
     marginHorizontal: Spacing.md,
   },
