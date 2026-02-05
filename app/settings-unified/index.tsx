@@ -1188,7 +1188,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   tab: {
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.sm,
     position: 'relative',
   },
