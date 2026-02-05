@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
   blogCategoriesTitle: {
     fontSize: 24,
     fontWeight: '700',
-    fontFamily: 'Arkhip',
+    fontFamily: 'Montserrat-Bold',
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: Spacing.lg,
