@@ -211,7 +211,7 @@ export default function CalendarSettingsScreen() {
             <ThemedText style={[styles.summaryText, { color: textSecondary }]}>
               {hasAnyConnection
                 ? `${connections.filter(c => c.isActive).length} calendario(s) activo(s)`
-                : 'Conecta un calendario para sincronizar citas'
+                : 'Conecta un calendario para sincronizar eventos'
               }
             </ThemedText>
           </View>
