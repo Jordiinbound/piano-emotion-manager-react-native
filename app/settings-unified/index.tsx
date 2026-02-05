@@ -8,8 +8,8 @@
 
 import { useRouter, Stack } from 'expo-router';
 import { useState, useEffect, useMemo } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomHeader from '@/components/layout/CustomHeader';
 import {
   Alert,
   Pressable,
@@ -301,37 +301,14 @@ export default function SettingsUnifiedScreen() {
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
       
-      {/* Cabecera azul con degradado */}
-      <LinearGradient
-        colors={['#003a8c', '#004ba8', '#005bc4']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={[
-          styles.headerBar,
-          { paddingTop: Math.max(insets.top, 20) + Spacing.md }
-        ]}
-      >
-        <View style={styles.headerRow}>
-          <View style={styles.iconContainer}>
-            <IconSymbol name="gearshape.fill" size={32} color="#FFFFFF" />
-          </View>
-          <View style={styles.headerText}>
-            <ThemedText 
-              type="title" 
-              style={[
-                styles.headerTitle, 
-                { color: '#FFFFFF' },
-                width > 600 && { fontSize: 32 }
-              ]}
-            >
-              Configuracion
-            </ThemedText>
-            <ThemedText style={styles.subtitle}>
-              Centro de control de la aplicacion
-            </ThemedText>
-          </View>
-        </View>
-      </LinearGradient>
+      {/* Cabecera con CustomHeader */}
+      <CustomHeader
+        title="Configuracion"
+        subtitle="Centro de control de la aplicacion"
+        icon="gearshape.fill"
+        showBackButton={false}
+        showMenuButton={width < 768}
+      />
       
       {/* Barra de búsqueda */}
       <View style={[styles.searchContainer, { backgroundColor: background, paddingTop: Spacing.sm }]}>
@@ -1216,37 +1193,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerBar: {
-    paddingHorizontal: Spacing.md,
-    paddingBottom: Spacing.md,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-  },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerText: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontFamily: 'Arkhip',
-    fontSize: 24,
-    lineHeight: 32,
-    textTransform: 'none',
-  },
-  subtitle: {
-    color: 'rgba(255,255,255,0.85)',
-    marginTop: 4,
-    fontSize: 14,
-  },
+
   searchContainer: {
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.sm,
