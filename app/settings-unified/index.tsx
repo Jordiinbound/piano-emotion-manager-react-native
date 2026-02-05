@@ -1057,17 +1057,9 @@ export default function SettingsUnifiedScreen() {
           </View>
           
           {renderSettingRow(
-            'lightbulb.fill',
-            'Recomendaciones IA',
-            'Sugerencias inteligentes basadas en tu actividad',
-            settings.aiRecommendationsEnabled,
-            () => updateSettings({ aiRecommendationsEnabled: !settings.aiRecommendationsEnabled })
-          )}
-          
-          {renderSettingRow(
             'brain',
             'Asistente IA',
-            'Asistente virtual para ayudarte en tus tareas',
+            'Asistente virtual flotante para ayudarte en tus tareas',
             settings.aiAssistantEnabled,
             () => updateSettings({ aiAssistantEnabled: !settings.aiAssistantEnabled })
           )}
