@@ -8,6 +8,7 @@
 
 import { useRouter, Stack } from 'expo-router';
 import { useState, useEffect, useMemo } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Alert,
@@ -300,8 +301,11 @@ export default function SettingsUnifiedScreen() {
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
       
-      {/* Cabecera azul */}
-      <View
+      {/* Cabecera azul con degradado */}
+      <LinearGradient
+        colors={['#003a8c', '#004ba8', '#005bc4']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
         style={[
           styles.headerBar,
           { paddingTop: Math.max(insets.top, 20) + Spacing.md }
@@ -327,7 +331,7 @@ export default function SettingsUnifiedScreen() {
             </ThemedText>
           </View>
         </View>
-      </View>
+      </LinearGradient>
       
       {/* Barra de búsqueda */}
       <View style={[styles.searchContainer, { backgroundColor: background, paddingTop: Spacing.sm }]}>
@@ -1213,7 +1217,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerBar: {
-    backgroundColor: '#003a8c',
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.md,
   },
