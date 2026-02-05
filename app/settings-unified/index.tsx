@@ -172,7 +172,9 @@ export default function SettingsUnifiedScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const { setHeaderConfig } = useHeader();
+  // Intentar usar HeaderContext si está disponible, sino usar cabecera personalizada
+  const headerContext = React.useContext(require('@/contexts/HeaderContext').default);
+  const setHeaderConfig = headerContext?.setHeaderConfig;
   const [activeTab, setActiveTab] = useState<TabId>('general');
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [hasChanges, setHasChanges] = useState(false);
@@ -185,15 +187,17 @@ export default function SettingsUnifiedScreen() {
   const textColor = useThemeColor({}, 'text');
   const background = useThemeColor({}, 'background');
 
-  // Configurar header con estilo de Herramientas Avanzadas
+  // Configurar header con estilo de Herramientas Avanzadas (solo si HeaderContext está disponible)
   useFocusEffect(
     React.useCallback(() => {
-      setHeaderConfig({
-        title: 'Configuracion',
-        subtitle: 'Centro de control de la aplicacion',
-        icon: 'gearshape.fill',
-        showBackButton: false,
-      });
+      if (setHeaderConfig) {
+        setHeaderConfig({
+          title: 'Configuracion',
+          subtitle: 'Centro de control de la aplicacion',
+          icon: 'gearshape.fill',
+          showBackButton: false,
+        });
+      }
     }, [setHeaderConfig])
   );
 
