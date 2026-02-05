@@ -819,7 +819,7 @@ export default function SettingsUnifiedScreen() {
   // ==================== TAB: MÓDULOS ====================
   function renderModulesTab() {
     return (
-      <View>
+      <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
         <ThemedText style={styles.sectionTitle}>Módulos Activos</ThemedText>
         <ThemedText style={[styles.sectionSubtitle, { color: textSecondary }]}>
           Activa o desactiva funcionalidades según tus necesidades
@@ -1215,7 +1215,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
     marginBottom: Spacing.sm,
-    marginHorizontal: Spacing.md,
   },
   sectionSubtitle: {
     fontSize: 14,
