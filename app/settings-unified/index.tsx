@@ -1188,8 +1188,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   tab: {
-    height: 44,
-    justifyContent: 'center',
+    paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
     position: 'relative',
   },
@@ -1200,10 +1199,7 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
   tabIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    marginTop: 2,
     height: 3,
     borderRadius: 3,
   },
