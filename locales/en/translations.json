@@ -1037,5 +1037,9 @@
     "included": "Including",
     "notIncluded": "Not included",
     "requiresPremium": "Requires premium plan"
+  },
+  "shop": {
+    "title": "Piano Emotion Store",
+    "subtitle": "Accessories, components, materials and products for the repair, restoration, maintenance and tuning of acoustic pianos"
   }
 }

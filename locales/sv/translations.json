@@ -1035,5 +1035,9 @@
     "absences": "Frånvaro",
     "holidays": "Semester",
     "sickLeave": "Sjukskrivning"
+  },
+  "shop": {
+    "title": "Piano Emotion Store",
+    "subtitle": "Tillbehör, komponenter, material och produkter för reparation, restaurering, underhåll och stämning av akustiska pianon"
   }
 }

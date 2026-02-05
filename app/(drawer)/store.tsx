@@ -2,25 +2,29 @@
  * Página Principal de Tienda
  * Piano Emotion Manager
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet } from 'react-native';
-import { ShopViewElegant } from '@/components/shop';
 import { useHeader } from '@/contexts/HeaderContext';
+import { useLanguage } from '@/contexts/language-context';
+import { ShopViewElegant } from '@/components/shop';
 
 export default function StoreScreen() {
   const { setHeaderConfig } = useHeader();
+  const { t, isLoading } = useLanguage();
 
-  // Configurar header con valores directos
+  // Configurar header cuando las traducciones estén listas
   useFocusEffect(
     React.useCallback(() => {
-      setHeaderConfig({
-        title: 'Piano Emotion Store',
-        subtitle: 'Accesorios, componentes, materiales y productos para la reparación, restauración, mantenimiento y afinación de pianos acústicos',
-        showLogo: true,
-        showBackButton: false,
-      });
-    }, [setHeaderConfig])
+      if (!isLoading) {
+        setHeaderConfig({
+          title: t('shop.title'),
+          subtitle: t('shop.subtitle'),
+          showLogo: true,
+          showBackButton: false,
+        });
+      }
+    }, [setHeaderConfig, t, isLoading])
   );
 
   return (

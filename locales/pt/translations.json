@@ -1031,5 +1031,9 @@
     "absences": "Ausências",
     "holidays": "Férias",
     "sickLeave": "Licença médica"
+  },
+  "shop": {
+    "title": "Piano Emotion Store",
+    "subtitle": "Acessórios, componentes, materiais e produtos para reparação, restauro, manutenção e afinação de pianos acústicos"
   }
 }

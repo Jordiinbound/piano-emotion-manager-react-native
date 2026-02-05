@@ -1031,5 +1031,9 @@
     "absences": "Assenze",
     "holidays": "Ferie",
     "sickLeave": "Congedo per malattia"
+  },
+  "shop": {
+    "title": "Piano Emotion Store",
+    "subtitle": "Accessori, componenti, materiali e prodotti per la riparazione, il restauro, la manutenzione e l'accordatura di pianoforti acustici"
   }
 }

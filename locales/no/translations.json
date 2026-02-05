@@ -223,8 +223,7 @@
       "week": "Uke",
       "month": "Måned"
     }
-  }
-,
+  },
   "inventory": {
     "title": "Lager",
     "newItem": "Ny Vare",
@@ -449,8 +448,7 @@
     "website": "Nettside",
     "logo": "Logo",
     "uploadLogo": "Last opp logo",
-    "bankAccount": "Bankkonto"
-,
+    "bankAccount": "Bankkonto",
     "iban": "IBAN",
     "invoicePrefix": "Fakturaprefiks",
     "invoiceNotes": "Notater på fakturaer"
@@ -705,8 +703,7 @@
       "quarterly": "Kvartalsvis",
       "biannual": "Halvårlig",
       "annual": "Årlig"
-    }
-,
+    },
     "status": "Status",
     "statuses": {
       "active": "Aktiv",
@@ -1038,5 +1035,9 @@
     "absences": "Fravær",
     "holidays": "Ferier",
     "sickLeave": "Sykmelding"
+  },
+  "shop": {
+    "title": "Piano Emotion Store",
+    "subtitle": "Tilbehør, komponenter, materialer og produkter for reparasjon, restaurering, vedlikehold og stemming av akustiske pianoer"
   }
 }

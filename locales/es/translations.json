@@ -1099,6 +1099,8 @@
     "accessDeniedDesc": "No tienes permiso para acceder a esta tienda",
     "outOfStock": "Agotado",
     "viewCart": "Ver carrito",
-    "approvalRequired": "Requiere aprobación"
+    "approvalRequired": "Requiere aprobación",
+    "title": "Piano Emotion Store",
+    "subtitle": "Accesorios, componentes, materiales y productos para la reparación, restauración, mantenimiento y afinación de pianos acústicos"
   }
 }

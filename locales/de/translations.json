@@ -1031,5 +1031,9 @@
     "absences": "Abwesenheiten",
     "holidays": "Urlaub",
     "sickLeave": "Krankheitsurlaub"
+  },
+  "shop": {
+    "title": "Piano Emotion Store",
+    "subtitle": "Zubehör, Komponenten, Materialien und Produkte für die Reparatur, Restaurierung, Wartung und Stimmung von akustischen Klavieren"
   }
 }

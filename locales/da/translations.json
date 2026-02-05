@@ -1031,5 +1031,9 @@
     "absences": "Fravær",
     "holidays": "Ferier",
     "sickLeave": "Sygeorlov"
+  },
+  "shop": {
+    "title": "Piano Emotion Store",
+    "subtitle": "Tilbehør, komponenter, materialer og produkter til reparation, restaurering, vedligeholdelse og stemning af akustiske klaverer"
   }
 }
