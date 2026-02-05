@@ -7,7 +7,7 @@
  */
 
 import { useRouter, Stack } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Alert,
@@ -18,7 +18,7 @@ import {
   Switch,
   TextInput,
   Platform,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -168,6 +168,7 @@ const ECOMMERCE_PLATFORMS = [
 export default function SettingsUnifiedScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState<TabId>('general');
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [hasChanges, setHasChanges] = useState(false);
@@ -179,6 +180,32 @@ export default function SettingsUnifiedScreen() {
   const textSecondary = useThemeColor({}, 'textSecondary');
   const textColor = useThemeColor({}, 'text');
   const background = useThemeColor({}, 'background');
+
+  // Estilos dinámicos basados en ancho de pantalla
+  const dynamicStyles = useMemo(() => ({
+    header: {
+      paddingHorizontal: width > 600 ? Spacing.lg : Spacing.md,
+    },
+    headerTitle: {
+      fontSize: width > 600 ? 28 : 24,
+    },
+    tabsContent: {
+      paddingHorizontal: width > 600 ? Spacing.lg : Spacing.sm,
+    },
+  contentContainer: {
+    paddingTop: Spacing.md,
+    paddingBottom: 0,
+  },
+    optionsRow: {
+      flexDirection: width > 600 ? 'row' as const : 'column' as const,
+    },
+    formRow: {
+      flexDirection: width > 600 ? 'row' as const : 'column' as const,
+    },
+    moduleCard: {
+      width: width > 768 ? '31%' : '48%',
+    },
+  }), [width]);
 
   // Cargar configuración guardada
   useEffect(() => {
@@ -271,8 +298,8 @@ export default function SettingsUnifiedScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       
       {/* Header con búsqueda */}
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md, backgroundColor: background }]}>
-        <ThemedText style={styles.headerTitle}>Configuración</ThemedText>
+      <View style={[styles.header, dynamicStyles.header, { paddingTop: insets.top + Spacing.md, backgroundColor: background }]}>
+        <ThemedText style={[styles.headerTitle, dynamicStyles.headerTitle]}>Configuración</ThemedText>
         
         <View style={[styles.searchBar, { backgroundColor: cardBg, borderColor }]}>
           <IconSymbol name="magnifyingglass" size={18} color={textSecondary} />
@@ -291,7 +318,7 @@ export default function SettingsUnifiedScreen() {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={[styles.tabsContainer, { borderBottomColor: borderColor }]}
-        contentContainerStyle={styles.tabsContent}
+        contentContainerStyle={[styles.tabsContent, dynamicStyles.tabsContent]}
       >
         {TABS.map((tab) => (
           <Pressable
@@ -323,7 +350,7 @@ export default function SettingsUnifiedScreen() {
       {/* Contenido del tab activo */}
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.contentContainer, { paddingBottom: insets.bottom + 80 }]}
+        contentContainerStyle={[styles.contentContainer, dynamicStyles.contentContainer, { paddingBottom: insets.bottom + 80 }]}
       >
         {activeTab === 'general' && renderGeneralTab()}
         {activeTab === 'business' && renderBusinessTab()}
@@ -1184,6 +1211,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Montserrat-Bold',
     marginBottom: Spacing.sm,
+    marginHorizontal: Spacing.md,
   },
   sectionSubtitle: {
     fontSize: 14,
@@ -1194,6 +1222,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
+    marginHorizontal: Spacing.md,
     borderWidth: 1,
     ...Platform.select({
       ios: {
