@@ -18,7 +18,7 @@ export default function StoreScreen() {
   useFocusEffect(
     React.useCallback(() => {
     setHeaderConfig({
-      title: 'Piano Emotion Store',
+      title: t('store.title'),
       subtitle: t('store.subtitle'),
       showLogo: true,
       showBackButton: false,

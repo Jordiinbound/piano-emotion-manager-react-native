@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     fontFamily: Platform.select({
       ios: 'System',
       android: 'sans-serif-medium',
-      web: 'Montserrat-Bold, system-ui, -apple-system, sans-serif',
+      web: 'Arkhip, Montserrat-Bold, system-ui, -apple-system, sans-serif',
     }),
   },
   subtitle: {
