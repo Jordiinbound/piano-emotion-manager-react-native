@@ -299,7 +299,15 @@ export default function SettingsUnifiedScreen() {
       
       {/* Header con búsqueda */}
       <View style={[styles.header, dynamicStyles.header, { paddingTop: insets.top + Spacing.md, backgroundColor: background }]}>
-        <ThemedText style={[styles.headerTitle, dynamicStyles.headerTitle]}>Configuración</ThemedText>
+        <View style={styles.headerRow}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <IconSymbol name="chevron.left" size={24} color={accent} />
+          </Pressable>
+          <ThemedText style={[styles.headerTitle, dynamicStyles.headerTitle]}>Configuración</ThemedText>
+        </View>
         
         <View style={[styles.searchBar, { backgroundColor: cardBg, borderColor }]}>
           <IconSymbol name="magnifyingglass" size={18} color={textSecondary} />
@@ -1146,9 +1154,18 @@ const styles = StyleSheet.create({
   header: {
     paddingBottom: Spacing.md,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  backButton: {
+    marginRight: Spacing.sm,
+    padding: Spacing.xs,
+  },
   headerTitle: {
     fontFamily: 'Montserrat-Bold',
-    marginBottom: Spacing.md,
+    flex: 1,
   },
   searchBar: {
     flexDirection: 'row',
