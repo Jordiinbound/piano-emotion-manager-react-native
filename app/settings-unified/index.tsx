@@ -8,6 +8,9 @@
 
 import { useRouter, Stack } from 'expo-router';
 import { useState, useEffect, useMemo } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React from 'react';
+import { useHeader } from '@/contexts/HeaderContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Alert,
@@ -169,6 +172,7 @@ export default function SettingsUnifiedScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { setHeaderConfig } = useHeader();
   const [activeTab, setActiveTab] = useState<TabId>('general');
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [hasChanges, setHasChanges] = useState(false);
@@ -181,14 +185,20 @@ export default function SettingsUnifiedScreen() {
   const textColor = useThemeColor({}, 'text');
   const background = useThemeColor({}, 'background');
 
+  // Configurar header con estilo de Herramientas Avanzadas
+  useFocusEffect(
+    React.useCallback(() => {
+      setHeaderConfig({
+        title: 'Configuracion',
+        subtitle: 'Centro de control de la aplicacion',
+        icon: 'gearshape.fill',
+        showBackButton: false,
+      });
+    }, [setHeaderConfig])
+  );
+
   // Estilos dinámicos basados en ancho de pantalla
   const dynamicStyles = useMemo(() => ({
-    header: {
-      paddingHorizontal: width > 600 ? Spacing.lg : Spacing.md,
-    },
-    headerTitle: {
-      fontSize: width > 600 ? 28 : 24,
-    },
     tabsContent: {
       paddingHorizontal: width > 600 ? Spacing.lg : Spacing.sm,
     },
@@ -303,18 +313,8 @@ export default function SettingsUnifiedScreen() {
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
       
-      {/* Header con búsqueda */}
-      <View style={[styles.header, dynamicStyles.header, { paddingTop: insets.top + Spacing.md, backgroundColor: background }]}>
-        <View style={styles.headerRow}>
-          <Pressable
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <IconSymbol name="chevron.left" size={24} color={accent} />
-          </Pressable>
-          <ThemedText style={[styles.headerTitle, dynamicStyles.headerTitle]}>Configuración</ThemedText>
-        </View>
-        
+      {/* Barra de búsqueda */}
+      <View style={[styles.searchContainer, { backgroundColor: background, paddingTop: Spacing.sm }]}>
         <View style={[styles.searchBar, { backgroundColor: cardBg, borderColor }]}>
           <IconSymbol name="magnifyingglass" size={18} color={textSecondary} />
           <TextInput
@@ -1196,21 +1196,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    paddingBottom: Spacing.md,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  backButton: {
-    marginRight: Spacing.sm,
-    padding: Spacing.xs,
-  },
-  headerTitle: {
-    fontFamily: 'Montserrat-Bold',
-    flex: 1,
+  searchContainer: {
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.sm,
   },
   searchBar: {
     flexDirection: 'row',
