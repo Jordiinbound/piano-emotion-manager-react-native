@@ -205,6 +205,12 @@ export default function SettingsUnifiedScreen() {
     moduleCard: {
       width: width > 768 ? '31%' : '48%',
     },
+    tabText: {
+      fontSize: width > 600 ? 15 : 13,
+    },
+    tab: {
+      paddingHorizontal: width > 600 ? Spacing.md : Spacing.sm,
+    },
   }), [width]);
 
   // Cargar configuración guardada
@@ -333,6 +339,7 @@ export default function SettingsUnifiedScreen() {
             key={tab.id}
             style={[
               styles.tab,
+              dynamicStyles.tab,
               activeTab === tab.id && styles.tabActive,
             ]}
             onPress={() => {
@@ -343,6 +350,7 @@ export default function SettingsUnifiedScreen() {
             <ThemedText
               style={[
                 styles.tabText,
+                dynamicStyles.tabText,
                 activeTab === tab.id && { color: accent, fontFamily: 'Montserrat-SemiBold' },
               ]}
             >
