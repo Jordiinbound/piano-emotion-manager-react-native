@@ -114,8 +114,8 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, onToggle, isToggling, o
             value={module.isEnabled}
             onValueChange={handleToggle}
             disabled={isToggling || !module.isAvailable}
-            trackColor={{ false: '#d1d5db', true: '#86efac' }}
-            thumbColor={module.isEnabled ? '#10b981' : '#f4f4f5'}
+            trackColor={{ false: '#d1d5db', true: '#fca5a5' }}
+            thumbColor={module.isEnabled ? '#ef4444' : '#f4f4f5'}
           />
         )}
       </View>
