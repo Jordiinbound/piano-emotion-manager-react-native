@@ -305,13 +305,13 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    borderRadius: 2,
+    borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 8,
   },
   progressFill: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: 4,
   },
   progressText: {
     fontSize: 12,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   frequencyContainer: {
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     overflow: 'hidden',
     marginBottom: 32,
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 8,
   },
   nextButtonText: {

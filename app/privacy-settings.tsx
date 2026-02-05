@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
   rightIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -542,12 +542,12 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 4,
-    borderRadius: 2,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: 4,
   },
   progressText: {
     fontSize: 12,

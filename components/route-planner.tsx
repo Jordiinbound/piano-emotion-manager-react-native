@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   stopNumber: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

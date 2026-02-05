@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 15,
     backgroundColor: '#f5f5f5',
-    borderRadius: 8,
+    borderRadius: 4,
   },
   sectionTitle: {
     fontSize: 16,

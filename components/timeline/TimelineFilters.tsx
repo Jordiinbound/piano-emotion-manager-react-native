@@ -124,7 +124,7 @@ export function TimelineFilters({ filters, onFiltersChange }: TimelineFiltersPro
 const styles = StyleSheet.create({
   filterButton: {
     backgroundColor: '#f0f0f0',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 12,
     alignItems: 'center',
   },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     marginBottom: 8,
     backgroundColor: '#f5f5f5',
   },
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   buttonPrimary: {

@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   applyButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   applyButtonText: {
     color: '#FFFFFF',

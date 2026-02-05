@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   filterChip: {
     paddingVertical: 6,
     paddingHorizontal: Spacing.md,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
   },
   filterText: {
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingVertical: 4,
     paddingHorizontal: Spacing.sm,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   statusText: {
     fontSize: 11,
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 6,
     paddingHorizontal: Spacing.sm,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     alignSelf: 'flex-start',
   },

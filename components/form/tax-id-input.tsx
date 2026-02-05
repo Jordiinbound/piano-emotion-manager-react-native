@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   typeBadge: {
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   typeText: {
     fontSize: 11,

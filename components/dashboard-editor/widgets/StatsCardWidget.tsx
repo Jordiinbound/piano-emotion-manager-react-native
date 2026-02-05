@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   statsCardContainer: {
     flex: 1,
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   statsCardIcon: {
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,

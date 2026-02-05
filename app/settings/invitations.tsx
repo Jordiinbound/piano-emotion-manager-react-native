@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     margin: 16,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#D1D5DB',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 12,
     fontSize: 16,
     marginBottom: 16,
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 14,
-    borderRadius: 8,
+    borderRadius: 4,
     gap: 8,
   },
   buttonDisabled: {
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     margin: 16,
     marginTop: 0,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   statusPending: {
     backgroundColor: '#FEF3C7',

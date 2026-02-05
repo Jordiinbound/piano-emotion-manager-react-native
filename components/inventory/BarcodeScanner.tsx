@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   headerButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 4,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   rescanButtonText: {
     color: '#fff',
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
     paddingHorizontal: 32,
     paddingVertical: 14,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   closeButtonText: {
     color: '#fff',

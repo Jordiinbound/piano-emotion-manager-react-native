@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     margin: 20,
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 4,
   },
   searchContainerDark: {
     backgroundColor: '#2a2a2a',
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 4,
     marginRight: 8,
   },
   filterButtonActive: {
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
   statBox: {
     backgroundColor: '#f5f5f5',
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 5,
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
   alertCard: {
     backgroundColor: '#fff',
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 4,
     marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

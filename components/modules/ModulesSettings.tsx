@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
     backgroundColor: '#f3f4f6',
-    borderRadius: 12,
+    borderRadius: 4,
   },
   separatorText: {
     fontSize: 11,
@@ -425,18 +425,18 @@ const styles = StyleSheet.create({
   // Contenedores con fondo diferente
   freeModulesContainer: {
     backgroundColor: '#f0fdf4',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 8,
   },
   paidModulesContainer: {
     backgroundColor: '#fef3c7',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 8,
   },
   // Plan Card
   planCard: {
     backgroundColor: '#fff',
-    borderRadius: 16,
+    borderRadius: 4,
     padding: 16,
     borderWidth: 2,
     borderColor: '#3b82f6',
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   // Usage Card
   usageCard: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     gap: 16,
   },
@@ -504,17 +504,17 @@ const styles = StyleSheet.create({
   usageBarBg: {
     height: 6,
     backgroundColor: '#e5e7eb',
-    borderRadius: 3,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   usageBarFill: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 4,
   },
   // Module Card
   moduleCard: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 8,
   },
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   moduleIcon: {
     width: 48,
     height: 48,
-    borderRadius: 12,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#10b981',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 4,
     position: 'absolute',
     left: 230,
   },
@@ -583,7 +583,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 4,
     position: 'absolute',
     left: 230,
   },
@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f59e0b',
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 4,
     position: 'absolute',
     left: 270,
   },
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   upgradeButtonText: {
     fontSize: 12,

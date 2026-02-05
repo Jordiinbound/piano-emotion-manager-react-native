@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   centerContent: {
     alignItems: 'center',
@@ -160,12 +160,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     marginBottom: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   predictionIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

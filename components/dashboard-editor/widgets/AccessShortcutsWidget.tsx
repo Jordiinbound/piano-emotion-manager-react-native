@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   shortcutsGrid: {
     flexDirection: 'row',
@@ -89,14 +89,14 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '30%',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
   shortcutIconContainer: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,

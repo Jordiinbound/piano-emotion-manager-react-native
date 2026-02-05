@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   
   // Alertas
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   alertItem: {
     flexDirection: 'row',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderLeftWidth: 3,
     marginBottom: 8,
     alignItems: 'center',
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '45%',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -127,12 +127,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     marginBottom: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   predictionIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   statIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   listItemIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -232,13 +232,13 @@ const additionalStyles = StyleSheet.create({
     flex: 1,
     minWidth: '30%',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   shortcutIconContainer: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
@@ -259,7 +259,7 @@ const additionalStyles = StyleSheet.create({
     flex: 1,
     minWidth: '30%',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -281,7 +281,7 @@ const additionalStyles = StyleSheet.create({
   helpItemIcon: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -326,7 +326,7 @@ const additionalStyles = StyleSheet.create({
   },
   calendarButton: {
     padding: 6,
-    borderRadius: 6,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

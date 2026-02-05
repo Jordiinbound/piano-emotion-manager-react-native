@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   emptyIconContainer: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 4,
     backgroundColor: Colors.light.surface,
     justifyContent: 'center',
     alignItems: 'center',
@@ -519,6 +519,6 @@ const styles = StyleSheet.create({
     right: Spacing.lg,
     height: 3,
     backgroundColor: Colors.light.accent,
-    borderRadius: 2,
+    borderRadius: 4,
   },
 });

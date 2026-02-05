@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   statsHeader: {
     flexDirection: 'row',
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   calendarButton: {
     padding: 6,
-    borderRadius: 6,
+    borderRadius: 4,
     marginLeft: 4,
   },
   statsGrid: {
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   statIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,

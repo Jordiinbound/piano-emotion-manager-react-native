@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   historyIcon: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

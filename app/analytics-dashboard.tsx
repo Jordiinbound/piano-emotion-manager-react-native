@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   kpiIcon: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.sm,
@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
   clientRank: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 4,
     fontSize: 16,
   },
   textArea: {
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   roleOption: {
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   roleText: {
     fontSize: 13,
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
   },
   cancelButtonText: {
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 4,
   },
   inviteButtonText: {
     color: '#fff',

@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   addButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
   },
   statItem: {
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     gap: 12,
   },
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
   },
   workflowCard: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
   },
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   triggerBadge: {
     width: 40,
     height: 40,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -596,7 +596,7 @@ const styles = StyleSheet.create({
   flowStart: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
   actionNode: {
     width: 32,
     height: 32,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: 'center',
     padding: 32,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
   },
   emptyTitle: {
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
   },
   infoContent: {
@@ -683,14 +683,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
   },
   triggerOptionIcon: {
     width: 56,
     height: 56,
-    borderRadius: 12,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -704,7 +704,7 @@ const styles = StyleSheet.create({
   },
   templateCard: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
   },
@@ -736,7 +736,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 4,
     gap: 4,
   },
   templateActionText: {

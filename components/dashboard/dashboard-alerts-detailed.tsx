@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
   alertIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

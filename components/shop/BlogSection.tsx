@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   refreshButton: {
     padding: 8,
-    borderRadius: 8,
+    borderRadius: 4,
     backgroundColor: '#eff6ff',
   },
   postsGrid: {
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   },
   postCard: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 4,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     backgroundColor: '#dbeafe',
-    borderRadius: 12,
+    borderRadius: 4,
   },
   categoryText: {
     fontSize: 12,

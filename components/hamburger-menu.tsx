@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   activeIndicator: {
     width: 4,
     height: 24,
-    borderRadius: 2,
+    borderRadius: 4,
   },
   divider: {
     height: 1,

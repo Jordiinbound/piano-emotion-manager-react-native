@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
   conditionDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   conditionText: {
     fontSize: 11,
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingHorizontal: 4,
     paddingVertical: 1,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   statusBadgeText: {
     fontSize: 8,

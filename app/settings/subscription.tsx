@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     margin: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   manageButtonText: {
     color: '#fff',
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 16,
     padding: 20,
-    borderRadius: 16,
+    borderRadius: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#8B5CF6',
     paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 4,
   },
   recommendedText: {
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   selectButton: {
     backgroundColor: '#3b82f6',
     paddingVertical: 14,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
   },
   selectButtonPremium: {
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     margin: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   infoTitle: {
     fontSize: 16,

@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   optimizeText: {
     fontSize: 13,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   stopNumber: {
     width: 32,
     height: 32,
-    borderRadius: 8,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   navButton: {
     width: 36,
     height: 36,
-    borderRadius: 8,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.sm,
     paddingVertical: Spacing.md,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   fullRouteText: {
     color: '#FFFFFF',

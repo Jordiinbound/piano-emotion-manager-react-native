@@ -190,7 +190,7 @@ export function OrderFromStoreButton({ item, supplier, size = 'medium' }: OrderB
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFBEB',
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: '#FCD34D',
     marginHorizontal: 16,
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D97706',
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: 4,
   },
   badgeText: {
     fontSize: 12,
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#5B9A8B',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 4,
     gap: 4,
   },
   orderButtonSupplier: {
@@ -320,13 +320,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#5B9A8B',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 4,
     gap: 8,
   },
   orderFromStoreButtonSmall: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 4,
     gap: 4,
   },
   orderFromStoreButtonSupplier: {

@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
   addButton: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
   colorPreview: {
     width: 16,
     height: 16,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   templateName: {
     fontSize: 15,
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
   actionButton: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 4,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',

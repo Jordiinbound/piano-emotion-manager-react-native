@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,

@@ -746,7 +746,7 @@ const styles = StyleSheet.create({
   categoryDot: {
     width: 16,
     height: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     marginRight: Spacing.sm,
   },
   categoryDisplay: {

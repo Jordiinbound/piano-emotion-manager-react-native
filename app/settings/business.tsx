@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   modeIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
     right: Spacing.sm,
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     right: Spacing.sm,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: 4,
   },
   premiumBadgeText: {
     color: '#FFFFFF',

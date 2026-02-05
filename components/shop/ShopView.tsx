@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 12,
     padding: 8,
-    borderRadius: 12,
+    borderRadius: 4,
     backgroundColor: '#f9fafb',
   },
   shopCardSelected: {
@@ -408,12 +408,12 @@ const styles = StyleSheet.create({
   shopLogo: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
   },
   shopLogoPlaceholder: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -484,13 +484,13 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     aspectRatio: 1,
-    borderRadius: 12,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
   },
   productImagePlaceholder: {
     width: '100%',
     aspectRatio: 1,
-    borderRadius: 12,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
   addButton: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 4,
     backgroundColor: '#3b82f6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
     right: -4,
     width: 18,
     height: 18,
-    borderRadius: 9,
+    borderRadius: 4,
     backgroundColor: '#ef4444',
     alignItems: 'center',
     justifyContent: 'center',

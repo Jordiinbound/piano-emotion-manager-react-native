@@ -723,7 +723,7 @@ const styles = StyleSheet.create({
   addButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
   tabBadge: {
     minWidth: 18,
     height: 18,
-    borderRadius: 9,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 5,
@@ -817,7 +817,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
   statusDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   statusText: {
     fontSize: 11,
@@ -865,7 +865,7 @@ const styles = StyleSheet.create({
   priorityIndicator: {
     width: 4,
     height: 44,
-    borderRadius: 2,
+    borderRadius: 4,
     marginRight: Spacing.md,
   },
   assignButton: {
@@ -885,7 +885,7 @@ const styles = StyleSheet.create({
   zoneColor: {
     width: 12,
     height: 44,
-    borderRadius: 6,
+    borderRadius: 4,
     marginRight: Spacing.md,
   },
   addZoneButton: {

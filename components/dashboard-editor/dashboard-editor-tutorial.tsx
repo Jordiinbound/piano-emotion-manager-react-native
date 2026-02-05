@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 500,
-    borderRadius: 16,
+    borderRadius: 4,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 120,
     height: 120,
-    borderRadius: 60,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 8,
+    borderRadius: 4,
     gap: 8,
   },
   buttonFull: {

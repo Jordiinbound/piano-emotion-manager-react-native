@@ -255,7 +255,7 @@ export function PianoEmotionStore({ collapsed: collapsedProp = false, onToggle }
 const styles = StyleSheet.create({
   container: {
     marginBottom: 0,
-    borderRadius: 12,
+    borderRadius: 4,
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     width: 32,
     height: 32,
-    borderRadius: 10,
+    borderRadius: 4,
     backgroundColor: '#1A1A1A',
     justifyContent: 'center',
     alignItems: 'center',
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D4AF37',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   premiumBadgeText: {
     fontSize: 11,
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   banner: {
-    borderRadius: 12,
+    borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 20,
   },
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#5B9A8B',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 4,
     gap: 8,
   },
   bannerButtonText: {
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     backgroundColor: '#F8F9FA',
-    borderRadius: 10,
+    borderRadius: 4,
     padding: 8,
     alignItems: 'center',
     width: 70,
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8EDF5',
     paddingHorizontal: 4,
     paddingVertical: 1,
-    borderRadius: 6,
+    borderRadius: 4,
     marginTop: 4,
   },
   comingSoonText: {
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   },
   categoryDetail: {
     backgroundColor: '#F8F9FA',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 20,
   },
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: '#D4AF37',
   },
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F8F9FA',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 14,
     marginBottom: 8,
   },
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#5B9A8B',
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 4,
     alignSelf: 'flex-start',
     marginBottom: 6,
   },

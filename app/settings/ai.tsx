@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   summaryIcon: {
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 4,
     backgroundColor: 'rgba(255,255,255,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   statusText: {
     color: '#FFFFFF',
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
   featureIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   premiumBadge: {
     width: 18,
     height: 18,
-    borderRadius: 9,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

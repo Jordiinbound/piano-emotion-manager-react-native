@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   iconCircle: {
     width: 160,
     height: 160,
-    borderRadius: 80,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   featureCard: {
     flexDirection: 'row',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   featureIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   nextStepsBox: {
     width: '100%',
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 4,
     marginBottom: 32,
   },
   nextStepsTitle: {
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   stepNumber: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 18,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 8,
   },
   continueButtonText: {

@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   messageBubble: {
     maxWidth: '80%',
     padding: 12,
-    borderRadius: 16,
+    borderRadius: 4,
     marginBottom: 12,
   },
   messageBubbleClient: {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 20,
+    borderRadius: 4,
     paddingHorizontal: 16,
     paddingVertical: 8,
     fontSize: 16,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     backgroundColor: '#2196F3',
-    borderRadius: 20,
+    borderRadius: 4,
     paddingHorizontal: 20,
     paddingVertical: 10,
     justifyContent: 'center',

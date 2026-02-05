@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   section: {
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 16,
   },
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     fontSize: 16,
   },
   timeRow: {
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
   dayOption: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   dayText: {
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
   currencyOption: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   currencyText: {
     fontSize: 14,
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: '#ef4444',
   },

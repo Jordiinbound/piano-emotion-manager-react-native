@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   badge: {
     minWidth: 20,
     height: 20,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 6,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     right: 0,
     minWidth: 16,
     height: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 4,

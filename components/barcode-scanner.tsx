@@ -602,7 +602,7 @@ const mobileStyles = StyleSheet.create({
   closeButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',

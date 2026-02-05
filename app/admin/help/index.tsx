@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3B82F6',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   emptyButtonText: {
     color: '#fff',
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
   },
   sectionLeft: {
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   sectionIcon: {
     width: 48,
     height: 48,
-    borderRadius: 12,
+    borderRadius: 4,
     backgroundColor: '#3B82F620',
     justifyContent: 'center',
     alignItems: 'center',
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '100%',
     maxWidth: 500,
-    borderRadius: 16,
+    borderRadius: 4,
     padding: 24,
   },
   modalHeader: {
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     fontSize: 16,
   },
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
   modalButton: {
     flex: 1,
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   cancelButton: {

@@ -199,13 +199,13 @@ export function PremiumPhotoUpload({
 const styles = StyleSheet.create({
   photoContainer: {
     position: 'relative',
-    borderRadius: 12,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   photo: {
     width: '100%',
     height: 200,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   photoOverlay: {
     position: 'absolute',
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   addPhotoButton: {
     height: 120,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 2,
     borderStyle: 'dashed',
     alignItems: 'center',
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   lockText: {
     color: '#fff',
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f59e0b',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   proBadgeText: {
     color: '#fff',

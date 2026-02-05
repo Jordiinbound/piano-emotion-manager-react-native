@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
   topRank: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

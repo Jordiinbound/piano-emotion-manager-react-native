@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   headerButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     alignItems: 'center',
     shadowColor: '#000',
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
   warehouseIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
     paddingHorizontal: 20,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   addButtonText: {
     color: '#fff',
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#d1d5db',
-    borderRadius: 8,
+    borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 16,
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
     width: '30%',
     alignItems: 'center',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
     borderWidth: 2,
     borderColor: 'transparent',

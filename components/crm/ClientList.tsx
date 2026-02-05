@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderWidth: 1,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#dbeafe',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
     marginRight: 12,
   },
   filterButtonText: {
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   statusFilterButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: '#e5e7eb',
     backgroundColor: '#fff',
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginHorizontal: 16,
     marginBottom: 12,
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   clientAvatar: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     backgroundColor: '#3b82f6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   statusText: {
     fontSize: 12,
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   tag: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   tagText: {
     fontSize: 11,

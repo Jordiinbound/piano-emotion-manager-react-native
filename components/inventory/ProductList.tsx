@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f3f4f6',
-    borderRadius: 8,
+    borderRadius: 4,
     paddingHorizontal: 12,
     height: 44,
   },
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
     top: 16,
     width: 44,
     height: 44,
-    borderRadius: 8,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
   filterChip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
     marginRight: 8,
   },
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   headerAddButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     backgroundColor: '#dbeafe',
     alignItems: 'center',
     justifyContent: 'center',
@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: 56,
     height: 56,
-    borderRadius: 8,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: 56,
     height: 56,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   productInfo: {
     flex: 1,
@@ -561,12 +561,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   stockDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: 4,
     marginRight: 6,
   },
   stockText: {
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3b82f6',
     paddingHorizontal: 20,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   addButtonText: {
     color: '#fff',
@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ef4444',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   retryButtonText: {
     color: '#fff',

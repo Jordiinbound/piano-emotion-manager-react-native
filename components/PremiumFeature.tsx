@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   lockIconContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 4,
   },
   proBadge: {
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   buttonPrimary: {
     backgroundColor: '#3b82f6',

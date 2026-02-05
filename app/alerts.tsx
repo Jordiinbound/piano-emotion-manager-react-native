@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
   alertIconContainer: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
   },
   contactButtonText: {

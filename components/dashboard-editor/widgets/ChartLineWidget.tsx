@@ -87,7 +87,7 @@ export const ChartLineWidget = React.memo(function ChartLineWidget({ config, isE
     color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
     labelColor: (opacity = 1) => colors.textSecondary,
     style: {
-      borderRadius: 16,
+      borderRadius: 4,
     },
     propsForDots: {
       r: '4',
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   chartHeader: {
     flexDirection: 'row',
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   periodButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   periodButtonText: {
     fontSize: 11,
@@ -189,6 +189,6 @@ const styles = StyleSheet.create({
   },
   chart: {
     marginVertical: 8,
-    borderRadius: 16,
+    borderRadius: 4,
   },
 });

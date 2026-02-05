@@ -493,13 +493,13 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    borderRadius: 2,
+    borderRadius: 4,
     marginBottom: 32,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: 4,
   },
   form: {
     gap: 20,
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     fontSize: 16,
     borderWidth: 1,
   },
@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 8,
     borderWidth: 1,
   },
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 8,
   },
   nextButtonText: {

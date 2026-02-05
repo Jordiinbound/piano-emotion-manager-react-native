@@ -234,13 +234,13 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    borderRadius: 2,
+    borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 8,
   },
   progressFill: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: 4,
   },
   progressText: {
     fontSize: 12,
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
-    borderRadius: 16,
+    borderRadius: 4,
     gap: 16,
   },
   optionPressed: {
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   infoBox: {
     flexDirection: 'row',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 12,
     marginBottom: 32,
     alignItems: 'flex-start',
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 8,
   },
   nextButtonDisabled: {

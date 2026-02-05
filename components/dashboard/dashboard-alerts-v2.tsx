@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: 4,
     minWidth: 24,
     alignItems: 'center',
   },
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
   alertIconContainer: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
   },
   contactButtonText: {

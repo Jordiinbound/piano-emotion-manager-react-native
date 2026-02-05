@@ -393,13 +393,13 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    borderRadius: 2,
+    borderRadius: 4,
     marginBottom: 32,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: 4,
   },
   form: {
     gap: 24,
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     fontSize: 16,
     borderWidth: 1,
   },
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   presetCard: {
     width: 100,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 2,
     alignItems: 'center',
     gap: 8,
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
   presetColor: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 4,
   },
   presetName: {
     fontSize: 12,
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   colorPreview: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     borderWidth: 2,
     borderColor: '#e5e7eb',
   },
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   previewCard: {
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
   },
   previewButton: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   previewButtonText: {
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 8,
     borderWidth: 1,
   },
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 8,
   },
   nextButtonText: {

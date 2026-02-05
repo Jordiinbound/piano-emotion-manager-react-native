@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     marginBottom: 4,
-    borderRadius: 16,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   sectionContainerActive: {

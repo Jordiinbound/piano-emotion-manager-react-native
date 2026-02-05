@@ -41,7 +41,7 @@ export default function MarketingScreen() {
     },
     heroSection: {
       backgroundColor: colors.primary,
-      borderRadius: 16,
+      borderRadius: 4,
       padding: 24,
       marginBottom: 24,
     },
@@ -66,7 +66,7 @@ export default function MarketingScreen() {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.card,
-      borderRadius: 12,
+      borderRadius: 4,
       padding: 16,
       marginBottom: 12,
       borderWidth: 1,
@@ -75,7 +75,7 @@ export default function MarketingScreen() {
     menuIcon: {
       width: 48,
       height: 48,
-      borderRadius: 24,
+      borderRadius: 4,
       alignItems: 'center',
       justifyContent: 'center',
       marginRight: 16,
@@ -103,7 +103,7 @@ export default function MarketingScreen() {
     statCard: {
       flex: 1,
       backgroundColor: colors.card,
-      borderRadius: 12,
+      borderRadius: 4,
       padding: 16,
       marginHorizontal: 4,
       alignItems: 'center',
@@ -123,7 +123,7 @@ export default function MarketingScreen() {
     },
     tipCard: {
       backgroundColor: colors.primary + '10',
-      borderRadius: 12,
+      borderRadius: 4,
       padding: 16,
       marginTop: 24,
       flexDirection: 'row',

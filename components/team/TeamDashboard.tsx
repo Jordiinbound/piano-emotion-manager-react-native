@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
   headerButton: {
     padding: 8,
     backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 10,
+    borderRadius: 4,
   },
   periodSelector: {
     flexDirection: 'row',
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   periodButton: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
   },
   periodButtonText: {
@@ -473,13 +473,13 @@ const styles = StyleSheet.create({
   summaryCard: {
     width: '48%',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     alignItems: 'center',
   },
   summaryIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   metricsSection: {
     margin: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   sectionTitle: {
     fontSize: 16,
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     margin: 16,
     marginTop: 0,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   technicianRow: {
     flexDirection: 'row',
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   rankBadge: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
   techAvatar: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
     margin: 16,
     marginTop: 0,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   alertItem: {
     flexDirection: 'row',
@@ -621,7 +621,7 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 12,
     backgroundColor: 'rgba(0,0,0,0.02)',
-    borderRadius: 8,
+    borderRadius: 4,
     borderLeftWidth: 4,
     marginBottom: 8,
   },

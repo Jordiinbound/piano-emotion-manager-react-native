@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   emptyState: {
     flex: 1,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   alertItem: {
     flexDirection: 'row',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderLeftWidth: 3,
     marginBottom: 8,
     alignItems: 'center',

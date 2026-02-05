@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
   vipBadge: {
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: 4,
   },
   vipBadgeText: {
     color: '#FFFFFF',
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
   scoreBadge: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

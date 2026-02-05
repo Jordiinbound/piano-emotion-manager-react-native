@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   filterChip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
   },
   filterChipText: {
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   statusText: {
     fontSize: 12,
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
     right: Spacing.lg,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,

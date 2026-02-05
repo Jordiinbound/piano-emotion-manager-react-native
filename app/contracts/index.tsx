@@ -275,7 +275,7 @@ export default function ContractsScreen() {
               { 
                 backgroundColor: filter === f.id ? colors.primary : cardBg,
                 borderColor: filter === f.id ? colors.primary : border,
-                borderRadius: 8
+                borderRadius: 4
               }
             ]}
             onPress={() => setFilter(f.id)}
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
   addButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
   },
   statItem: {
@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     gap: 8,
   },
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   contractCard: {
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
     overflow: 'hidden',
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   typeBadge: {
     width: 44,
     height: 44,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   statusText: {
     fontSize: 12,
@@ -721,12 +721,12 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 6,
     backgroundColor: '#E5E7EB',
-    borderRadius: 3,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   serviceUsageProgress: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 4,
   },
   serviceUsageCount: {
     fontSize: 12,
@@ -758,7 +758,7 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: 'center',
     padding: 32,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
   },
   emptyTitle: {
@@ -775,7 +775,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
   },
   infoContent: {
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
   },
   templateCard: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 12,
   },
@@ -824,7 +824,7 @@ const styles = StyleSheet.create({
   templateIcon: {
     width: 56,
     height: 56,
-    borderRadius: 12,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -862,7 +862,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     borderStyle: 'dashed',
     marginTop: 8,

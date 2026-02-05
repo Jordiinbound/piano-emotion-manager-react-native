@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     backgroundColor: '#f3f4f6',
-    borderRadius: 6,
+    borderRadius: 4,
   },
   todayButtonText: {
     fontSize: 14,
@@ -526,13 +526,13 @@ const styles = StyleSheet.create({
   },
   settingsButton: {
     padding: 8,
-    borderRadius: 6,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
   },
   viewSelector: {
     flexDirection: 'row',
     backgroundColor: '#f3f4f6',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 4,
     height: 160, // Altura compacta del contenedor de botones
     alignItems: 'center',
@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
   },
   monthDayToday: {
     backgroundColor: '#dbeafe',
-    borderRadius: 8,
+    borderRadius: 4,
   },
   monthDayNumber: {
     fontSize: 14,
@@ -683,7 +683,7 @@ const styles = StyleSheet.create({
   monthEventDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   // Event Card
   eventCard: {

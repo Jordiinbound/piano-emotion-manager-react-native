@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   sectionTitle: {
     fontSize: 14,
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
   timeInput: {
     flex: 1,
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     fontSize: 16,
   },
   durationGrid: {
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
   durationOption: {
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   durationText: {
     fontSize: 13,
@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 4,
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 2,
   },
   priorityText: {
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 12,
   },
   technicianUnavailable: {
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
   technicianAvatar: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -624,13 +624,13 @@ const styles = StyleSheet.create({
   loadBar: {
     height: 6,
     backgroundColor: 'rgba(0,0,0,0.1)',
-    borderRadius: 3,
+    borderRadius: 4,
     overflow: 'hidden',
     marginTop: 4,
   },
   loadFill: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 4,
   },
   loadText: {
     fontSize: 11,
@@ -646,7 +646,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     fontSize: 14,
     minHeight: 80,
     textAlignVertical: 'top',
@@ -661,7 +661,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
   },
   cancelButtonText: {
@@ -671,7 +671,7 @@ const styles = StyleSheet.create({
   submitButton: {
     flex: 2,
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 4,
     alignItems: 'center',
   },
   submitButtonDisabled: {

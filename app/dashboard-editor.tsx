@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     margin: 16,
     padding: 16,
     backgroundColor: '#3B82F620',
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 12,
   },
   infoText: {
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 2,
   },
   itemLeft: {
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
   itemIcon: {
     width: 48,
     height: 48,
-    borderRadius: 12,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 2,
     borderColor: '#EF4444',
     gap: 8,
@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3B82F6',
     paddingHorizontal: 32,
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     marginBottom: 16,
     width: '100%',
     alignItems: 'center',
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
   tutorialModal: {
     width: '100%',
     maxWidth: 500,
-    borderRadius: 16,
+    borderRadius: 4,
     padding: 24,
     maxHeight: '80%',
   },
@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
   tutorialButton: {
     backgroundColor: '#3B82F6',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     alignItems: 'center',
   },
   tutorialButtonText: {

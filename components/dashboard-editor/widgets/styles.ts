@@ -8,7 +8,7 @@ export const widgetStyles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   
   // Alertas
@@ -21,7 +21,7 @@ export const widgetStyles = StyleSheet.create({
   alertItem: {
     flexDirection: 'row',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderLeftWidth: 3,
     marginBottom: 8,
     alignItems: 'center',
@@ -49,7 +49,7 @@ export const widgetStyles = StyleSheet.create({
     flex: 1,
     minWidth: '45%',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -65,12 +65,12 @@ export const widgetStyles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     marginBottom: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   predictionIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -107,7 +107,7 @@ export const widgetStyles = StyleSheet.create({
   statIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
@@ -131,7 +131,7 @@ export const widgetStyles = StyleSheet.create({
   listItemIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -175,6 +175,6 @@ export const widgetStyles = StyleSheet.create({
   },
   chart: {
     marginVertical: 8,
-    borderRadius: 16,
+    borderRadius: 4,
   },
 });

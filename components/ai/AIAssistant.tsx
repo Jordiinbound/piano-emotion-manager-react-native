@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   headerAvatar: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
   avatarContainer: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
   sendButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

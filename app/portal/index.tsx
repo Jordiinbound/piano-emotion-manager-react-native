@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   headerIcon: {
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 4,
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
   tabBadge: {
     minWidth: 18,
     height: 18,
-    borderRadius: 9,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 4,
@@ -640,7 +640,7 @@ const styles = StyleSheet.create({
   cardIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

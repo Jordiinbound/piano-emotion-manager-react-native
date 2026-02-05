@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   exportButton: {
     flex: 1,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   pdfButton: {
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 24,
     alignItems: 'center',
   },

@@ -139,7 +139,7 @@ export function SignaturePad({
           height={height}
           style={{
             border: '2px solid #ccc',
-            borderRadius: 8,
+            borderRadius: 4,
             touchAction: 'none',
             cursor: 'crosshair',
           }}
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   },
   canvasContainer: {
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   hint: {
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 8,
+    borderRadius: 4,
     minWidth: 100,
     alignItems: 'center',
   },

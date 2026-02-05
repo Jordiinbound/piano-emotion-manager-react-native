@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 32,
     height: 32,
-    borderRadius: 8,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   badge: {
     minWidth: 20,
     height: 20,
-    borderRadius: 10,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 6,

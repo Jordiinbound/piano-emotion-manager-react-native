@@ -60,7 +60,7 @@ export const ChartBarWidget = React.memo(function ChartBarWidget({ config, isEdi
     color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`,
     labelColor: (opacity = 1) => colors.textSecondary,
     style: {
-      borderRadius: 16,
+      borderRadius: 4,
     },
   }), [colors]);
 
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   widgetContent: {
     flex: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   emptyState: {
     flex: 1,
@@ -138,6 +138,6 @@ const styles = StyleSheet.create({
   },
   chart: {
     marginVertical: 8,
-    borderRadius: 16,
+    borderRadius: 4,
   },
 });

@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   form: {
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 16,
   },
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     fontSize: 16,
   },
   row: {
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     marginBottom: 24,
   },
   infoText: {
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   submitButtonDisabled: {
     opacity: 0.5,

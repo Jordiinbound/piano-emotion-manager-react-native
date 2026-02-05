@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   colorDot: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 4,
     marginRight: Spacing.md,
   },
   categoryInfo: {
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   colorOption: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -89,7 +89,7 @@ const SortableItem = memo(function SortableItem({
       <div
         style={{
           marginBottom: 0,
-          borderRadius: 16,
+          borderRadius: 4,
           overflow: 'hidden',
           opacity: isItemDragging ? 0.3 : 1,
           transition: 'opacity 0.2s ease, box-shadow 0.2s ease',
@@ -124,12 +124,12 @@ const SortableItem = memo(function SortableItem({
           {/* 4 puntos pequeños en cuadrícula 2x2 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <div style={{ display: 'flex', gap: 2 }}>
-              <div style={{ width: 2, height: 2, borderRadius: 1, backgroundColor: '#FFFFFF' }} />
-              <div style={{ width: 2, height: 2, borderRadius: 1, backgroundColor: '#FFFFFF' }} />
+              <div style={{ width: 2, height: 2, borderRadius: 4, backgroundColor: '#FFFFFF' }} />
+              <div style={{ width: 2, height: 2, borderRadius: 4, backgroundColor: '#FFFFFF' }} />
             </div>
             <div style={{ display: 'flex', gap: 2 }}>
-              <div style={{ width: 2, height: 2, borderRadius: 1, backgroundColor: '#FFFFFF' }} />
-              <div style={{ width: 2, height: 2, borderRadius: 1, backgroundColor: '#FFFFFF' }} />
+              <div style={{ width: 2, height: 2, borderRadius: 4, backgroundColor: '#FFFFFF' }} />
+              <div style={{ width: 2, height: 2, borderRadius: 4, backgroundColor: '#FFFFFF' }} />
             </div>
           </div>
         </div>
@@ -166,7 +166,7 @@ const DragOverlayContent = memo(function DragOverlayContent({
   return (
     <div
       style={{
-        borderRadius: 16,
+        borderRadius: 4,
         overflow: 'hidden',
         boxShadow: '0 16px 48px rgba(0,0,0,0.25)',
         border: `3px solid ${accent}`,

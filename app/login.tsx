@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   errorContainer: {
     padding: 20,
     backgroundColor: "#fff",
-    borderRadius: 12,
+    borderRadius: 4,
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   },
 });

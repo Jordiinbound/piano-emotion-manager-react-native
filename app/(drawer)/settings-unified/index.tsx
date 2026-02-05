@@ -1250,7 +1250,7 @@ const styles = StyleSheet.create({
     left: '10%',
     right: '10%',
     height: 3,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   content: {
     flex: 1,

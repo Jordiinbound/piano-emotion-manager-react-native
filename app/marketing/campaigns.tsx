@@ -222,7 +222,7 @@ export default function CampaignsScreen() {
       alignItems: 'center',
       paddingHorizontal: 16,
       paddingVertical: 8,
-      borderRadius: 8,
+      borderRadius: 4,
     },
     createButtonText: {
       color: '#fff',
@@ -241,7 +241,7 @@ export default function CampaignsScreen() {
     },
     campaignCard: {
       backgroundColor: colors.card,
-      borderRadius: 12,
+      borderRadius: 4,
       padding: 16,
       marginBottom: 12,
       borderWidth: 1,
@@ -262,7 +262,7 @@ export default function CampaignsScreen() {
     statusBadge: {
       paddingHorizontal: 10,
       paddingVertical: 4,
-      borderRadius: 12,
+      borderRadius: 4,
     },
     statusText: {
       fontSize: 12,
@@ -286,14 +286,14 @@ export default function CampaignsScreen() {
     progressBar: {
       height: 4,
       backgroundColor: colors.border,
-      borderRadius: 2,
+      borderRadius: 4,
       marginTop: 12,
       overflow: 'hidden',
     },
     progressFill: {
       height: '100%',
       backgroundColor: colors.primary,
-      borderRadius: 2,
+      borderRadius: 4,
     },
     emptyState: {
       alignItems: 'center',
@@ -344,7 +344,7 @@ export default function CampaignsScreen() {
     stepDot: {
       width: 10,
       height: 10,
-      borderRadius: 5,
+      borderRadius: 4,
       backgroundColor: colors.border,
       marginHorizontal: 4,
     },
@@ -359,7 +359,7 @@ export default function CampaignsScreen() {
     },
     input: {
       backgroundColor: colors.card,
-      borderRadius: 8,
+      borderRadius: 4,
       padding: 12,
       fontSize: 16,
       color: colors.text,
@@ -371,7 +371,7 @@ export default function CampaignsScreen() {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.card,
-      borderRadius: 12,
+      borderRadius: 4,
       padding: 16,
       marginBottom: 12,
       borderWidth: 2,
@@ -384,7 +384,7 @@ export default function CampaignsScreen() {
     optionIcon: {
       width: 44,
       height: 44,
-      borderRadius: 22,
+      borderRadius: 4,
       backgroundColor: colors.primary + '20',
       alignItems: 'center',
       justifyContent: 'center',
@@ -411,7 +411,7 @@ export default function CampaignsScreen() {
     secondaryButton: {
       flex: 1,
       backgroundColor: colors.card,
-      borderRadius: 8,
+      borderRadius: 4,
       padding: 16,
       alignItems: 'center',
       marginRight: 8,
@@ -426,7 +426,7 @@ export default function CampaignsScreen() {
     primaryButton: {
       flex: 1,
       backgroundColor: colors.primary,
-      borderRadius: 8,
+      borderRadius: 4,
       padding: 16,
       alignItems: 'center',
       marginLeft: 8,
@@ -443,7 +443,7 @@ export default function CampaignsScreen() {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.primary + '10',
-      borderRadius: 12,
+      borderRadius: 4,
       padding: 16,
       marginBottom: 12,
       borderWidth: 1,
@@ -452,7 +452,7 @@ export default function CampaignsScreen() {
     quickActionIcon: {
       width: 48,
       height: 48,
-      borderRadius: 24,
+      borderRadius: 4,
       backgroundColor: colors.primary,
       alignItems: 'center',
       justifyContent: 'center',

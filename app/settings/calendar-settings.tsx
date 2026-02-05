@@ -240,7 +240,7 @@ export default function CalendarSettingsScreen() {
           {/* Google Calendar */}
           <View style={[styles.connectionRow, { borderTopColor: borderColor }]}>
             <View style={[styles.providerIcon, { backgroundColor: `${accent}15` }]}>
-              <IconSymbol name="g.circle.fill" size={24} color={accent} />
+              <IconSymbol name="envelope.fill" size={24} color={accent} />
             </View>
             <View style={styles.connectionInfo}>
               <ThemedText style={styles.connectionName}>Google Calendar</ThemedText>

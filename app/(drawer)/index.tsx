@@ -163,27 +163,34 @@ export default function DashboardScreen() {
       >
         {/* 1. BARRA DE ALERTAS - Compacta y elegante */}
         <Pressable
-          style={[
-            styles.alertBanner,
-            { backgroundColor: hasAlerts ? COLORS.alertDanger : COLORS.alertSuccess },
-          ]}
+          style={styles.alertBanner}
           onPress={() => router.push('/alerts')}
         >
-          <View style={styles.alertContent as any}>
-            <Ionicons
-              name={hasAlerts ? 'warning-outline' : 'checkmark-circle-outline'}
-              size={18}
-              color={COLORS.white}
-            />
-            <Text style={styles.alertText as any}>
-              {hasAlerts
-                ? `${alertCount} ${alertCount === 1 ? 'alerta requiere' : 'alertas requieren'} tu atención`
-                : 'Todo en orden'}
-            </Text>
-          </View>
-          {hasAlerts && (
-            <Text style={styles.alertLink as any}>Ver →</Text>
-          )}
+          <LinearGradient
+            colors={hasAlerts 
+              ? ['#d66b6b', '#c85a5a', '#b94949'] // Rojo degradado
+              : ['#52a67d', '#479668', '#3c8653'] // Verde degradado
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.alertGradient as any}
+          >
+            <View style={styles.alertContent as any}>
+              <Ionicons
+                name={hasAlerts ? 'warning-outline' : 'checkmark-circle-outline'}
+                size={18}
+                color={COLORS.white}
+              />
+              <Text style={styles.alertText as any}>
+                {hasAlerts
+                  ? `${alertCount} ${alertCount === 1 ? 'alerta requiere' : 'alertas requieren'} tu atención`
+                  : 'Todo en orden'}
+              </Text>
+            </View>
+            {hasAlerts && (
+              <Text style={styles.alertLink as any}>Ver →</Text>
+            )}
+          </LinearGradient>
         </Pressable>
 
         {/* Contenedor principal con padding */}
@@ -474,8 +481,15 @@ function ActionButton({ icon, label, onPress }: ActionButtonProps) {
       ]}
       onPress={onPress}
     >
-      <Ionicons name={icon as any} size={24} color={COLORS.white} />
-      <Text style={styles.actionButtonText as any}>{label}</Text>
+      <LinearGradient
+        colors={['#e07a5f', '#d66b4f', '#cc5c3f']} // Terracota degradado
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.actionButtonGradient as any}
+      >
+        <Ionicons name={icon as any} size={24} color={COLORS.white} />
+        <Text style={styles.actionButtonText as any}>{label}</Text>
+      </LinearGradient>
     </Pressable>
   );
 }
@@ -498,12 +512,9 @@ const styles = StyleSheet.create({
 
   // Barra de alertas - Compacta y elegante
   alertBanner: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 11,
-    paddingVertical: 7, // Compacta: 10% menos
+    borderRadius: 4,
     marginTop: 12,
+    overflow: 'hidden',
     ...Platform.select({
       web: {
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
@@ -516,6 +527,13 @@ const styles = StyleSheet.create({
         elevation: 2,
       },
     }),
+  },
+  alertGradient: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 11,
+    paddingVertical: 7,
   },
   alertContent: {
     flexDirection: 'row',
@@ -552,7 +570,7 @@ const styles = StyleSheet.create({
   // Este Mes
   thisMonthContainer: {
     backgroundColor: COLORS.white,
-    borderRadius: 9,
+    borderRadius: 4,
     padding: 11,
     maxWidth: '95%',
     alignSelf: 'center',
@@ -600,7 +618,7 @@ const styles = StyleSheet.create({
   todayButton: {
     paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 4,
     backgroundColor: COLORS.background,
   },
   todayText: {
@@ -620,7 +638,7 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     backgroundColor: COLORS.white,
-    borderRadius: 9,
+    borderRadius: 4,
     padding: 11,
     alignItems: 'center',
     width: 'calc(50% - 5.7px)', // 2 columnas con gap (5% menos)
@@ -658,7 +676,7 @@ const styles = StyleSheet.create({
   // Predicciones IA
   aiPredictionsContainer: {
     backgroundColor: COLORS.white,
-    borderRadius: 9,
+    borderRadius: 4,
     padding: 11,
     maxWidth: '95%',
     alignSelf: 'center',
@@ -708,7 +726,7 @@ const styles = StyleSheet.create({
   circle: {
     width: 63,
     height: 63,
-    borderRadius: 32,
+    borderRadius: 4,
     borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
@@ -740,7 +758,7 @@ const styles = StyleSheet.create({
   // Próximas citas
   appointmentsContainer: {
     backgroundColor: COLORS.white,
-    borderRadius: 9,
+    borderRadius: 4,
     padding: 11,
     maxWidth: '95%',
     alignSelf: 'center',
@@ -823,7 +841,7 @@ const styles = StyleSheet.create({
   // Acciones rápidas
   quickActionsContainer: {
     backgroundColor: COLORS.white,
-    borderRadius: 9,
+    borderRadius: 4,
     padding: 11,
     maxWidth: '95%',
     alignSelf: 'center',
@@ -852,14 +870,11 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   actionButton: {
-    backgroundColor: COLORS.accent, // Terracota
-    borderRadius: 9,
-    padding: 11,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 4,
     width: 'calc(50% - 4.5px)', // 2 columnas
     minWidth: 117,
     minHeight: 63,
+    overflow: 'hidden',
     ...Platform.select({
       web: {
         boxShadow: '0 2px 6px rgba(224, 122, 95, 0.3)',
@@ -872,6 +887,13 @@ const styles = StyleSheet.create({
         elevation: 4,
       },
     }),
+  },
+  actionButtonGradient: {
+    padding: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
   },
   actionButtonPressed: {
     opacity: 0.8,

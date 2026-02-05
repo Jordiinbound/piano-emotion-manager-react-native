@@ -146,7 +146,7 @@ export default function AgendaScreen() {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               router.push('/settings/calendar-settings' as any);
             }}
-            style={[{ padding: 8, borderRadius: 8, backgroundColor: `${accent}15` }]}
+            style={[{ padding: 8, borderRadius: 4, backgroundColor: `${accent}15` }]}
           >
             <IconSymbol name="gearshape.fill" size={20} color="#ffffff" />
           </Pressable>
@@ -155,7 +155,7 @@ export default function AgendaScreen() {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setShowCalendar(!showCalendar);
             }}
-            style={[{ padding: 8, borderRadius: 8, backgroundColor: `${accent}15` }]}
+            style={[{ padding: 8, borderRadius: 4, backgroundColor: `${accent}15` }]}
           >
             <IconSymbol name={showCalendar ? 'list.bullet' : 'calendar'} size={20} color="#ffffff" />
           </Pressable>
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.md,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     gap: Spacing.md,
   },
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
     width: 3,
     height: '100%',
     minHeight: 50,
-    borderRadius: 2,
+    borderRadius: 4,
   },
   contentColumn: {
     flex: 1,

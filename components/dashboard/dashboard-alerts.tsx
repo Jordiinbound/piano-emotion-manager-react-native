@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   alertDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   alertText: {
     fontSize: 13,

@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 24,
   },
@@ -677,7 +677,7 @@ const styles = StyleSheet.create({
   },
   predictionCard: {
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 8,
   },
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   confidenceBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   predictionValue: {
     flexDirection: 'row',
@@ -714,11 +714,11 @@ const styles = StyleSheet.create({
   factorChip: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   churnCard: {
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 8,
   },
@@ -742,23 +742,23 @@ const styles = StyleSheet.create({
   riskBadge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   riskBar: {
     height: 6,
-    borderRadius: 3,
+    borderRadius: 4,
     marginBottom: 12,
   },
   riskBarFill: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 4,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     gap: 6,
   },
   actionButtonText: {
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
   },
   maintenanceCard: {
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 8,
   },
@@ -779,7 +779,7 @@ const styles = StyleSheet.create({
   maintenanceIcon: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -809,17 +809,17 @@ const styles = StyleSheet.create({
   confidenceSmall: {
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   scheduleButton: {
     alignItems: 'center',
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
   },
   workloadCard: {
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 8,
   },
@@ -859,7 +859,7 @@ const styles = StyleSheet.create({
   },
   inventoryCard: {
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 8,
   },
@@ -879,7 +879,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   inventoryStats: {
     flexDirection: 'row',
@@ -903,7 +903,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
     gap: 6,
   },
   orderButtonText: {
@@ -912,7 +912,7 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     padding: 32,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     alignItems: 'center',
     marginBottom: 12,
@@ -938,7 +938,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '100%',
     maxWidth: 400,
-    borderRadius: 16,
+    borderRadius: 4,
     padding: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -969,7 +969,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 12,
   },
   contactOptionText: {

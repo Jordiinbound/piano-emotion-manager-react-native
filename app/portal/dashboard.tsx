@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 20,
     margin: 10,
     width: '45%',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     margin: 10,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   sectionTitle: {
     fontSize: 18,

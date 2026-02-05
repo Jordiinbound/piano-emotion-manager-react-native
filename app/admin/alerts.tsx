@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
   statIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -838,14 +838,14 @@ const styles = StyleSheet.create({
   switch: {
     width: 50,
     height: 28,
-    borderRadius: 14,
+    borderRadius: 4,
     padding: 2,
     justifyContent: 'center',
   },
   switchThumb: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 4,
   },
   switchThumbActive: {
     marginLeft: 22,

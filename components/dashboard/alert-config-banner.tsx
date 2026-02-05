@@ -86,7 +86,7 @@ export const AlertConfigBanner = memo(function AlertConfigBanner({ onDismiss }: 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FEF3C7',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F59E0B',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: '#D97706',
   },

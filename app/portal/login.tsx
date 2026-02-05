@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 32,
     width: '100%',
     maxWidth: 400,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 12,
     fontSize: 16,
     marginBottom: 16,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#2196F3',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 16,
     alignItems: 'center',
     marginTop: 8,

@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   section: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   sectionContent: {
     backgroundColor: '#f8f9fa',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 12,
   },
   sectionText: {
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '45%',
     backgroundColor: '#f8f9fa',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 12,
     borderLeftWidth: 4,
     alignItems: 'center',
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     right: 16,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 4,
     backgroundColor: ACCENT_COLOR,
     justifyContent: 'center',
     alignItems: 'center',

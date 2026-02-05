@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     bottom: -2,
     right: -2,
     backgroundColor: '#FFFFFF',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 2,
   },
   label: {

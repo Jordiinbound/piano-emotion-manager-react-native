@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
     gap: 6,
   },
   inviteButtonText: {
@@ -446,13 +446,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 12,
   },
   avatar: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     fontSize: 16,
     marginBottom: 16,
   },
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
   },
   roleOption: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: 'transparent',
   },
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
   modalButton: {
     flex: 1,
     padding: 14,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   modalButtonText: {
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     gap: 8,
   },
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 14,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
     marginTop: 12,
   },

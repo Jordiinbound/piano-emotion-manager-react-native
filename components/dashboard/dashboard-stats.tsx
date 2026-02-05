@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   todayButton: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 10,
+    borderRadius: 4,
     borderWidth: 1,
     minHeight: 28,
     justifyContent: 'center',
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   },
   calendarButton: {
     padding: 6,
-    borderRadius: 8,
+    borderRadius: 4,
     minWidth: 36,
     minHeight: 36,
     marginLeft: 4,
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   statIconBg: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 4,
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   skeletonCircle: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 4,
     marginBottom: 4,
   },
   skeletonValue: {
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
   retryButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     marginTop: Spacing.sm,
   },

@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: Math.min(screenWidth - 40, 400),
     backgroundColor: '#fff',
-    borderRadius: 16,
+    borderRadius: 4,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 64,
     height: 64,
-    borderRadius: 32,
+    borderRadius: 4,
     backgroundColor: '#eff6ff',
     justifyContent: 'center',
     alignItems: 'center',
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   planInfo: {
     backgroundColor: '#fefce8',
-    borderRadius: 12,
+    borderRadius: 4,
     padding: 16,
     marginBottom: 16,
   },
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: '#3b82f6',
     paddingVertical: 14,
-    borderRadius: 10,
+    borderRadius: 4,
   },
   upgradeButtonText: {
     fontSize: 16,

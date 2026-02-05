@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   statusDot: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.sm,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   syncButton: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   bigStatusDot: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,

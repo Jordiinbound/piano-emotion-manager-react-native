@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     minHeight: 48, // Altura táctil estándar y cómoda
     minWidth: 100, // Asegurar un ancho mínimo mayor
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
   filterDot: {
     width: 10,
     height: 10,
-    borderRadius: 5,
+    borderRadius: 4,
     marginRight: Spacing.xs,
   },
   manageCategoriesLink: {
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   categoryDot: {
     width: 16,
     height: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     marginRight: Spacing.sm,
     marginTop: 2,
   },
@@ -660,13 +660,13 @@ const styles = StyleSheet.create({
   toggle: {
     width: 50,
     height: 30,
-    borderRadius: 15,
+    borderRadius: 4,
     padding: 2,
   },
   toggleKnob: {
     width: 26,
     height: 26,
-    borderRadius: 13,
+    borderRadius: 4,
     backgroundColor: '#fff',
   },
   pickerItem: {

@@ -125,7 +125,7 @@ export const DashboardHelp = memo(function DashboardHelp() {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 0,
-    borderRadius: 12,
+    borderRadius: 4,
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     width: 140,
     marginRight: 12,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     backgroundColor: '#f9f9f9',
     borderLeftWidth: 3,
   },
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   viewAllButton: {
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   viewAllButtonText: {

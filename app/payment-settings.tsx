@@ -440,13 +440,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 2,
   },
   gatewayIcon: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
   },
   configSection: {
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 20,
   },
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 15,
@@ -509,14 +509,14 @@ const styles = StyleSheet.create({
   envButton: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
   },
   webhookInfo: {
     flexDirection: 'row',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     marginBottom: 16,
   },
   webhookInfoContent: {
@@ -540,14 +540,14 @@ const styles = StyleSheet.create({
   testButton: {
     flex: 1,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     alignItems: 'center',
   },
   saveButton: {
     flex: 1,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   docsLink: {
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
   },
   statsSection: {
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 20,
   },
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   infoCard: {
     flexDirection: 'row',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     marginBottom: 32,
   },

@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 120,
     height: 120,
-    borderRadius: 60,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 24,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   stepCard: {
     flexDirection: 'row',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   stepIconContainer: {
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   infoBox: {
     flexDirection: 'row',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 12,
     marginBottom: 32,
     alignItems: 'flex-start',
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     gap: 8,
     marginBottom: 16,
   },

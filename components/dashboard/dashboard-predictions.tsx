@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   predictionIcon: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

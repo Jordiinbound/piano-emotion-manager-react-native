@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   lineSegment: {
     position: 'absolute',
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   legendDot: {
     width: 10,
     height: 10,
-    borderRadius: 5,
+    borderRadius: 4,
   },
   legendLabel: {
     fontSize: 12,

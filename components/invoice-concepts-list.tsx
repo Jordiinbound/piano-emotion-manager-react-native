@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   conceptTypeBadge: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

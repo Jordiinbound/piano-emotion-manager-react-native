@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   pianoKey: {
-    borderRadius: 2,
+    borderRadius: 4,
   },
   circleContainer: {
     position: 'absolute',
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   circle: {
     width: '100%',
     height: '100%',
-    borderRadius: 50,
+    borderRadius: 4,
     borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    borderRadius: 50,
+    borderRadius: 4,
     borderWidth: 3,
     borderColor: 'transparent',
   },

@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     backgroundColor: '#fff',
     alignItems: 'center',
     borderWidth: 1,
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   statCard: {
     width: (Dimensions.get('window').width - 40) / 2,
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 16,
     borderLeftWidth: 4,
     shadowColor: '#000',
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 12,
     marginBottom: 8,
     borderLeftWidth: 4,
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
   accountIcon: {
     width: 40,
     height: 40,
-    borderRadius: 8,
+    borderRadius: 4,
     backgroundColor: '#f3f4f6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -481,12 +481,12 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 8,
     backgroundColor: '#e5e7eb',
-    borderRadius: 2,
+    borderRadius: 4,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: 4,
   },
   actionsGrid: {
     flexDirection: 'row',
@@ -496,14 +496,14 @@ const styles = StyleSheet.create({
   actionButton: {
     width: (Dimensions.get('window').width - 56) / 2,
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 4,
     padding: 16,
     alignItems: 'center',
   },
   actionIcon: {
     width: 48,
     height: 48,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,

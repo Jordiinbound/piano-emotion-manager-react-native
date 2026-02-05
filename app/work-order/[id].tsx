@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2D5A27',
     paddingVertical: 14,
     paddingHorizontal: 32,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   printButtonText: {
     color: '#fff',

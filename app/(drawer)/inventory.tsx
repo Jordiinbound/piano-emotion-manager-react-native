@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   filterChip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     marginRight: Spacing.sm,
   },
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   },
   alertBadge: {
     padding: 4,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   itemCategory: {
     fontSize: 12,

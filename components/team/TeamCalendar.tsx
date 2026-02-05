@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   legendDot: {
     width: 10,
     height: 10,
-    borderRadius: 5,
+    borderRadius: 4,
   },
   legendText: {
     fontSize: 11,
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
   technicianAvatar: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 4,
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 4,
     right: 4,
-    borderRadius: 6,
+    borderRadius: 4,
     padding: 6,
     borderLeftWidth: 3,
     overflow: 'hidden',
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
   currentTimeDot: {
     width: 10,
     height: 10,
-    borderRadius: 5,
+    borderRadius: 4,
     backgroundColor: '#ef4444',
   },
   currentTimeLine: {

@@ -576,13 +576,13 @@ const styles = StyleSheet.create({
   toggle: {
     width: 44,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 4,
     justifyContent: 'center',
   },
   toggleKnob: {
     width: 20,
     height: 20,
-    borderRadius: 10,
+    borderRadius: 4,
     backgroundColor: '#FFFFFF',
   },
   preview: {

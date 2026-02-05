@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   infoCard: {
     flexDirection: 'row',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     backgroundColor: '#3b82f620',
     marginBottom: 24,
     gap: 12,
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
     gap: 16,
   },
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   stepIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },

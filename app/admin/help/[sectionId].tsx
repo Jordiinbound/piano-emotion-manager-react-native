@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3B82F6',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 4,
   },
   emptyButtonText: {
     color: '#fff',
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   },
   itemCard: {
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 4,
     borderWidth: 1,
   },
   itemHeader: {
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
   itemNumber: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 4,
     backgroundColor: '#3B82F620',
     justifyContent: 'center',
     alignItems: 'center',
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '100%',
     maxWidth: 600,
-    borderRadius: 16,
+    borderRadius: 4,
     padding: 24,
     alignSelf: 'center',
   },
@@ -585,14 +585,14 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     fontSize: 16,
     minHeight: 48,
   },
   textArea: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 4,
     borderWidth: 1,
     fontSize: 16,
     minHeight: 120,
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
   modalButton: {
     flex: 1,
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 4,
     alignItems: 'center',
   },
   cancelButton: {

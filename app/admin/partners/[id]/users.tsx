@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
     right: Spacing.lg,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
