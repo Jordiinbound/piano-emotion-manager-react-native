@@ -387,7 +387,7 @@ export default function SettingsUnifiedScreen() {
   // ==================== TAB: GENERAL ====================
   function renderGeneralTab() {
     return (
-      <View style={{ paddingTop: Spacing.md }}>
+      <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
         <ThemedText style={styles.sectionTitle}>Preferencias Generales</ThemedText>
         
         {/* Idioma */}
@@ -473,7 +473,7 @@ export default function SettingsUnifiedScreen() {
   // ==================== TAB: NEGOCIO ====================
   function renderBusinessTab() {
     return (
-      <View>
+      <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
         <ThemedText style={styles.sectionTitle}>Información del Negocio</ThemedText>
         
         {/* Modo de negocio */}
@@ -661,7 +661,7 @@ export default function SettingsUnifiedScreen() {
   // ==================== TAB: FACTURACIÓN ====================
   function renderBillingTab() {
     return (
-      <View>
+      <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
         <ThemedText style={styles.sectionTitle}>Facturación y Contabilidad</ThemedText>
         
         {/* País fiscal */}
@@ -876,7 +876,7 @@ export default function SettingsUnifiedScreen() {
   // ==================== TAB: NOTIFICACIONES ====================
   function renderNotificationsTab() {
     return (
-      <View>
+      <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
         <ThemedText style={styles.sectionTitle}>Preferencias de Notificaciones</ThemedText>
         
         <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
@@ -911,7 +911,7 @@ export default function SettingsUnifiedScreen() {
   // ==================== TAB: INTEGRACIONES ====================
   function renderIntegrationsTab() {
     return (
-      <View>
+      <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
         <ThemedText style={styles.sectionTitle}>Integraciones</ThemedText>
         
         {/* Calendario */}
@@ -1079,7 +1079,7 @@ export default function SettingsUnifiedScreen() {
   // ==================== TAB: AVANZADO ====================
   function renderAdvancedTab() {
     return (
-      <View>
+      <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
         <ThemedText style={styles.sectionTitle}>Configuración Avanzada</ThemedText>
         
         <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
