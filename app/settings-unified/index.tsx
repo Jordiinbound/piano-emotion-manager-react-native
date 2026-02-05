@@ -1182,6 +1182,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
   },
   tabsContainer: {
+    flexGrow: 0,
+    flexShrink: 0,
     borderBottomWidth: 1,
   },
   tabsContent: {
