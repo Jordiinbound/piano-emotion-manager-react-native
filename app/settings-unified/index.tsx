@@ -206,7 +206,7 @@ export default function SettingsUnifiedScreen() {
       width: width > 768 ? '31%' : '48%',
     },
     tabText: {
-      fontSize: 15,
+      fontSize: width > 600 ? 15 : 12,
     },
     tab: {
       paddingHorizontal: width > 600 ? Spacing.md : Spacing.xs,
@@ -1239,7 +1239,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     gap: Spacing.xs,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: Spacing.xs,
     paddingVertical: Spacing.sm,
   },
   tab: {
@@ -1249,6 +1249,7 @@ const styles = StyleSheet.create({
   },
   tabGridItem: {
     minWidth: '30%',
+    maxWidth: '32%',
     alignItems: 'center',
   },
   tabActive: {},
