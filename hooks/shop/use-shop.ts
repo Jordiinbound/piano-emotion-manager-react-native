@@ -218,9 +218,9 @@ export interface BlogPost {
   categories: string[];
 }
 
-export function useShopBlog(shopId: number | null, limit: number = 5) {
+export function useShopBlog(shopId: number | null, limit: number = 5, categoryId?: string) {
   const { data: posts, isLoading, refetch } = trpc.shop.getBlogPosts.useQuery(
-    { shopId: shopId!, limit },
+    { limit, categoryId },
     { enabled: shopId !== null }
   );
 
@@ -228,6 +228,29 @@ export function useShopBlog(shopId: number | null, limit: number = 5) {
     posts: (posts || []) as BlogPost[],
     isLoading,
     refetch,
+  };
+}
+
+// ============================================================================
+// useShopBlogCategories Hook
+// ============================================================================
+
+export interface BlogCategory {
+  id: number;
+  name: string;
+  slug: string;
+  count: number;
+}
+
+export function useShopBlogCategories(shopId: number | null) {
+  const { data: categories, isLoading } = trpc.shop.getBlogCategories.useQuery(
+    undefined,
+    { enabled: shopId !== null }
+  );
+
+  return {
+    categories: (categories || []) as BlogCategory[],
+    isLoading,
   };
 }
 

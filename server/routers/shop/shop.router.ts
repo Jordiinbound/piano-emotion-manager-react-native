@@ -607,7 +607,10 @@ export const shopRouter = router({
    * Obtener posts del blog
    */
   getBlogPosts: protectedProcedure
-    .input(z.object({ limit: z.number().optional() }))
+    .input(z.object({ 
+      limit: z.number().optional(),
+      categoryId: z.string().optional()
+    }))
     .query(async ({ input }) => {
       const database = await getDb();
       if (!database) {
@@ -623,7 +626,12 @@ export const shopRouter = router({
       }
       
       const blogService = new WordPressBlogService(wooConfig.url);
-      const posts = await blogService.getRecentPosts(input.limit || 5);
+      const posts = await blogService.getPosts({
+        per_page: input.limit || 5,
+        categories: input.categoryId,
+        orderby: 'date',
+        order: 'desc',
+      });
       
       return posts;
     }),
@@ -651,6 +659,30 @@ export const shopRouter = router({
       const posts = await blogService.searchPosts(input.query);
       
       return posts;
+    }),
+
+  /**
+   * Obtener categorías del blog
+   */
+  getBlogCategories: protectedProcedure
+    .query(async () => {
+      const database = await getDb();
+      if (!database) {
+        throw new Error('Database not available');
+      }
+      const [wooConfig] = await database
+        .select()
+        .from(distributorWooCommerceConfig)
+        .limit(1);
+      
+      if (!wooConfig) {
+        return [];
+      }
+      
+      const blogService = new WordPressBlogService(wooConfig.url);
+      const categories = await blogService.getCategories();
+      
+      return categories;
     }),
 });
 

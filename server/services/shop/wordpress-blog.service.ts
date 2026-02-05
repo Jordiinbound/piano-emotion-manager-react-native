@@ -181,6 +181,39 @@ export class WordPressBlogService {
   }
 
   /**
+   * Decodificar entidades HTML
+   */
+  private decodeHtmlEntities(text: string): string {
+    const entities: Record<string, string> = {
+      '&#8211;': '–',
+      '&#8212;': '—',
+      '&#8216;': ''',
+      '&#8217;': ''',
+      '&#8220;': '"',
+      '&#8221;': '"',
+      '&#8230;': '…',
+      '&amp;': '&',
+      '&lt;': '<',
+      '&gt;': '>',
+      '&quot;': '"',
+      '&#039;': "'",
+      '&apos;': "'",
+    };
+    
+    let decoded = text;
+    for (const entity in entities) {
+      decoded = decoded.replace(new RegExp(entity, 'g'), entities[entity]);
+    }
+    
+    // Decodificar entidades numéricas genéricas
+    decoded = decoded.replace(/&#(\d+);/g, (match, dec) => {
+      return String.fromCharCode(parseInt(dec));
+    });
+    
+    return decoded;
+  }
+
+  /**
    * Simplificar estructura de post de WordPress
    */
   private simplifyPost(post: WordPressPost): SimplifiedPost {
@@ -204,7 +237,7 @@ export class WordPressBlogService {
     
     return {
       id: post.id,
-      title: post.title.rendered,
+      title: this.decodeHtmlEntities(post.title.rendered),
       excerpt,
       url: post.link,
       date: new Date(post.date).toLocaleDateString('es-ES', {
