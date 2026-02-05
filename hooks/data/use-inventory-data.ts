@@ -46,9 +46,9 @@ function serverToLocalMaterial(server: ServerInventoryItem): Material {
 export function useInventoryData() {
   const utils = trpc.useUtils();
 
-  // Query para obtener todo el inventario con límite alto
+  // Query para obtener todo el inventario
   const { data: serverInventory, isLoading: loading, refetch } = trpc.inventory.list.useQuery(
-    { limit: 10000 }, // Límite alto para obtener todos los items
+    undefined,
     {
       staleTime: 5 * 60 * 1000, // 5 minutos
     }
