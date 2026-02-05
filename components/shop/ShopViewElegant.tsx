@@ -26,16 +26,30 @@ export function ShopViewElegant() {
   const { shops, isLoading: shopsLoading } = useShops();
   const shop = shops?.[0];
   
+  console.log('[ShopViewElegant] DEBUG 1: shops=', shops, 'shop=', shop, 'shopsLoading=', shopsLoading);
+  
   const [activeTab, setActiveTab] = useState<TabType>('products');
   const [selectedBlogCategory, setSelectedBlogCategory] = useState<number | undefined>();
   
+  console.log('[ShopViewElegant] DEBUG 2: selectedBlogCategory=', selectedBlogCategory);
+  
   const { products, isLoading: productsLoading, category: selectedCategory, setCategory: setSelectedCategory } = useShopProducts(shop?.id || null);
+  
+  console.log('[ShopViewElegant] DEBUG 3: Calling useShopBlog with shopId=', shop?.id, 'limit=10', 'categoryId=', selectedBlogCategory?.toString());
+  
   const { posts, isLoading: blogLoading, refetch: refetchBlog } = useShopBlog(
     shop?.id || null, 
     10, 
     selectedBlogCategory?.toString()
   );
+  
+  console.log('[ShopViewElegant] DEBUG 4: posts=', posts, 'blogLoading=', blogLoading);
+  
+  console.log('[ShopViewElegant] DEBUG 5: Calling useShopBlogCategories with shopId=', shop?.id);
+  
   const { categories: blogCategories, isLoading: categoriesLoading } = useShopBlogCategories(shop?.id || null);
+  
+  console.log('[ShopViewElegant] DEBUG 6: blogCategories=', blogCategories, 'categoriesLoading=', categoriesLoading);
 
   const categories = [
     { id: 'macillos', name: 'Macillos', description: 'Macillos de precisión para mecanismos de piano' },
