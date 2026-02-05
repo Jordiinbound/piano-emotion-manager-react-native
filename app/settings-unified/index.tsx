@@ -1152,11 +1152,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: Dimensions.get('window').width > 600 ? Spacing.lg : Spacing.md,
     paddingBottom: Spacing.md,
   },
   headerTitle: {
-    fontSize: Dimensions.get('window').width > 600 ? 28 : 24,
     fontFamily: 'Montserrat-Bold',
     marginBottom: Spacing.md,
   },
@@ -1178,7 +1176,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   tabsContent: {
-    paddingHorizontal: Dimensions.get('window').width > 600 ? Spacing.lg : Spacing.sm,
     gap: Spacing.sm,
   },
   tab: {
@@ -1204,8 +1201,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: Dimensions.get('window').width > 600 ? Spacing.md : Spacing.sm,
-    paddingTop: Spacing.sm,
+    paddingTop: Spacing.md,
+    paddingBottom: 0,
   },
   sectionTitle: {
     fontSize: 20,
@@ -1287,7 +1284,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Regular',
   },
   optionsRow: {
-    flexDirection: Dimensions.get('window').width > 600 ? 'row' : 'column',
     gap: Spacing.sm,
   },
   optionButton: {
@@ -1309,7 +1305,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   formRow: {
-    flexDirection: Dimensions.get('window').width > 600 ? 'row' : 'column',
     gap: Spacing.sm,
   },
   inputLabel: {
@@ -1365,7 +1360,6 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   moduleCard: {
-    width: Dimensions.get('window').width > 768 ? '31%' : '48%',
     minWidth: 150,
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
