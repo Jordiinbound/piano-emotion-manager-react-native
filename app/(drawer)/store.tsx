@@ -2,7 +2,6 @@
  * Página Principal de Tienda
  * Piano Emotion Manager
  */
-
 import React, { useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet } from 'react-native';
@@ -12,18 +11,20 @@ import { ShopViewElegant } from '@/components/shop';
 
 export default function StoreScreen() {
   const { setHeaderConfig } = useHeader();
-  const { t } = useLanguage();
+  const { t, isLoading } = useLanguage();
 
-  // Configurar header
+  // Configurar header solo cuando las traducciones estén listas
   useFocusEffect(
     React.useCallback(() => {
-    setHeaderConfig({
-      title: t('store.title'),
-      subtitle: t('store.subtitle'),
-      showLogo: true,
-      showBackButton: false,
-    });
-    }, [setHeaderConfig, t])
+      if (!isLoading) {
+        setHeaderConfig({
+          title: t('store.title'),
+          subtitle: t('store.subtitle'),
+          showLogo: true,
+          showBackButton: false,
+        });
+      }
+    }, [setHeaderConfig, t, isLoading])
   );
 
   return (
