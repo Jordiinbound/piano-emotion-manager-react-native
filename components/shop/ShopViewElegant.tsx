@@ -199,13 +199,8 @@ export function ShopViewElegant() {
           {/* Selector de categorías del blog */}
           {!categoriesLoading && blogCategories && blogCategories.length > 0 && (
             <View style={styles.blogCategoriesSection}>
-              <Text style={styles.sectionTitle}>Categorías</Text>
-              <ScrollView 
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.blogTabsScrollView}
-                contentContainerStyle={styles.blogTabsContainer}
-              >
+              <Text style={styles.blogCategoriesTitle}>Categorías</Text>
+              <View style={styles.blogTabsContainer}>
                 <TouchableOpacity
                   style={styles.blogTab}
                   onPress={() => setSelectedBlogCategory(undefined)}
@@ -216,7 +211,7 @@ export function ShopViewElegant() {
                       !selectedBlogCategory && styles.blogTabTextActive,
                     ]}
                   >
-                    Todas
+                    Todas <Text style={styles.blogTabCount}>({blogCategories.reduce((sum, cat) => sum + cat.count, 0)})</Text>
                   </Text>
                   {!selectedBlogCategory && <View style={styles.blogTabIndicator} />}
                 </TouchableOpacity>
@@ -239,8 +234,7 @@ export function ShopViewElegant() {
                     {selectedBlogCategory === category.id && <View style={styles.blogTabIndicator} />}
                   </TouchableOpacity>
                 ))}
-              </ScrollView>
-              <View style={styles.blogTabsBorder} />
+              </View>
             </View>
           )}
           <BlogSection posts={posts} isLoading={blogLoading} onRefresh={refetchBlog} />
@@ -473,20 +467,29 @@ const styles = StyleSheet.create({
   blogCategoriesSection: {
     paddingHorizontal: isDesktop ? 60 : Spacing.lg,
     paddingTop: Spacing.xxl,
-    paddingBottom: 0,
+    paddingBottom: Spacing.md,
   },
-  blogTabsScrollView: {
-    marginTop: Spacing.md,
+  blogCategoriesTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.light.text,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
   },
   blogTabsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: Spacing.sm,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    paddingBottom: Spacing.md,
   },
   blogTab: {
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     position: 'relative',
+    marginBottom: Spacing.xs,
   },
   blogTabText: {
     fontSize: 15,
@@ -504,16 +507,11 @@ const styles = StyleSheet.create({
   },
   blogTabIndicator: {
     position: 'absolute',
-    bottom: 0,
+    bottom: -Spacing.xs,
     left: Spacing.lg,
     right: Spacing.lg,
     height: 3,
     backgroundColor: Colors.light.accent,
     borderRadius: 2,
-  },
-  blogTabsBorder: {
-    height: 1,
-    backgroundColor: '#E5E7EB',
-    marginTop: -1,
   },
 });
