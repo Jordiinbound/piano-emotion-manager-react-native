@@ -387,7 +387,7 @@ export default function SettingsUnifiedScreen() {
   // ==================== TAB: GENERAL ====================
   function renderGeneralTab() {
     return (
-      <View>
+      <View style={{ paddingTop: Spacing.sm }}>
         <ThemedText style={styles.sectionTitle}>Preferencias Generales</ThemedText>
         
         {/* Idioma */}
