@@ -1176,7 +1176,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: Spacing.lg,
+    padding: Spacing.md,
+    paddingTop: Spacing.sm,
   },
   sectionTitle: {
     fontSize: 20,
