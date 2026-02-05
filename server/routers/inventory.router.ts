@@ -195,7 +195,7 @@ export const inventoryRouter = router({
     .input(paginationSchema.optional())
     .query(async ({ ctx, input }) => {
       const { 
-        limit = 30, 
+        limit, 
         cursor, 
         sortBy = "name", 
         sortOrder = "asc", 
@@ -204,6 +204,9 @@ export const inventoryRouter = router({
         lowStock, 
         outOfStock 
       } = input || {};
+      
+      // Usar el límite del input o el default del schema (30)
+      const effectiveLimit = limit ?? 30;
       
       const database = await db.getDb();
       if (!database) return { items: [], total: 0, stats: null };
@@ -241,7 +244,7 @@ export const inventoryRouter = router({
         .from(inventory)
         .where(and(...whereClauses))
         .orderBy(orderByClause)
-        .limit(limit)
+        .limit(effectiveLimit)
         .offset(offset);
 
       // Aplicar filtros de stock después de la query
