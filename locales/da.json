@@ -896,7 +896,5 @@
   "accounting.quickActions": "Hurtige handlinger",
   "shop.noShops": "Ingen butikker tilgængelige",
   "shop.noShopsDesc": "Der er i øjeblikket ingen konfigurerede butikker",
-  "store": {
-    "subtitle": "Tilbehør, komponenter, materialer og produkter til reparation, restaurering, vedligeholdelse og stemning af akustiske klaverer"
-  }
+  "store.subtitle": "Accessories, components, materials and products for repair, restoration, maintenance and tuning of acoustic pianos"
 }

@@ -896,7 +896,5 @@
   "accounting.quickActions": "Ações rápidas",
   "shop.noShops": "Nenhuma loja disponível",
   "shop.noShopsDesc": "Atualmente não há lojas configuradas",
-  "store": {
-    "subtitle": "Acessórios, componentes, materiais e produtos para reparação, restauro, manutenção e afinação de pianos acústicos"
-  }
+  "store.subtitle": "Accessories, components, materials and products for repair, restoration, maintenance and tuning of acoustic pianos"
 }

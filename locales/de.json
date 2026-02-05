@@ -896,7 +896,5 @@
   "accounting.quickActions": "Schnellaktionen",
   "shop.noShops": "Keine Geschäfte verfügbar",
   "shop.noShopsDesc": "Derzeit sind keine Geschäfte konfiguriert",
-  "store": {
-    "subtitle": "Zubehör, Komponenten, Materialien und Produkte für die Reparatur, Restaurierung, Wartung und Stimmung von akustischen Klavieren"
-  }
+  "store.subtitle": "Accessories, components, materials and products for repair, restoration, maintenance and tuning of acoustic pianos"
 }
