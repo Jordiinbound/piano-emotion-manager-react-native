@@ -124,8 +124,8 @@ function DrawerContent() {
       <Drawer.Screen
         name="quick-access"
         options={{
-          drawerLabel: 'Accesos Rápidos',
-          title: 'Accesos Rápidos',
+          drawerLabel: 'Accesos Rapidos',
+          title: 'Accesos Rapidos',
         }}
       />
       <Drawer.Screen

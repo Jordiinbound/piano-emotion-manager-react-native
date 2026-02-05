@@ -36,7 +36,7 @@ export default function DashboardScreen() {
     { title: 'Predicciones IA', icon: '🤖', content: 'Análisis de datos' },
     { title: 'Este Mes', icon: '📊', content: 'Resumen mensual' },
     { title: 'Servicios Recientes', icon: '📋', content: 'Últimos servicios' },
-    { title: 'Accesos Rápidos', icon: '⭐', content: 'Accesos favoritos' },
+    { title: 'Accesos Rapidos', icon: '⭐', content: 'Accesos favoritos' },
     { title: 'Herramientas Avanzadas', icon: '🛠️', content: 'Herramientas' },
     { title: 'Ayuda', icon: '❓', content: 'Centro de ayuda' },
     { title: 'Piano Emotion Store', icon: '🎹', content: 'Tienda' },

@@ -1,5 +1,5 @@
 /**
- * Página de Accesos Rápidos
+ * Página de Accesos Rapidos
  * Piano Emotion Manager - Diseño moderno y elegante
  */
 
@@ -21,58 +21,58 @@ const CATEGORIES = [
     id: 'core',
     title: 'Gestión Principal',
     modules: [
-      { key: 'clients', icon: 'person.2.fill', label: 'Clientes', color: '#E07856' },
-      { key: 'pianos', icon: 'pianokeys', label: 'Pianos', color: '#8B5CF6' },
-      { key: 'services', icon: 'wrench.and.screwdriver.fill', label: 'Servicios', color: '#10B981' },
-      { key: 'inventory', icon: 'shippingbox.fill', label: 'Inventario', color: '#F59E0B' },
+      { key: 'clients', icon: 'person.2.fill', label: 'Clientes', color: '#5ba3b8' },
+      { key: 'pianos', icon: 'pianokeys', label: 'Pianos', color: '#9b7fc9' },
+      { key: 'services', icon: 'wrench.and.screwdriver.fill', label: 'Servicios', color: '#52a67d' },
+      { key: 'inventory', icon: 'shippingbox.fill', label: 'Inventario', color: '#d9a05b' },
     ],
   },
   {
     id: 'financial',
     title: 'Finanzas y Facturación',
     modules: [
-      { key: 'invoices', icon: 'doc.text.fill', label: 'Facturas', color: '#3B82F6' },
-      { key: 'quotes', icon: 'doc.plaintext', label: 'Presupuestos', color: '#9333EA' },
-      { key: 'billing_summary', icon: 'dollarsign.circle.fill', label: 'Resumen Facturación', color: '#059669' },
-      { key: 'rates', icon: 'list.bullet', label: 'Tarifas', color: '#EC4899' },
+      { key: 'invoices', icon: 'doc.text.fill', label: 'Facturas', color: '#5b7fc7' },
+      { key: 'quotes', icon: 'doc.plaintext', label: 'Presupuestos', color: '#9b7fc9' },
+      { key: 'billing_summary', icon: 'dollarsign.circle.fill', label: 'Resumen Facturación', color: '#52a67d' },
+      { key: 'rates', icon: 'list.bullet', label: 'Tarifas', color: '#e07a5f' },
     ],
   },
   {
     id: 'analytics',
     title: 'Análisis y Reportes',
     modules: [
-      { key: 'dashboard', icon: 'chart.pie.fill', label: 'Panel Control', color: '#2D5A27' },
-      { key: 'stats', icon: 'chart.bar.fill', label: 'Estadísticas', color: '#10B981' },
-      { key: 'analytics', icon: 'chart.xyaxis.line', label: 'Analíticas', color: '#0EA5E9' },
-      { key: 'predictions', icon: 'brain.head.profile', label: 'Predicciones IA', color: '#8B5CF6' },
+      { key: 'dashboard', icon: 'chart.pie.fill', label: 'Panel Control', color: '#5b7fc7' },
+      { key: 'stats', icon: 'chart.bar.fill', label: 'Estadísticas', color: '#52a67d' },
+      { key: 'analytics', icon: 'chart.xyaxis.line', label: 'Analíticas', color: '#5ba3b8' },
+      { key: 'predictions', icon: 'brain.head.profile', label: 'Predicciones IA', color: '#9b7fc9' },
     ],
   },
   {
     id: 'operations',
     title: 'Operaciones',
     modules: [
-      { key: 'suppliers', icon: 'building.2.fill', label: 'Proveedores', color: '#F97316' },
-      { key: 'service_catalog', icon: 'list.clipboard.fill', label: 'Catálogo Servicios', color: '#7C3AED' },
-      { key: 'contracts', icon: 'doc.badge.clock.fill', label: 'Contratos', color: '#059669' },
-      { key: 'reminders', icon: 'bell.badge.fill', label: 'Recordatorios', color: '#F59E0B' },
+      { key: 'suppliers', icon: 'building.2.fill', label: 'Proveedores', color: '#e07a5f' },
+      { key: 'service_catalog', icon: 'list.clipboard.fill', label: 'Catálogo Servicios', color: '#9b7fc9' },
+      { key: 'contracts', icon: 'doc.badge.clock.fill', label: 'Contratos', color: '#52a67d' },
+      { key: 'reminders', icon: 'bell.badge.fill', label: 'Recordatorios', color: '#d9a05b' },
     ],
   },
   {
     id: 'tools',
     title: 'Herramientas',
     modules: [
-      { key: 'clients_map', icon: 'map.fill', label: 'Mapa Clientes', color: '#DC2626' },
-      { key: 'routes', icon: 'map.fill', label: 'Rutas', color: '#F97316' },
-      { key: 'import', icon: 'square.and.arrow.down.fill', label: 'Importar', color: '#22C55E' },
-      { key: 'business', icon: 'person.fill', label: 'Datos Fiscales', color: '#6B7280' },
+      { key: 'clients_map', icon: 'map.fill', label: 'Mapa Clientes', color: '#d66b6b' },
+      { key: 'routes', icon: 'map.fill', label: 'Rutas', color: '#e07a5f' },
+      { key: 'import', icon: 'square.and.arrow.down.fill', label: 'Importar', color: '#52a67d' },
+      { key: 'business', icon: 'person.fill', label: 'Datos Fiscales', color: '#666666' },
     ],
   },
   {
     id: 'settings',
     title: 'Configuración',
     modules: [
-      { key: 'modules', icon: 'square.grid.2x2.fill', label: 'Módulos y Plan', color: '#8B5CF6' },
-      { key: 'settings', icon: 'gearshape.fill', label: 'Configuración', color: '#64748B' },
+      { key: 'modules', icon: 'square.grid.2x2.fill', label: 'Módulos y Plan', color: '#9b7fc9' },
+      { key: 'settings', icon: 'gearshape.fill', label: 'Configuración', color: '#666666' },
     ],
   },
 ];
@@ -118,7 +118,7 @@ export default function QuickAccessScreen() {
   useFocusEffect(
     React.useCallback(() => {
       setHeaderConfig({
-        title: 'Accesos Rápidos',
+        title: 'Accesos Rapidos',
         subtitle: 'Accede rápidamente a las funciones principales',
         icon: 'square.grid.2x2.fill',
         showBackButton: false,

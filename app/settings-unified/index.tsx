@@ -206,7 +206,7 @@ export default function SettingsUnifiedScreen() {
       width: width > 768 ? '31%' : '48%',
     },
     tabText: {
-      fontSize: width > 600 ? 15 : 12,
+      fontSize: 15,
     },
     tab: {
       paddingHorizontal: width > 600 ? Spacing.md : Spacing.xs,
@@ -328,40 +328,77 @@ export default function SettingsUnifiedScreen() {
       </View>
 
       {/* Tabs horizontales */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={[styles.tabsContainer, { borderBottomColor: borderColor }]}
-        contentContainerStyle={[styles.tabsContent, dynamicStyles.tabsContent]}
-      >
-        {TABS.map((tab) => (
-          <Pressable
-            key={tab.id}
-            style={[
-              styles.tab,
-              dynamicStyles.tab,
-              activeTab === tab.id && styles.tabActive,
-            ]}
-            onPress={() => {
-              setActiveTab(tab.id);
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
-          >
-            <ThemedText
+      {width <= 1000 ? (
+        // Dos filas para móvil y tablet pequeña
+        <View style={[styles.tabsContainer, { borderBottomColor: borderColor }]}>
+          <View style={styles.tabsGrid}>
+            {TABS.map((tab) => (
+              <Pressable
+                key={tab.id}
+                style={[
+                  styles.tab,
+                  dynamicStyles.tab,
+                  styles.tabGridItem,
+                  activeTab === tab.id && styles.tabActive,
+                ]}
+                onPress={() => {
+                  setActiveTab(tab.id);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
+              >
+                <ThemedText
+                  style={[
+                    styles.tabText,
+                    dynamicStyles.tabText,
+                    activeTab === tab.id && { color: accent, fontFamily: 'Montserrat-SemiBold' },
+                  ]}
+                >
+                  {tab.label}
+                </ThemedText>
+                {activeTab === tab.id && (
+                  <View style={[styles.tabIndicator, { backgroundColor: accent }]} />
+                )}
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ) : (
+        // Scroll horizontal para desktop
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={[styles.tabsContainer, { borderBottomColor: borderColor }]}
+          contentContainerStyle={[styles.tabsContent, dynamicStyles.tabsContent]}
+        >
+          {TABS.map((tab) => (
+            <Pressable
+              key={tab.id}
               style={[
-                styles.tabText,
-                dynamicStyles.tabText,
-                activeTab === tab.id && { color: accent, fontFamily: 'Montserrat-SemiBold' },
+                styles.tab,
+                dynamicStyles.tab,
+                activeTab === tab.id && styles.tabActive,
               ]}
+              onPress={() => {
+                setActiveTab(tab.id);
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
             >
-              {tab.label}
-            </ThemedText>
-            {activeTab === tab.id && (
-              <View style={[styles.tabIndicator, { backgroundColor: accent }]} />
-            )}
-          </Pressable>
-        ))}
-      </ScrollView>
+              <ThemedText
+                style={[
+                  styles.tabText,
+                  dynamicStyles.tabText,
+                  activeTab === tab.id && { color: accent, fontFamily: 'Montserrat-SemiBold' },
+                ]}
+              >
+                {tab.label}
+              </ThemedText>
+              {activeTab === tab.id && (
+                <View style={[styles.tabIndicator, { backgroundColor: accent }]} />
+              )}
+            </Pressable>
+          ))}
+        </ScrollView>
+      )}
 
       {/* Contenido del tab activo */}
       <ScrollView
@@ -1197,10 +1234,22 @@ const styles = StyleSheet.create({
   tabsContent: {
     gap: Spacing.sm,
   },
+  tabsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.sm,
+  },
   tab: {
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
     position: 'relative',
+  },
+  tabGridItem: {
+    minWidth: '30%',
+    alignItems: 'center',
   },
   tabActive: {},
   tabText: {

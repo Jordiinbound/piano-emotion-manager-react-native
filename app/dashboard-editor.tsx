@@ -4,7 +4,7 @@
  * 
  * Configurador visual para personalizar el dashboard:
  * - Mostrar/ocultar secciones del dashboard
- * - Configurar qué módulos aparecen en Accesos Rápidos
+ * - Configurar qué módulos aparecen en Accesos Rapidos
  * 
  * Funcionalidad premium disponible solo para usuarios Pro y Premium.
  */
@@ -258,8 +258,8 @@ export default function DashboardEditorScreen() {
                 Activa o desactiva las secciones que quieres ver en tu dashboard principal.
               </ThemedText>
               <ThemedText style={styles.tutorialText}>
-                <Text style={styles.tutorialBold}>Accesos Rápidos:</Text>{'\n'}
-                Elige qué módulos aparecen en la sección de Accesos Rápidos.
+                <Text style={styles.tutorialBold}>Accesos Rapidos:</Text>{'\n'}
+                Elige qué módulos aparecen en la sección de Accesos Rapidos.
               </ThemedText>
               <ThemedText style={styles.tutorialText}>
                 • Los cambios se <Text style={styles.tutorialBold}>guardan automáticamente</Text>.
@@ -316,7 +316,7 @@ export default function DashboardEditorScreen() {
             styles.tabText,
             activeTab === 'shortcuts' && { color: '#3B82F6', fontWeight: '600' }
           ]}>
-            Accesos Rápidos
+            Accesos Rapidos
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -372,12 +372,12 @@ export default function DashboardEditorScreen() {
             </View>
           </>
         ) : (
-          // Tab de Accesos Rápidos
+          // Tab de Accesos Rapidos
           <>
             <View style={styles.infoCard}>
               <Ionicons name="information-circle" size={24} color="#3B82F6" />
               <ThemedText style={styles.infoText}>
-                Elige qué módulos aparecen en la sección de Accesos Rápidos de tu dashboard.
+                Elige qué módulos aparecen en la sección de Accesos Rapidos de tu dashboard.
               </ThemedText>
             </View>
 
