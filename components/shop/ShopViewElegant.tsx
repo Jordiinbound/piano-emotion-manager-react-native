@@ -200,47 +200,47 @@ export function ShopViewElegant() {
           {!categoriesLoading && blogCategories && blogCategories.length > 0 && (
             <View style={styles.blogCategoriesSection}>
               <Text style={styles.sectionTitle}>Categorías</Text>
-              <View 
-                style={styles.blogCategoriesContainer}
+              <ScrollView 
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.blogTabsScrollView}
+                contentContainerStyle={styles.blogTabsContainer}
               >
                 <TouchableOpacity
-                  style={[
-                    styles.blogCategoryChip,
-                    !selectedBlogCategory && styles.blogCategoryChipActive,
-                  ]}
+                  style={styles.blogTab}
                   onPress={() => setSelectedBlogCategory(undefined)}
                 >
                   <Text
                     style={[
-                      styles.blogCategoryChipText,
-                      !selectedBlogCategory && styles.blogCategoryChipTextActive,
+                      styles.blogTabText,
+                      !selectedBlogCategory && styles.blogTabTextActive,
                     ]}
                   >
                     Todas
                   </Text>
+                  {!selectedBlogCategory && <View style={styles.blogTabIndicator} />}
                 </TouchableOpacity>
                 {blogCategories.map((category) => (
                   <TouchableOpacity
                     key={category.id}
-                    style={[
-                      styles.blogCategoryChip,
-                      selectedBlogCategory === category.id && styles.blogCategoryChipActive,
-                    ]}
+                    style={styles.blogTab}
                     onPress={() => setSelectedBlogCategory(
                       selectedBlogCategory === category.id ? undefined : category.id
                     )}
                   >
                     <Text
                       style={[
-                        styles.blogCategoryChipText,
-                        selectedBlogCategory === category.id && styles.blogCategoryChipTextActive,
+                        styles.blogTabText,
+                        selectedBlogCategory === category.id && styles.blogTabTextActive,
                       ]}
                     >
-                      {category.name} ({category.count})
+                      {category.name} <Text style={styles.blogTabCount}>({category.count})</Text>
                     </Text>
+                    {selectedBlogCategory === category.id && <View style={styles.blogTabIndicator} />}
                   </TouchableOpacity>
                 ))}
-              </View>
+              </ScrollView>
+              <View style={styles.blogTabsBorder} />
             </View>
           )}
           <BlogSection posts={posts} isLoading={blogLoading} onRefresh={refetchBlog} />
@@ -473,34 +473,47 @@ const styles = StyleSheet.create({
   blogCategoriesSection: {
     paddingHorizontal: isDesktop ? 60 : Spacing.lg,
     paddingTop: Spacing.xxl,
-    paddingBottom: Spacing.md,
+    paddingBottom: 0,
   },
-  blogCategoriesContainer: {
+  blogTabsScrollView: {
     marginTop: Spacing.md,
+  },
+  blogTabsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
+    alignItems: 'center',
+    paddingBottom: Spacing.sm,
   },
-  blogCategoryChip: {
+  blogTab: {
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: 4,
-    backgroundColor: Colors.light.surface,
-    borderWidth: 1,
-    borderColor: Colors.light.border,
-    ...Shadows.sm,
+    paddingVertical: Spacing.md,
+    position: 'relative',
   },
-  blogCategoryChipActive: {
-    backgroundColor: Colors.light.accent,
-    borderColor: Colors.light.accent,
-  },
-  blogCategoryChipText: {
-    fontSize: 14,
+  blogTabText: {
+    fontSize: 15,
     fontWeight: '500',
-    color: Colors.light.text,
+    color: '#6B7280',
   },
-  blogCategoryChipTextActive: {
-    color: '#FFFFFF',
+  blogTabTextActive: {
+    color: Colors.light.accent,
     fontWeight: '600',
+  },
+  blogTabCount: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#9CA3AF',
+  },
+  blogTabIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: Spacing.lg,
+    right: Spacing.lg,
+    height: 3,
+    backgroundColor: Colors.light.accent,
+    borderRadius: 2,
+  },
+  blogTabsBorder: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginTop: -1,
   },
 });
