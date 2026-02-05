@@ -426,8 +426,8 @@ export default function SettingsUnifiedScreen() {
           <View style={styles.optionsRow}>
             {[
               { value: 'gmail', label: 'Gmail', icon: 'envelope.fill' },
-              { value: 'outlook', label: 'Outlook', icon: 'envelope.badge.fill' },
-              { value: 'default', label: 'Sistema', icon: 'gear' },
+              { value: 'outlook', label: 'Outlook', icon: 'envelope.open.fill' },
+              { value: 'default', label: 'Sistema', icon: 'gearshape.fill' },
             ].map((option) => (
               <Pressable
                 key={option.value}
