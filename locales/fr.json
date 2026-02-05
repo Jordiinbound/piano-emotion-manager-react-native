@@ -895,5 +895,8 @@
   "accounting.expensesByCategory": "Dépenses par catégorie",
   "accounting.quickActions": "Actions rapides",
   "shop.noShops": "Aucune boutique disponible",
-  "shop.noShopsDesc": "Il n'y a actuellement aucune boutique configurée"
+  "shop.noShopsDesc": "Il n'y a actuellement aucune boutique configurée",
+  "store": {
+    "subtitle": "Accessoires, composants, matériaux et produits pour la réparation, restauration, entretien et accord de pianos acoustiques"
+  }
 }

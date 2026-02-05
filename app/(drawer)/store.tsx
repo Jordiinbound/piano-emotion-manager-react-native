@@ -7,21 +7,23 @@ import React, { useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet } from 'react-native';
 import { useHeader } from '@/contexts/HeaderContext';
+import { useLanguage } from '@/contexts/language-context';
 import { ShopViewElegant } from '@/components/shop';
 
 export default function StoreScreen() {
   const { setHeaderConfig } = useHeader();
+  const { t } = useLanguage();
 
   // Configurar header
   useFocusEffect(
     React.useCallback(() => {
     setHeaderConfig({
       title: 'Piano Emotion Store',
-      subtitle: 'Tienda de pianos y accesorios',
+      subtitle: t('store.subtitle'),
       showLogo: true,
       showBackButton: false,
     });
-    }, [setHeaderConfig])
+    }, [setHeaderConfig, t])
   );
 
   return (

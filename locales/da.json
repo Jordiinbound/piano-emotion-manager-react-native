@@ -895,5 +895,8 @@
   "accounting.expensesByCategory": "Udgifter efter kategori",
   "accounting.quickActions": "Hurtige handlinger",
   "shop.noShops": "Ingen butikker tilgængelige",
-  "shop.noShopsDesc": "Der er i øjeblikket ingen konfigurerede butikker"
+  "shop.noShopsDesc": "Der er i øjeblikket ingen konfigurerede butikker",
+  "store": {
+    "subtitle": "Tilbehør, komponenter, materialer og produkter til reparation, restaurering, vedligeholdelse og stemning af akustiske klaverer"
+  }
 }

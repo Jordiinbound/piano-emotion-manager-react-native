@@ -922,5 +922,8 @@
   "accounting.category.training": "Formación",
   "accounting.category.other": "Otros",
   "shop.noShops": "No hay tiendas disponibles",
-  "shop.noShopsDesc": "Actualmente no hay tiendas configuradas"
+  "shop.noShopsDesc": "Actualmente no hay tiendas configuradas",
+  "store": {
+    "subtitle": "Accesorios, componentes, materiales y productos para la reparación, restauración, mantenimiento y afinación de pianos acústicos"
+  }
 }
