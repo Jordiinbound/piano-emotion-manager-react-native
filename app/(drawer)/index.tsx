@@ -168,8 +168,8 @@ export default function DashboardScreen() {
         >
           <LinearGradient
             colors={hasAlerts 
-              ? ['#d66b6b', '#d9726f', '#dc7974'] // Rojo degradado suave (diferencia sutil)
-              : ['#52a67d', '#56ab82', '#5ab087'] // Verde degradado suave (diferencia sutil)
+              ? ['#e08080', '#d66b6b', '#c85a5a'] // Rojo: claro derecha → oscuro izquierda
+              : ['#65b890', '#52a67d', '#479668'] // Verde: claro derecha → oscuro izquierda
             }
             start={{ x: 1, y: 0 }}
             end={{ x: 0, y: 0 }}
@@ -482,7 +482,7 @@ function ActionButton({ icon, label, onPress }: ActionButtonProps) {
       onPress={onPress}
     >
       <LinearGradient
-        colors={['#e07a5f', '#e38266', '#e68a6d']} // Terracota degradado suave (diferencia sutil)
+        colors={['#ed9178', '#e07a5f', '#d66b4f']} // Terracota: claro derecha → oscuro izquierda
         start={{ x: 1, y: 1 }}
         end={{ x: 0, y: 0 }}
         style={styles.actionButtonGradient as any}
