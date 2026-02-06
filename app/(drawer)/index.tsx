@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   metricLabel: {
-    fontSize: 12,
+    fontSize: 14,
     color: COLORS.textSecondary,
     marginTop: 3,
     fontFamily: 'Montserrat',
@@ -743,7 +743,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   circleLabel: {
-    fontSize: 10,
+    fontSize: 12,
     color: COLORS.textSecondary,
     marginTop: 5,
     textAlign: 'center',

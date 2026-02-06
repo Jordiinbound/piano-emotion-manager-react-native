@@ -921,3 +921,11 @@
 ## Dashboard - Corregir fuente Montserrat en Este Mes
 - [x] Verificar por qué Montserrat no se aplica correctamente en tarjetas de Este Mes
 - [x] Aplicar corrección para forzar fuente Montserrat
+
+## Dashboard - Aumentar tamaño de fuente
+- [ ] Aumentar fontSize en tarjetas "Este Mes" (+2 puntos)
+- [ ] Aumentar fontSize en "Previsión próximos 30 días" (+2 puntos)
+
+## Dashboard - Aumentar tamaño de etiquetas
+- [x] Aumentar fontSize de etiquetas en "Este Mes" (Servicios, Ingresos, etc.) +2 puntos
+- [x] Aumentar fontSize de etiquetas en "Previsión próximos 30 días" +2 puntos
