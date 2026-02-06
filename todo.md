@@ -573,3 +573,13 @@
 - [x] Usar mismo ancho (15-16%), padding vertical (Spacing.md) y fuente responsiva que Inventario
 - [x] Indicador inferior en lugar de fondo azul para filtro activo
 - [x] Eliminados estilos filterChipActive y filterChipTextActive
+
+## Ajustes de Diseño en Facturas
+- [x] Color de acento de filtros activos ya es azul corporativo (#003a8c)
+- [x] Aumentar intensidad de sombras en tarjetas de estadísticas (shadowOpacity 0.15, shadowRadius 10)
+- [x] Aumentar intensidad de sombras en caja de búsqueda (shadowOpacity 0.2, shadowRadius 15)
+- [x] Aumentar intensidad de sombras en dropdowns (shadowOpacity 0.15, shadowRadius 10)
+- [x] Eliminar bordes de dropdowns (solo sombras)
+- [x] Aumentar intensidad de sombras en cards de facturas (shadowOpacity 0.15, shadowRadius 12)
+- [x] Aumentar intensidad de sombras en chips de filtros (shadowOpacity 0.15, shadowRadius 10)
+- [x] Eliminar bordes de cards de facturas (solo sombras)
