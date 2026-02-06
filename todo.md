@@ -913,3 +913,7 @@
 ## Dashboard - Restaurar sombras correctas
 - [x] Restaurar sombras originales de Acciones Rápidas (que funcionaban) con menor intensidad
 - [x] Aplicar las mismas sombras a Próximas Citas
+
+## Dashboard - Igualar sombras con Este Mes
+- [x] Copiar sombras de tarjetas "Este Mes" a Próximas Citas
+- [x] Copiar sombras de tarjetas "Este Mes" a Acciones Rápidas
