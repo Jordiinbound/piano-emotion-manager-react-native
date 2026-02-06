@@ -598,3 +598,13 @@
 ## Ajuste de Sombras en Facturas
 - [x] Eliminar sombras de filtersContainer (contenedor de filtros)
 - [x] Aumentar sombras en fichas de datos statCard (shadowOpacity 0.2, shadowRadius 12, elevation 6)
+
+## Problemas de Persistencia en Detalle de Factura (CRÍTICO)
+- [x] Los datos modificados en useEffect ahora se guardan automáticamente en AsyncStorage
+- [x] Número de factura asignado persiste al recargar
+- [x] Cliente cargado desde clientId persiste al recargar
+- [x] Totales calculados persisten al recargar
+- [ ] Estado cambiado (pagada/pendiente) no persiste al volver al listado (pendiente de verificar)
+- [x] Badge de estado (BORRADOR/PENDIENTE) ahora tiene sombra (shadowOpacity 0.15, shadowRadius 8)
+
+
