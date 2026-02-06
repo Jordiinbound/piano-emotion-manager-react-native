@@ -896,3 +896,7 @@
 
 ## Inventario - Cambiar texto de filtro
 - [x] Cambiar 'Alerta de stock bajo' a 'Alerta stock bajo'
+
+## Dashboard - Ajustes de sombras
+- [x] Reducir sombra de botones de Acciones Rápidas
+- [x] Aplicar sombras individuales a cada cita en Próximas Citas

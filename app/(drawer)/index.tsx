@@ -788,13 +788,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
       },
       default: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.12,
-        shadowRadius: 8,
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
         elevation: 3,
       },
     }),
@@ -887,14 +887,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       web: {
-        boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25), 0 3px 8px rgba(0, 0, 0, 0.18)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.25,
-        shadowRadius: 16,
-        elevation: 10,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        elevation: 4,
       },
     }),
   },
