@@ -413,8 +413,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.xs,
     position: 'relative',
-    minWidth: '18%',
-    maxWidth: '19%',
+    minWidth: '15%',
+    maxWidth: '16%',
     alignItems: 'center',
   },
   filterText: {

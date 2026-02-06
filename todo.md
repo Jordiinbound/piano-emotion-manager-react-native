@@ -530,3 +530,15 @@
 - [ ] Probar hook de forma aislada
 - [ ] Integrar en inventory.tsx con try-catch y fallback
 - [ ] Testing completo sin errores generales
+
+## Ajuste Tamaño Fuente Filtros (2026-02-06)
+
+- [ ] Aumentar fontSize de filtros de 7.5px a 12px para móvil/tablet (más legible)
+
+## Sistema de Categorías Configurables de Inventario
+- [ ] Verificar y arreglar export de inventoryCategories en schema
+- [ ] Reactivar inventoryCategoriesRouter en routers.ts
+- [ ] Integrar InventoryCategoriesManager en página de Configuración
+- [ ] Conectar filtros de inventario con categorías dinámicas de BD
+- [ ] Probar creación/edición/eliminación de categorías desde UI
+- [ ] Verificar que filtros se actualicen automáticamente al cambiar categorías
