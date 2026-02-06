@@ -135,17 +135,8 @@ export default function InvoiceDetailScreen() {
   }, [id, isNew, invoices, businessInfo, clients]);
 
   const totals = useMemo(() => {
-    // Si la factura ya existe y tiene totales guardados, usarlos
-    if (!isNew && form.subtotal !== undefined && form.tax !== undefined && form.total !== undefined) {
-      return {
-        subtotal: form.subtotal || 0,
-        taxAmount: form.tax || 0,
-        total: form.total || 0,
-      };
-    }
-    // Si no, calcular desde items
     return calculateInvoiceTotals(form.items || []);
-  }, [form.items, form.subtotal, form.tax, form.total, isNew]);
+  }, [form.items]);
 
   const handleAddItem = (serviceId?: string) => {
     let newItem: InvoiceItem;

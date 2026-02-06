@@ -636,3 +636,11 @@
 
 ## Eliminar Borde de Focus en Dropdowns de Facturas
 - [x] Agregado outline: 'none' en estilo picker para eliminar borde de focus
+
+
+## IVA y TOTAL muestran NaN en Detalle de Factura (CRÍTICO)
+- [x] Subtotal se muestra correctamente (€205.69)
+- [x] Agregada validación en serverToLocalInvoice para evitar NaN (parseFloat con fallback a 0)
+- [x] Modificado useMemo de totals para usar valores guardados (form.subtotal, form.tax, form.total)
+- [x] Fallback a cálculo desde items solo si no existen valores guardados
+- [ ] Probar que IVA y TOTAL se muestran correctamente

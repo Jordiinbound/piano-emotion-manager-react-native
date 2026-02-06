@@ -60,9 +60,9 @@ function serverToLocalInvoice(server: ServerInvoice): LocalInvoice {
       ? (server.dueDate instanceof Date ? server.dueDate.toISOString() : String(server.dueDate))
       : undefined,
     status: server.status,
-    subtotal: parseFloat(server.subtotal),
-    tax: parseFloat(server.taxAmount),  // Corregido: server usa taxAmount
-    total: parseFloat(server.total),
+    subtotal: server.subtotal ? parseFloat(server.subtotal) : 0,
+    tax: server.taxAmount ? parseFloat(server.taxAmount) : 0,  // Corregido: server usa taxAmount, con validación
+    total: server.total ? parseFloat(server.total) : 0,
     notes: server.notes || undefined,
     items: (() => {
       // Manejar items que pueden venir como string JSON, array, o null
