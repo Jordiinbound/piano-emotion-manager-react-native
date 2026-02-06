@@ -733,3 +733,9 @@
 - [ ] invoice.clientEmail es undefined en handleSendEmail (depende de datos del cliente)
 - [ ] Botón "Exportar PDF" no tiene logs - buscar handler y agregar logs
 - [x] Solo funciona botón "Marcar como Pendiente/Pagada"
+
+## Botón Editar en Factura lleva a página en blanco
+- [x] Al hacer clic en "Editar", la página se queda en blanco
+- [x] Problema: useEffect se ejecuta de nuevo y getInvoice() no encuentra la factura
+- [x] Solución: Agregar estado loadedInvoice para guardar la factura cargada
+- [x] useEffect ahora solo carga la factura una vez y la reutiliza

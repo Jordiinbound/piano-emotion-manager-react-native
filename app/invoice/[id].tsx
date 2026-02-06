@@ -46,6 +46,7 @@ export default function InvoiceDetailScreen() {
   const [showServicePicker, setShowServicePicker] = useState(false);
   const [showClientPicker, setShowClientPicker] = useState(false);
   const [showServiceSelector, setShowServiceSelector] = useState(false);
+  const [loadedInvoice, setLoadedInvoice] = useState<Invoice | null>(null);
 
   const [form, setForm] = useState<Partial<Invoice>>({
     date: new Date().toISOString().split('T')[0],
@@ -67,9 +68,10 @@ export default function InvoiceDetailScreen() {
   const background = useThemeColor({}, 'background');
 
   useEffect(() => {
-    if (!isNew && id) {
+    if (!isNew && id && !loadedInvoice) {
       const invoice = getInvoice(id);
       if (invoice) {
+        setLoadedInvoice(invoice);
         // Crear copia para no mutar el original
         const invoiceData = { ...invoice };
         
@@ -136,10 +138,31 @@ export default function InvoiceDetailScreen() {
       } else {
         console.log('[Invoice Detail] Invoice not found:', id);
       }
-    } else {
+    } else if (loadedInvoice && id) {
+      // Si ya tenemos la factura cargada, usarla en lugar de buscarla de nuevo
+      const invoiceData = { ...loadedInvoice };
+      
+      // Asegurar que siempre tenga businessInfo
+      if (!invoiceData.business) {
+        invoiceData.business = businessInfo;
+      }
+      
+      // Poblar clientName desde clientId si no existe
+      if (invoiceData.clientId && !invoiceData.clientName) {
+        const client = clients.find(c => c.id === invoiceData.clientId);
+        if (client) {
+          invoiceData.clientName = getClientFullName(client);
+          invoiceData.clientEmail = client.email;
+          invoiceData.clientAddress = getClientFormattedAddress(client);
+          invoiceData.clientTaxId = client.taxId;
+        }
+      }
+      
+      setForm(invoiceData);
+    } else if (isNew) {
       setForm(prev => ({ ...prev, business: businessInfo }));
     }
-  }, [id, isNew, invoices, businessInfo, clients]);
+  }, [id, isNew, invoices, businessInfo, clients, loadedInvoice]);
 
   const totals = useMemo(() => {
     // Si la factura ya existe y tiene totales guardados, usarlos
@@ -441,6 +464,8 @@ export default function InvoiceDetailScreen() {
   };
   const statusStyle = getStatusStyle(form.status || 'draft');
 
+  console.log('[Invoice Detail] Render:', { isEditing, isNew, formStatus: form.status, hasItems: form.items?.length });
+
   // Mostrar spinner mientras carga
   if (loading && !isNew) {
     return (
@@ -464,7 +489,10 @@ export default function InvoiceDetailScreen() {
           title: isNew ? 'Nueva Factura' : `Factura ${form.invoiceNumber || ''}`,
           headerRight: () =>
             !isNew && (
-              <Pressable onPress={() => setIsEditing(!isEditing)} style={{ marginRight: Spacing.md }}>
+              <Pressable onPress={() => {
+                console.log('[Invoice Detail] Toggle isEditing:', !isEditing);
+                setIsEditing(!isEditing);
+              }} style={{ marginRight: Spacing.md }}>
                 <ThemedText style={{ color: accent }}>
                   {isEditing ? 'Cancelar' : 'Editar'}
                 </ThemedText>
