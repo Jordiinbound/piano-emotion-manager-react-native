@@ -757,3 +757,13 @@
 - [x] Eliminado LinearGradient y fondo coral
 - [x] Agregado estilo de tabs con línea inferior naranja
 - [x] Aplicado mismo estilo que Facturas: fondo blanco, sombra, línea activa
+
+## Suavizar gradientes en Dashboard
+- [x] Banner de alertas ("5 alertas requieren tu atención") - gradiente muy intenso
+- [x] Botones de Acciones Rápidas (Nuevo Cliente, Nuevo Servicio, etc.) - gradiente muy intenso
+- [x] Reducir contraste entre colores del gradiente para que sea más sutil
+- [x] Hacer sombra más pronunciada en cajas de métricas (Servicios, Ingresos, etc.)
+- [x] Hacer sombra más pronunciada en botones de Acciones Rápidas
+- [x] Hacer sombra más pronunciada en banner de alertas
+- [x] Agregar sombra a indicadores circulares (Ingresos prev., Clientes riesgo, etc.)
+- [x] Agregar sombra a cajas de Próximas Citas y otros contenedores

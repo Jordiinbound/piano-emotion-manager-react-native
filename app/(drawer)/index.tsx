@@ -168,8 +168,8 @@ export default function DashboardScreen() {
         >
           <LinearGradient
             colors={hasAlerts 
-              ? ['#e08080', '#d66b6b', '#c85a5a'] // Rojo: claro derecha → oscuro izquierda
-              : ['#65b890', '#52a67d', '#479668'] // Verde: claro derecha → oscuro izquierda
+              ? ['#e89090', '#e08080', '#d87070'] // Rojo sutil: menos contraste
+              : ['#75c8a0', '#65b890', '#5aad85'] // Verde sutil: menos contraste
             }
             start={{ x: 1, y: 0 }}
             end={{ x: 0, y: 0 }}
@@ -482,7 +482,7 @@ function ActionButton({ icon, label, onPress }: ActionButtonProps) {
       onPress={onPress}
     >
       <LinearGradient
-        colors={['#ed9178', '#e07a5f', '#d66b4f']} // Terracota: claro derecha → oscuro izquierda
+        colors={['#f0a088', '#ed9178', '#e88568']} // Terracota sutil: menos contraste
         start={{ x: 1, y: 1 }}
         end={{ x: 0, y: 0 }}
         style={styles.actionButtonGradient as any}
@@ -517,14 +517,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       web: {
-        boxShadow: '0 3px 10px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1)',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.15)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        elevation: 5,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.2,
+        shadowRadius: 16,
+        elevation: 8,
       },
     }),
   },
@@ -577,14 +577,14 @@ const styles = StyleSheet.create({
     width: '100%',
     ...Platform.select({
       web: {
-        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
-        elevation: 6,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8,
       },
     }),
   },
@@ -647,14 +647,14 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 6,
       },
     }),
   },
@@ -684,14 +684,14 @@ const styles = StyleSheet.create({
     minHeight: 160,
     ...Platform.select({
       web: {
-        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
-        elevation: 6,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8,
       },
     }),
   },
@@ -732,6 +732,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.white,
     flexDirection: 'column',
+    ...Platform.select({
+      web: {
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1)',
+      },
+      default: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 6,
+      },
+    }),
   },
   circleValue: {
     fontSize: 13,
@@ -766,14 +778,14 @@ const styles = StyleSheet.create({
     minHeight: 250,
     ...Platform.select({
       web: {
-        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
-        elevation: 6,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8,
       },
     }),
   },
@@ -848,14 +860,14 @@ const styles = StyleSheet.create({
     width: '100%',
     ...Platform.select({
       web: {
-        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
-        elevation: 6,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8,
       },
     }),
   },
@@ -877,14 +889,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       web: {
-        boxShadow: '0 4px 12px rgba(224, 122, 95, 0.4), 0 2px 4px rgba(224, 122, 95, 0.2)',
+        boxShadow: '0 6px 16px rgba(224, 122, 95, 0.5), 0 3px 6px rgba(224, 122, 95, 0.3)',
       },
       default: {
         shadowColor: COLORS.accent,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.4,
-        shadowRadius: 12,
-        elevation: 8,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.5,
+        shadowRadius: 16,
+        elevation: 10,
       },
     }),
   },
