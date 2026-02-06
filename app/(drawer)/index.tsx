@@ -544,11 +544,13 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 13,
     fontWeight: '500',
+    fontFamily: 'Montserrat-SemiBold',
   },
   alertLink: {
     color: COLORS.white,
     fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
   },
 
   // Contenido principal
@@ -592,6 +594,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: COLORS.textPrimary,
+    fontFamily: 'Montserrat-Bold',
   },
 
   // Navegación de mes
@@ -613,6 +616,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.textSecondary,
+    fontFamily: 'Montserrat-SemiBold',
   },
   calendarButton: {
     padding: 4,
@@ -654,11 +658,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.textPrimary,
     marginTop: 5,
+    fontFamily: 'Montserrat-Bold',
   },
   metricLabel: {
     fontSize: 12,
     color: COLORS.textSecondary,
     marginTop: 3,
+    fontFamily: 'Montserrat-Regular',
   },
 
   // Predicciones IA
@@ -684,6 +690,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: COLORS.primary,
+    fontFamily: 'Montserrat-SemiBold',
   },
   predictionsRow: {
     flexDirection: 'row',
@@ -725,12 +732,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     marginTop: 3,
+    fontFamily: 'Montserrat-Bold',
   },
   circleLabel: {
     fontSize: 10,
     color: COLORS.textSecondary,
     marginTop: 5,
     textAlign: 'center',
+    fontFamily: 'Montserrat-Regular',
   },
 
   // Sección inferior
@@ -778,10 +787,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: COLORS.textPrimary,
+    fontFamily: 'Montserrat-Bold',
   },
   appointmentDateText: {
     fontSize: 10,
     color: COLORS.textSecondary,
+    fontFamily: 'Montserrat-Regular',
   },
   appointmentDetails: {
     flex: 1,
@@ -790,10 +801,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: COLORS.textPrimary,
+    fontFamily: 'Montserrat-SemiBold',
   },
   appointmentClient: {
     fontSize: 11,
     color: COLORS.textSecondary,
+    fontFamily: 'Montserrat-Regular',
   },
   emptyState: {
     alignItems: 'center',
@@ -803,6 +816,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.textSecondary,
     marginTop: 7,
+    fontFamily: 'Montserrat-Regular',
   },
   loadingContainer: {
     alignItems: 'center',
@@ -812,6 +826,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 13,
     color: COLORS.textSecondary,
+    fontFamily: 'Montserrat-Regular',
   },
 
   // Acciones rápidas
@@ -868,6 +883,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 5,
     textAlign: 'center',
+    fontFamily: 'Montserrat-SemiBold',
   },
 
 

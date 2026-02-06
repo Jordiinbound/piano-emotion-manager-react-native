@@ -798,3 +798,11 @@
 - [x] Reducir contraste entre inicio y final del gradiente
 - [x] Aplicar tonos más sutiles (de #d66b6b a #cc5f5f)
 
+
+## Dashboard - Aplicar fuente Montserrat
+- [x] Cambiar todos los textos a Montserrat
+- [x] Usar Montserrat-Regular para textos normales
+- [x] Usar Montserrat-SemiBold para peso 500-600
+- [x] Usar Montserrat-Bold para peso 700+
+- [x] 16 estilos actualizados: alertText, alertLink, sectionTitle, todayText, metricValue, metricLabel, linkText, circleValue, circleLabel, appointmentTimeText, appointmentDateText, appointmentTitle, appointmentClient, emptyText, loadingText, actionButtonText
+
