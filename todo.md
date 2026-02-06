@@ -625,3 +625,10 @@
 - [x] Corregidas conversiones en addInvoice y updateInvoice
 - [ ] Probar que items y totales se muestran correctamente
 - [ ] Verificar persistencia de cambios de estado
+
+
+## Centrar Texto de Dropdowns en Facturas
+- [x] Centrar texto horizontalmente en picker (textAlign: 'center')
+- [x] Agregar padding horizontal para margen interno
+- [x] Aumentar padding vertical en periodSelector para mejor alineación
+- [x] Agregar justifyContent: 'center' en periodSelector

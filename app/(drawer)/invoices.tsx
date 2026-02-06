@@ -480,11 +480,12 @@ const styles = StyleSheet.create({
   periodSelector: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',  // Centrar contenido
     backgroundColor: COLORS.surface,
     borderRadius: BorderRadius.md,
     borderWidth: 0,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    paddingHorizontal: Spacing.md,  // Más padding para mejor espaciado
+    paddingVertical: 8,  // Aumentado para mejor alineación vertical
     gap: 8,
     minWidth: 150,
     shadowColor: '#000',
@@ -498,6 +499,8 @@ const styles = StyleSheet.create({
     height: 40,
     color: COLORS.text,
     borderWidth: 0,
+    textAlign: 'center',  // Centrar texto horizontalmente
+    paddingHorizontal: Spacing.sm,  // Margen interno para no estar pegado
   },
   navButton: {
     paddingHorizontal: 8,
