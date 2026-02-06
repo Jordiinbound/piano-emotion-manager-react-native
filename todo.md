@@ -560,3 +560,8 @@
 - [x] Eliminar sombras de searchContainer y filtersWrapper
 - [x] Aplicar sombras directamente al componente SearchBar
 - [x] Aplicar sombras a cada filterChip individual
+
+## Aplicar diseño de filtros de Inventario a Facturas
+- [x] Reemplazar diseño de botones rectangulares grandes por chips compactos
+- [x] Aplicar mismo ancho, padding y sombras que filterChip de Inventario
+- [x] Mantener funcionalidad de filtrado por estado

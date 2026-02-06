@@ -246,6 +246,7 @@ export default function InvoicesScreen() {
             >
               <Text style={[
                 styles.filterChipText,
+                { fontSize: width < 1400 ? 10 : 13 },
                 filter === f.key && styles.filterChipTextActive,
               ]}>
                 {f.label}
@@ -450,6 +451,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'transparent',
     borderWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   filterChipActive: {
     backgroundColor: COLORS.primary,
