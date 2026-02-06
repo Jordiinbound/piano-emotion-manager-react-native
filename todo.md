@@ -693,3 +693,23 @@
 - [x] shadowOpacity: 0.15 → 0.3 (doble)
 - [x] shadowRadius: 8 → 12
 - [x] elevation: 4 → 8 (Android)
+
+
+## Corregir Tipografía de Dropdowns en Facturas
+- [x] Dropdowns (Febrero, 2026) no usan la fuente del theme
+- [x] Aplicar fontFamily del theme a los Picker (Montserrat-Regular)
+- [x] Picker en web no respeta fontFamily, aplicar a Picker.Item
+- [x] Cards de facturas en listado no usan Montserrat
+- [x] Aplicar Montserrat a todos los textos del listado (5 estilos actualizados)
+
+## Implementar Funcionalidad de Botones en Detalle de Factura (CRÍTICO)
+- [ ] Botón "Imprimir/PDF" no hace nada
+- [ ] Botón "Descargar" no hace nada
+- [ ] Botón "Enviar por Email" no hace nada
+- [ ] Botón "Marcar como Pendiente" no hace nada
+- [ ] Botón "Exportar PDF" no hace nada
+- [x] Funciones están conectadas: handlePrint, handleDownload, handleSendEmail, handleToggleStatus
+- [x] Funciones importadas desde @/lib/invoice-pdf
+- [x] Verificar si @/lib/invoice-pdf existe y funciones están implementadas (TODO OK)
+- [x] Agregar console.log para depurar por qué no funcionan
+- [ ] Revisar consola del navegador para ver qué está fallando

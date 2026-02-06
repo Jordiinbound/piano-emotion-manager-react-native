@@ -309,10 +309,16 @@ export default function InvoiceDetailScreen() {
   };
 
   const handlePrint = () => {
-    if (!id || isNew) return;
+    console.log('handlePrint called', { id, isNew, platform: Platform.OS });
+    if (!id || isNew) {
+      console.log('handlePrint: id or isNew condition failed');
+      return;
+    }
     const invoice = getInvoice(id);
+    console.log('handlePrint: invoice', invoice ? 'found' : 'not found');
     if (invoice) {
       if (Platform.OS === 'web') {
+        console.log('handlePrint: calling openInvoiceForPrint');
         openInvoiceForPrint(invoice);
       } else {
         Alert.alert('Info', 'La generación de PDF está disponible en la versión web');
@@ -321,10 +327,16 @@ export default function InvoiceDetailScreen() {
   };
 
   const handleDownload = () => {
-    if (!id || isNew) return;
+    console.log('handleDownload called', { id, isNew, platform: Platform.OS });
+    if (!id || isNew) {
+      console.log('handleDownload: id or isNew condition failed');
+      return;
+    }
     const invoice = getInvoice(id);
+    console.log('handleDownload: invoice', invoice ? 'found' : 'not found');
     if (invoice) {
       if (Platform.OS === 'web') {
+        console.log('handleDownload: calling downloadInvoiceHTML');
         downloadInvoiceHTML(invoice);
       } else {
         Alert.alert('Info', 'La descarga está disponible en la versión web');
@@ -333,13 +345,19 @@ export default function InvoiceDetailScreen() {
   };
 
   const handleSendEmail = async () => {
-    if (!id || isNew) return;
+    console.log('handleSendEmail called', { id, isNew, platform: Platform.OS });
+    if (!id || isNew) {
+      console.log('handleSendEmail: id or isNew condition failed');
+      return;
+    }
     const invoice = getInvoice(id);
+    console.log('handleSendEmail: invoice', invoice ? 'found' : 'not found', invoice?.clientEmail);
     if (invoice) {
       if (!invoice.clientEmail) {
         Alert.alert('Error', 'El cliente no tiene email configurado');
         return;
       }
+      console.log('handleSendEmail: calling sendInvoiceByEmail');
       sendInvoiceByEmail(invoice);
       await markAsSent(id);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

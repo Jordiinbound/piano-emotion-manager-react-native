@@ -270,7 +270,12 @@ export default function InvoicesScreen() {
               style={styles.picker}
             >
               {MONTH_NAMES.map((month, index) => (
-                <Picker.Item key={index} label={month} value={index} />
+                <Picker.Item 
+                  key={index} 
+                  label={month} 
+                  value={index}
+                  style={{ fontFamily: 'Montserrat-Regular' }}
+                />
               ))}
             </Picker>
           </View>
@@ -283,7 +288,12 @@ export default function InvoicesScreen() {
               style={styles.picker}
             >
               {Array.from({ length: new Date().getFullYear() - 2020 + 1 }, (_, i) => 2020 + i).map((year) => (
-                <Picker.Item key={year} label={year.toString()} value={year} />
+                <Picker.Item 
+                  key={year} 
+                  label={year.toString()} 
+                  value={year}
+                  style={{ fontFamily: 'Montserrat-Regular' }}
+                />
               ))}
             </Picker>
           </View>
@@ -503,6 +513,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',  // Centrar texto horizontalmente
     paddingHorizontal: Spacing.sm,  // Margen interno para no estar pegado
     outline: 'none',  // Eliminar borde de focus en web
+    fontFamily: 'Montserrat-Regular',  // Usar fuente del theme
   },
   navButton: {
     paddingHorizontal: 8,
@@ -572,6 +583,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: COLORS.text,
+    fontFamily: 'Montserrat-Bold',
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -583,11 +595,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontFamily: 'Montserrat-Bold',
   },
   invoiceClient: {
     fontSize: 14,
     color: COLORS.textSecondary,
     fontWeight: '500',
+    fontFamily: 'Montserrat-SemiBold',
   },
   invoiceFooter: {
     flexDirection: 'row',
@@ -598,10 +612,12 @@ const styles = StyleSheet.create({
   invoiceDate: {
     fontSize: 12,
     color: COLORS.textTertiary,
+    fontFamily: 'Montserrat-Regular',
   },
   invoiceTotal: {
     fontSize: 16,
     fontWeight: '700',
     color: COLORS.accent,
+    fontFamily: 'Montserrat-Bold',
   },
 });
