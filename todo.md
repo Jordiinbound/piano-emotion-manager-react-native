@@ -505,9 +505,10 @@
 
 - [x] Crear tabla inventory_categories en base de datos
 - [x] Crear tRPC procedures para CRUD de categorías (list, getById, create, update, delete, reorder)
-- [ ] Crear sección en Configuración para gestionar categorías
-- [ ] Actualizar filtros de inventario para usar categorías dinámicas
-- [ ] Crear script de migración de categorías hardcodeadas a BD
+- [x] Crear hook para categorías (useInventoryCategories)
+- [x] Crear sección en Configuración para gestionar categorías (tab Inventario con CRUD completo)
+- [x] Actualizar filtros de inventario para usar categorías dinámicas de BD (useMemo con categories)
+- [ ] Testing de funcionalidad completa
 
 ## Ajustes Responsive Filtros (2026-02-06)
 
@@ -517,3 +518,7 @@
 
 - [x] Añadir sombras al contenedor de búsqueda (shadowOffset: 2px, opacity: 0.08, radius: 6px)
 - [x] Añadir sombras al contenedor de filtros (shadowOffset: 2px, opacity: 0.08, radius: 6px)
+
+## Bug Crítico (2026-02-06)
+
+- [ ] Corregir error de conexión a base de datos causado por últimos cambios en inventory.tsx

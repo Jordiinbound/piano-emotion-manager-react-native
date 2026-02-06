@@ -30,9 +30,10 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import { LanguageSelector } from '@/components/language-selector';
+import { InventoryCategoriesSettings } from '@/components/settings/inventory-categories-settings';
 
 // ==================== TIPOS ====================
-type TabId = 'general' | 'business' | 'billing' | 'modules' | 'notifications' | 'integrations' | 'advanced';
+type TabId = 'general' | 'business' | 'billing' | 'modules' | 'notifications' | 'integrations' | 'inventory' | 'advanced';
 type BusinessMode = 'individual' | 'team';
 type EInvoicingCountry = 'ES' | 'IT' | 'DE' | 'FR' | 'PT' | 'DK' | 'BE' | 'GB' | 'none';
 
@@ -112,6 +113,7 @@ const TABS = [
   { id: 'modules' as TabId, label: 'Módulos', icon: 'square.grid.2x2.fill' },
   { id: 'notifications' as TabId, label: 'Notificaciones', icon: 'bell.fill' },
   { id: 'integrations' as TabId, label: 'Integraciones', icon: 'link' },
+  { id: 'inventory' as TabId, label: 'Inventario', icon: 'shippingbox.fill' },
   { id: 'advanced' as TabId, label: 'Avanzado', icon: 'slider.horizontal.3' },
 ];
 
@@ -408,6 +410,7 @@ export default function SettingsUnifiedScreen() {
         {activeTab === 'modules' && renderModulesTab()}
         {activeTab === 'notifications' && renderNotificationsTab()}
         {activeTab === 'integrations' && renderIntegrationsTab()}
+        {activeTab === 'inventory' && <InventoryCategoriesSettings />}
         {activeTab === 'advanced' && renderAdvancedTab()}
       </ScrollView>
 
