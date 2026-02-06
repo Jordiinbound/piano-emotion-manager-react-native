@@ -238,19 +238,19 @@ export default function InvoicesScreen() {
           {statusFilters.map((f) => (
             <Pressable
               key={f.key}
-              style={[
-                styles.filterChip,
-                filter === f.key && styles.filterChipActive,
-              ]}
+              style={styles.filterChip}
               onPress={() => setFilter(f.key)}
             >
               <Text style={[
                 styles.filterChipText,
                 { fontSize: width < 1400 ? 10 : 13 },
-                filter === f.key && styles.filterChipTextActive,
+                filter === f.key && { color: COLORS.primary, fontWeight: '600' },
               ]}>
                 {f.label}
               </Text>
+              {filter === f.key && (
+                <View style={[styles.filterIndicator, { backgroundColor: COLORS.primary }]} />
+              )}
             </Pressable>
           ))}
         </View>
@@ -449,25 +449,25 @@ const styles = StyleSheet.create({
     minWidth: '15%',
     maxWidth: '16%',
     alignItems: 'center',
-    backgroundColor: 'transparent',
-    borderWidth: 0,
+    backgroundColor: COLORS.surface,
+    borderRadius: BorderRadius.md,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
   },
-  filterChipActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
   filterChipText: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 15, // Se ajustará dinámicamente en el componente
     color: COLORS.textSecondary,
   },
-  filterChipTextActive: {
-    color: '#FFFFFF',
+  filterIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: '10%',
+    right: '10%',
+    height: 3,
+    borderRadius: 4,
   },
   periodSelectorContainer: {
     flexDirection: 'row',

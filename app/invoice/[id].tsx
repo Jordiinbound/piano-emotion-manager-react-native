@@ -78,15 +78,32 @@ export default function InvoiceDetailScreen() {
             invoiceData.clientName = getClientFullName(client);
             invoiceData.clientEmail = client.email;
             invoiceData.clientAddress = getClientFormattedAddress(client);
+            invoiceData.clientTaxId = client.taxId;
           }
+        }
+        
+        // Asegurar que items sea un array
+        if (!invoiceData.items || !Array.isArray(invoiceData.items)) {
+          invoiceData.items = [];
+        }
+        
+        // Si no hay totales calculados, calcularlos ahora
+        if (!invoiceData.subtotal || !invoiceData.total) {
+          const calculatedTotals = calculateInvoiceTotals(invoiceData.items);
+          invoiceData.subtotal = calculatedTotals.subtotal;
+          invoiceData.taxAmount = calculatedTotals.taxAmount;
+          invoiceData.total = calculatedTotals.total;
         }
         
         console.log('[Invoice Detail] Loaded invoice:', {
           id: invoiceData.id,
           invoiceNumber: invoiceData.invoiceNumber,
           clientName: invoiceData.clientName,
+          clientId: invoiceData.clientId,
           itemsCount: invoiceData.items?.length || 0,
-          total: invoiceData.total
+          subtotal: invoiceData.subtotal,
+          total: invoiceData.total,
+          status: invoiceData.status
         });
         
         setForm(invoiceData);
@@ -302,8 +319,24 @@ export default function InvoiceDetailScreen() {
 
   const handleMarkPaid = async () => {
     if (!id || isNew) return;
-    await markAsPaid(id);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    
+    try {
+      await markAsPaid(id);
+      
+      // Actualizar el estado local
+      setForm(prev => ({
+        ...prev,
+        status: 'paid',
+        paidAt: new Date().toISOString()
+      }));
+      
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert('✅ Factura Pagada', 'La factura ha sido marcada como pagada correctamente.');
+    } catch (error) {
+      console.error('Error al marcar como pagada:', error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert('Error', 'No se pudo marcar la factura como pagada. Inténtalo de nuevo.');
+    }
   };
 
   const handleDelete = () => {
@@ -326,7 +359,21 @@ export default function InvoiceDetailScreen() {
   };
 
   const activeRates = getActiveRates();
-  const statusColor = form.status === 'paid' ? success : form.status === 'sent' ? accent : form.status === 'cancelled' ? error : warning;
+  // Colores modernos para badges de estado
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return { color: success, bgColor: `${success}10`, borderColor: success };
+      case 'sent':
+        return { color: accent, bgColor: `${accent}10`, borderColor: accent };
+      case 'cancelled':
+        return { color: error, bgColor: `${error}10`, borderColor: error };
+      case 'draft':
+      default:
+        return { color: textSecondary, bgColor: 'transparent', borderColor: borderColor };
+    }
+  };
+  const statusStyle = getStatusStyle(form.status || 'draft');
 
   return (
     <ThemedView style={styles.container}>
@@ -335,7 +382,7 @@ export default function InvoiceDetailScreen() {
           title: isNew ? 'Nueva Factura' : `Factura ${form.invoiceNumber || ''}`,
           headerRight: () =>
             !isNew && (
-              <Pressable onPress={() => setIsEditing(!isEditing)}>
+              <Pressable onPress={() => setIsEditing(!isEditing)} style={{ marginRight: Spacing.md }}>
                 <ThemedText style={{ color: accent }}>
                   {isEditing ? 'Cancelar' : 'Editar'}
                 </ThemedText>
@@ -351,8 +398,8 @@ export default function InvoiceDetailScreen() {
       >
         {/* Estado */}
         {!isNew && (
-          <View style={[styles.statusBanner, { backgroundColor: `${statusColor}15`, borderColor: statusColor }]}>
-            <ThemedText style={[styles.statusText, { color: statusColor }]}>
+          <View style={[styles.statusBanner, { backgroundColor: statusStyle.bgColor, borderColor: statusStyle.borderColor }]}>
+            <ThemedText style={[styles.statusText, { color: statusStyle.color }]}>
               {INVOICE_STATUS_LABELS[form.status as keyof typeof INVOICE_STATUS_LABELS]}
             </ThemedText>
           </View>

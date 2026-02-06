@@ -550,11 +550,12 @@
 - [x] Mantener consistencia visual entre pantallas
 
 ## Bugs en Detalle de Factura
-- [x] Badge de estado "Borrador" usa diseño antiguo, actualizar a diseño moderno compacto
-- [x] Botón "Marcar como Pagada" funciona correctamente (ya estaba bien implementado)
-- [ ] Datos de factura no se cargan en detalle (items, total, número) aunque existen en lista
-- [x] Nombre del cliente se pobla automáticamente desde clientId
-- [ ] Investigar getInvoice() y cómo se almacenan/recuperan datos
+- [x] Badge "BORRADOR" actualizado a diseño moderno compacto (fondo transparente, borde gris)
+- [x] Botón "Editar" ahora tiene margen derecho (Spacing.md)
+- [x] Información de cliente se carga automáticamente desde clientId con email y dirección
+- [x] Número de factura se muestra correctamente en header
+- [x] Botón "Marcar como Pagada" funciona y actualiza estado con confirmación
+- [x] Total se calcula automáticamente desde items si no existe en los datos guardados
 
 ## Cambios de Sombras en Inventario
 - [x] Eliminar sombras de searchContainer y filtersWrapper
@@ -565,3 +566,10 @@
 - [x] Reemplazar diseño de botones rectangulares grandes por chips compactos
 - [x] Aplicar mismo ancho, padding y sombras que filterChip de Inventario
 - [x] Mantener funcionalidad de filtrado por estado
+
+## Diseño de Filtros en Facturas
+- [x] Reemplazar botones rectangulares grandes azules por chips compactos
+- [x] Aplicar sombras individuales a cada chip de filtro
+- [x] Usar mismo ancho (15-16%), padding vertical (Spacing.md) y fuente responsiva que Inventario
+- [x] Indicador inferior en lugar de fondo azul para filtro activo
+- [x] Eliminados estilos filterChipActive y filterChipTextActive
