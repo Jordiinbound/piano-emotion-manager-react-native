@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View, Pressable } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -43,6 +43,16 @@ export const SearchBar = memo(function SearchBar({
         accessibilityLabel={accessibilityLabel}
         accessibilityHint={`Escribe para ${placeholder.toLowerCase()}`}
       />
+      {value.length > 0 && (
+        <Pressable 
+          onPress={() => onChangeText('')}
+          hitSlop={8}
+          accessibilityLabel="Limpiar búsqueda"
+          accessibilityRole="button"
+        >
+          <IconSymbol name="xmark.circle.fill" size={18} color={placeholderColor} />
+        </Pressable>
+      )}
     </View>
   );
 });

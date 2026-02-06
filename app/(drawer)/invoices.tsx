@@ -62,7 +62,7 @@ export default function InvoicesScreen() {
     }
   }, [params.filter]);
 
-  const debouncedSearch = useDebounce(search, 300);
+  const debouncedSearch = useDebounce(search, 500);  // Aumentado a 500ms para permitir borrado múltiple
   
   // Calcular dateFrom y dateTo basado en los filtros seleccionados
   const { dateFrom, dateTo } = useMemo(() => {

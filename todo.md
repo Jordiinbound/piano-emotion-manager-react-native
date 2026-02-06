@@ -649,3 +649,11 @@
 ## Alinear Dropdowns con Cards de Facturas
 - [x] Agregado paddingHorizontal: Spacing.md a periodSelectorContainer
 - [x] Dropdowns ahora alineados con el margen de las cards
+
+
+## Optimizar Búsqueda de Facturas - Evitar Recargas en Cada Tecla
+- [x] Aumentado debounce de 300ms a 500ms para dar tiempo a borrar múltiples caracteres
+- [x] Agregado botón X (xmark.circle.fill) que aparece cuando hay texto
+- [x] Botón X limpia toda la búsqueda de una vez
+- [ ] Probar que ahora se pueden borrar varios caracteres antes de la recarga
+- [ ] Probar que el botón X limpia instantáneamente
