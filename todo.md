@@ -674,3 +674,8 @@
 - [ ] Problema real: la pantalla de facturas no reacciona a la invalidación
 - [ ] Investigar por qué la query no se recarga automáticamente
 - [ ] Posible solución: usar refetchOnWindowFocus o refetchInterval
+
+
+## Cambiar "Facturación" por "Facturacion" (sin acento)
+- [x] Fuente Arkhip no soporta caracteres con acentos
+- [x] Cambiado drawerLabel y title en app/(drawer)/_layout.tsx (líneas 95-96)

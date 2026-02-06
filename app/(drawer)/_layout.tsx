@@ -92,8 +92,8 @@ function DrawerContent() {
       <Drawer.Screen
         name="invoices"
         options={{
-          drawerLabel: 'Facturación',
-          title: 'Facturación',
+          drawerLabel: 'Facturacion',
+          title: 'Facturacion',
         }}
       />
       <Drawer.Screen
