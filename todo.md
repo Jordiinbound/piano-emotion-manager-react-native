@@ -521,4 +521,4 @@
 
 ## Bug Crítico (2026-02-06)
 
-- [ ] Corregir error de conexión a base de datos causado por últimos cambios en inventory.tsx
+- [x] Corregir error de conexión a base de datos causado por últimos cambios en inventory.tsx (añadido fallback a hardcodeadas)
