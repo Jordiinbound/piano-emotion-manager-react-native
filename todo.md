@@ -536,9 +536,10 @@
 - [ ] Aumentar fontSize de filtros de 7.5px a 12px para móvil/tablet (más legible)
 
 ## Sistema de Categorías Configurables de Inventario
-- [ ] Verificar y arreglar export de inventoryCategories en schema
-- [ ] Reactivar inventoryCategoriesRouter en routers.ts
-- [ ] Integrar InventoryCategoriesManager en página de Configuración
-- [ ] Conectar filtros de inventario con categorías dinámicas de BD
+- [x] Verificar y arreglar export de inventoryCategories en schema
+- [x] Reactivar inventoryCategoriesRouter en routers.ts
+- [x] Integrar InventoryCategoriesManager en página de Configuración
+- [x] Conectar filtros de inventario con categorías dinámicas de BD
+- [x] Agregar procedimiento initializeDefaultCategories
 - [ ] Probar creación/edición/eliminación de categorías desde UI
 - [ ] Verificar que filtros se actualicen automáticamente al cambiar categorías

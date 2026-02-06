@@ -22,6 +22,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useInventoryData } from '@/hooks/data';
 import { useSuppliers } from '@/hooks/use-suppliers';
+import { useInventoryCategories } from '@/hooks/data/use-inventory-categories';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import { MATERIAL_CATEGORY_LABELS, MaterialCategory } from '@/types/inventory';
 import type { Material as InventoryItem } from '@/types/inventory';
@@ -36,6 +37,7 @@ export default function InventoryScreen() {
   const { width } = useWindowDimensions();
   const { materials: items, loading, lowStockItems } = useInventoryData();
   const { suppliers } = useSuppliers();
+  const { categories: dbCategories, isLoading: categoriesLoading } = useInventoryCategories();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
   const [showScanner, setShowScanner] = useState(false);
@@ -198,20 +200,37 @@ export default function InventoryScreen() {
     [cardBg, borderColor, textSecondary, error, warning, success]
   );
 
-  const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: t('common.all') },
-    { key: 'low_stock', label: `${t('inventory.lowStockAlert')} (${lowStockItems.length})` },
-    { key: 'strings', label: t('inventory.categories.strings') },
-    { key: 'hammers', label: t('inventory.categories.hammers') },
-    { key: 'felts', label: t('inventory.categories.felts') },
-    { key: 'pins', label: MATERIAL_CATEGORY_LABELS.pins },
-    { key: 'keys', label: MATERIAL_CATEGORY_LABELS.keys },
-    { key: 'pedals', label: MATERIAL_CATEGORY_LABELS.pedals },
-    { key: 'hardware', label: MATERIAL_CATEGORY_LABELS.hardware },
-    { key: 'chemicals', label: MATERIAL_CATEGORY_LABELS.chemicals },
-    { key: 'tools', label: t('inventory.categories.tools') },
-    { key: 'other', label: MATERIAL_CATEGORY_LABELS.other },
-  ];
+  // Construir filtros dinámicamente desde categorías de BD
+  const filters: { key: FilterType; label: string }[] = useMemo(() => {
+    const baseFilters = [
+      { key: 'all' as FilterType, label: t('common.all') },
+      { key: 'low_stock' as FilterType, label: `${t('inventory.lowStockAlert')} (${lowStockItems.length})` },
+    ];
+
+    // Si hay categorías de BD, usarlas; si no, usar fallback hardcodeado
+    if (dbCategories && dbCategories.length > 0) {
+      const categoryFilters = dbCategories.map(cat => ({
+        key: cat.key as FilterType,
+        label: cat.label,
+      }));
+      return [...baseFilters, ...categoryFilters];
+    }
+
+    // Fallback: categorías hardcodeadas si BD no está disponible
+    return [
+      ...baseFilters,
+      { key: 'strings' as FilterType, label: t('inventory.categories.strings') },
+      { key: 'hammers' as FilterType, label: t('inventory.categories.hammers') },
+      { key: 'felts' as FilterType, label: t('inventory.categories.felts') },
+      { key: 'pins' as FilterType, label: MATERIAL_CATEGORY_LABELS.pins },
+      { key: 'keys' as FilterType, label: MATERIAL_CATEGORY_LABELS.keys },
+      { key: 'pedals' as FilterType, label: MATERIAL_CATEGORY_LABELS.pedals },
+      { key: 'hardware' as FilterType, label: MATERIAL_CATEGORY_LABELS.hardware },
+      { key: 'chemicals' as FilterType, label: MATERIAL_CATEGORY_LABELS.chemicals },
+      { key: 'tools' as FilterType, label: t('inventory.categories.tools') },
+      { key: 'other' as FilterType, label: MATERIAL_CATEGORY_LABELS.other },
+    ];
+  }, [dbCategories, lowStockItems.length, t]);
 
   return (
     <ThemedView style={styles.container}>

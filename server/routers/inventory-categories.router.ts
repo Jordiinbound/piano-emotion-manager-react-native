@@ -208,6 +208,55 @@ export const inventoryCategoriesRouter = router({
     }),
 
   /**
+   * Inicializar categorías predefinidas del sistema
+   */
+  initializeDefaultCategories: protectedProcedure.mutation(async ({ ctx }) => {
+    const database = await db.getDb();
+    if (!database) throw new Error('Database not available');
+
+    const defaultCategories = [
+      { key: 'strings', label: 'Cuerdas', icon: 'music.note', displayOrder: 1 },
+      { key: 'hammers', label: 'Macillos', icon: 'wrench.fill', displayOrder: 2 },
+      { key: 'felts', label: 'Fieltros', icon: 'doc.text.fill', displayOrder: 3 },
+      { key: 'pins', label: 'Clavijas', icon: 'wrench.fill', displayOrder: 4 },
+      { key: 'keys', label: 'Teclas y partes', icon: 'pianokeys', displayOrder: 5 },
+      { key: 'pedals', label: 'Pedales y mecanismo', icon: 'gearshape.fill', displayOrder: 6 },
+      { key: 'hardware', label: 'Herrajes y tornillería', icon: 'wrench.fill', displayOrder: 7 },
+      { key: 'chemicals', label: 'Productos químicos', icon: 'doc.text.fill', displayOrder: 8 },
+      { key: 'tools', label: 'Herramientas', icon: 'wrench.fill', displayOrder: 9 },
+      { key: 'other', label: 'Otros', icon: 'doc.text.fill', displayOrder: 10 },
+    ];
+
+    // Verificar si ya existen categorías
+    const existing = await database
+      .select()
+      .from(inventoryCategories)
+      .where(eq(inventoryCategories.organizationId, null))
+      .limit(1);
+
+    if (existing.length > 0) {
+      return { success: true, message: 'Categories already initialized' };
+    }
+
+    // Insertar categorías predefinidas
+    for (const cat of defaultCategories) {
+      await database
+        .insert(inventoryCategories)
+        .values({
+          key: cat.key,
+          label: cat.label,
+          icon: cat.icon,
+          displayOrder: cat.displayOrder,
+          isActive: true,
+          isSystem: true,
+          organizationId: null,
+        });
+    }
+
+    return { success: true, message: 'Default categories initialized' };
+  }),
+
+  /**
    * Reordenar categorías
    */
   reorder: protectedProcedure
