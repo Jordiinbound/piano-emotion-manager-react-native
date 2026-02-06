@@ -78,5 +78,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     paddingVertical: 4,
     outlineStyle: 'none', // Eliminar outline en web
+    fontFamily: 'Montserrat-Regular',
   },
 });

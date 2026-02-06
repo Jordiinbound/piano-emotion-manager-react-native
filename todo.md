@@ -739,3 +739,7 @@
 - [x] Problema: useEffect se ejecuta de nuevo y getInvoice() no encuentra la factura
 - [x] Solución: Agregar estado loadedInvoice para guardar la factura cargada
 - [x] useEffect ahora solo carga la factura una vez y la reutiliza
+
+## Campo de búsqueda sin Montserrat
+- [x] Input "Buscar factura..." no usa Montserrat
+- [x] Aplicar Montserrat al estilo del input de búsqueda (components/search-bar.tsx)
