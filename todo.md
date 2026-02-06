@@ -494,3 +494,9 @@
 - [x] Sombras no visibles en botones "Pedir" y filtros (aumentadas: offset 4, opacity 0.45, radius 8)
 - [x] Filtros no responsive - se cortan en móvil/tablet (ajustado flexGrow: 0)
 - [x] Icono de escáner sigue siendo interrogante (cambiado a camera.fill)
+
+## Mejoras UX Filtros (2026-02-06)
+
+- [x] Reducir altura de filtros (paddingVertical: Spacing.xs)
+- [x] Cambiar de scroll horizontal a múltiples filas (flexWrap)
+- [x] Aplicar diseño de tabs de configuración (indicador inferior, fontSize 15)

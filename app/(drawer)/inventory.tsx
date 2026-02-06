@@ -251,41 +251,29 @@ export default function InventoryScreen() {
       </View>
 
       {/* Filtros */}
-      <View style={styles.filtersWrapper}>
-        <FlatList
-          horizontal
-          data={filters}
-          keyExtractor={(item) => item.key}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContainer}
-          renderItem={({ item: f }) => (
+      <View style={[styles.filtersWrapper, { borderBottomColor: borderColor }]}>
+        <View style={styles.filtersContainer}>
+          {filters.map((f) => (
             <Pressable
-              style={[
-                styles.filterChip,
-                { backgroundColor: cardBg, borderColor },
-                filter === f.key && { overflow: 'hidden', borderColor: 'transparent' },
-              ]}
+              key={f.key}
+              style={styles.filterChip}
               onPress={() => setFilter(f.key)}
             >
-              {filter === f.key ? (
-                <LinearGradient
-                  colors={['#d66b4f', '#e07a5f', '#ed9178']} // Coral: oscuro izquierda → claro derecha
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.filterGradient as any}
-                >
-                  <ThemedText style={[styles.filterText, { color: '#FFFFFF' }]}>
-                    {f.label}
-                  </ThemedText>
-                </LinearGradient>
-              ) : (
-                <ThemedText style={[styles.filterText, { color: textSecondary }]}>
-                  {f.label}
-                </ThemedText>
+              <ThemedText
+                style={[
+                  styles.filterText,
+                  { color: textSecondary },
+                  filter === f.key && { color: accent, fontWeight: '600' },
+                ]}
+              >
+                {f.label}
+              </ThemedText>
+              {filter === f.key && (
+                <View style={[styles.filterIndicator, { backgroundColor: accent }]} />
               )}
             </Pressable>
-          )}
-        />
+          ))}
+        </View>
       </View>
 
       {loading ? (
@@ -394,39 +382,38 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   filtersWrapper: {
+    flexGrow: 0,
+    flexShrink: 0,
+    borderBottomWidth: 1,
     marginBottom: Spacing.sm,
   },
   filtersContainer: {
-    paddingLeft: Spacing.md,
-    paddingRight: Spacing.md,
-    gap: Spacing.sm,
-    flexGrow: 0,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.xs,
+    paddingVertical: Spacing.sm,
   },
   filterChip: {
-    borderRadius: 4,
-    borderWidth: 1,
-    marginRight: Spacing.sm,
-    justifyContent: 'center',
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    position: 'relative',
+    minWidth: '23%',
+    maxWidth: '24%',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  filterGradient: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
   },
   filterText: {
-    fontSize: 11,
-    fontWeight: '500',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    fontSize: 15,
+    color: '#6B7280',
+  },
+  filterIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: '10%',
+    right: '10%',
+    height: 3,
+    borderRadius: 4,
   },
   list: {
     paddingHorizontal: Spacing.md,
