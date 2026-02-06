@@ -786,3 +786,9 @@
 - [x] Verificar nombres de fuentes Montserrat
 - [x] Problema: usé Montserrat-Medium que NO existe
 - [x] Solución: cambiar a Montserrat-SemiBold
+
+## Dashboard - Eliminar sombras de contenedores
+- [x] Eliminar sombras de cajas contenedoras (Este Mes, Próximas Citas, Previsión, Acciones Rápidas)
+- [x] Las sombras no se aplican correctamente en algunos elementos
+- [x] Aplicar diseño más limpio y plano
+

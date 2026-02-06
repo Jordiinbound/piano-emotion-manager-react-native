@@ -575,18 +575,6 @@ const styles = StyleSheet.create({
     maxWidth: '95%',
     alignSelf: 'center',
     width: '100%',
-    ...Platform.select({
-      web: {
-        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
-      },
-      default: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
-        elevation: 8,
-      },
-    }),
   },
   thisMonthDesktop: {
     flex: 1,
@@ -682,18 +670,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     minHeight: 160,
-    ...Platform.select({
-      web: {
-        boxShadow: '0 8px 20px rgba(0,0,0,0.18), 0 4px 8px rgba(0,0,0,0.12)',
-      },
-      default: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.18,
-        shadowRadius: 20,
-        elevation: 10,
-      },
-    }),
   },
   aiPredictionsDesktop: {
     flex: 1,
@@ -776,18 +752,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     minHeight: 250,
-    ...Platform.select({
-      web: {
-        boxShadow: '0 8px 20px rgba(0,0,0,0.18), 0 4px 8px rgba(0,0,0,0.12)',
-      },
-      default: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.18,
-        shadowRadius: 20,
-        elevation: 10,
-      },
-    }),
   },
   appointmentsDesktop: {
     flex: 1,
@@ -858,18 +822,6 @@ const styles = StyleSheet.create({
     maxWidth: '95%',
     alignSelf: 'center',
     width: '100%',
-    ...Platform.select({
-      web: {
-        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
-      },
-      default: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
-        elevation: 8,
-      },
-    }),
   },
   quickActionsDesktop: {
     flex: 1,
