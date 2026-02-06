@@ -8,7 +8,7 @@
 import { z } from 'zod';
 import { router, protectedProcedure } from '../_core/trpc.js';
 import * as db from '../db.js';
-import { inventoryCategories } from '../../drizzle/inventory-schema.ts';
+import { inventoryCategories } from '../../drizzle/schema.js';
 import { eq, and, asc } from 'drizzle-orm';
 
 export const inventoryCategoriesRouter = router({

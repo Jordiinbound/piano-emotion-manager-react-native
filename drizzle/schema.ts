@@ -1148,3 +1148,24 @@ export * from './accounting-schema.js';
 // ============================================================================
 export * from './distributor-schema.js';
 export * from './crm-schema.js';
+
+// ============================================================================
+// INVENTORY CATEGORIES (Configurable)
+// ============================================================================
+
+export const inventoryCategories = mysqlTable('inventory_categories', {
+  id: int().autoincrement().notNull(),
+  key: varchar({ length: 50 }).notNull(),
+  label: varchar({ length: 100 }).notNull(),
+  icon: varchar({ length: 50 }).notNull().default('doc.text.fill'),
+  displayOrder: int('display_order').notNull().default(0),
+  isActive: boolean('is_active').notNull().default(true),
+  isSystem: boolean('is_system').notNull().default(false),
+  organizationId: int('organization_id'),
+  createdAt: timestamp('created_at', { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+  index('inventory_categories_key_idx').on(table.key, table.organizationId),
+  index('inventory_categories_order_idx').on(table.displayOrder),
+]);
