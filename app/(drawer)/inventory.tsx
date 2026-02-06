@@ -383,11 +383,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 6,
   },
   searchRow: {
     flexDirection: 'row',
@@ -414,11 +409,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     borderBottomWidth: 1,
     marginBottom: Spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 6,
   },
   filtersContainer: {
     flexDirection: 'row',
@@ -435,6 +425,11 @@ const styles = StyleSheet.create({
     minWidth: '15%',
     maxWidth: '16%',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   filterText: {
     fontSize: 15, // Se ajustará dinámicamente en el componente

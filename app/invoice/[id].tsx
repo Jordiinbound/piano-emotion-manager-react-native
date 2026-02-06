@@ -68,16 +68,30 @@ export default function InvoiceDetailScreen() {
     if (!isNew && id) {
       const invoice = getInvoice(id);
       if (invoice) {
+        // Crear copia para no mutar el original
+        const invoiceData = { ...invoice };
+        
         // Poblar clientName desde clientId si no existe
-        if (invoice.clientId && !invoice.clientName) {
-          const client = clients.find(c => c.id === invoice.clientId);
+        if (invoiceData.clientId && !invoiceData.clientName) {
+          const client = clients.find(c => c.id === invoiceData.clientId);
           if (client) {
-            invoice.clientName = getClientFullName(client);
-            invoice.clientEmail = client.email;
-            invoice.clientAddress = getClientFormattedAddress(client);
+            invoiceData.clientName = getClientFullName(client);
+            invoiceData.clientEmail = client.email;
+            invoiceData.clientAddress = getClientFormattedAddress(client);
           }
         }
-        setForm(invoice);
+        
+        console.log('[Invoice Detail] Loaded invoice:', {
+          id: invoiceData.id,
+          invoiceNumber: invoiceData.invoiceNumber,
+          clientName: invoiceData.clientName,
+          itemsCount: invoiceData.items?.length || 0,
+          total: invoiceData.total
+        });
+        
+        setForm(invoiceData);
+      } else {
+        console.log('[Invoice Detail] Invoice not found:', id);
       }
     } else {
       setForm(prev => ({ ...prev, business: businessInfo }));

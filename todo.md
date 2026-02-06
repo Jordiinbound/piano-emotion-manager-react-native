@@ -552,6 +552,11 @@
 ## Bugs en Detalle de Factura
 - [x] Badge de estado "Borrador" usa diseño antiguo, actualizar a diseño moderno compacto
 - [x] Botón "Marcar como Pagada" funciona correctamente (ya estaba bien implementado)
-- [x] Número de factura se muestra en header (problema: datos no se cargan de BD)
+- [ ] Datos de factura no se cargan en detalle (items, total, número) aunque existen en lista
 - [x] Nombre del cliente se pobla automáticamente desde clientId
-- [x] Cálculo de totales funciona correctamente (problema: items vacíos en BD)
+- [ ] Investigar getInvoice() y cómo se almacenan/recuperan datos
+
+## Cambios de Sombras en Inventario
+- [x] Eliminar sombras de searchContainer y filtersWrapper
+- [x] Aplicar sombras directamente al componente SearchBar
+- [x] Aplicar sombras a cada filterChip individual
