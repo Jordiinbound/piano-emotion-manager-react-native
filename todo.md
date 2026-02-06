@@ -608,3 +608,7 @@
 - [x] Badge de estado (BORRADOR/PENDIENTE) ahora tiene sombra (shadowOpacity 0.15, shadowRadius 8)
 
 
+
+## Eliminar Sombra/Borde de Contenedor Superior en Facturas
+- [x] Envuelto statsRow y searchContainer en topSection sin sombras
+- [x] Eliminado borderBottom de filtersContainer (línea horizontal)

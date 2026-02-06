@@ -194,8 +194,10 @@ export default function InvoicesScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Estadísticas discretas en línea */}
-      <View style={[styles.statsRow, isDesktop && styles.statsRowDesktop]}>
+      {/* Contenedor superior sin sombras */}
+      <View style={styles.topSection}>
+        {/* Estadísticas discretas en línea */}
+        <View style={[styles.statsRow, isDesktop && styles.statsRowDesktop]}>
         <View style={styles.statCard}>
           <Text style={styles.statLabel}>Total</Text>
           <Text style={[styles.statValue, { color: COLORS.primary }]}>
@@ -223,16 +225,17 @@ export default function InvoicesScreen() {
             {stats.draft}
           </Text>
         </View>
-      </View>
+        </View>
 
-      {/* Barra de búsqueda */}
-      <View style={styles.searchContainer}>
-        <SearchBar
-          value={search}
-          onChangeText={setSearch}
-          placeholder="Buscar factura..."
-          accessibilityLabel="Buscar facturas"
-        />
+        {/* Barra de búsqueda */}
+        <View style={styles.searchContainer}>
+          <SearchBar
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Buscar factura..."
+            accessibilityLabel="Buscar facturas"
+          />
+        </View>
       </View>
 
       {/* Filtros compactos */}
@@ -370,6 +373,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  topSection: {
+    backgroundColor: 'transparent',
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
   loadingState: {
     flex: 1,
     justifyContent: 'center',
@@ -428,8 +439,6 @@ const styles = StyleSheet.create({
   filtersContainer: {
     flexGrow: 0,
     flexShrink: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
     marginBottom: Spacing.sm,
   },
   filterGroup: {
