@@ -265,7 +265,7 @@ export default function InventoryScreen() {
                   styles.filterText,
                   { 
                     color: textSecondary,
-                    fontSize: width < 768 ? 7.5 : 15, // Mitad del tamaño para móvil/tablet
+                    fontSize: width < 1400 ? 10 : 13, // 10px para tablet/móvil, 13px para desktop grande
                   },
                   filter === f.key && { color: accent, fontWeight: '600' },
                 ]}
@@ -411,10 +411,10 @@ const styles = StyleSheet.create({
   },
   filterChip: {
     paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.xs,
     position: 'relative',
-    minWidth: '23%',
-    maxWidth: '24%',
+    minWidth: '18%',
+    maxWidth: '19%',
     alignItems: 'center',
   },
   filterText: {
