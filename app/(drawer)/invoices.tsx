@@ -244,12 +244,12 @@ export default function InvoicesScreen() {
               <Text style={[
                 styles.filterChipText,
                 { fontSize: width < 1400 ? 10 : 13 },
-                filter === f.key && { color: COLORS.primary, fontWeight: '600' },
+                filter === f.key && { color: COLORS.accent, fontWeight: '600' },
               ]}>
                 {f.label}
               </Text>
               {filter === f.key && (
-                <View style={[styles.filterIndicator, { backgroundColor: COLORS.primary }]} />
+                <View style={[styles.filterIndicator, { backgroundColor: COLORS.accent }]} />
               )}
             </Pressable>
           ))}
@@ -392,11 +392,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     gap: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 5,
   },
   statLabel: {
     fontSize: 11,
@@ -480,6 +475,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.surface,
     borderRadius: BorderRadius.md,
+    borderWidth: 0,
     paddingHorizontal: 8,
     paddingVertical: 6,
     gap: 8,
@@ -494,6 +490,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     color: COLORS.text,
+    borderWidth: 0,
   },
   navButton: {
     paddingHorizontal: 8,
