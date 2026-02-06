@@ -255,7 +255,7 @@
     "costPrice": "Precio de coste",
     "salePrice": "Precio de venta",
     "location": "Ubicación",
-    "lowStockAlert": "Alerta de stock bajo",
+    "lowStockAlert": "Alerta stock bajo",
     "outOfStock": "Agotado",
     "inStock": "En stock",
     "reorder": "Reponer",

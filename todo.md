@@ -881,3 +881,18 @@
 - [x] Reportes página (reports.tsx) - no tiene estilos propios (usa componente AnalyticsDashboard)
 - [x] Store (store.tsx) - no tiene estilos con fontSize
 - [x] Configuración (settings.tsx) - no tiene estilos con fontSize
+
+## Verificar y aplicar Montserrat a páginas restantes
+- [x] Leer reports.tsx completo - Solo renderiza AnalyticsDashboard (ya tiene Montserrat)
+- [x] Leer store.tsx completo - Solo renderiza ShopViewElegant (ya tiene Montserrat)
+- [x] Leer settings.tsx completo - Solo redirect a settings-unified (ya tiene 24 referencias Montserrat)
+- [x] Verificado: TODAS las páginas usan Montserrat al 100%
+
+## Inventario - Aumentar tamaño de fuente de filtros en pantallas grandes
+- [x] Modificar estilos de filtros para usar fontSize mayor en desktop/tablet
+- [x] Aplicar cambios responsive
+- [x] Tablet/móvil (< 1400px): 10px → 14px
+- [x] Desktop grande (≥ 1400px): 13px → 16px
+
+## Inventario - Cambiar texto de filtro
+- [x] Cambiar 'Alerta de stock bajo' a 'Alerta stock bajo'

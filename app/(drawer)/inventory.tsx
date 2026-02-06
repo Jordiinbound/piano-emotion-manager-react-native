@@ -284,7 +284,7 @@ export default function InventoryScreen() {
                   styles.filterText,
                   { 
                     color: textSecondary,
-                    fontSize: width < 1400 ? 10 : 13, // 10px para tablet/móvil, 13px para desktop grande
+                    fontSize: width < 1400 ? 14 : 16, // 14px para tablet/móvil, 16px para desktop grande
                   },
                   filter === f.key && { color: accent, fontWeight: '600' },
                 ]}
