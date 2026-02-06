@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   filterChip: {
-    paddingVertical: Spacing.xs,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xs,
     position: 'relative',
     minWidth: '15%',
