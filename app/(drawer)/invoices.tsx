@@ -144,7 +144,7 @@ export default function InvoicesScreen() {
       if (false) { // Mantener estructura pero deshabilitar
       }
       setHeaderConfig({
-        title: 'Facturaci\u00f3n',
+        title: 'Facturacion',
         subtitle,
         icon: 'doc.plaintext',
         showBackButton: false,

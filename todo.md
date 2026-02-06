@@ -833,3 +833,15 @@
 - [x] Mantener consistencia con otros filtros de la app
 - [x] Agregado COLORS.accent a la paleta de colores
 
+
+## Facturación - Ajustes de texto y fuentes
+- [x] Cambiar título de "Facturación" a "Facturacion" (sin acento)
+- [x] Aplicar fuente Montserrat a los filtros (Todas, Borrador, etc.) - ya estaba aplicado
+
+- [x] Aplicar fuente Montserrat a filtros de Inventario (filterText)
+
+- [x] Aplicar fuente Montserrat a la barra lateral (sidebar)
+- [x] Secciones (MAIN, COMERCIAL, HERRAMIENTAS) → Montserrat-SemiBold
+- [x] Items del menú → Montserrat-Regular (normal) y Montserrat-Bold (activo)
+- [x] Subtítulo del header → Montserrat-Regular
+

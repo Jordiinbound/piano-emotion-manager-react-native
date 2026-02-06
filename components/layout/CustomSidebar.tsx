@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 8,
     letterSpacing: 0.5,
+    fontFamily: 'Montserrat-SemiBold',
   },
   menuItem: {
     flexDirection: 'row',
@@ -218,9 +219,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: COLORS.textGray,
     fontWeight: '500',
+    fontFamily: 'Montserrat-Regular',
   },
   menuLabelActive: {
     color: COLORS.primary,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
   },
 });

@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.8)',
     marginTop: 2,
+    fontFamily: 'Montserrat-Regular',
   },
   rightSection: {
     flexDirection: 'row',
