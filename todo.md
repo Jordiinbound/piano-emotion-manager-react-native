@@ -500,3 +500,11 @@
 - [x] Reducir altura de filtros (paddingVertical: Spacing.xs)
 - [x] Cambiar de scroll horizontal a múltiples filas (flexWrap)
 - [x] Aplicar diseño de tabs de configuración (indicador inferior, fontSize 15)
+
+## Sistema de Categorías Configurables (2026-02-06)
+
+- [x] Crear tabla inventory_categories en base de datos
+- [x] Crear tRPC procedures para CRUD de categorías (list, getById, create, update, delete, reorder)
+- [ ] Crear sección en Configuración para gestionar categorías
+- [ ] Actualizar filtros de inventario para usar categorías dinámicas
+- [ ] Crear script de migración de categorías hardcodeadas a BD

@@ -802,3 +802,44 @@ export const serviceProductUsageRelations = relations(serviceProductUsage, ({ on
     references: [stockMovements.id],
   }),
 }));
+
+// ============================================================================
+// Tabla de Categorías Configurables
+// ============================================================================
+
+/**
+ * Tabla de Categorías de Inventario Configurables
+ * Permite a los usuarios definir sus propias categorías personalizadas
+ */
+export const inventoryCategories = pgTable('inventory_categories', {
+  id: serial('id').primaryKey(),
+  
+  // Identificación
+  key: varchar('key', { length: 50 }).notNull().unique(), // e.g., 'strings', 'hammers'
+  label: varchar('label', { length: 100 }).notNull(), // e.g., 'Cuerdas', 'Macillos'
+  icon: varchar('icon', { length: 50 }).notNull().default('doc.text.fill'), // SF Symbol name
+  
+  // Orden de visualización
+  displayOrder: integer('display_order').notNull().default(0),
+  
+  // Estado
+  isActive: boolean('is_active').notNull().default(true),
+  isSystem: boolean('is_system').notNull().default(false), // true para categorías predefinidas
+  
+  // Multi-tenant
+  organizationId: integer('organization_id'),
+  
+  // Timestamps
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (table) => ({
+  keyIdx: uniqueIndex('inventory_categories_key_idx').on(table.key, table.organizationId),
+  orderIdx: index('inventory_categories_order_idx').on(table.displayOrder),
+}));
+
+/**
+ * Relaciones de categorías de inventario
+ */
+export const inventoryCategoriesRelations = relations(inventoryCategories, ({ many }) => ({
+  // Aquí se pueden añadir relaciones con productos si es necesario
+}));
