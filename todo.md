@@ -773,3 +773,9 @@
 - [x] No hay errores en consola
 - [x] Problema: periodButton tenía sombra sin Platform.select
 - [x] Corregido: agregado Platform.select con boxShadow para web
+
+## Aumentar sombras en Dashboard (más visibles)
+- [x] Previsión próximos 30 días - sombra poco visible → aumentada
+- [x] Próximas Citas - no se ve la sombra → aumentada
+- [x] Acciones Rápidas - sombras poco definidas (por el gradiente) → aumentada
+- [x] Acciones Rápidas - gradiente aclara demasiado el color original → oscurecido

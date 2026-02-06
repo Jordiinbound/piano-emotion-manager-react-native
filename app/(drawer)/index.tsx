@@ -482,7 +482,7 @@ function ActionButton({ icon, label, onPress }: ActionButtonProps) {
       onPress={onPress}
     >
       <LinearGradient
-        colors={['#f0a088', '#ed9178', '#e88568']} // Terracota sutil: menos contraste
+        colors={['#e88568', '#e07a5f', '#d86f54']} // Terracota más cercano al color original
         start={{ x: 1, y: 1 }}
         end={{ x: 0, y: 0 }}
         style={styles.actionButtonGradient as any}
@@ -684,14 +684,14 @@ const styles = StyleSheet.create({
     minHeight: 160,
     ...Platform.select({
       web: {
-        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.18), 0 4px 8px rgba(0,0,0,0.12)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
-        elevation: 8,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.18,
+        shadowRadius: 20,
+        elevation: 10,
       },
     }),
   },
@@ -778,14 +778,14 @@ const styles = StyleSheet.create({
     minHeight: 250,
     ...Platform.select({
       web: {
-        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1)',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.18), 0 4px 8px rgba(0,0,0,0.12)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
-        elevation: 8,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.18,
+        shadowRadius: 20,
+        elevation: 10,
       },
     }),
   },
@@ -889,14 +889,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       web: {
-        boxShadow: '0 6px 16px rgba(224, 122, 95, 0.5), 0 3px 6px rgba(224, 122, 95, 0.3)',
+        boxShadow: '0 8px 20px rgba(224, 122, 95, 0.6), 0 4px 8px rgba(224, 122, 95, 0.4)',
       },
       default: {
         shadowColor: COLORS.accent,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.5,
-        shadowRadius: 16,
-        elevation: 10,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.6,
+        shadowRadius: 20,
+        elevation: 12,
       },
     }),
   },
