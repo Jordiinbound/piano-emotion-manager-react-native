@@ -512,3 +512,8 @@
 ## Ajustes Responsive Filtros (2026-02-06)
 
 - [x] Reducir tamaño de fuente de filtros a la mitad para móvil/tablet (15px → 7.5px)
+
+## Sombras Contenedores Inventario (2026-02-06)
+
+- [x] Añadir sombras al contenedor de búsqueda (shadowOffset: 2px, opacity: 0.08, radius: 6px)
+- [x] Añadir sombras al contenedor de filtros (shadowOffset: 2px, opacity: 0.08, radius: 6px)

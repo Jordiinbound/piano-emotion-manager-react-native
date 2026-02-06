@@ -364,6 +364,11 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
   searchRow: {
     flexDirection: 'row',
@@ -390,6 +395,11 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     borderBottomWidth: 1,
     marginBottom: Spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
   filtersContainer: {
     flexDirection: 'row',
