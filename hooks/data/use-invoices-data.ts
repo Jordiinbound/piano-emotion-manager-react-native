@@ -19,7 +19,7 @@ type ServerInvoice = {
   dueDate: Date | null;
   status: 'draft' | 'sent' | 'paid' | 'cancelled' | 'overdue';
   subtotal: string;
-  tax: string;
+  taxAmount: string;  // Corregido: era 'tax', debe ser 'taxAmount'
   total: string;
   notes: string | null;
   items: any;
@@ -61,10 +61,27 @@ function serverToLocalInvoice(server: ServerInvoice): LocalInvoice {
       : undefined,
     status: server.status,
     subtotal: parseFloat(server.subtotal),
-    tax: parseFloat(server.tax),
+    tax: parseFloat(server.taxAmount),  // Corregido: server usa taxAmount
     total: parseFloat(server.total),
     notes: server.notes || undefined,
-    items: Array.isArray(server.items) ? server.items : [],
+    items: (() => {
+      // Manejar items que pueden venir como string JSON, array, o null
+      if (!server.items) return [];
+      if (Array.isArray(server.items)) return server.items;
+      if (typeof server.items === 'string') {
+        try {
+          const parsed = JSON.parse(server.items);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+      // Si es un objeto pero no array, intentar extraer si tiene una propiedad items
+      if (typeof server.items === 'object' && 'items' in server.items) {
+        return Array.isArray(server.items.items) ? server.items.items : [];
+      }
+      return [];
+    })(),
     createdAt: server.createdAt instanceof Date 
       ? server.createdAt.toISOString() 
       : String(server.createdAt),
@@ -209,7 +226,7 @@ export function useInvoicesData(options: UseInvoicesDataOptions = {}) {
           dueDate: invoice.dueDate ? new Date(invoice.dueDate) : null,
           status: invoice.status,
           subtotal: invoice.subtotal.toString(),
-          tax: invoice.tax.toString(),
+          taxAmount: invoice.tax.toString(),  // Corregido: backend espera taxAmount
           total: invoice.total.toString(),
           notes: invoice.notes || null,
           items: invoice.items,
@@ -237,7 +254,7 @@ export function useInvoicesData(options: UseInvoicesDataOptions = {}) {
       if (updates.dueDate !== undefined) updateData.dueDate = updates.dueDate ? new Date(updates.dueDate) : null;
       if (updates.status !== undefined) updateData.status = updates.status;
       if (updates.subtotal !== undefined) updateData.subtotal = updates.subtotal.toString();
-      if (updates.tax !== undefined) updateData.tax = updates.tax.toString();
+      if (updates.tax !== undefined) updateData.taxAmount = updates.tax.toString();  // Corregido: backend espera taxAmount
       if (updates.total !== undefined) updateData.total = updates.total.toString();
       if (updates.notes !== undefined) updateData.notes = updates.notes || null;
       if (updates.items !== undefined) updateData.items = updates.items;

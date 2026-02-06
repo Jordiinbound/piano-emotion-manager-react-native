@@ -619,5 +619,9 @@
 - [x] Ruta dinámica /invoice/[id].tsx ya existe
 - [x] Identificado problema: listado usa useInvoicesData (tRPC), detalle usaba useInvoices (AsyncStorage)
 - [x] Cambiado detalle para usar useInvoicesData (misma fuente de datos que listado)
-- [ ] Probar que cada factura del listado abre su propio detalle
+- [x] Cada factura ahora abre su propio detalle (número, cliente, fecha correctos)
+- [x] Corregido tipo ServerInvoice: tax → taxAmount (coincide con schema)
+- [x] Mejorada conversión de items JSON (maneja string, array, null)
+- [x] Corregidas conversiones en addInvoice y updateInvoice
+- [ ] Probar que items y totales se muestran correctamente
 - [ ] Verificar persistencia de cambios de estado
