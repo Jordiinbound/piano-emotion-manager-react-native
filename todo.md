@@ -575,11 +575,22 @@
 - [x] Eliminados estilos filterChipActive y filterChipTextActive
 
 ## Ajustes de Diseño en Facturas
-- [x] Color de acento de filtros activos ya es azul corporativo (#003a8c)
+- [x] Color de acento de filtros activos cambiado a coral (COLORS.accent)
 - [x] Aumentar intensidad de sombras en tarjetas de estadísticas (shadowOpacity 0.15, shadowRadius 10)
 - [x] Aumentar intensidad de sombras en caja de búsqueda (shadowOpacity 0.2, shadowRadius 15)
 - [x] Aumentar intensidad de sombras en dropdowns (shadowOpacity 0.15, shadowRadius 10)
-- [x] Eliminar bordes de dropdowns (solo sombras)
+- [x] Eliminar bordes de dropdowns con borderWidth: 0 explícito
 - [x] Aumentar intensidad de sombras en cards de facturas (shadowOpacity 0.15, shadowRadius 12)
 - [x] Aumentar intensidad de sombras en chips de filtros (shadowOpacity 0.15, shadowRadius 10)
 - [x] Eliminar bordes de cards de facturas (solo sombras)
+- [x] Ajustar breakpoint de tamaño de fuente a 768px (coincide con aparición del sidebar)
+- [x] Ordenamiento de facturas cambiado a fecha ascendente (más cercana en el tiempo primero)
+
+## Bugs Críticos en Detalle de Factura
+- [x] Asignación automática de número de factura a facturas antiguas sin número
+- [x] Carga automática del nombre del cliente desde clientId
+- [x] Número de factura se muestra en el título del header
+- [x] Items/conceptos se cargan correctamente desde datos guardados
+- [x] Total se calcula automáticamente si no existe en datos guardados
+- [x] Botón para cambiar estado entre "Pagada" ↔ "Pendiente" implementado
+- [x] Sombras agregadas a todas las cajas de información (shadowOpacity 0.15, shadowRadius 10)

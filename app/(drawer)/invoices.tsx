@@ -119,7 +119,10 @@ export default function InvoicesScreen() {
         
         return matchesOverdue;
       })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .sort((a, b) => {
+        // Ordenar por fecha ascendente (más cercana en el tiempo primero)
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      });
   }, [invoices, params.filter]);
 
   const statusFilters = useMemo(() => [

@@ -71,6 +71,11 @@ export default function InvoiceDetailScreen() {
         // Crear copia para no mutar el original
         const invoiceData = { ...invoice };
         
+        // Asignar número de factura si no existe (migración de facturas antiguas)
+        if (!invoiceData.invoiceNumber) {
+          invoiceData.invoiceNumber = `2026/${String(invoices.length + 1).padStart(6, '0')}`;
+        }
+        
         // Poblar clientName desde clientId si no existe
         if (invoiceData.clientId && !invoiceData.clientName) {
           const client = clients.find(c => c.id === invoiceData.clientId);
@@ -317,25 +322,38 @@ export default function InvoiceDetailScreen() {
     }
   };
 
-  const handleMarkPaid = async () => {
+  const handleToggleStatus = async () => {
     if (!id || isNew) return;
     
+    const isPaid = form.status === 'paid';
+    const newStatus = isPaid ? 'draft' : 'paid';
+    const statusLabel = isPaid ? 'Pendiente' : 'Pagada';
+    
     try {
-      await markAsPaid(id);
-      
-      // Actualizar el estado local
-      setForm(prev => ({
-        ...prev,
-        status: 'paid',
-        paidAt: new Date().toISOString()
-      }));
+      if (isPaid) {
+        // Cambiar de pagada a pendiente
+        await updateInvoice(id, { status: 'draft', paidAt: undefined });
+        setForm(prev => ({
+          ...prev,
+          status: 'draft',
+          paidAt: undefined
+        }));
+      } else {
+        // Cambiar de pendiente a pagada
+        await markAsPaid(id);
+        setForm(prev => ({
+          ...prev,
+          status: 'paid',
+          paidAt: new Date().toISOString()
+        }));
+      }
       
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert('✅ Factura Pagada', 'La factura ha sido marcada como pagada correctamente.');
+      Alert.alert(`✅ Factura ${statusLabel}`, `La factura ha sido marcada como ${statusLabel.toLowerCase()} correctamente.`);
     } catch (error) {
-      console.error('Error al marcar como pagada:', error);
+      console.error('Error al cambiar estado:', error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Error', 'No se pudo marcar la factura como pagada. Inténtalo de nuevo.');
+      Alert.alert('Error', 'No se pudo cambiar el estado de la factura. Inténtalo de nuevo.');
     }
   };
 
@@ -603,12 +621,19 @@ export default function InvoiceDetailScreen() {
               <IconSymbol name="paperplane.fill" size={20} color="#FFFFFF" />
               <ThemedText style={[styles.actionButtonText, { color: '#FFFFFF' }]}>Enviar por Email</ThemedText>
             </Pressable>
-            {form.status !== 'paid' && (
-              <Pressable style={[styles.actionButtonFull, { backgroundColor: success }]} onPress={handleMarkPaid}>
-                <IconSymbol name="checkmark.circle.fill" size={20} color="#FFFFFF" />
-                <ThemedText style={[styles.actionButtonText, { color: '#FFFFFF' }]}>Marcar como Pagada</ThemedText>
-              </Pressable>
-            )}
+            <Pressable 
+              style={[styles.actionButtonFull, { backgroundColor: form.status === 'paid' ? accent : success }]} 
+              onPress={handleToggleStatus}
+            >
+              <IconSymbol 
+                name={form.status === 'paid' ? "arrow.counterclockwise.circle.fill" : "checkmark.circle.fill"} 
+                size={20} 
+                color="#FFFFFF" 
+              />
+              <ThemedText style={[styles.actionButtonText, { color: '#FFFFFF' }]}>
+                {form.status === 'paid' ? 'Marcar como Pendiente' : 'Marcar como Pagada'}
+              </ThemedText>
+            </Pressable>
             <Pressable 
               style={[styles.actionButtonFull, { backgroundColor: accent }]} 
               onPress={async () => {
@@ -787,6 +812,11 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     gap: Spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 5,
   },
   sectionHeader: {
     flexDirection: 'row',
