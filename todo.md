@@ -718,3 +718,9 @@
 - [x] Aplicar Montserrat a filterChipText (SemiBold)
 - [x] Aplicar Montserrat a statLabel (estadísticas: Total, Pendiente, Cobrado)
 - [x] Aplicar Montserrat a statValue (valores de estadísticas)
+
+## Color del Total en Detalle de Factura
+- [x] Al marcar como Pendiente, el total debe cambiar a color coral/naranja
+- [x] Al volver a marcar como Pagada, el total debe volver a verde
+- [x] Corregido: draft ahora usa accent (coral) en lugar de textSecondary (gris)
+- [ ] Verificar que el color se actualiza en tiempo real sin recargar

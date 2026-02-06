@@ -430,7 +430,7 @@ export default function InvoiceDetailScreen() {
         return { color: error, bgColor: `${error}10`, borderColor: error };
       case 'draft':
       default:
-        return { color: textSecondary, bgColor: 'transparent', borderColor: borderColor };
+        return { color: accent, bgColor: 'transparent', borderColor: borderColor };
     }
   };
   const statusStyle = getStatusStyle(form.status || 'draft');
