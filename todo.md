@@ -679,3 +679,17 @@
 ## Cambiar "Facturación" por "Facturacion" (sin acento)
 - [x] Fuente Arkhip no soporta caracteres con acentos
 - [x] Cambiado drawerLabel y title en app/(drawer)/_layout.tsx (líneas 95-96)
+
+
+## Cambiar Color de Cantidad en Facturas Pagadas
+- [x] Cantidad (€248.88) se muestra en naranja incluso cuando factura está PAGADA
+- [x] Debería mostrarse en verde cuando estado es 'paid' para coherencia visual
+- [x] Aplicar color según estado en listado (InvoiceCard): paid → verde, sent → naranja, draft → gris
+- [x] Aplicar color según estado en detalle (TOTAL): paid → verde, sent → naranja, draft → gris
+
+## Aumentar Sombra del Badge de Estado
+- [x] Sombra actual es demasiado sutil y no se percibe
+- [x] shadowOffset: height 2 → 4
+- [x] shadowOpacity: 0.15 → 0.3 (doble)
+- [x] shadowRadius: 8 → 12
+- [x] elevation: 4 → 8 (Android)

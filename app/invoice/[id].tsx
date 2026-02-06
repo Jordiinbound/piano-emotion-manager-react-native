@@ -611,7 +611,7 @@ export default function InvoiceDetailScreen() {
           </View>
           <View style={[styles.totalRow, styles.totalFinal]}>
             <ThemedText style={styles.totalLabel}>TOTAL</ThemedText>
-            <ThemedText style={[styles.totalValue, { color: accent }]}>€{totals.total.toFixed(2)}</ThemedText>
+            <ThemedText style={[styles.totalValue, { color: statusStyle.color }]}>€{totals.total.toFixed(2)}</ThemedText>
           </View>
         </View>
 
@@ -846,10 +846,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginBottom: Spacing.sm,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   statusText: {
     fontSize: 12,

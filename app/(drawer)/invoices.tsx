@@ -353,7 +353,7 @@ function InvoiceCard({ invoice, onPress }: { invoice: Invoice; onPress: () => vo
       
       <View style={styles.invoiceFooter}>
         <Text style={styles.invoiceDate}>{formatDate(invoice.date)}</Text>
-        <Text style={styles.invoiceTotal}>€{invoice.total.toFixed(2)}</Text>
+        <Text style={[styles.invoiceTotal, { color: config.color }]}>€{invoice.total.toFixed(2)}</Text>
       </View>
     </Pressable>
   );
