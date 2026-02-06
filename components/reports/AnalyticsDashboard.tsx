@@ -31,6 +31,7 @@ import { useTranslation } from '@/hooks/use-translation';
 // Paleta de colores profesional (tonos matizados y suaves)
 const COLORS = {
   primary: '#5b7fc7',      // Azul matizado (antes #2563eb)
+  accent: '#e07a5f',       // Terracota/Coral (color principal de la app)
   secondary: '#6b7a8f',    // Gris azulado suave (antes #64748b)
   success: '#52a67d',      // Verde suave (antes #10b981)
   warning: '#d9a05b',      // Naranja/dorado suave (antes #f59e0b)
@@ -141,7 +142,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
             {period.label}
           </Text>
           {selected === period.key && (
-            <View style={[styles.periodIndicator, { backgroundColor: COLORS.primary }]} />
+            <View style={[styles.periodIndicator, { backgroundColor: COLORS.accent }]} />
           )}
         </Pressable>
       ))}

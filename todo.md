@@ -827,3 +827,9 @@
 - [x] Problema encontrado: Pressable usado pero no importado
 - [x] Solución: Agregar Pressable a los imports de react-native
 
+
+## Reportes - Color del filtro seleccionado
+- [x] Cambiar color de línea indicadora de azul (#5b7fc7) a coral (#e07a5f)
+- [x] Mantener consistencia con otros filtros de la app
+- [x] Agregado COLORS.accent a la paleta de colores
+
