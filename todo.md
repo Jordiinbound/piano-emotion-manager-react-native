@@ -644,3 +644,8 @@
 - [x] Modificado useMemo de totals para usar valores guardados (form.subtotal, form.tax, form.total)
 - [x] Fallback a cálculo desde items solo si no existen valores guardados
 - [ ] Probar que IVA y TOTAL se muestran correctamente
+
+
+## Alinear Dropdowns con Cards de Facturas
+- [x] Agregado paddingHorizontal: Spacing.md a periodSelectorContainer
+- [x] Dropdowns ahora alineados con el margen de las cards

@@ -476,6 +476,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: Spacing.sm,
     alignItems: 'center',
+    paddingHorizontal: Spacing.md,  // Alinear con cards de facturas
   },
   periodSelector: {
     flexDirection: 'row',
