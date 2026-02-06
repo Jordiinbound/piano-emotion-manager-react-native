@@ -900,3 +900,8 @@
 ## Dashboard - Ajustes de sombras
 - [x] Reducir sombra de botones de Acciones Rápidas
 - [x] Aplicar sombras individuales a cada cita en Próximas Citas
+
+## Dashboard - Corrección de sombras (CRÍTICO)
+- [x] Investigar por qué las sombras no se renderizan en React Native Web
+- [x] Aplicar sombras VISIBLES a Acciones Rápidas (reducidas pero visibles)
+- [x] Aplicar sombras VISIBLES a cada cita en Próximas Citas

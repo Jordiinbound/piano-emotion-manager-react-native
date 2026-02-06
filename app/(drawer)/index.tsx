@@ -788,14 +788,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
       },
       default: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 6,
-        elevation: 3,
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
       },
     }),
   },
@@ -884,17 +884,16 @@ const styles = StyleSheet.create({
     width: 'calc(50% - 4.5px)', // 2 columnas
     minWidth: 117,
     minHeight: 63,
-    overflow: 'hidden',
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
+        boxShadow: '0 3px 10px rgba(0, 0, 0, 0.15)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.12,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 5,
       },
     }),
   },
@@ -904,6 +903,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     height: '100%',
+    borderRadius: 4,
+    overflow: 'hidden',
   },
   actionButtonPressed: {
     opacity: 0.8,
