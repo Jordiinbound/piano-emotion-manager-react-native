@@ -168,8 +168,8 @@ export default function DashboardScreen() {
         >
           <LinearGradient
             colors={hasAlerts 
-              ? ['#e89090', '#e08080', '#d87070'] // Rojo sutil: menos contraste
-              : ['#75c8a0', '#65b890', '#5aad85'] // Verde sutil: menos contraste
+              ? ['#d66b6b', '#d16565', '#cc5f5f'] // Rojo sutil: gradiente más leve
+              : ['#52a67d', '#4d9e76', '#48966f'] // Verde sutil: gradiente más leve
             }
             start={{ x: 1, y: 0 }}
             end={{ x: 0, y: 0 }}

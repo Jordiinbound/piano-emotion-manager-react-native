@@ -792,3 +792,9 @@
 - [x] Las sombras no se aplican correctamente en algunos elementos
 - [x] Aplicar diseño más limpio y plano
 
+
+## Barra de alertas - Suavizar gradiente
+- [x] Gradiente demasiado pronunciado (de rojo a rosado claro)
+- [x] Reducir contraste entre inicio y final del gradiente
+- [x] Aplicar tonos más sutiles (de #d66b6b a #cc5f5f)
+
