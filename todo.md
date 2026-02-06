@@ -657,3 +657,20 @@
 - [x] Botón X limpia toda la búsqueda de una vez
 - [ ] Probar que ahora se pueden borrar varios caracteres antes de la recarga
 - [ ] Probar que el botón X limpia instantáneamente
+
+
+## Agregar Spinner de Carga en Detalle de Factura
+- [x] Factura tarda mucho en cargar (datos se obtienen correctamente pero sin feedback visual)
+- [x] Agregado loading al hook useInvoicesData
+- [x] Importado LoadingSpinner
+- [x] Agregado condicional para mostrar spinner cuando loading && !isNew
+- [x] Agregado estilo loadingContainer (flex, centrado vertical y horizontal)
+- [x] Spinner se muestra antes del return principal
+
+## Invalidar Caché al Cambiar Estado de Factura (CRÍTICO)
+- [ ] Al marcar factura como pagada, el cambio no aparece en listado hasta recargar página
+- [x] Verificado: updateMutation YA tiene utils.invoices.list.invalidate() en onSuccess
+- [x] La invalidación está configurada correctamente
+- [ ] Problema real: la pantalla de facturas no reacciona a la invalidación
+- [ ] Investigar por qué la query no se recarga automáticamente
+- [ ] Posible solución: usar refetchOnWindowFocus o refetchInterval

@@ -14,6 +14,7 @@ import * as Haptics from 'expo-haptics';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { LoadingSpinner } from '@/components/loading-spinner';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useInvoicesData } from '@/hooks/data/use-invoices-data';
 import { useBusinessInfo } from '@/hooks/use-invoices';
@@ -33,7 +34,7 @@ export default function InvoiceDetailScreen() {
   const insets = useSafeAreaInsets();
   const isNew = id === 'new';
 
-  const { invoices, addInvoice, updateInvoice, deleteInvoice, getInvoice, markAsSent, markAsPaid } = useInvoicesData();
+  const { invoices, loading, addInvoice, updateInvoice, deleteInvoice, getInvoice, markAsSent, markAsPaid } = useInvoicesData();
   const { businessInfo } = useBusinessInfo();
   const { rates, getActiveRates } = useServiceCatalog();
   const { clients } = useClientsData();
@@ -415,6 +416,22 @@ export default function InvoiceDetailScreen() {
     }
   };
   const statusStyle = getStatusStyle(form.status || 'draft');
+
+  // Mostrar spinner mientras carga
+  if (loading && !isNew) {
+    return (
+      <ThemedView style={styles.container}>
+        <Stack.Screen
+          options={{
+            title: 'Cargando factura...',
+          }}
+        />
+        <View style={styles.loadingContainer}>
+          <LoadingSpinner />
+        </View>
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={styles.container}>
@@ -807,6 +824,11 @@ export default function InvoiceDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollView: {
     flex: 1,
