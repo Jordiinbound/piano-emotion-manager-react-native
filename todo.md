@@ -713,3 +713,8 @@
 - [x] Verificar si @/lib/invoice-pdf existe y funciones están implementadas (TODO OK)
 - [x] Agregar console.log para depurar por qué no funcionan
 - [ ] Revisar consola del navegador para ver qué está fallando
+
+- [x] Tabs de filtro (Todas, Borrador, Enviada, Pagada, Anulada) no usan Montserrat
+- [x] Aplicar Montserrat a filterChipText (SemiBold)
+- [x] Aplicar Montserrat a statLabel (estadísticas: Total, Pendiente, Cobrado)
+- [x] Aplicar Montserrat a statValue (valores de estadísticas)

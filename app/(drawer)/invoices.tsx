@@ -428,10 +428,12 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    fontFamily: 'Montserrat-SemiBold',
   },
   statValue: {
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
   },
 
   // Búsqueda
@@ -472,6 +474,7 @@ const styles = StyleSheet.create({
   filterChipText: {
     fontSize: 15, // Se ajustará dinámicamente en el componente
     color: COLORS.textSecondary,
+    fontFamily: 'Montserrat-SemiBold',
   },
   filterIndicator: {
     position: 'absolute',
