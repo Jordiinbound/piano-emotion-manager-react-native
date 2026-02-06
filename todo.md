@@ -488,3 +488,9 @@
 
 - [x] Aplicar sombras a los elementos de la página de inventario (itemCard, filterChip, LowStockAlert, botones)
 - [x] Añadir todas las categorías de productos en los filtros (pins, keys, pedals, hardware, chemicals, other)
+
+## Bugs Inventario (2026-02-06)
+
+- [x] Sombras no visibles en botones "Pedir" y filtros (aumentadas: offset 4, opacity 0.45, radius 8)
+- [x] Filtros no responsive - se cortan en móvil/tablet (ajustado flexGrow: 0)
+- [x] Icono de escáner sigue siendo interrogante (cambiado a camera.fill)

@@ -245,7 +245,7 @@ export default function InventoryScreen() {
             style={[styles.scanButton, { backgroundColor: accent }]}
             onPress={handleScanBarcode}
           >
-            <IconSymbol name="qrcode" size={22} color="#FFFFFF" />
+            <IconSymbol name="camera.fill" size={22} color="#FFFFFF" />
           </Pressable>
         </View>
       </View>
@@ -397,8 +397,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   filtersContainer: {
-    paddingHorizontal: Spacing.md,
+    paddingLeft: Spacing.md,
+    paddingRight: Spacing.md,
     gap: Spacing.sm,
+    flexGrow: 0,
   },
   filterChip: {
     borderRadius: 4,
@@ -407,10 +409,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   filterGradient: {
     paddingHorizontal: 10,
@@ -438,10 +440,10 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 6,
   },
   itemContent: {
     flex: 1,
