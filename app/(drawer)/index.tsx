@@ -717,14 +717,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     ...Platform.select({
       web: {
-        boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1)',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.22), 0 3px 8px rgba(0,0,0,0.16)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-        elevation: 6,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.22,
+        shadowRadius: 16,
+        elevation: 8,
       },
     }),
   },
@@ -773,6 +773,22 @@ const styles = StyleSheet.create({
     minHeight: 70,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
+    backgroundColor: COLORS.white,
+    marginBottom: 8,
+    borderRadius: 4,
+    paddingHorizontal: 12,
+    ...Platform.select({
+      web: {
+        boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+      },
+      default: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        elevation: 3,
+      },
+    }),
   },
   appointmentRowPressed: {
     opacity: 0.7,
@@ -856,14 +872,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       web: {
-        boxShadow: '0 8px 20px rgba(224, 122, 95, 0.6), 0 4px 8px rgba(224, 122, 95, 0.4)',
+        boxShadow: '0 6px 16px rgba(0, 0, 0, 0.25), 0 3px 8px rgba(0, 0, 0, 0.18)',
       },
       default: {
-        shadowColor: COLORS.accent,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.6,
-        shadowRadius: 20,
-        elevation: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.25,
+        shadowRadius: 16,
+        elevation: 10,
       },
     }),
   },

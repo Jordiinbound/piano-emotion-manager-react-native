@@ -806,3 +806,9 @@
 - [x] Usar Montserrat-Bold para peso 700+
 - [x] 16 estilos actualizados: alertText, alertLink, sectionTitle, todayText, metricValue, metricLabel, linkText, circleValue, circleLabel, appointmentTimeText, appointmentDateText, appointmentTitle, appointmentClient, emptyText, loadingText, actionButtonText
 
+
+## Dashboard - Mejorar sombras
+- [x] Añadir sombras a cada cita individual en Próximas Citas (sombra suave con elevation 3)
+- [x] Cambiar sombra de Acciones Rápidas de terracota claro a gris oscuro (rgba(0,0,0,0.25))
+- [x] Aumentar sombras de indicadores circulares de previsión (de 0.15 a 0.22 opacity)
+
