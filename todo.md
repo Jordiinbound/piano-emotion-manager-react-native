@@ -820,3 +820,10 @@
 - [x] Copiar fuentes Montserrat a public/fonts/
 - [x] Agregar 3 declaraciones @font-face para Montserrat-Regular, SemiBold y Bold
 
+
+## Reportes - Página en blanco (CRÍTICO)
+- [x] Revisar AnalyticsDashboard.tsx completo
+- [x] Buscar errores de sintaxis o referencias incorrectas
+- [x] Problema encontrado: Pressable usado pero no importado
+- [x] Solución: Agregar Pressable a los imports de react-native
+
