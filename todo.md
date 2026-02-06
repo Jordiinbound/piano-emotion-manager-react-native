@@ -743,3 +743,17 @@
 ## Campo de búsqueda sin Montserrat
 - [x] Input "Buscar factura..." no usa Montserrat
 - [x] Aplicar Montserrat al estilo del input de búsqueda (components/search-bar.tsx)
+
+## Cambiar todas las fuentes en Reportes a Montserrat
+- [x] Títulos principales (REPORTES, Panel de Control, etc.) - Montserrat-Bold
+- [x] Subtítulos (Análisis y estadísticas, Resumen de rendimiento, etc.) - Montserrat-Regular
+- [x] Tabs de período (Últimos 7 días, Últimos 30 días, etc.) - Montserrat-SemiBold
+- [x] Valores de métricas (9947 €, 93, 16, etc.) - Montserrat-Bold
+- [x] Labels de métricas (Ingresos, Servicios, Clientes, etc.) - Montserrat-Medium
+- [x] Descripciones (vs periodo anterior, Nuevos en el periodo, etc.) - Montserrat-Regular
+- [x] Porcentajes (33.2%, 128.6%, etc.) - Montserrat-Bold
+- [x] Gráficos (valores del eje, labels, etc.) - Montserrat aplicado a todos
+- [x] Cambiar estilo de filtros de período para que coincida con Facturas/Inventario
+- [x] Eliminado LinearGradient y fondo coral
+- [x] Agregado estilo de tabs con línea inferior naranja
+- [x] Aplicado mismo estilo que Facturas: fondo blanco, sombra, línea activa

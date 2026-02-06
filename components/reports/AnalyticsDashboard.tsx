@@ -16,7 +16,6 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path, Circle, Line, Text as SvgText, Rect } from 'react-native-svg';
 import {
   useDashboardData,
@@ -129,32 +128,21 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
   return (
     <View style={styles.periodSelector}>
       {periods.map((period) => (
-        <TouchableOpacity
+        <Pressable
           key={period.key}
-          style={[
-            styles.periodButton,
-            selected === period.key && { overflow: 'hidden' },
-          ]}
+          style={styles.periodButton}
           onPress={() => onSelect(period.key)}
-          activeOpacity={0.7}
         >
-          {selected === period.key ? (
-            <LinearGradient
-              colors={['#d66b4f', '#e07a5f', '#ed9178']} // Coral: oscuro izquierda → claro derecha
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.periodButtonGradient as any}
-            >
-              <Text style={[styles.periodButtonText, styles.periodButtonTextActive]}>
-                {period.label}
-              </Text>
-            </LinearGradient>
-          ) : (
-            <Text style={styles.periodButtonText}>
-              {period.label}
-            </Text>
+          <Text style={[
+            styles.periodButtonText,
+            selected === period.key && { color: COLORS.primary, fontWeight: '600' },
+          ]}>
+            {period.label}
+          </Text>
+          {selected === period.key && (
+            <View style={[styles.periodIndicator, { backgroundColor: COLORS.primary }]} />
           )}
-        </TouchableOpacity>
+        </Pressable>
       ))}
     </View>
   );
@@ -660,11 +648,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 14,
+    fontFamily: 'Montserrat-Regular',
     color: COLORS.text.secondary,
   },
   exportButton: {
@@ -681,36 +671,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 24,
     marginBottom: 20,
-    gap: 8,
+    gap: 4,
   },
   periodButton: {
     flex: 1,
-    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    position: 'relative',
+    alignItems: 'center',
     backgroundColor: COLORS.card,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  periodButtonGradient: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-  },
-  periodButtonActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    borderRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 5,
   },
   periodButtonText: {
     fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
     color: COLORS.text.secondary,
   },
-  periodButtonTextActive: {
-    color: COLORS.card,
+  periodIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: '10%',
+    right: '10%',
+    height: 3,
+    borderRadius: 4,
   },
   metricsGrid: {
     flexDirection: 'row',
@@ -759,11 +748,13 @@ const styles = StyleSheet.create({
   changeText: {
     fontSize: 14,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
     flexShrink: 1,
   },
   metricValue: {
     fontSize: 22,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
@@ -771,10 +762,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.text.secondary,
     fontWeight: '500',
+    fontFamily: 'Montserrat-Medium',
     flexWrap: 'wrap', // Permitir múltiples líneas para texto completo
   },
   metricSubtitle: {
     fontSize: 11,
+    fontFamily: 'Montserrat-Regular',
     color: COLORS.text.tertiary,
     marginTop: 2,
   },
@@ -788,11 +781,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
   sectionSubtitle: {
     fontSize: 13,
+    fontFamily: 'Montserrat-Regular',
     color: COLORS.text.secondary,
   },
   chartCard: {
@@ -814,6 +809,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
+    fontFamily: 'Montserrat-Regular',
     color: COLORS.text.secondary,
     marginTop: 8,
   },
@@ -826,10 +822,12 @@ const styles = StyleSheet.create({
   emptyChartText: {
     fontSize: 14,
     fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
     color: COLORS.text.secondary,
   },
   emptyChartSubtext: {
     fontSize: 12,
+    fontFamily: 'Montserrat-Regular',
     color: COLORS.text.tertiary,
   },
   horizontalBarContainer: {
@@ -854,6 +852,7 @@ const styles = StyleSheet.create({
   barLabel: {
     fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
     color: COLORS.text.primary,
     flex: 1,
   },
@@ -875,10 +874,12 @@ const styles = StyleSheet.create({
   barValue: {
     fontSize: 14,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
     color: COLORS.text.primary,
   },
   barPercentage: {
     fontSize: 11,
+    fontFamily: 'Montserrat-Regular',
     color: COLORS.text.secondary,
   },
   quickStatsGrid: {
@@ -908,17 +909,20 @@ const styles = StyleSheet.create({
   quickStatValue: {
     fontSize: 22,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
   quickStatTitle: {
     fontSize: 13,
     fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
     color: COLORS.text.primary,
     marginBottom: 2,
   },
   quickStatSubtitle: {
     fontSize: 11,
+    fontFamily: 'Montserrat-Regular',
     color: COLORS.text.secondary,
   },
   viewAllButton: {
@@ -936,6 +940,7 @@ const styles = StyleSheet.create({
   viewAllButtonText: {
     color: COLORS.primary,
     fontWeight: '700',
+    fontFamily: 'Montserrat-Bold',
     fontSize: 15,
   },
   bottomPadding: {
