@@ -917,3 +917,7 @@
 ## Dashboard - Igualar sombras con Este Mes
 - [x] Copiar sombras de tarjetas "Este Mes" a Próximas Citas
 - [x] Copiar sombras de tarjetas "Este Mes" a Acciones Rápidas
+
+## Dashboard - Corregir fuente Montserrat en Este Mes
+- [x] Verificar por qué Montserrat no se aplica correctamente en tarjetas de Este Mes
+- [x] Aplicar corrección para forzar fuente Montserrat
