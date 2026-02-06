@@ -501,6 +501,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     textAlign: 'center',  // Centrar texto horizontalmente
     paddingHorizontal: Spacing.sm,  // Margen interno para no estar pegado
+    outline: 'none',  // Eliminar borde de focus en web
   },
   navButton: {
     paddingHorizontal: 8,

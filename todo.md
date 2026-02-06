@@ -632,3 +632,7 @@
 - [x] Agregar padding horizontal para margen interno
 - [x] Aumentar padding vertical en periodSelector para mejor alineación
 - [x] Agregar justifyContent: 'center' en periodSelector
+
+
+## Eliminar Borde de Focus en Dropdowns de Facturas
+- [x] Agregado outline: 'none' en estilo picker para eliminar borde de focus
