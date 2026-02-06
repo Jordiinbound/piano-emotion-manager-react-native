@@ -779,3 +779,10 @@
 - [x] Próximas Citas - no se ve la sombra → aumentada
 - [x] Acciones Rápidas - sombras poco definidas (por el gradiente) → aumentada
 - [x] Acciones Rápidas - gradiente aclara demasiado el color original → oscurecido
+
+## Reportes sigue en página en blanco (CRÍTICO)
+- [x] Error ocurrió al cambiar todas las fuentes a Montserrat
+- [x] Uncaught (in promise) en consola
+- [x] Verificar nombres de fuentes Montserrat
+- [x] Problema: usé Montserrat-Medium que NO existe
+- [x] Solución: cambiar a Montserrat-SemiBold

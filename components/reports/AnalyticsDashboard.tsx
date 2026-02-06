@@ -769,7 +769,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.text.secondary,
     fontWeight: '500',
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: 'Montserrat-SemiBold',
     flexWrap: 'wrap', // Permitir múltiples líneas para texto completo
   },
   metricSubtitle: {
