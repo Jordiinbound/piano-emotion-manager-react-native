@@ -845,3 +845,10 @@
 - [x] Items del menú → Montserrat-Regular (normal) y Montserrat-Bold (activo)
 - [x] Subtítulo del header → Montserrat-Regular
 
+
+## Reportes - Aplicar Montserrat y color coral
+- [x] Filtros de período → Montserrat (ya estaba) + color coral cuando seleccionado (cambiado de COLORS.primary a COLORS.accent)
+- [x] Todos los textos de la página → Montserrat (ya estaban todos aplicados)
+- [x] Fuentes SVG en gráficos → Montserrat-SemiBold y Montserrat-Bold
+- [ ] Investigar problema de barra lateral que desaparece en hard refresh
+

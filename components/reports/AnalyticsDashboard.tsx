@@ -137,7 +137,7 @@ const PeriodSelector: React.FC<PeriodSelectorProps> = ({ selected, onSelect }) =
         >
           <Text style={[
             styles.periodButtonText,
-            selected === period.key && { color: COLORS.primary, fontWeight: '600' },
+            selected === period.key && { color: COLORS.accent, fontWeight: '600' },
           ]}>
             {period.label}
           </Text>
@@ -257,7 +257,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
                 fontSize={labelFontSize}  // Responsive
                 fontWeight="600"
                 textAnchor="end"
-                fontFamily="System"
+                fontFamily="Montserrat-SemiBold"
               >
                 {formatValue(line.value)}
               </SvgText>
@@ -291,7 +291,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
                   fontSize={labelFontSize}
                   fontWeight="700"
                   textAnchor="middle"
-                  fontFamily="System"
+                  fontFamily="Montserrat-Bold"
                 >
                   {formatValue(item.value)}
                 </SvgText>
@@ -304,7 +304,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, color = COLORS.primary }) => 
                   fontSize="11"
                   fontWeight="600"
                   textAnchor="middle"
-                  fontFamily="System"
+                  fontFamily="Montserrat-SemiBold"
                   transform={`rotate(-45, ${x + barWidth / 2}, ${chartHeight - 20})`}
                 >
                   {item.label}
