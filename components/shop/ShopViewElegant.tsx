@@ -472,7 +472,8 @@ const styles = StyleSheet.create({
   blogCategoriesTitle: {
     fontSize: 24,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: Spacing.lg,
@@ -495,18 +496,21 @@ const styles = StyleSheet.create({
   blogTabText: {
     fontSize: 15,
     fontWeight: '500',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     color: '#6B7280',
   },
   blogTabTextActive: {
     color: Colors.light.accent,
     fontWeight: '600',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
   },
   blogTabCount: {
     fontSize: 14,
     fontWeight: '400',
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: '#9CA3AF',
   },
   blogTabCountActive: {

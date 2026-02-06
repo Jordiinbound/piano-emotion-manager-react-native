@@ -274,7 +274,8 @@ export default function InvoicesScreen() {
                   key={index} 
                   label={month} 
                   value={index}
-                  style={{ fontFamily: 'Montserrat-Regular' }}
+                  style={{ fontFamily: 'Montserrat',
+    fontWeight: '400' }}
                 />
               ))}
             </Picker>
@@ -292,7 +293,8 @@ export default function InvoicesScreen() {
                   key={year} 
                   label={year.toString()} 
                   value={year}
-                  style={{ fontFamily: 'Montserrat-Regular' }}
+                  style={{ fontFamily: 'Montserrat',
+    fontWeight: '400' }}
                 />
               ))}
             </Picker>
@@ -428,12 +430,14 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   statValue: {
     fontSize: 18,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
   },
 
   // Búsqueda
@@ -474,7 +478,8 @@ const styles = StyleSheet.create({
   filterChipText: {
     fontSize: 15, // Se ajustará dinámicamente en el componente
     color: COLORS.textSecondary,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   filterIndicator: {
     position: 'absolute',
@@ -516,7 +521,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',  // Centrar texto horizontalmente
     paddingHorizontal: Spacing.sm,  // Margen interno para no estar pegado
     outline: 'none',  // Eliminar borde de focus en web
-    fontFamily: 'Montserrat-Regular',  // Usar fuente del theme
+    fontFamily: 'Montserrat',
+    fontWeight: '400',  // Usar fuente del theme
   },
   navButton: {
     paddingHorizontal: 8,
@@ -586,7 +592,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: COLORS.text,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -598,13 +605,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
   },
   invoiceClient: {
     fontSize: 14,
     color: COLORS.textSecondary,
     fontWeight: '500',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   invoiceFooter: {
     flexDirection: 'row',
@@ -615,12 +624,14 @@ const styles = StyleSheet.create({
   invoiceDate: {
     fontSize: 12,
     color: COLORS.textTertiary,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   invoiceTotal: {
     fontSize: 16,
     fontWeight: '700',
     color: COLORS.accent,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
   },
 });

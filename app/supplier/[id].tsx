@@ -306,7 +306,8 @@ const styles = StyleSheet.create({
   },
   typeButtonText: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   toggleRow: {
     flexDirection: 'row',

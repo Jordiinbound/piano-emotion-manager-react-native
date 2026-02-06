@@ -183,7 +183,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 8,
     letterSpacing: 0.5,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   menuItem: {
     flexDirection: 'row',
@@ -219,11 +220,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: COLORS.textGray,
     fontWeight: '500',
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   menuLabelActive: {
     color: COLORS.primary,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
   },
 });

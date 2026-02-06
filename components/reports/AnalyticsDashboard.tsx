@@ -650,13 +650,15 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: COLORS.text.secondary,
   },
   exportButton: {
@@ -699,7 +701,8 @@ const styles = StyleSheet.create({
   periodButtonText: {
     fontSize: 13,
     fontWeight: '600',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     color: COLORS.text.secondary,
   },
   periodIndicator: {
@@ -757,13 +760,15 @@ const styles = StyleSheet.create({
   changeText: {
     fontSize: 14,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     flexShrink: 1,
   },
   metricValue: {
     fontSize: 22,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
@@ -771,12 +776,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.text.secondary,
     fontWeight: '500',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     flexWrap: 'wrap', // Permitir múltiples líneas para texto completo
   },
   metricSubtitle: {
     fontSize: 11,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: COLORS.text.tertiary,
     marginTop: 2,
   },
@@ -790,13 +797,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
   sectionSubtitle: {
     fontSize: 13,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: COLORS.text.secondary,
   },
   chartCard: {
@@ -818,7 +827,8 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: COLORS.text.secondary,
     marginTop: 8,
   },
@@ -831,12 +841,14 @@ const styles = StyleSheet.create({
   emptyChartText: {
     fontSize: 14,
     fontWeight: '600',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     color: COLORS.text.secondary,
   },
   emptyChartSubtext: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: COLORS.text.tertiary,
   },
   horizontalBarContainer: {
@@ -861,7 +873,8 @@ const styles = StyleSheet.create({
   barLabel: {
     fontSize: 13,
     fontWeight: '600',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     color: COLORS.text.primary,
     flex: 1,
   },
@@ -883,12 +896,14 @@ const styles = StyleSheet.create({
   barValue: {
     fontSize: 14,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     color: COLORS.text.primary,
   },
   barPercentage: {
     fontSize: 11,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: COLORS.text.secondary,
   },
   quickStatsGrid: {
@@ -918,20 +933,23 @@ const styles = StyleSheet.create({
   quickStatValue: {
     fontSize: 22,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     color: COLORS.text.primary,
     marginBottom: 4,
   },
   quickStatTitle: {
     fontSize: 13,
     fontWeight: '600',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     color: COLORS.text.primary,
     marginBottom: 2,
   },
   quickStatSubtitle: {
     fontSize: 11,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: COLORS.text.secondary,
   },
   viewAllButton: {
@@ -949,7 +967,8 @@ const styles = StyleSheet.create({
   viewAllButtonText: {
     color: COLORS.primary,
     fontWeight: '700',
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     fontSize: 15,
   },
   bottomPadding: {

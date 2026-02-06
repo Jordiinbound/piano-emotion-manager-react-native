@@ -434,7 +434,8 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: 15, // Se ajustará dinámicamente en el componente
     color: '#6B7280',
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   filterIndicator: {
     position: 'absolute',

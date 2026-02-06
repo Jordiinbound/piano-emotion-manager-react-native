@@ -201,7 +201,8 @@ const styles = StyleSheet.create({
   },
   categoryTitle: {
     fontSize: 18,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     marginBottom: Spacing.md,
     paddingHorizontal: Spacing.xs,
   },
@@ -232,7 +233,8 @@ const styles = StyleSheet.create({
   },
   moduleLabel: {
     fontSize: 14,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     textAlign: 'center',
   },
 });

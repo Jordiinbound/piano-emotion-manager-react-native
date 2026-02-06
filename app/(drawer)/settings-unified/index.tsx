@@ -349,7 +349,8 @@ export default function SettingsUnifiedScreen() {
                   style={[
                     styles.tabText,
                     dynamicStyles.tabText,
-                    activeTab === tab.id && { color: accent, fontFamily: 'Montserrat-SemiBold' },
+                    activeTab === tab.id && { color: accent, fontFamily: 'Montserrat',
+    fontWeight: '600' },
                   ]}
                 >
                   {tab.label}
@@ -386,7 +387,8 @@ export default function SettingsUnifiedScreen() {
                 style={[
                   styles.tabText,
                   dynamicStyles.tabText,
-                  activeTab === tab.id && { color: accent, fontFamily: 'Montserrat-SemiBold' },
+                  activeTab === tab.id && { color: accent, fontFamily: 'Montserrat',
+    fontWeight: '600' },
                 ]}
               >
                 {tab.label}
@@ -1213,7 +1215,8 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   tabsContainer: {
     flexGrow: 0,
@@ -1244,7 +1247,8 @@ const styles = StyleSheet.create({
   tabActive: {},
   tabText: {
     fontSize: 15,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: '#6B7280',
   },
   tabIndicator: {
@@ -1263,12 +1267,14 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     marginBottom: Spacing.sm,
   },
   sectionSubtitle: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     marginBottom: Spacing.md,
   },
   card: {
@@ -1307,12 +1313,14 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     marginBottom: 2,
   },
   cardSubtitle: {
     fontSize: 13,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   settingRow: {
     flexDirection: 'row',
@@ -1332,12 +1340,14 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     fontSize: 15,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     marginBottom: 2,
   },
   settingSublabel: {
     fontSize: 13,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   optionsRow: {
     gap: Spacing.sm,
@@ -1355,7 +1365,8 @@ const styles = StyleSheet.create({
   },
   optionButtonText: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   formGroup: {
     marginBottom: Spacing.md,
@@ -1365,7 +1376,8 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 13,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     marginBottom: Spacing.xs,
   },
   input: {
@@ -1374,7 +1386,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     fontSize: 15,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   inputSmall: {
     width: 80,
@@ -1386,7 +1399,8 @@ const styles = StyleSheet.create({
   },
   inputSuffix: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   countriesGrid: {
     gap: Spacing.sm,
@@ -1404,11 +1418,13 @@ const styles = StyleSheet.create({
   },
   countryName: {
     fontSize: 15,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   countryTax: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   modulesGrid: {
     flexDirection: 'row',
@@ -1436,7 +1452,8 @@ const styles = StyleSheet.create({
   },
   moduleName: {
     fontSize: 14,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     marginBottom: Spacing.xs,
   },
   premiumBadge: {
@@ -1451,7 +1468,8 @@ const styles = StyleSheet.create({
   },
   premiumBadgeText: {
     fontSize: 10,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
   },
   divider: {
     height: 1,
@@ -1475,11 +1493,13 @@ const styles = StyleSheet.create({
   },
   platformName: {
     fontSize: 15,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   platformStatus: {
     fontSize: 12,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   platformButton: {
     paddingHorizontal: Spacing.md,
@@ -1489,7 +1509,8 @@ const styles = StyleSheet.create({
   },
   platformButtonText: {
     fontSize: 13,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   actionRow: {
     flexDirection: 'row',
@@ -1506,12 +1527,14 @@ const styles = StyleSheet.create({
   },
   actionLabel: {
     fontSize: 15,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     marginBottom: 2,
   },
   actionSublabel: {
     fontSize: 13,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   saveButtonContainer: {
     position: 'absolute',
@@ -1543,7 +1566,8 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     color: '#FFFFFF',
   },
 });

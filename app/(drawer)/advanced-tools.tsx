@@ -299,7 +299,8 @@ const styles = StyleSheet.create({
   },
   categoryTitle: {
     fontSize: 18,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     marginBottom: Spacing.md,
     paddingHorizontal: Spacing.xs,
   },
@@ -331,7 +332,8 @@ const styles = StyleSheet.create({
   },
   moduleLabel: {
     fontSize: 14,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     textAlign: 'center',
   },
   badge: {
@@ -345,7 +347,8 @@ const styles = StyleSheet.create({
   badgeText: {
     color: '#FFFFFF',
     fontSize: 10,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
   },
   modalOverlay: {
     flex: 1,
@@ -368,12 +371,14 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    fontFamily: 'Montserrat-Bold',
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     color: '#FFFFFF',
   },
   modalPrice: {
     fontSize: 18,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     color: 'rgba(255, 255, 255, 0.9)',
   },
   modalBody: {
@@ -382,7 +387,8 @@ const styles = StyleSheet.create({
   },
   modalSubtitle: {
     fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     marginBottom: Spacing.sm,
   },
   featureRow: {
@@ -392,7 +398,8 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 15,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     flex: 1,
   },
   modalFooter: {
@@ -408,7 +415,8 @@ const styles = StyleSheet.create({
   upgradeButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
   },
   cancelButton: {
     padding: Spacing.md,
@@ -417,6 +425,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: '#6B7280',
     fontSize: 15,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
 });

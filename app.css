@@ -7,21 +7,21 @@
 }
 
 @font-face {
-  font-family: 'Montserrat-Regular';
+  font-family: 'Montserrat';
   src: url('/fonts/Montserrat-Regular.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Montserrat-SemiBold';
+  font-family: 'Montserrat';
   src: url('/fonts/Montserrat-SemiBold.otf') format('opentype');
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Montserrat-Bold';
+  font-family: 'Montserrat';
   src: url('/fonts/Montserrat-Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;

@@ -435,7 +435,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
   },
   introCard: {
@@ -447,7 +448,8 @@ const styles = StyleSheet.create({
   },
   introTitle: {
     fontSize: 20,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
@@ -455,13 +457,15 @@ const styles = StyleSheet.create({
   },
   introText: {
     fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     textAlign: 'center',
     lineHeight: 20,
   },
   lastBackup: {
     fontSize: 13,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     marginTop: Spacing.md,
   },
   actionCard: {
@@ -485,13 +489,15 @@ const styles = StyleSheet.create({
   },
   actionTitle: {
     fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     marginBottom: 4,
   },
   actionDescription: {
     fontSize: 13,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     lineHeight: 18,
   },
   warningCard: {
@@ -503,14 +509,16 @@ const styles = StyleSheet.create({
   },
   warningTitle: {
     fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     marginTop: Spacing.sm,
     marginBottom: Spacing.xs,
   },
   warningText: {
     fontSize: 13,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     lineHeight: 18,
     marginBottom: Spacing.md,
   },
@@ -527,7 +535,8 @@ const styles = StyleSheet.create({
   dangerButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
   },
   tipsCard: {
@@ -537,13 +546,15 @@ const styles = StyleSheet.create({
   },
   tipsTitle: {
     fontSize: 16,
-    fontFamily: 'Montserrat-SemiBold',
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     marginBottom: Spacing.md,
   },
   tipItem: {
     fontSize: 13,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
     lineHeight: 22,
   },
 });

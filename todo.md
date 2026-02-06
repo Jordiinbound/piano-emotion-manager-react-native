@@ -861,3 +861,14 @@
 - [x] Causa raíz: screenOptions no era reactivo al headerConfig
 - [x] Solución: usar useMemo para hacer screenOptions reactivo
 
+
+## Verificar fuentes Montserrat al 100%
+- [x] Verificar que app.css tiene @font-face correctos
+- [x] Verificar que las fuentes están en public/fonts/
+- [x] Verificar que los estilos usan fontFamily correcto
+- [x] Identificar por qué no se aplican en web
+- [x] Causa raíz: React Native Web no reconoce nombres con guiones (Montserrat-Regular)
+- [x] Solución: Usar fontFamily: 'Montserrat' con fontWeight: '400'/'600'/'700'
+- [x] Actualizado app.css para usar un solo nombre de familia
+- [x] Reemplazadas 112 referencias en 14 archivos
+
