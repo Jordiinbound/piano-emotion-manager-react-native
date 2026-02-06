@@ -6,26 +6,27 @@
  */
 
 import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
-import { db } from '../../drizzle/db';
-import { inventoryCategories } from '../../drizzle/inventory-schema';
-import { eq, and, desc, asc } from 'drizzle-orm';
+import { router, protectedProcedure } from '../_core/trpc.js';
+import * as db from '../db.js';
+import { inventoryCategories } from '../../drizzle/inventory-schema.js';
+import { eq, and, asc } from 'drizzle-orm';
 
 export const inventoryCategoriesRouter = router({
   /**
    * Listar todas las categorías activas
    */
   list: protectedProcedure.query(async ({ ctx }) => {
-    const categories = await db
+    const database = await db.getDb();
+    if (!database) return [];
+
+    const categories = await database
       .select()
       .from(inventoryCategories)
       .where(
         and(
           eq(inventoryCategories.isActive, true),
-          // Filtrar por organización si existe, o mostrar categorías del sistema
-          ctx.user.organizationId
-            ? eq(inventoryCategories.organizationId, ctx.user.organizationId)
-            : eq(inventoryCategories.organizationId, null)
+          // Mostrar solo categorías del sistema (organizationId = null)
+          eq(inventoryCategories.organizationId, null)
         )
       )
       .orderBy(asc(inventoryCategories.displayOrder));
@@ -39,15 +40,16 @@ export const inventoryCategoriesRouter = router({
   getById: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input, ctx }) => {
-      const [category] = await db
+      const database = await db.getDb();
+      if (!database) return null;
+
+      const [category] = await database
         .select()
         .from(inventoryCategories)
         .where(
           and(
             eq(inventoryCategories.id, input.id),
-            ctx.user.organizationId
-              ? eq(inventoryCategories.organizationId, ctx.user.organizationId)
-              : eq(inventoryCategories.organizationId, null)
+            eq(inventoryCategories.organizationId, null)
           )
         )
         .limit(1);
@@ -68,21 +70,21 @@ export const inventoryCategoriesRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const database = await db.getDb();
+      if (!database) throw new Error('Database not available');
+
       // Calcular el siguiente displayOrder si no se proporciona
       let displayOrder = input.displayOrder;
       if (displayOrder === undefined) {
-        const [maxOrder] = await db
+        const result = await database
           .select({ max: inventoryCategories.displayOrder })
           .from(inventoryCategories)
-          .where(
-            ctx.user.organizationId
-              ? eq(inventoryCategories.organizationId, ctx.user.organizationId)
-              : eq(inventoryCategories.organizationId, null)
-          );
-        displayOrder = (maxOrder?.max || 0) + 1;
+          .where(eq(inventoryCategories.organizationId, null));
+        
+        displayOrder = (result[0]?.max || 0) + 1;
       }
 
-      const [newCategory] = await db
+      const [newCategory] = await database
         .insert(inventoryCategories)
         .values({
           key: input.key,
@@ -91,7 +93,7 @@ export const inventoryCategoriesRouter = router({
           displayOrder,
           isActive: true,
           isSystem: false,
-          organizationId: ctx.user.organizationId || null,
+          organizationId: null,
         })
         .$returningId();
 
@@ -112,18 +114,19 @@ export const inventoryCategoriesRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const database = await db.getDb();
+      if (!database) throw new Error('Database not available');
+
       const { id, ...updates } = input;
 
-      // Verificar que la categoría existe y pertenece a la organización
-      const [existing] = await db
+      // Verificar que la categoría existe
+      const [existing] = await database
         .select()
         .from(inventoryCategories)
         .where(
           and(
             eq(inventoryCategories.id, id),
-            ctx.user.organizationId
-              ? eq(inventoryCategories.organizationId, ctx.user.organizationId)
-              : eq(inventoryCategories.organizationId, null)
+            eq(inventoryCategories.organizationId, null)
           )
         )
         .limit(1);
@@ -137,7 +140,7 @@ export const inventoryCategoriesRouter = router({
         throw new Error('No se pueden editar categorías del sistema');
       }
 
-      await db
+      await database
         .update(inventoryCategories)
         .set({
           ...updates,
@@ -154,16 +157,17 @@ export const inventoryCategoriesRouter = router({
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      // Verificar que la categoría existe y pertenece a la organización
-      const [existing] = await db
+      const database = await db.getDb();
+      if (!database) throw new Error('Database not available');
+
+      // Verificar que la categoría existe
+      const [existing] = await database
         .select()
         .from(inventoryCategories)
         .where(
           and(
             eq(inventoryCategories.id, input.id),
-            ctx.user.organizationId
-              ? eq(inventoryCategories.organizationId, ctx.user.organizationId)
-              : eq(inventoryCategories.organizationId, null)
+            eq(inventoryCategories.organizationId, null)
           )
         )
         .limit(1);
@@ -178,7 +182,7 @@ export const inventoryCategoriesRouter = router({
       }
 
       // Soft delete: marcar como inactiva
-      await db
+      await database
         .update(inventoryCategories)
         .set({
           isActive: false,
@@ -199,9 +203,12 @@ export const inventoryCategoriesRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const database = await db.getDb();
+      if (!database) throw new Error('Database not available');
+
       // Actualizar el displayOrder de cada categoría según su posición en el array
       for (let i = 0; i < input.categoryIds.length; i++) {
-        await db
+        await database
           .update(inventoryCategories)
           .set({
             displayOrder: i + 1,
@@ -210,9 +217,7 @@ export const inventoryCategoriesRouter = router({
           .where(
             and(
               eq(inventoryCategories.id, input.categoryIds[i]),
-              ctx.user.organizationId
-                ? eq(inventoryCategories.organizationId, ctx.user.organizationId)
-                : eq(inventoryCategories.organizationId, null)
+              eq(inventoryCategories.organizationId, null)
             )
           );
       }
