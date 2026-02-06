@@ -909,3 +909,7 @@
 ## Dashboard - Sombras con técnica alternativa
 - [x] Aplicar bordes sutiles a Acciones Rápidas (alternativa a sombras CSS)
 - [x] Aplicar bordes sutiles a Próximas Citas (alternativa a sombras CSS)
+
+## Dashboard - Restaurar sombras correctas
+- [x] Restaurar sombras originales de Acciones Rápidas (que funcionaban) con menor intensidad
+- [x] Aplicar las mismas sombras a Próximas Citas
