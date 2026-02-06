@@ -428,11 +428,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 15,
-    elevation: 8,
   },
 
   // Filtros compactos

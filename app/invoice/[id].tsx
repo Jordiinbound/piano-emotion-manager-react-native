@@ -15,7 +15,8 @@ import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { useInvoices, useBusinessInfo } from '@/hooks/use-invoices';
+import { useInvoicesData } from '@/hooks/data/use-invoices-data';
+import { useBusinessInfo } from '@/hooks/use-invoices';
 import { useServiceCatalog } from '@/hooks/use-service-catalog';
 import { useClientsData, usePianosData, useServicesData } from '@/hooks/data';
 import { useInventoryData } from '@/hooks/data';
@@ -32,7 +33,7 @@ export default function InvoiceDetailScreen() {
   const insets = useSafeAreaInsets();
   const isNew = id === 'new';
 
-  const { invoices, addInvoice, updateInvoice, deleteInvoice, getInvoice, markAsSent, markAsPaid } = useInvoices();
+  const { invoices, addInvoice, updateInvoice, deleteInvoice, getInvoice, markAsSent, markAsPaid } = useInvoicesData();
   const { businessInfo } = useBusinessInfo();
   const { rates, getActiveRates } = useServiceCatalog();
   const { clients } = useClientsData();

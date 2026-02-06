@@ -612,3 +612,12 @@
 ## Eliminar Sombra/Borde de Contenedor Superior en Facturas
 - [x] Envuelto statsRow y searchContainer en topSection sin sombras
 - [x] Eliminado borderBottom de filtersContainer (línea horizontal)
+- [x] Eliminada sombra de searchContainer (shadowOpacity, shadowRadius, elevation)
+
+
+## Corregir Navegación de Facturas a Detalle Específico (CRÍTICO)
+- [x] Ruta dinámica /invoice/[id].tsx ya existe
+- [x] Identificado problema: listado usa useInvoicesData (tRPC), detalle usaba useInvoices (AsyncStorage)
+- [x] Cambiado detalle para usar useInvoicesData (misma fuente de datos que listado)
+- [ ] Probar que cada factura del listado abre su propio detalle
+- [ ] Verificar persistencia de cambios de estado
