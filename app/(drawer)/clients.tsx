@@ -441,12 +441,15 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     fontSize: 28,
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     fontWeight: '700',
     color: COLORS.primary,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
+    fontFamily: 'Montserrat',
     fontWeight: '500',
     color: COLORS.textSecondary,
     textTransform: 'uppercase',
@@ -478,6 +481,8 @@ const styles = StyleSheet.create({
   },
   filterLabel: {
     fontSize: 11,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     color: COLORS.textSecondary,
     marginBottom: 6,
@@ -494,6 +499,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     fontSize: 14,
+    fontFamily: 'Montserrat',
     color: COLORS.textPrimary,
     fontWeight: '500',
     outlineStyle: 'none', // Eliminar outline en web
@@ -517,6 +523,7 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     fontSize: 13,
+    fontFamily: 'Montserrat',
     color: COLORS.textPrimary,
     fontWeight: '500',
   },
@@ -558,6 +565,8 @@ const styles = StyleSheet.create({
   },
   paginationButtonText: {
     fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     color: COLORS.primary,
   },
@@ -566,6 +575,8 @@ const styles = StyleSheet.create({
   },
   paginationInfo: {
     fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     color: COLORS.textPrimary,
   },
@@ -590,6 +601,8 @@ const styles = StyleSheet.create({
   headerButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
   },
 });

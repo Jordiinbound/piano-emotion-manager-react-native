@@ -872,3 +872,12 @@
 - [x] Actualizado app.css para usar un solo nombre de familia
 - [x] Reemplazadas 112 referencias en 14 archivos
 
+
+## Aplicar Montserrat a páginas sin fuentes personalizadas
+- [x] Agenda (agenda.tsx) - 7 estilos actualizados
+- [x] Clientes (clients.tsx) - actualizado con script
+- [x] Pianos (pianos.tsx) - actualizado con script
+- [x] Servicios (services.tsx) - actualizado con script
+- [x] Reportes página (reports.tsx) - no tiene estilos propios (usa componente AnalyticsDashboard)
+- [x] Store (store.tsx) - no tiene estilos con fontSize
+- [x] Configuración (settings.tsx) - no tiene estilos con fontSize

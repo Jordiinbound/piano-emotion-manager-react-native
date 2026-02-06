@@ -381,6 +381,8 @@ const styles = StyleSheet.create({
   },
   dateCount: {
     fontSize: 13,
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   appointmentCard: {
     flexDirection: 'row',
@@ -396,10 +398,13 @@ const styles = StyleSheet.create({
   },
   timeText: {
     fontSize: 16,
+    fontFamily: 'Montserrat',
     fontWeight: '600',
   },
   endTimeText: {
     fontSize: 12,
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   divider: {
     width: 3,
@@ -413,10 +418,13 @@ const styles = StyleSheet.create({
   },
   clientName: {
     fontSize: 15,
+    fontFamily: 'Montserrat',
     fontWeight: '600',
   },
   pianoInfo: {
     fontSize: 13,
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   appointmentMeta: {
     flexDirection: 'row',
@@ -431,10 +439,13 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 11,
+    fontFamily: 'Montserrat',
     fontWeight: '600',
   },
   durationText: {
     fontSize: 12,
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
   toggleButton: {
     padding: Spacing.sm,

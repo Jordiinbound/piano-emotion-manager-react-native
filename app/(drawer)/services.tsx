@@ -318,10 +318,13 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     fontSize: 28,
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     fontWeight: '700',
   },
   statLabel: {
     fontSize: 11,
+    fontFamily: 'Montserrat',
     fontWeight: '500',
     textAlign: 'center',
   },
@@ -349,6 +352,7 @@ const styles = StyleSheet.create({
   },
   filterText: {
     fontSize: 13,
+    fontFamily: 'Montserrat',
     fontWeight: '500',
   },
   list: {

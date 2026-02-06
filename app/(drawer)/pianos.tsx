@@ -415,11 +415,14 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     fontSize: 28,
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
     fontWeight: '700',
     color: COLORS.primary,
   },
   statLabel: {
     fontSize: 12,
+    fontFamily: 'Montserrat',
     fontWeight: '500',
     color: COLORS.textSecondary,
   },
@@ -451,6 +454,7 @@ const styles = StyleSheet.create({
   },
   filterText: {
     fontSize: 13,
+    fontFamily: 'Montserrat',
     fontWeight: '500',
     color: COLORS.textSecondary,
   },
@@ -466,6 +470,7 @@ const styles = StyleSheet.create({
   },
   paginationInfo: {
     fontSize: 13,
+    fontFamily: 'Montserrat',
     color: COLORS.textSecondary,
     textAlign: 'center',
   },
@@ -489,6 +494,8 @@ const styles = StyleSheet.create({
   },
   paginationButtonText: {
     fontSize: 13,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     color: COLORS.primary,
   },
@@ -497,6 +504,8 @@ const styles = StyleSheet.create({
   },
   paginationPageInfo: {
     fontSize: 13,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
     fontWeight: '600',
     color: COLORS.textPrimary,
   },
