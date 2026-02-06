@@ -243,7 +243,7 @@ export default function InvoicesScreen() {
             >
               <Text style={[
                 styles.filterChipText,
-                { fontSize: width < 1400 ? 10 : 13 },
+                { fontSize: width < 900 ? 11 : 14 },
                 filter === f.key && { color: COLORS.accent, fontWeight: '600' },
               ]}>
                 {f.label}
