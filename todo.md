@@ -548,3 +548,10 @@
 - [x] Aplicar mismo diseño de filtros de Inventario a pantalla de Facturas
 - [x] Añadir sombras a todos los elementos principales (cards, botones, contenedores)
 - [x] Mantener consistencia visual entre pantallas
+
+## Bugs en Detalle de Factura
+- [x] Badge de estado "Borrador" usa diseño antiguo, actualizar a diseño moderno compacto
+- [x] Botón "Marcar como Pagada" funciona correctamente (ya estaba bien implementado)
+- [x] Número de factura se muestra en header (problema: datos no se cargan de BD)
+- [x] Nombre del cliente se pobla automáticamente desde clientId
+- [x] Cálculo de totales funciona correctamente (problema: items vacíos en BD)

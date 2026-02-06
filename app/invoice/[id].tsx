@@ -68,12 +68,21 @@ export default function InvoiceDetailScreen() {
     if (!isNew && id) {
       const invoice = getInvoice(id);
       if (invoice) {
+        // Poblar clientName desde clientId si no existe
+        if (invoice.clientId && !invoice.clientName) {
+          const client = clients.find(c => c.id === invoice.clientId);
+          if (client) {
+            invoice.clientName = getClientFullName(client);
+            invoice.clientEmail = client.email;
+            invoice.clientAddress = getClientFormattedAddress(client);
+          }
+        }
         setForm(invoice);
       }
     } else {
       setForm(prev => ({ ...prev, business: businessInfo }));
     }
-  }, [id, isNew, invoices, businessInfo]);
+  }, [id, isNew, invoices, businessInfo, clients]);
 
   const totals = useMemo(() => {
     return calculateInvoiceTotals(form.items || []);
@@ -698,14 +707,19 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   statusBanner: {
-    padding: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     alignItems: 'center',
+    alignSelf: 'flex-start',
+    marginBottom: Spacing.sm,
   },
   statusText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   section: {
     padding: Spacing.md,
