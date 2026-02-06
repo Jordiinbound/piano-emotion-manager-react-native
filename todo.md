@@ -905,3 +905,7 @@
 - [x] Investigar por qué las sombras no se renderizan en React Native Web
 - [x] Aplicar sombras VISIBLES a Acciones Rápidas (reducidas pero visibles)
 - [x] Aplicar sombras VISIBLES a cada cita en Próximas Citas
+
+## Dashboard - Sombras con técnica alternativa
+- [x] Aplicar bordes sutiles a Acciones Rápidas (alternativa a sombras CSS)
+- [x] Aplicar bordes sutiles a Próximas Citas (alternativa a sombras CSS)
