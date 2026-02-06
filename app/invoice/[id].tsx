@@ -78,6 +78,11 @@ export default function InvoiceDetailScreen() {
           invoiceData.invoiceNumber = `2026/${String(invoices.length + 1).padStart(6, '0')}`;
         }
         
+        // Asegurar que siempre tenga businessInfo
+        if (!invoiceData.business) {
+          invoiceData.business = businessInfo;
+        }
+        
         // Poblar clientName desde clientId si no existe
         if (invoiceData.clientId && !invoiceData.clientName) {
           const client = clients.find(c => c.id === invoiceData.clientId);
@@ -113,11 +118,12 @@ export default function InvoiceDetailScreen() {
           status: invoiceData.status
         });
         
-        // Si se modificaron datos (número, cliente, totales), guardar en AsyncStorage
+        // Si se modificaron datos (número, cliente, totales, business), guardar en AsyncStorage
         const needsUpdate = !invoice.invoiceNumber || 
                            (invoiceData.clientId && !invoice.clientName) || 
                            !invoice.subtotal || 
-                           !invoice.total;
+                           !invoice.total ||
+                           !invoice.business;
         
         if (needsUpdate) {
           console.log('[Invoice Detail] Updating invoice with missing data');

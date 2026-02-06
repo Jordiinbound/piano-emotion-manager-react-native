@@ -116,14 +116,14 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
 <body>
   <div class="header">
     <div class="logo-section">
-      ${invoice.business.logo ? `<img src="${invoice.business.logo}" class="logo" alt="Logo">` : ''}
-      <div class="business-name">${invoice.business.name || 'Piano Tech'}</div>
+      ${invoice.business?.logo ? `<img src="${invoice.business.logo}" class="logo" alt="Logo">` : ''}
+      <div class="business-name">${invoice.business?.name || 'Piano Tech'}</div>
       <div class="business-info">
-        ${invoice.business.taxId ? `NIF/CIF: ${invoice.business.taxId}<br>` : ''}
-        ${invoice.business.address ? `${invoice.business.address}<br>` : ''}
-        ${invoice.business.postalCode || ''} ${invoice.business.city || ''}<br>
-        ${invoice.business.phone ? `Tel: ${invoice.business.phone}<br>` : ''}
-        ${invoice.business.email || ''}
+        ${invoice.business?.taxId ? `NIF/CIF: ${invoice.business.taxId}<br>` : ''}
+        ${invoice.business?.address ? `${invoice.business.address}<br>` : ''}
+        ${invoice.business?.postalCode || ''} ${invoice.business?.city || ''}<br>
+        ${invoice.business?.phone ? `Tel: ${invoice.business.phone}<br>` : ''}
+        ${invoice.business?.email || ''}
       </div>
     </div>
     <div class="invoice-section">
@@ -190,7 +190,7 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
   </div>
   ` : ''}
 
-  ${invoice.business.bankAccount ? `
+  ${invoice.business?.bankAccount ? `
   <div class="notes">
     <div class="notes-title">Datos bancarios</div>
     <p>IBAN: ${invoice.business.bankAccount}</p>
@@ -199,7 +199,7 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
 
   <div class="footer">
     <p>Gracias por confiar en nuestros servicios</p>
-    <p>${invoice.business.name || 'Piano Tech'} - ${invoice.business.email || ''}</p>
+    <p>${invoice.business?.name || 'Piano Tech'} - ${invoice.business?.email || ''}</p>
   </div>
 </body>
 </html>

@@ -724,3 +724,12 @@
 - [x] Al volver a marcar como Pagada, el total debe volver a verde
 - [x] Corregido: draft ahora usa accent (coral) en lugar de textSecondary (gris)
 - [ ] Verificar que el color se actualiza en tiempo real sin recargar
+
+## Errores en Botones de Factura (CRÍTICO)
+- [x] Error: Cannot read properties of undefined (reading 'logo') en openInvoiceForPrint
+- [x] invoice.business es undefined - agregado optional chaining (?.) en lib/invoice-pdf.ts
+- [x] invoice.business no se carga desde la BD - CORREGIDO: agregado en useEffect
+- [x] Asegurar que invoice.business siempre tenga businessInfo al cargar
+- [ ] invoice.clientEmail es undefined en handleSendEmail (depende de datos del cliente)
+- [ ] Botón "Exportar PDF" no tiene logs - buscar handler y agregar logs
+- [x] Solo funciona botón "Marcar como Pendiente/Pagada"
