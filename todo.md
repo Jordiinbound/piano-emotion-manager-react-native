@@ -483,3 +483,8 @@
 - [x] Hacer botón de escáner circular en lugar de cuadrado
 - [x] Reducir tamaño de los botones de filtro (fontSize: 11px, padding: 10/4px)
 - [x] Unificar estilos de texto entre alerta de stock bajo y listado de inventario (ThemedText, fontSize 16/13)
+
+## Nuevas Mejoras Inventario (2026-02-06)
+
+- [x] Aplicar sombras a los elementos de la página de inventario (itemCard, filterChip, LowStockAlert, botones)
+- [x] Añadir todas las categorías de productos en los filtros (pins, keys, pedals, hardware, chemicals, other)

@@ -203,7 +203,13 @@ export default function InventoryScreen() {
     { key: 'strings', label: t('inventory.categories.strings') },
     { key: 'hammers', label: t('inventory.categories.hammers') },
     { key: 'felts', label: t('inventory.categories.felts') },
+    { key: 'pins', label: MATERIAL_CATEGORY_LABELS.pins },
+    { key: 'keys', label: MATERIAL_CATEGORY_LABELS.keys },
+    { key: 'pedals', label: MATERIAL_CATEGORY_LABELS.pedals },
+    { key: 'hardware', label: MATERIAL_CATEGORY_LABELS.hardware },
+    { key: 'chemicals', label: MATERIAL_CATEGORY_LABELS.chemicals },
     { key: 'tools', label: t('inventory.categories.tools') },
+    { key: 'other', label: MATERIAL_CATEGORY_LABELS.other },
   ];
 
   return (
@@ -401,10 +407,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
   filterGradient: {
     paddingHorizontal: 10,
@@ -432,10 +438,10 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 5,
   },
   itemContent: {
     flex: 1,
