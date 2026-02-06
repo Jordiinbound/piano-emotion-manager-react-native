@@ -522,3 +522,11 @@
 ## Bug Crítico (2026-02-06)
 
 - [x] Corregir error de conexión a base de datos causado por últimos cambios en inventory.tsx (añadido fallback a hardcodeadas)
+
+## Reimplementación Sistema Categorías (2026-02-06)
+
+- [ ] Verificar y corregir router de categorías (tRPC)
+- [x] Verificar y corregir hook useInventoryCategories con manejo de errores (retry: 1, onError, staleTime)
+- [ ] Probar hook de forma aislada
+- [ ] Integrar en inventory.tsx con try-catch y fallback
+- [ ] Testing completo sin errores generales

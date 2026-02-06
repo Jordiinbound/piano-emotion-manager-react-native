@@ -16,22 +16,36 @@ export const inventoryCategoriesRouter = router({
    * Listar todas las categorías activas
    */
   list: protectedProcedure.query(async ({ ctx }) => {
-    const database = await db.getDb();
-    if (!database) return [];
+    console.log('[inventoryCategories.list] START - User:', ctx.user?.id);
+    
+    try {
+      const database = await db.getDb();
+      console.log('[inventoryCategories.list] Database obtained:', !!database);
+      
+      if (!database) {
+        console.error('[inventoryCategories.list] ERROR: Database not available');
+        return [];
+      }
 
-    const categories = await database
-      .select()
-      .from(inventoryCategories)
-      .where(
-        and(
-          eq(inventoryCategories.isActive, true),
-          // Mostrar solo categorías del sistema (organizationId = null)
-          eq(inventoryCategories.organizationId, null)
+      console.log('[inventoryCategories.list] Executing query...');
+      const categories = await database
+        .select()
+        .from(inventoryCategories)
+        .where(
+          and(
+            eq(inventoryCategories.isActive, true),
+            // Mostrar solo categorías del sistema (organizationId = null)
+            eq(inventoryCategories.organizationId, null)
+          )
         )
-      )
-      .orderBy(asc(inventoryCategories.displayOrder));
+        .orderBy(asc(inventoryCategories.displayOrder));
 
-    return categories;
+      console.log('[inventoryCategories.list] SUCCESS - Found', categories.length, 'categories');
+      return categories;
+    } catch (error) {
+      console.error('[inventoryCategories.list] ERROR:', error);
+      return [];
+    }
   }),
 
   /**
