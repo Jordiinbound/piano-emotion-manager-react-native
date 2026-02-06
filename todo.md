@@ -594,3 +594,7 @@
 - [x] Total se calcula automáticamente si no existe en datos guardados
 - [x] Botón para cambiar estado entre "Pagada" ↔ "Pendiente" implementado
 - [x] Sombras agregadas a todas las cajas de información (shadowOpacity 0.15, shadowRadius 10)
+
+## Ajuste de Sombras en Facturas
+- [x] Eliminar sombras de filtersContainer (contenedor de filtros)
+- [x] Aumentar sombras en fichas de datos statCard (shadowOpacity 0.2, shadowRadius 12, elevation 6)
