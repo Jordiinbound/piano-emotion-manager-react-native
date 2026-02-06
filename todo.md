@@ -812,3 +812,11 @@
 - [x] Cambiar sombra de Acciones Rápidas de terracota claro a gris oscuro (rgba(0,0,0,0.25))
 - [x] Aumentar sombras de indicadores circulares de previsión (de 0.15 a 0.22 opacity)
 
+
+## Fuentes Montserrat no se aplican en web
+- [x] Verificar carga de fuentes en app.json o expo config (ya estaban en _layout.tsx)
+- [x] Verificar que las fuentes se carguen con useFonts (correcto)
+- [x] Asegurar que funcione en React Native Web (agregadas declaraciones @font-face en app.css)
+- [x] Copiar fuentes Montserrat a public/fonts/
+- [x] Agregar 3 declaraciones @font-face para Montserrat-Regular, SemiBold y Bold
+
