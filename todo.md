@@ -852,3 +852,12 @@
 - [x] Fuentes SVG en gráficos → Montserrat-SemiBold y Montserrat-Bold
 - [ ] Investigar problema de barra lateral que desaparece en hard refresh
 
+
+## Problema crítico de navegación - Hard refresh
+- [x] Al hacer hard refresh, desaparece la barra lateral
+- [x] Aparece header incorrecto con botón back y texto en inglés
+- [x] Problema sistemático que ocurre en múltiples páginas
+- [x] Investigar configuración del drawer y headers
+- [x] Causa raíz: screenOptions no era reactivo al headerConfig
+- [x] Solución: usar useMemo para hacer screenOptions reactivo
+

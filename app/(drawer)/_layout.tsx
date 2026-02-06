@@ -8,6 +8,7 @@
 
 import { Drawer } from 'expo-router/drawer';
 import { useWindowDimensions } from 'react-native';
+import { useMemo } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomSidebar from '@/components/layout/CustomSidebar';
 import CustomHeader from '@/components/layout/CustomHeader';
@@ -21,35 +22,38 @@ function DrawerContent() {
   const isTabletOrDesktop = width >= TABLET_BREAKPOINT;
   const { headerConfig } = useHeader();
 
+  // Hacer screenOptions reactivo al headerConfig
+  const screenOptions = useMemo(() => ({ navigation }: any) => ({
+    drawerStyle: {
+      width: SIDEBAR_WIDTH,
+      backgroundColor: '#ffffff',
+    },
+    // Sidebar permanente en tablet/desktop, deslizable en móvil
+    drawerType: isTabletOrDesktop ? 'permanent' : 'slide',
+    header: () => (
+      <CustomHeader
+        title={headerConfig.title}
+        subtitle={headerConfig.subtitle}
+        icon={headerConfig.icon}
+        iconColor={headerConfig.iconColor}
+        showBackButton={headerConfig.showBackButton}
+        rightAction={headerConfig.rightAction}
+        onMenuPress={() => navigation.toggleDrawer()}
+        showMenuButton={!isTabletOrDesktop}
+      />
+    ),
+    headerShown: true,
+    // Swipe solo habilitado en móvil
+    swipeEnabled: !isTabletOrDesktop,
+    swipeEdgeWidth: 50,
+    // Overlay en móvil
+    overlayColor: 'rgba(0, 0, 0, 0.5)',
+  }), [headerConfig, isTabletOrDesktop]);
+
   return (
     <Drawer
       drawerContent={(props) => <CustomSidebar />}
-      screenOptions={({ navigation }) => ({
-        drawerStyle: {
-          width: SIDEBAR_WIDTH,
-          backgroundColor: '#ffffff',
-        },
-        // Sidebar permanente en tablet/desktop, deslizable en móvil
-        drawerType: isTabletOrDesktop ? 'permanent' : 'slide',
-        header: () => (
-          <CustomHeader
-            title={headerConfig.title}
-            subtitle={headerConfig.subtitle}
-            icon={headerConfig.icon}
-            iconColor={headerConfig.iconColor}
-            showBackButton={headerConfig.showBackButton}
-            rightAction={headerConfig.rightAction}
-            onMenuPress={() => navigation.toggleDrawer()}
-            showMenuButton={!isTabletOrDesktop}
-          />
-        ),
-        headerShown: true,
-        // Swipe solo habilitado en móvil
-        swipeEnabled: !isTabletOrDesktop,
-        swipeEdgeWidth: 50,
-        // Overlay en móvil
-        overlayColor: 'rgba(0, 0, 0, 0.5)',
-      })}
+      screenOptions={screenOptions as any}
     >
       {/* Pantalla principal - Dashboard */}
       <Drawer.Screen
