@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeader } from '@/contexts/HeaderContext';
-import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -33,6 +33,7 @@ export default function InventoryScreen() {
   const { t } = useTranslation();
   const { setHeaderConfig } = useHeader();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const { materials: items, loading, lowStockItems } = useInventoryData();
   const { suppliers } = useSuppliers();
   const [search, setSearch] = useState('');
@@ -262,7 +263,10 @@ export default function InventoryScreen() {
               <ThemedText
                 style={[
                   styles.filterText,
-                  { color: textSecondary },
+                  { 
+                    color: textSecondary,
+                    fontSize: width < 768 ? 7.5 : 15, // Mitad del tamaño para móvil/tablet
+                  },
                   filter === f.key && { color: accent, fontWeight: '600' },
                 ]}
               >
@@ -404,7 +408,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   filterText: {
-    fontSize: 15,
+    fontSize: 15, // Se ajustará dinámicamente en el componente
     color: '#6B7280',
   },
   filterIndicator: {

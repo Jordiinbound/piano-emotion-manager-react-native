@@ -508,3 +508,7 @@
 - [ ] Crear sección en Configuración para gestionar categorías
 - [ ] Actualizar filtros de inventario para usar categorías dinámicas
 - [ ] Crear script de migración de categorías hardcodeadas a BD
+
+## Ajustes Responsive Filtros (2026-02-06)
+
+- [x] Reducir tamaño de fuente de filtros a la mitad para móvil/tablet (15px → 7.5px)
