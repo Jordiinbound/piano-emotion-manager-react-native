@@ -543,3 +543,8 @@
 - [x] Agregar procedimiento initializeDefaultCategories
 - [ ] Probar creación/edición/eliminación de categorías desde UI
 - [ ] Verificar que filtros se actualicen automáticamente al cambiar categorías
+
+## Diseño de Filtros y Sombras en Facturas
+- [x] Aplicar mismo diseño de filtros de Inventario a pantalla de Facturas
+- [x] Añadir sombras a todos los elementos principales (cards, botones, contenedores)
+- [x] Mantener consistencia visual entre pantallas
