@@ -767,3 +767,9 @@
 - [x] Hacer sombra más pronunciada en banner de alertas
 - [x] Agregar sombra a indicadores circulares (Ingresos prev., Clientes riesgo, etc.)
 - [x] Agregar sombra a cajas de Próximas Citas y otros contenedores
+
+## Reportes va a página en blanco (CRÍTICO)
+- [x] Después de cambios de Montserrat, Reportes no carga
+- [x] No hay errores en consola
+- [x] Problema: periodButton tenía sombra sin Platform.select
+- [x] Corregido: agregado Platform.select con boxShadow para web
