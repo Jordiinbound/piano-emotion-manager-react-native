@@ -287,3 +287,14 @@
 - [x] **Pianos: Cambiar color de filtros activos de azul a coral**
   - [x] Texto activo: COLORS.primary (#003a8c) → COLORS.accent (#e07a5f)
   - [x] Línea indicadora: COLORS.primary → COLORS.accent
+
+### Estilos y Filtros de Página de Clientes (07 Feb 2026)
+- [x] **Añadir sombras consistentes:**
+  - [x] Cajas superiores (359 TOTAL, 359 ACTIVOS, 0 VIP, 334 CON PIANOS)
+  - [x] Cajas de filtros desplegables (COMUNIDAD, CIUDAD, GRUPO DE RUTA)
+- [x] **Corregir filtros de ubicación:**
+  - [x] Cambiar "COMUNIDAD" por "PROVINCIA"
+  - [x] Mostrar todas las 50 provincias españolas (no solo las que tienen clientes)
+  - [x] Mostrar todas las ciudades españolas principales (52 ciudades)
+  - [x] Ordenar alfabéticamente
+  - [x] Corregir comparación de filtros (c.address?.province y c.address?.city)

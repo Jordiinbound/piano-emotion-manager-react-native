@@ -38,6 +38,30 @@ const COLORS = {
   accent: '#e07a5f',        // Terracota (solo para acciones)
 };
 
+// Lista completa de provincias españolas (50)
+const SPANISH_PROVINCES = [
+  'A Coruña', 'Álava', 'Albacete', 'Alicante', 'Almería', 'Asturias', 'Ávila',
+  'Badajoz', 'Baleares', 'Barcelona', 'Burgos', 'Cáceres', 'Cádiz', 'Cantabria',
+  'Castellón', 'Ceuta', 'Ciudad Real', 'Córdoba', 'Cuenca', 'Girona', 'Granada',
+  'Guadalajara', 'Guipúzcoa', 'Huelva', 'Huesca', 'Jaén', 'La Rioja', 'Las Palmas',
+  'León', 'Lleida', 'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Navarra',
+  'Ourense', 'Palencia', 'Pontevedra', 'Salamanca', 'Santa Cruz de Tenerife',
+  'Segovia', 'Sevilla', 'Soria', 'Tarragona', 'Teruel', 'Toledo', 'Valencia',
+  'Valladolid', 'Vizcaya', 'Zamora', 'Zaragoza'
+];
+
+// Lista de ciudades españolas principales (capitales de provincia + ciudades importantes)
+const SPANISH_CITIES = [
+  'A Coruña', 'Albacete', 'Alicante', 'Almería', 'Ávila', 'Badajoz', 'Barcelona',
+  'Bilbao', 'Burgos', 'Cáceres', 'Cádiz', 'Castellón de la Plana', 'Ceuta',
+  'Ciudad Real', 'Córdoba', 'Cuenca', 'Donostia-San Sebastián', 'Girona', 'Granada',
+  'Guadalajara', 'Huelva', 'Huesca', 'Jaén', 'Las Palmas de Gran Canaria', 'León',
+  'Lleida', 'Logroño', 'Lugo', 'Madrid', 'Málaga', 'Melilla', 'Murcia', 'Ourense',
+  'Oviedo', 'Palencia', 'Palma', 'Pamplona', 'Pontevedra', 'Salamanca',
+  'Santa Cruz de Tenerife', 'Santander', 'Segovia', 'Sevilla', 'Soria', 'Tarragona',
+  'Teruel', 'Toledo', 'Valencia', 'Valladolid', 'Vitoria-Gasteiz', 'Zamora', 'Zaragoza'
+];
+
 export default function ClientsScreen() {
   const router = useRouter();
   const pathname = usePathname();
@@ -61,20 +85,14 @@ export default function ClientsScreen() {
   const isMobile = width < 768;
   const isDesktop = width >= 1024;
 
-  // Calcular listas únicas para los filtros
+  // Listas completas de provincias y ciudades españolas
   const uniqueProvinces = useMemo(() => {
-    const provinces = clients
-      .map(c => c.address?.province)
-      .filter((r): r is string => !!r);
-    return ['Todas', ...Array.from(new Set(provinces)).sort()];
-  }, [clients]);
+    return ['Todas', ...SPANISH_PROVINCES];
+  }, []);
 
   const uniqueCities = useMemo(() => {
-    const cities = clients
-      .map(c => c.address?.city)
-      .filter((c): c is string => !!c);
-    return ['Todas', ...Array.from(new Set(cities)).sort()];
-  }, [clients]);
+    return ['Todas', ...SPANISH_CITIES];
+  }, []);
 
   const uniqueRouteGroups = useMemo(() => {
     const groups = clients
@@ -147,12 +165,12 @@ export default function ClientsScreen() {
       
       // Filtro de provincia
       if (selectedProvince && selectedProvince !== 'Todas') {
-        if (c.region !== selectedProvince) return false;
+        if (c.address?.province !== selectedProvince) return false;
       }
       
       // Filtro de ciudad
       if (selectedCity && selectedCity !== 'Todas') {
-        if (c.city !== selectedCity) return false;
+        if (c.address?.city !== selectedCity) return false;
       }
       
       // Filtro de grupo de ruta
@@ -278,7 +296,7 @@ export default function ClientsScreen() {
       {/* Filtros */}
       <View style={[styles.filtersSection, isDesktop && styles.filtersSectionDesktop]}>
         <View style={styles.filterItem as any}>
-          <Text style={styles.filterLabel as any}>COMUNIDAD</Text>
+          <Text style={styles.filterLabel as any}>PROVINCIA</Text>
           <select 
             value={selectedProvince || ''}
             onChange={(e: any) => setSelectedProvince(e.target.value)}
@@ -434,10 +452,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 80,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   statNumber: {
     fontSize: 28,
@@ -503,6 +521,11 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     fontWeight: '500',
     outlineStyle: 'none', // Eliminar outline en web
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   filterButton: {
     flexDirection: 'row',
