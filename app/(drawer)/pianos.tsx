@@ -283,10 +283,7 @@ export default function PianosScreen() {
         {filters.map((f) => (
           <Pressable
             key={f.key}
-            style={[
-              styles.filterChip,
-              filter === f.key && styles.filterChipActive,
-            ]}
+            style={styles.filterChip}
             onPress={() => setFilter(f.key)}
             accessibilityRole="button"
             accessibilityLabel={`${t('common.filter')}: ${f.label}`}
@@ -295,11 +292,14 @@ export default function PianosScreen() {
             <Text
               style={[
                 styles.filterText,
-                filter === f.key && styles.filterTextActive,
+                { color: filter === f.key ? COLORS.primary : COLORS.textSecondary },
               ]}
             >
               {f.label}
             </Text>
+            {filter === f.key && (
+              <View style={[styles.filterIndicator, { backgroundColor: COLORS.primary }]} />
+            )}
           </Pressable>
         ))}
       </View>
@@ -412,6 +412,11 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     alignItems: 'center',
     gap: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   statNumber: {
     fontSize: 28,
@@ -436,30 +441,36 @@ const styles = StyleSheet.create({
   // Filtros minimalistas
   filtersContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.md,
     gap: Spacing.sm,
   },
   filterChip: {
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: COLORS.background,
-  },
-  filterChipActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   filterText: {
-    fontSize: 13,
+    fontSize: 15,
     fontFamily: 'Montserrat',
-    fontWeight: '500',
-    color: COLORS.textSecondary,
+    fontWeight: '600',
   },
-  filterTextActive: {
-    color: '#FFFFFF',
+  filterIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: '10%',
+    right: '10%',
+    height: 3,
+    borderRadius: 4,
   },
 
   // Paginación
