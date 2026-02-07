@@ -445,3 +445,13 @@
   - [x] Exportación PDF
 
 **Nota:** En web, el mapa no se mostrará hasta que se implemente la versión web con @react-google-maps/api. Por ahora, la app funciona en web sin errores de compilación.
+
+### Implementación Web Completa del Mapa (07 Feb 2026) ✅ COMPLETADA
+- [x] Crear componente WebMapView con @react-google-maps/api
+- [x] Implementar markers personalizados para web (colores VIP/ruta)
+- [x] Implementar InfoWindow para callouts con información de cliente
+- [x] Auto-zoom con fitBounds para mostrar todos los markers
+- [x] Integrar en map.tsx con renderizado condicional (Platform.OS === 'web')
+- [ ] Configurar EXPO_PUBLIC_GOOGLE_MAPS_API_KEY en variables de entorno (Vercel)
+
+**Nota:** El mapa ahora funciona completamente en web. Solo falta configurar la API key de Google Maps en Vercel.

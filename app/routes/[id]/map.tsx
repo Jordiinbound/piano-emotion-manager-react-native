@@ -35,6 +35,7 @@ if (Platform.OS !== 'web') {
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { WebMapView } from '@/components/WebMapView';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import { trpc } from '@/utils/trpc';
@@ -412,45 +413,54 @@ export default function RouteMapScreen() {
         {/* Mapa de Google */}
         <View style={styles.mapContainer}>
           {clientsWithCoords.length > 0 ? (
-            <MapView
-              ref={mapRef}
-              provider={PROVIDER_GOOGLE}
-              style={styles.map}
-              initialRegion={{
-                latitude: clientsWithCoords[0].latitude,
-                longitude: clientsWithCoords[0].longitude,
-                latitudeDelta: 0.1,
-                longitudeDelta: 0.1,
-              }}
-              onMapReady={() => {
-                setMapLoaded(true);
-                // Auto-ajustar para mostrar todos los markers
-                if (mapRef.current && clientsWithCoords.length > 1) {
-                  const coordinates = clientsWithCoords.map((c: any) => ({
-                    latitude: c.latitude,
-                    longitude: c.longitude,
-                  }));
-                  mapRef.current.fitToCoordinates(coordinates, {
-                    edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-                    animated: true,
-                  });
-                }
-              }}
-            >
-              {clientsWithCoords.map((client: any) => (
-                <Marker
-                  key={client.id}
-                  coordinate={{
-                    latitude: client.latitude,
-                    longitude: client.longitude,
-                  }}
-                  title={`${client.firstName || ''} ${client.lastName1 || ''}`}
-                  description={client.address?.street ? `${client.address.street} ${client.address.number || ''}` : 'Sin dirección'}
-                  pinColor={client.isVip ? '#FFD700' : route.color}
-                  onCalloutPress={() => router.push(`/client/${client.id}`)}
-                />
-              ))}
-            </MapView>
+            Platform.OS === 'web' ? (
+              <WebMapView
+                clients={clientsWithCoords}
+                routeColor={route.color}
+                onMarkerPress={(clientId) => router.push(`/client/${clientId}`)}
+                mapRef={mapRef}
+              />
+            ) : (
+              <MapView
+                ref={mapRef}
+                provider={PROVIDER_GOOGLE}
+                style={styles.map}
+                initialRegion={{
+                  latitude: clientsWithCoords[0].latitude,
+                  longitude: clientsWithCoords[0].longitude,
+                  latitudeDelta: 0.1,
+                  longitudeDelta: 0.1,
+                }}
+                onMapReady={() => {
+                  setMapLoaded(true);
+                  // Auto-ajustar para mostrar todos los markers
+                  if (mapRef.current && clientsWithCoords.length > 1) {
+                    const coordinates = clientsWithCoords.map((c: any) => ({
+                      latitude: c.latitude,
+                      longitude: c.longitude,
+                    }));
+                    mapRef.current.fitToCoordinates(coordinates, {
+                      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+                      animated: true,
+                    });
+                  }
+                }}
+              >
+                {clientsWithCoords.map((client: any) => (
+                  <Marker
+                    key={client.id}
+                    coordinate={{
+                      latitude: client.latitude,
+                      longitude: client.longitude,
+                    }}
+                    title={`${client.firstName || ''} ${client.lastName1 || ''}`}
+                    description={client.address?.street ? `${client.address.street} ${client.address.number || ''}` : 'Sin dirección'}
+                    pinColor={client.isVip ? '#FFD700' : route.color}
+                    onCalloutPress={() => router.push(`/client/${client.id}`)}
+                  />
+                ))}
+              </MapView>
+            )
           ) : (
             <View style={styles.mapPlaceholder}>
               <IconSymbol name="map.fill" size={64} color={COLORS.textTertiary} />
