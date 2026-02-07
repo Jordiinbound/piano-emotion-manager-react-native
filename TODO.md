@@ -266,3 +266,16 @@
     - [x] Cajas superiores con números (statCard)
     - [x] Tarjetas de servicios individuales (ServiceCard)
   - [x] Implementado indicador de línea inferior (filterIndicator) con posición absoluta
+
+### Estilos de Página de Pianos (07 Feb 2026)
+- [x] **Igualar estilos con página de Inventario:**
+  - [x] Botones de filtros: fondo blanco con línea de color debajo (en lugar de azul sólido)
+  - [x] Aumentar tamaño de botones de filtros
+  - [x] Border radius actualizado: 8px (igual que Inventario)
+  - [x] Tamaño de fuente: 15px, font weight: '600'
+  - [x] Añadir sombras consistentes a:
+    - [x] Botones de filtros (filterChip)
+    - [x] Cajas superiores con números (statCard - Verticales, De Cola)
+    - [x] Tarjetas de pianos individuales (PianoCard)
+  - [x] Implementar indicador de línea inferior (filterIndicator) con posición absoluta
+  - [x] Centrar botones de filtros
