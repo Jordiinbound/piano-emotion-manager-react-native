@@ -353,3 +353,41 @@
   - [ ] Mapa estático con marcadores (requiere Google Maps API)
   - [ ] Tiempo estimado de desplazamiento (requiere Directions API)
   - [ ] Distancia total de la ruta (requiere Directions API)
+
+
+### Mejoras Avanzadas del Sistema de Rutas (07 Feb 2026) ✅ COMPLETADAS
+
+#### 1. Migración de Datos ✅
+- [x] Crear endpoint de migración en backend (migrate-routes.router.ts)
+- [x] Procedimiento migrateData que convierte routeGroup → routeId
+- [ ] Ejecutar migración en BD de producción (manual)
+
+#### 2. Estadísticas Avanzadas ✅
+- [x] Añadir query para contar pianos por ruta (routes.router.ts getStats)
+- [x] Añadir query para próximas citas por ruta (routes.router.ts getStats)
+- [x] Actualizar página de configuración con iconos de pianos y citas
+- [x] Mostrar estadísticas en página de mapa (distancia y tiempo cuando optimizado)
+
+#### 3. Integración Google Maps ✅
+- [x] Añadir react-native-maps en página de mapa
+- [x] Mostrar markers de clientes con coordenadas
+- [x] Colores de markers según estado (VIP = dorado #FFD700, otros = color ruta)
+- [x] Callout al click en marker con nombre y dirección
+- [x] Auto-zoom con fitToCoordinates para mostrar todos los markers
+- [x] Click en callout para ir a detalle de cliente
+
+#### 4. Optimización de Ruta (TSP) ✅
+- [x] Implementar algoritmo nearest neighbor (utils/route-optimizer.ts)
+- [x] Botón "Optimizar ruta" en página de mapa
+- [x] Reordenar lista de clientes según optimización
+- [x] Botón "Restablecer orden" para volver al original
+- [x] Haptic feedback en optimización
+- [x] Alert con resumen de distancia y tiempo
+
+#### 5. Cálculo de Distancias y Tiempo ✅
+- [x] Cálculo de distancia con fórmula de Haversine
+- [x] Calcular distancia total de la ruta (calculateTotalDistance)
+- [x] Calcular tiempo estimado (estimateTravelTime - 40 km/h promedio)
+- [x] Formateo de tiempo (formatTravelTime - "2h 30min")
+- [x] Mostrar en estadísticas de mapa cuando está optimizado
+- [x] Incluir en alert de optimización

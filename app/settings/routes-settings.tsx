@@ -284,6 +284,22 @@ export default function RoutesSettingsScreen() {
                       {route.clientCount} clientes
                     </ThemedText>
                   </View>
+                  {route.pianoCount > 0 && (
+                    <View style={styles.statItem}>
+                      <IconSymbol name="pianokeys" size={16} color={COLORS.textSecondary} />
+                      <ThemedText style={styles.statText}>
+                        {route.pianoCount} pianos
+                      </ThemedText>
+                    </View>
+                  )}
+                  {route.upcomingAppointments > 0 && (
+                    <View style={styles.statItem}>
+                      <IconSymbol name="calendar.badge.clock" size={16} color={COLORS.accent} />
+                      <ThemedText style={styles.statText}>
+                        {route.upcomingAppointments} próximas
+                      </ThemedText>
+                    </View>
+                  )}
                   {route.preferredDay !== 'flexible' && (
                     <View style={styles.statItem}>
                       <IconSymbol name="calendar" size={16} color={COLORS.textSecondary} />

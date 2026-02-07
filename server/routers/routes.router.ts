@@ -8,7 +8,7 @@
 import { z } from 'zod';
 import { router, protectedProcedure } from '../_core/trpc.js';
 import * as db from '../db.js';
-import { routes, clients } from '../../drizzle/schema.js';
+import { routes, clients, pianos, appointments } from '../../drizzle/schema.js';
 import { eq, and, asc, count, sql } from 'drizzle-orm';
 
 export const routesRouter = router({
@@ -219,23 +219,56 @@ export const routesRouter = router({
       )
       .orderBy(asc(routes.displayOrder), asc(routes.name));
 
-    // Para cada ruta, contar clientes
+    // Para cada ruta, contar clientes, pianos y próximas citas
     const statsPromises = routesList.map(async (route) => {
-      const [stats] = await database
+      // Contar clientes (usando routeId)
+      const [clientStats] = await database
         .select({
           clientCount: count(clients.id),
         })
         .from(clients)
         .where(
           and(
-            eq(clients.routeGroup, route.name),
+            eq(clients.routeId, route.id),
             eq(clients.partnerId, ctx.partnerId)
+          )
+        );
+
+      // Contar pianos de clientes en esta ruta
+      const [pianoStats] = await database
+        .select({
+          pianoCount: count(pianos.id),
+        })
+        .from(pianos)
+        .innerJoin(clients, eq(pianos.clientId, clients.id))
+        .where(
+          and(
+            eq(clients.routeId, route.id),
+            eq(clients.partnerId, ctx.partnerId)
+          )
+        );
+
+      // Contar próximas citas (futuras) de clientes en esta ruta
+      const now = new Date();
+      const [appointmentStats] = await database
+        .select({
+          upcomingCount: count(appointments.id),
+        })
+        .from(appointments)
+        .innerJoin(clients, eq(appointments.clientId, clients.id))
+        .where(
+          and(
+            eq(clients.routeId, route.id),
+            eq(clients.partnerId, ctx.partnerId),
+            sql`${appointments.scheduledDate} >= ${now.toISOString()}`
           )
         );
 
       return {
         ...route,
-        clientCount: stats?.clientCount || 0,
+        clientCount: clientStats?.clientCount || 0,
+        pianoCount: pianoStats?.pianoCount || 0,
+        upcomingAppointments: appointmentStats?.upcomingCount || 0,
       };
     });
 

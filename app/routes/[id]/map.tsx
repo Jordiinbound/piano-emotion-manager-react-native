@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -28,6 +29,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import { trpc } from '@/utils/trpc';
 import { useClientsData } from '@/hooks/data';
+import { optimizeRoute, calculateTotalDistance, estimateTravelTime, formatTravelTime } from '@/utils/route-optimizer';
 
 // Paleta de colores
 const COLORS = {
@@ -50,6 +52,8 @@ export default function RouteMapScreen() {
 
   const [mapLoaded, setMapLoaded] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [optimizedClients, setOptimizedClients] = useState<any[]>([]);
+  const [isOptimized, setIsOptimized] = useState(false);
   const mapRef = useRef<any>(null);
 
   // Queries
@@ -65,6 +69,43 @@ export default function RouteMapScreen() {
   const clientsWithCoords = routeClients.filter((c: any) => 
     c.latitude && c.longitude
   );
+
+  // Lista de clientes a mostrar (optimizada o no)
+  const displayClients = isOptimized && optimizedClients.length > 0 ? optimizedClients : routeClients;
+
+  // Calcular estadísticas de distancia y tiempo
+  const totalDistance = isOptimized && optimizedClients.length > 0 
+    ? calculateTotalDistance(optimizedClients)
+    : 0;
+  const estimatedTime = totalDistance > 0 ? estimateTravelTime(totalDistance) : 0;
+
+  const handleOptimizeRoute = () => {
+    if (clientsWithCoords.length < 2) {
+      Alert.alert('Error', 'Se necesitan al menos 2 clientes con ubicación para optimizar');
+      return;
+    }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    // Optimizar usando algoritmo nearest neighbor
+    const optimized = optimizeRoute(clientsWithCoords);
+    setOptimizedClients(optimized);
+    setIsOptimized(true);
+
+    Alert.alert(
+      'Ruta optimizada',
+      `Distancia total: ${totalDistance.toFixed(1)} km\nTiempo estimado: ${formatTravelTime(estimatedTime)}`,
+      [{ text: 'OK' }]
+    );
+
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
+  const handleResetOptimization = () => {
+    setIsOptimized(false);
+    setOptimizedClients([]);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
 
   const handleExportPDF = async () => {
     if (clientsWithCoords.length === 0) {
@@ -315,26 +356,102 @@ export default function RouteMapScreen() {
               </ThemedText>
               <ThemedText style={styles.statLabel}>Con ubicación</ThemedText>
             </View>
-            <View style={styles.statCard}>
-              <ThemedText style={[styles.statValue, { color: COLORS.textTertiary }]}>
-                {routeClients.length - clientsWithCoords.length}
-              </ThemedText>
-              <ThemedText style={styles.statLabel}>Sin ubicación</ThemedText>
-            </View>
+            {isOptimized ? (
+              <>
+                <View style={styles.statCard}>
+                  <ThemedText style={[styles.statValue, { color: COLORS.accent }]}>
+                    {totalDistance.toFixed(1)} km
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>Distancia</ThemedText>
+                </View>
+                <View style={styles.statCard}>
+                  <ThemedText style={[styles.statValue, { color: COLORS.primary }]}>
+                    {formatTravelTime(estimatedTime)}
+                  </ThemedText>
+                  <ThemedText style={styles.statLabel}>Tiempo est.</ThemedText>
+                </View>
+              </>
+            ) : (
+              <View style={styles.statCard}>
+                <ThemedText style={[styles.statValue, { color: COLORS.textTertiary }]}>
+                  {routeClients.length - clientsWithCoords.length}
+                </ThemedText>
+                <ThemedText style={styles.statLabel}>Sin ubicación</ThemedText>
+              </View>
+            )}
           </View>
+
+          {/* Botón de optimización */}
+          {clientsWithCoords.length >= 2 && (
+            <View style={styles.optimizeButtonContainer}>
+              {isOptimized ? (
+                <Pressable style={styles.resetButton} onPress={handleResetOptimization}>
+                  <IconSymbol name="arrow.counterclockwise" size={16} color={COLORS.textSecondary} />
+                  <ThemedText style={styles.resetButtonText}>Restablecer orden</ThemedText>
+                </Pressable>
+              ) : (
+                <Pressable style={styles.optimizeButton} onPress={handleOptimizeRoute}>
+                  <IconSymbol name="arrow.triangle.2.circlepath" size={16} color="#FFFFFF" />
+                  <ThemedText style={styles.optimizeButtonText}>Optimizar ruta</ThemedText>
+                </Pressable>
+              )}
+            </View>
+          )}
         </View>
 
-        {/* Mapa placeholder */}
+        {/* Mapa de Google */}
         <View style={styles.mapContainer}>
-          <View style={styles.mapPlaceholder}>
-            <IconSymbol name="map.fill" size={64} color={COLORS.textTertiary} />
-            <ThemedText style={styles.mapPlaceholderText}>
-              Integración con Google Maps
-            </ThemedText>
-            <ThemedText style={styles.mapPlaceholderSubtext}>
-              {clientsWithCoords.length} clientes con ubicación en el mapa
-            </ThemedText>
-          </View>
+          {clientsWithCoords.length > 0 ? (
+            <MapView
+              ref={mapRef}
+              provider={PROVIDER_GOOGLE}
+              style={styles.map}
+              initialRegion={{
+                latitude: clientsWithCoords[0].latitude,
+                longitude: clientsWithCoords[0].longitude,
+                latitudeDelta: 0.1,
+                longitudeDelta: 0.1,
+              }}
+              onMapReady={() => {
+                setMapLoaded(true);
+                // Auto-ajustar para mostrar todos los markers
+                if (mapRef.current && clientsWithCoords.length > 1) {
+                  const coordinates = clientsWithCoords.map((c: any) => ({
+                    latitude: c.latitude,
+                    longitude: c.longitude,
+                  }));
+                  mapRef.current.fitToCoordinates(coordinates, {
+                    edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+                    animated: true,
+                  });
+                }
+              }}
+            >
+              {clientsWithCoords.map((client: any) => (
+                <Marker
+                  key={client.id}
+                  coordinate={{
+                    latitude: client.latitude,
+                    longitude: client.longitude,
+                  }}
+                  title={`${client.firstName || ''} ${client.lastName1 || ''}`}
+                  description={client.address?.street ? `${client.address.street} ${client.address.number || ''}` : 'Sin dirección'}
+                  pinColor={client.isVip ? '#FFD700' : route.color}
+                  onCalloutPress={() => router.push(`/client/${client.id}`)}
+                />
+              ))}
+            </MapView>
+          ) : (
+            <View style={styles.mapPlaceholder}>
+              <IconSymbol name="map.fill" size={64} color={COLORS.textTertiary} />
+              <ThemedText style={styles.mapPlaceholderText}>
+                No hay clientes con ubicación
+              </ThemedText>
+              <ThemedText style={styles.mapPlaceholderSubtext}>
+                Añade coordenadas a los clientes para verlos en el mapa
+              </ThemedText>
+            </View>
+          )}
         </View>
 
         {/* Lista de clientes */}
@@ -348,7 +465,7 @@ export default function RouteMapScreen() {
               </ThemedText>
             </View>
           ) : (
-            routeClients.map((client: any, index: number) => (
+            displayClients.map((client: any, index: number) => (
               <Pressable
                 key={client.id}
                 style={styles.clientCard}
@@ -494,6 +611,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
+  map: {
+    width: '100%',
+    height: '100%',
+  },
   mapPlaceholder: {
     flex: 1,
     justifyContent: 'center',
@@ -599,5 +720,40 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat',
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  optimizeButtonContainer: {
+    marginTop: Spacing.md,
+  },
+  optimizeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.primary,
+    borderRadius: BorderRadius.sm,
+    padding: Spacing.sm,
+    gap: Spacing.xs,
+  },
+  optimizeButtonText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  resetButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.surface,
+    borderRadius: BorderRadius.sm,
+    padding: Spacing.sm,
+    gap: Spacing.xs,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  resetButtonText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '500',
+    color: COLORS.textSecondary,
   },
 });
