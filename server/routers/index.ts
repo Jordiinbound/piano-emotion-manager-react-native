@@ -9,6 +9,7 @@ export { pianosRouter } from './pianos.router.js';
 export { servicesRouter } from './services.router.js';
 export { inventoryRouter } from './inventory.router.js';
 export { inventoryCategoriesRouter } from './inventory-categories.router.js';
+export { routesRouter } from './routes.router.js';
 export { appointmentsRouter } from './appointments.router.js';
 export { invoicesRouter } from './invoices.router.js';
 export { quotesRouter } from './quotes.router.js';

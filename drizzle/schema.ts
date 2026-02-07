@@ -1169,3 +1169,27 @@ export const inventoryCategories = mysqlTable('inventory_categories', {
   index('inventory_categories_key_idx').on(table.key, table.organizationId),
   index('inventory_categories_order_idx').on(table.displayOrder),
 ]);
+
+// ============================================================================
+// ROUTES (Client Route Management)
+// ============================================================================
+
+export const routes = mysqlTable('routes', {
+  id: int().autoincrement().notNull(),
+  name: varchar({ length: 100 }).notNull(),
+  color: varchar({ length: 7 }).notNull().default('#e07a5f'), // Hex color
+  description: text(),
+  preferredDay: mysqlEnum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'flexible']).default('flexible'),
+  preferredTime: mysqlEnum(['morning', 'afternoon', 'evening', 'flexible']).default('flexible'),
+  displayOrder: int('display_order').notNull().default(0),
+  isActive: tinyint('is_active').notNull().default(1),
+  partnerId: int('partner_id').notNull(),
+  organizationId: int('organization_id'),
+  createdAt: timestamp('created_at', { mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().onUpdateNow().notNull(),
+},
+(table) => [
+  index('routes_partner_idx').on(table.partnerId),
+  index('routes_organization_idx').on(table.organizationId),
+  index('routes_order_idx').on(table.displayOrder),
+]);

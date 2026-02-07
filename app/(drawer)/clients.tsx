@@ -324,7 +324,7 @@ export default function ClientsScreen() {
         </View>
         
         <View style={styles.filterItem as any}>
-          <Text style={styles.filterLabel as any}>GRUPO DE RUTA</Text>
+          <Text style={styles.filterLabel as any}>RUTA</Text>
           <select 
             value={selectedRouteGroup || ''}
             onChange={(e: any) => setSelectedRouteGroup(e.target.value)}
