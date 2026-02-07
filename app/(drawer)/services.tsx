@@ -224,23 +224,20 @@ export default function ServicesScreen() {
           contentContainerStyle={styles.filtersContainer}
           renderItem={({ item: f }) => (
             <Pressable
-              style={[
-                styles.filterChip,
-                { 
-                  backgroundColor: filter === f.key ? COLORS.primary : COLORS.background,
-                  borderColor: filter === f.key ? COLORS.primary : COLORS.border
-                },
-              ]}
+              style={styles.filterChip}
               onPress={() => setFilter(f.key)}
             >
               <Text
                 style={[
                   styles.filterText,
-                  { color: filter === f.key ? COLORS.background : COLORS.textSecondary },
+                  { color: filter === f.key ? COLORS.primary : COLORS.textSecondary },
                 ]}
               >
                 {f.label}
               </Text>
+              {filter === f.key && (
+                <View style={[styles.filterIndicator, { backgroundColor: COLORS.primary }]} />
+              )}
             </Pressable>
           )}
         />
@@ -315,6 +312,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     gap: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   statNumber: {
     fontSize: 28,
@@ -342,18 +344,31 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   filterChip: {
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
-    paddingVertical: 6,
-    height: 34,
     justifyContent: 'center',
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+    borderRadius: 8,
     marginRight: Spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   filterText: {
-    fontSize: 13,
+    fontSize: 15,
     fontFamily: 'Montserrat',
-    fontWeight: '500',
+    fontWeight: '600',
+  },
+  filterIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: '10%',
+    right: '10%',
+    height: 3,
+    borderRadius: 4,
   },
   list: {
     paddingHorizontal: Spacing.md,
