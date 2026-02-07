@@ -279,3 +279,11 @@
     - [x] Tarjetas de pianos individuales (PianoCard)
   - [x] Implementar indicador de línea inferior (filterIndicator) con posición absoluta
   - [x] Centrar botones de filtros
+
+### Corrección de Color en Filtros (07 Feb 2026)
+- [x] **Servicios: Cambiar color de filtros activos de azul a coral**
+  - [x] Texto activo: COLORS.primary (#003a8c) → COLORS.accent (#e07a5f)
+  - [x] Línea indicadora: COLORS.primary → COLORS.accent
+- [x] **Pianos: Cambiar color de filtros activos de azul a coral**
+  - [x] Texto activo: COLORS.primary (#003a8c) → COLORS.accent (#e07a5f)
+  - [x] Línea indicadora: COLORS.primary → COLORS.accent

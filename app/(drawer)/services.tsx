@@ -230,13 +230,13 @@ export default function ServicesScreen() {
               <Text
                 style={[
                   styles.filterText,
-                  { color: filter === f.key ? COLORS.primary : COLORS.textSecondary },
+                  { color: filter === f.key ? COLORS.accent : COLORS.textSecondary },
                 ]}
               >
                 {f.label}
               </Text>
               {filter === f.key && (
-                <View style={[styles.filterIndicator, { backgroundColor: COLORS.primary }]} />
+                <View style={[styles.filterIndicator, { backgroundColor: COLORS.accent }]} />
               )}
             </Pressable>
           )}
