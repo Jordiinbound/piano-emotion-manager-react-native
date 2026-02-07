@@ -929,3 +929,6 @@
 ## Dashboard - Aumentar tamaño de etiquetas
 - [x] Aumentar fontSize de etiquetas en "Este Mes" (Servicios, Ingresos, etc.) +2 puntos
 - [x] Aumentar fontSize de etiquetas en "Previsión próximos 30 días" +2 puntos
+
+## Dashboard - Eliminar franjas grises de fondo
+- [x] Localizar y eliminar colores de fondo grises en el Dashboard

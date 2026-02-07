@@ -42,7 +42,7 @@ const COLORS = {
   primary: '#003a8c',      // Azul Cobalto (mantener cabecera)
   accent: '#e07a5f',       // Terracota
   white: '#ffffff',
-  background: '#f5f5f5',
+  background: '#ffffff',
   
   // Alertas (tonos suaves)
   alertSuccess: '#52a67d', // Verde suave
