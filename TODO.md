@@ -253,3 +253,16 @@
   - [ ] Los porcentajes de cambio se cortan (↘6.7%, ↗87.5%)
   - [ ] Debe saltar directamente de 2 a 4 columnas
   - [ ] Ajustar breakpoints del grid
+
+### Estilos de Página de Servicios (07 Feb 2026)
+- [x] **Igualar estilos con página de Inventario:**
+  - [x] Botones de filtros: fondo blanco con línea de color debajo (en lugar de azul sólido)
+  - [x] Aumentado tamaño de botones: paddingVertical 6px → 12px
+  - [x] Border radius actualizado: 8px (igual que Inventario)
+  - [x] Tamaño de fuente: 13px → 15px
+  - [x] Font weight: '500' → '600'
+  - [x] Añadidas sombras consistentes a todos los elementos:
+    - [x] Botones de filtros (filterChip)
+    - [x] Cajas superiores con números (statCard)
+    - [x] Tarjetas de servicios individuales (ServiceCard)
+  - [x] Implementado indicador de línea inferior (filterIndicator) con posición absoluta
