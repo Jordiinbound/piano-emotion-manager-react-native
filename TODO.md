@@ -298,3 +298,58 @@
   - [x] Mostrar todas las ciudades españolas principales (52 ciudades)
   - [x] Ordenar alfabéticamente
   - [x] Corregir comparación de filtros (c.address?.province y c.address?.city)
+
+### Sistema de Gestión de Rutas (07 Feb 2026)
+
+#### Fase 1: Configuración Básica (CRUD) ✅ COMPLETADA
+- [x] Cambiar "GRUPO DE RUTA" → "RUTA" en página de clientes
+- [x] Crear tabla `routes` en base de datos:
+  - [x] id, name, color, description, preferredDay, preferredTime
+  - [x] createdAt, updatedAt, displayOrder, isActive, partnerId, organizationId
+- [x] Crear router backend `routes.router.ts`:
+  - [x] list, getById, create, update, delete, getStats
+- [x] Registrar router en `server/routers.ts` y `server/routers/index.ts`
+- [x] Crear página `/settings/routes-settings.tsx`:
+  - [x] Lista de rutas con colores y estadísticas
+  - [x] Modal crear/editar ruta con todos los campos
+  - [x] Selector de colores predefinidos (15 colores)
+  - [x] Selectores de día y hora preferente
+  - [x] Botón eliminar con confirmación y aviso de clientes asignados
+  - [x] Diseño responsive (móvil/tablet/desktop)
+  - [ ] Drag & drop para reordenar (opcional - futuro)
+
+#### Fase 2: Asignación y Estadísticas 🔄 EN PROGRESO
+- [x] Añadir campo `routeId` a tabla `clients` en schema
+- [ ] Migración de datos: convertir routeGroup string → routeId (ejecutar en BD)
+- [ ] Actualizar página de detalle de cliente `/app/client/[id].tsx`:
+  - [ ] Añadir selector de ruta (dropdown con colores)
+  - [ ] Guardar routeId al actualizar cliente
+  - [ ] Mostrar ruta actual con color
+- [x] Actualizar filtro en página de clientes:
+  - [x] Cargar rutas desde BD con trpc.routes.list.useQuery()
+  - [ ] Mostrar colores en selector (opcional)
+- [x] Estadísticas por ruta en `/settings/routes-settings.tsx`:
+  - [x] Número de clientes asignados (ya implementado)
+  - [ ] Número de pianos en la ruta (requiere query adicional)
+  - [ ] Próximas citas programadas (requiere query adicional)
+
+#### Fase 3: Mapas y Optimización ✅ COMPLETADA
+- [x] Crear página `/routes/[id]/map.tsx`:
+  - [x] Estructura completa con header, stats, lista de clientes
+  - [x] Placeholder para Google Maps (integración futura)
+  - [x] Indicadores de clientes con/sin ubicación
+  - [x] Click en cliente para ir a detalle
+  - [x] Botón de mapa en tarjetas de rutas en configuración
+- [ ] Optimización de orden (futuro):
+  - [ ] Algoritmo para ordenar clientes por proximidad (TSP)
+  - [ ] Botón "Optimizar ruta" en página de mapa
+  - [ ] Guardar orden optimizado
+- [x] Exportación a PDF:
+  - [x] Lista de clientes ordenados con direcciones
+  - [x] Tabla HTML profesional con estilos
+  - [x] Estadísticas de la ruta (total, con/sin ubicación)
+  - [x] Botón de exportación en página de mapa
+  - [x] Compartir PDF generado
+  - [ ] Mapa estático con marcadores (requiere Google Maps API)
+  - [ ] Tiempo estimado de desplazamiento (requiere Directions API)
+  - [ ] Distancia total de la ruta (requiere Directions API)

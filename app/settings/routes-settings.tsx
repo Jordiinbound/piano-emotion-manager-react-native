@@ -258,6 +258,12 @@ export default function RoutesSettingsScreen() {
                   <View style={styles.routeActions}>
                     <Pressable
                       style={styles.iconButton}
+                      onPress={() => router.push(`/routes/${route.id}/map`)}
+                    >
+                      <IconSymbol name="map.fill" size={20} color={COLORS.accent} />
+                    </Pressable>
+                    <Pressable
+                      style={styles.iconButton}
                       onPress={() => handleOpenModal(route)}
                     >
                       <IconSymbol name="pencil" size={20} color={COLORS.primary} />
