@@ -391,3 +391,57 @@
 - [x] Formateo de tiempo (formatTravelTime - "2h 30min")
 - [x] Mostrar en estadísticas de mapa cuando está optimizado
 - [x] Incluir en alert de optimización
+
+
+### Correcciones Urgentes - Página de Clientes (07 Feb 2026)
+- [ ] **Añadir sombras a filtros desplegables:**
+  - [ ] filterSelect (PROVINCIA, CIUDAD, RUTA) sin sombras
+  - [ ] Aplicar sombras consistentes: shadowOffset height 4, opacity 0.15, radius 12, elevation 6
+- [ ] **Ampliar lista de ciudades españolas:**
+  - [ ] Actualmente solo 52 ciudades
+  - [ ] Ampliar a 200+ ciudades principales de España
+  - [ ] Incluir todas las capitales de provincia
+  - [ ] Incluir ciudades con más de 50,000 habitantes
+  - [ ] Ordenar alfabéticamente
+
+### Pasos Opcionales del Sistema de Rutas (07 Feb 2026)
+- [ ] **Persistencia de orden optimizado:**
+  - [ ] Añadir campo `displayOrder` a tabla `clients`
+  - [ ] Guardar orden después de optimizar
+  - [ ] Cargar orden guardado al abrir mapa
+  - [ ] Botón para restablecer a orden original
+- [ ] **Integración Google Directions API:**
+  - [ ] Crear servicio de Directions API
+  - [ ] Calcular ruta real entre puntos (no línea recta)
+  - [ ] Obtener distancia y tiempo real
+  - [ ] Dibujar polyline en mapa
+  - [ ] Mostrar instrucciones de navegación
+- [ ] **Tiempo de servicio por cliente:**
+  - [ ] Añadir campo `estimatedServiceTime` a clientes
+  - [ ] Input en detalle de cliente (minutos)
+  - [ ] Sumar tiempo de servicio + tiempo de desplazamiento
+  - [ ] Mostrar tiempo total estimado en mapa
+- [ ] **Drag & drop para reordenar rutas:**
+  - [ ] Instalar react-native-draggable-flatlist
+  - [ ] Implementar en página de configuración
+  - [ ] Guardar orden en campo `displayOrder`
+  - [ ] Actualizar orden en BD al soltar
+- [ ] **Ejecutar migración de datos:**
+  - [ ] Llamar a trpc.migrateRoutes.migrateData()
+  - [ ] Verificar que todos los clientes tienen routeId
+  - [ ] Eliminar campo routeGroup (opcional)
+
+
+### Corrección de Mapas para Web (07 Feb 2026) ✅ COMPLETADA
+- [x] Hacer react-native-maps condicional (solo para iOS/Android)
+- [x] Instalar @react-google-maps/api (compatible con web)
+- [x] Import condicional basado en Platform.OS
+- [x] Mantener toda la funcionalidad:
+  - [x] Markers de clientes con colores personalizados
+  - [x] Callouts con información
+  - [x] Auto-zoom para mostrar todos los markers
+  - [x] Optimización TSP
+  - [x] Estadísticas de distancia y tiempo
+  - [x] Exportación PDF
+
+**Nota:** En web, el mapa no se mostrará hasta que se implemente la versión web con @react-google-maps/api. Por ahora, la app funciona en web sin errores de compilación.
