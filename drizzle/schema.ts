@@ -316,7 +316,8 @@ export const clients = mysqlTable("clients", {
 	postalCode: varchar({ length: 20 }),
 	latitude: decimal({ precision: 10, scale: 7 }),
 	longitude: decimal({ precision: 10, scale: 7 }),
-	routeGroup: varchar({ length: 50 }),
+	routeGroup: varchar({ length: 50 }), // Deprecated: usar routeId
+	routeId: int('route_id'), // Nueva relación con tabla routes
 	partnerId: int().default(1).notNull(),
 	organizationId: int(), // Columna existe en BD como 'organizationId' (camelCase)
 });

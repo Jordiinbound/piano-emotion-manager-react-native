@@ -27,6 +27,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import { Client, ClientType, ClientAddress, Piano, CLIENT_TYPE_LABELS, getClientFullName, getClientFormattedAddress } from '@/types';
 import { validateSpanishTaxId, TaxIdValidationResult } from '@/utils/spanish-tax-id';
+import { trpc } from '@/utils/trpc';
 
 export default function ClientDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -66,8 +67,12 @@ export default function ClientDetailScreen() {
       province: '',
     },
     notes: '',
+    routeId: undefined,
   });
   const [taxIdValidation, setTaxIdValidation] = useState<TaxIdValidationResult | null>(null);
+
+  // Cargar rutas desde BD
+  const { data: routes = [] } = trpc.routes.list.useQuery();
 
   const backgroundColor = useThemeColor({}, 'background');
   const cardBg = useThemeColor({}, 'cardBackground');
@@ -121,6 +126,7 @@ export default function ClientDetailScreen() {
           email: form.email?.trim(),
           address: form.address,
           notes: form.notes?.trim(),
+          routeId: form.routeId,
         });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.replace({
@@ -572,6 +578,77 @@ export default function ClientDetailScreen() {
                 ? `${form.shippingAddress.street}${form.shippingAddress.number ? ` ${form.shippingAddress.number}` : ''}${form.shippingAddress.floor ? `, ${form.shippingAddress.floor}` : ''}, ${form.shippingAddress.postalCode || ''} ${form.shippingAddress.city || ''}, ${form.shippingAddress.province || ''}`
                 : 'Sin dirección de envío'}
             </ThemedText>
+          )}
+        </View>
+
+        {/* Ruta */}
+        <View style={[styles.section, { backgroundColor: cardBg, borderColor }]}>
+          <ThemedText style={styles.sectionTitle}>Ruta de Trabajo</ThemedText>
+          {isEditing ? (
+            <View style={styles.inputContainer}>
+              <ThemedText style={styles.label}>Ruta asignada</ThemedText>
+              <View style={[styles.pickerContainer, { borderColor }]}>
+                <select
+                  value={form.routeId?.toString() || ''}
+                  onChange={(e: any) => {
+                    const value = e.target.value;
+                    setForm({ ...form, routeId: value ? parseInt(value) : undefined });
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: Spacing.sm,
+                    fontSize: 15,
+                    fontFamily: 'Montserrat',
+                    backgroundColor: cardBg,
+                    color: textColor,
+                    border: 'none',
+                    outline: 'none',
+                  } as any}
+                >
+                  <option value="">Sin ruta asignada</option>
+                  {routes.map((route: any) => (
+                    <option key={route.id} value={route.id}>
+                      {route.name}
+                    </option>
+                  ))}
+                </select>
+              </View>
+              {form.routeId && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: Spacing.xs, gap: 4 }}>
+                  <View
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 6,
+                      backgroundColor: routes.find((r: any) => r.id === form.routeId)?.color || '#e07a5f',
+                    }}
+                  />
+                  <ThemedText style={{ fontSize: 13, color: textSecondary }}>
+                    {routes.find((r: any) => r.id === form.routeId)?.name}
+                  </ThemedText>
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              {form.routeId ? (
+                <>
+                  <View
+                    style={{
+                      width: 16,
+                      height: 16,
+                      borderRadius: 8,
+                      backgroundColor: routes.find((r: any) => r.id === form.routeId)?.color || '#e07a5f',
+                    }}
+                  />
+                  <ThemedText style={styles.value}>
+                    {routes.find((r: any) => r.id === form.routeId)?.name || 'Sin ruta'}
+                  </ThemedText>
+                </>
+              ) : (
+                <ThemedText style={[styles.value, { color: textSecondary }]}>Sin ruta asignada</ThemedText>
+              )}
+            </View>
           )}
         </View>
 

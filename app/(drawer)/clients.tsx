@@ -94,12 +94,12 @@ export default function ClientsScreen() {
     return ['Todas', ...SPANISH_CITIES];
   }, []);
 
+  // Cargar rutas desde BD
+  const { data: routes = [] } = trpc.routes.list.useQuery();
+  
   const uniqueRouteGroups = useMemo(() => {
-    const groups = clients
-      .map(c => (c as any).routeGroup)
-      .filter((g): g is string => !!g);
-    return ['Todos', ...Array.from(new Set(groups)).sort()];
-  }, [clients]);
+    return ['Todos', ...routes.map(r => r.name)];
+  }, [routes]);
 
   // Configurar header - useFocusEffect para actualización al recibir foco
   useFocusEffect(
