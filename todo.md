@@ -932,3 +932,6 @@
 
 ## Dashboard - Eliminar franjas grises de fondo
 - [x] Localizar y eliminar colores de fondo grises en el Dashboard
+
+## Global - Aplicar fondo blanco en toda la aplicación
+- [x] Añadir regla CSS global para fondo blanco en body y html

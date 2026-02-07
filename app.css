@@ -49,9 +49,11 @@ textarea,
 }
 
 /* Prevenir cursor de texto en elementos no editables */
+html,
 body {
   cursor: default;
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #ffffff;
 }
 
 
