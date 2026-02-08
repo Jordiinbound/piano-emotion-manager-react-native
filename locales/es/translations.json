@@ -92,7 +92,9 @@
     "deleteWarning": "Se eliminarán también todos los pianos, servicios y facturas asociados.",
     "noClients": "No hay clientes registrados",
     "addFirstClient": "Añade tu primer cliente",
-    "search": "Buscar clientes..."
+    "search": "Buscar clientes...",
+    "empty": "No hay clientes",
+    "emptyMessage": "Aún no tienes clientes registrados. Comienza agregando tu primer cliente."
   },
   "pianos": {
     "title": "Pianos",

@@ -475,3 +475,7 @@
 - [ ] Configurar EXPO_PUBLIC_GOOGLE_MAPS_API_KEY en variables de entorno (Vercel)
 
 **Nota:** El mapa ahora funciona completamente en web. Solo falta configurar la API key de Google Maps en Vercel.
+
+### Traducciones Faltantes en Clientes (08 Feb 2026)
+- [ ] Agregar traducción "es.clients.empty" en locales/es/translations.json
+- [ ] Agregar traducción "es.clients.emptyMessage" en locales/es/translations.json
