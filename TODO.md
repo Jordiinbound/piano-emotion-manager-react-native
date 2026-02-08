@@ -598,3 +598,9 @@
 ## 🐛 Bugs Nuevos (08 Feb 2026)
 
 - [x] Spinner de carga no aparece en detalle de cliente (corregido - agregado delay de 300ms)
+
+- [x] Calendario: Las tarjetas de citas no responden al clic (corregido - habilitada navegación a /appointment/[id])
+- [x] Calendario: Eventos en el calendario no abren detalle (corregido - habilitada navegación)
+- [x] Calendario: Cambio de día funciona correctamente (setSelectedDate ya estaba implementado)
+
+- [ ] Timeout al conectar Google/Outlook Calendar (FUNCTION_INVOCATION_TIMEOUT en Vercel)

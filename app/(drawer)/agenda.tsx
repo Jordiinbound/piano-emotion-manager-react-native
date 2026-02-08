@@ -185,10 +185,9 @@ export default function AgendaScreen() {
   }, [appointments, getClient]);
 
   const handleCalendarEventPress = (event: { id: string }) => {
-    // TODO: Implementar navegación a detalle de cita cuando la ruta exista
     console.log('[AgendaScreen] Evento seleccionado:', event.id);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // Temporalmente no navegar para evitar error de página en blanco
+    router.push(`/appointment/${event.id}`);
   };
 
   const handleCalendarDatePress = (date: string) => {
@@ -200,10 +199,9 @@ export default function AgendaScreen() {
   };
 
   const handleAppointmentPress = (appointment: Appointment) => {
-    // TODO: Implementar navegación a detalle de cita cuando la ruta exista
     console.log('[AgendaScreen] Cita seleccionada:', appointment.id);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // Temporalmente no navegar para evitar error de página en blanco
+    router.push(`/appointment/${appointment.id}`);
   };
 
   const handleAddAppointment = () => {
