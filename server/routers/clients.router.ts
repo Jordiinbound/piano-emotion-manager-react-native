@@ -502,8 +502,22 @@ export const clientsRouter = router({
         )
       );
 
-    // Por ahora, activos = total (no existe columna status)
-    const active = total;
+    // Clientes activos = clientes con al menos un servicio en los últimos 12 meses
+    const { services } = await import("../../drizzle/schema.js");
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    
+    const [{ activeCount }] = await database
+      .select({ activeCount: sql<number>`COUNT(DISTINCT ${services.clientId})` })
+      .from(services)
+      .where(
+        and(
+          eq(services.partnerId, ctx.partnerId),
+          sql`${services.date} >= ${oneYearAgo.toISOString().split('T')[0]}`,
+          isNotNull(services.clientId)
+        )
+      );
+    const active = Number(activeCount) || 0;
 
     // Contar clientes VIP (isVip = 1)
     const [{ vipCount }] = await database

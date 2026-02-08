@@ -630,3 +630,14 @@
 - [x] Calendario: Debe empezar en Lunes y acabar en Domingo - SOLUCIONADO ajustando cálculo de días
 
 - [x] OAuth: Timeout al conectar Google Calendar y Outlook Calendar - SOLUCIONADO creando endpoints de callback faltantes
+
+- [ ] Dashboard: Métrica "CON PIANOS" muestra 334 en lugar de 359 (cálculo incorrecto en el código del dashboard)
+
+- [ ] Implementar lógica real para "clientes activos" (actualmente solo muestra total=activos sin sentido)
+
+- [ ] Agregar campos de valor a tabla pianos (purchasePrice, currentValue, insuranceValue)
+- [ ] Actualizar interfaz de edición de pianos para incluir campos de valor
+
+- [ ] Marcar como VIP clientes con pianos de más de 30,000 euros
+
+- [ ] Ajustar valores: teatros y salas de conciertos solo deben tener pianos de cola de alto valor (50k-150k€)

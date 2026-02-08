@@ -815,6 +815,10 @@ export const pianos = mysqlTable("pianos", {
 	regulationIntervalDays: int().default(730),
 	alertsEnabled: tinyint().default(1),
 	customThresholdsEnabled: tinyint().default(0),
+	// Campos de valor
+	purchasePrice: decimal({ precision: 10, scale: 2 }),
+	currentValue: decimal({ precision: 10, scale: 2 }),
+	insuranceValue: decimal({ precision: 10, scale: 2 }),
 });
 
 export const platformAdmins = mysqlTable("platform_admins", {
