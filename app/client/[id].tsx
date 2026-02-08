@@ -654,6 +654,30 @@ export default function ClientDetailScreen() {
           )}
         </View>
 
+        {/* Cliente VIP */}
+        <View style={[styles.section, { backgroundColor: cardBg, borderColor }]}>
+          <View style={styles.vipContainer}>
+            <View style={styles.vipTextContainer}>
+              <ThemedText style={styles.sectionTitle}>Cliente VIP</ThemedText>
+              <ThemedText style={[styles.label, { color: textSecondary, fontSize: 13, marginTop: 4 }]}>
+                Marca este cliente como VIP para darle prioridad
+              </ThemedText>
+            </View>
+            <Switch
+              value={form.isVip || false}
+              onValueChange={(value) => {
+                setForm({ ...form, isVip: value });
+                if (!isNew) {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }
+              }}
+              trackColor={{ false: borderColor, true: '#52a67d' }}
+              thumbColor={form.isVip ? '#FFFFFF' : '#f4f3f4'}
+              disabled={!isEditing}
+            />
+          </View>
+        </View>
+
         {/* Notas */}
         <View style={[styles.section, { backgroundColor: cardBg, borderColor }]}>
           <ThemedText style={styles.sectionTitle}>Notas</ThemedText>
@@ -891,6 +915,15 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '600',
+  },
+  vipContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  vipTextContainer: {
+    flex: 1,
+    marginRight: Spacing.md,
   },
   actionsRow: {
     flexDirection: 'row',
