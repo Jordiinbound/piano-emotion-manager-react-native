@@ -1,5 +1,25 @@
 # TODO - Piano Emotion Manager
 
+## ✅ RESUELTO - Páginas en blanco (08 Feb 2026)
+
+### Página de Clientes
+- [x] **CAUSA:** Faltaba import de trpc en clients.tsx
+- [x] **SOLUCIÓN:** Agregado `import { trpc } from '@/lib/trpc'` en línea 26
+- [x] **COMMIT:** fa0329a - "Fix: Agregar import faltante de trpc en clients.tsx"
+- [x] **ESTADO:** Desplegado en producción
+
+### Página de Agenda
+- [x] **CAUSA:** Navegación a ruta inexistente /appointment/[id]
+- [x] **PROBLEMA:** Al hacer clic en días del calendario, eventos o botón FAB intentaba navegar a ruta que no existe
+- [x] **SOLUCIÓN:** 
+  - handleCalendarDatePress: ahora solo actualiza fecha seleccionada
+  - handleCalendarEventPress: comentada navegación temporalmente
+  - handleAppointmentPress: comentada navegación temporalmente
+  - handleAddAppointment: comentada navegación temporalmente
+  - Agregados TODOs para implementar cuando la ruta exista
+- [x] **COMMIT:** c6f7a7e - "Fix: Corregir navegación a ruta inexistente en agenda"
+- [x] **ESTADO:** Desplegado en producción
+
 ## 🐛 Bugs Críticos (Prioridad Alta)
 
 ### Gráfico de Reportes con Sidebar (04 Feb 2026)
