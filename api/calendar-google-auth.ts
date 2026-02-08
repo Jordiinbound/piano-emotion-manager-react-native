@@ -20,6 +20,24 @@ export default async function handler(request: Request) {
       );
     }
 
+    // Validar que las variables de entorno estén configuradas
+    const clientId = process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_CALENDAR_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CALENDAR_CLIENT_SECRET;
+    
+    if (!clientId || !clientSecret) {
+      console.error('❌ Missing Google OAuth credentials');
+      return new Response(
+        JSON.stringify({
+          error: 'Google Calendar integration not configured',
+          message: 'Please configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel environment variables',
+        }),
+        {
+          status: 503,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     // Generar URL de autorización de Google
     const authUrl = getAuthorizationUrl(userId);
 

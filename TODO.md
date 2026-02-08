@@ -603,7 +603,10 @@
 - [x] Calendario: Eventos en el calendario no abren detalle (corregido - habilitada navegación)
 - [x] Calendario: Cambio de día funciona correctamente (setSelectedDate ya estaba implementado)
 
-- [ ] Timeout al conectar Google/Outlook Calendar (FUNCTION_INVOCATION_TIMEOUT en Vercel)
+- [x] Timeout al conectar Google/Outlook Calendar - Correcciones aplicadas:
+  - maxDuration aumentado de 10s a 30s en vercel.json
+  - Validación temprana de variables de entorno en endpoints
+  - Mensajes de error claros si faltan credenciales OAuth
 
 - [x] Aviso "Sin Conexión" actualizado a diseño moderno (cardBg con sombras)
 - [x] Icono de Google Calendar corregido (calendar.badge.clock)
@@ -614,3 +617,5 @@
 - [x] Contenedor de "Conexiones" y "Sincronización" ahora tienen sombras
 
 - [x] Usar mismo icono para Google y Outlook Calendar (calendar.badge.clock para ambos)
+
+- [ ] Calendario: Los días no responden al clic (no se puede cambiar de día seleccionado)

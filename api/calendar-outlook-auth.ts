@@ -20,6 +20,24 @@ export default async function handler(request: Request) {
       );
     }
 
+    // Validar que las variables de entorno estén configuradas
+    const clientId = process.env.MICROSOFT_CLIENT_ID || process.env.OUTLOOK_CLIENT_ID;
+    const clientSecret = process.env.MICROSOFT_CLIENT_SECRET || process.env.OUTLOOK_CLIENT_SECRET;
+    
+    if (!clientId || !clientSecret) {
+      console.error('❌ Missing Microsoft OAuth credentials');
+      return new Response(
+        JSON.stringify({
+          error: 'Outlook Calendar integration not configured',
+          message: 'Please configure MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET in Vercel environment variables',
+        }),
+        {
+          status: 503,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     // Generar URL de autorización de Microsoft
     const authUrl = await getAuthorizationUrl(userId);
 
