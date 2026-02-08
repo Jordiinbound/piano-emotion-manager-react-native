@@ -625,6 +625,8 @@
 
 - [ ] Selector de ciudades: No se cargan todas las ciudades en el listado de clientes
 
-- [ ] Calendario: El día seleccionado no se marca visualmente al hacer clic (el borde naranja no se mueve al nuevo día)
+- [x] Calendario: El día seleccionado no se marca visualmente al hacer clic - SOLUCIONADO con estado selectedDate
 
-- [ ] Calendario: Debe empezar en Lunes y acabar en Domingo (actualmente empieza en Domingo)
+- [x] Calendario: Debe empezar en Lunes y acabar en Domingo - SOLUCIONADO ajustando cálculo de días
+
+- [ ] OAuth: Timeout al conectar Google Calendar y Outlook Calendar (504 GATEWAY_TIMEOUT)
