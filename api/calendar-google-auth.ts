@@ -3,7 +3,7 @@
  * Genera la URL de autorización de Google y redirige al usuario
  */
 
-import { getAuthorizationUrl } from '../server/_core/calendar/oauth-google';
+import { getAuthorizationUrl } from '../server/_core/calendar/oauth-google.js';
 
 export default async function handler(request: Request) {
   try {

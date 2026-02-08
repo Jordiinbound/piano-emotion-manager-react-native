@@ -3,7 +3,7 @@
  */
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
-import { encrypt, decrypt } from './encryption';
+import { encrypt, decrypt } from './encryption.js';
 import type { OAuthTokens } from './types';
 
 const MICROSOFT_CLIENT_ID = process.env.OUTLOOK_CLIENT_ID || process.env.MICROSOFT_CALENDAR_CLIENT_ID || '';
