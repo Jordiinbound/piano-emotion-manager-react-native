@@ -45,6 +45,7 @@ export default async function handler(request: any) {
     console.log('[OAuth] Successfully generated auth URL:', authUrl.substring(0, 50) + '...');
 
     // Redirigir al usuario a Google para autorización
+    console.log('[OAuth] 🚀 About to return redirect response...');
     return new Response(null, {
       status: 302,
       headers: {
