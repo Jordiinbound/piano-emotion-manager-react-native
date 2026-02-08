@@ -23,6 +23,7 @@ import { LoadingSpinner } from '@/components/loading-spinner';
 import { SearchBar } from '@/components/search-bar';
 import { useClientsData, usePianosData } from '@/hooks/data';
 import { useTranslation } from '@/hooks/use-translation';
+import { trpc } from '@/lib/trpc';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import { Client, getClientFullName } from '@/types';
 
