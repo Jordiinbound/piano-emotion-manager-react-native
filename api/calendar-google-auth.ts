@@ -40,7 +40,9 @@ export default async function handler(request: any) {
     }
 
     // Generar URL de autorización de Google
+    console.log('[OAuth] About to call getAuthorizationUrl for userId:', userId);
     const authUrl = getAuthorizationUrl(userId);
+    console.log('[OAuth] Successfully generated auth URL:', authUrl.substring(0, 50) + '...');
 
     // Redirigir al usuario a Google para autorización
     return Response.redirect(authUrl, 302);

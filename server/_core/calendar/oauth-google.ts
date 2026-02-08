@@ -34,14 +34,21 @@ export function createOAuth2Client(): OAuth2Client {
  * @returns Authorization URL
  */
 export function getAuthorizationUrl(state?: string): string {
+  console.log('[OAuth] getAuthorizationUrl called with state:', state);
+  console.log('[OAuth] Creating OAuth2 client...');
   const oauth2Client = createOAuth2Client();
+  console.log('[OAuth] OAuth2 client created successfully');
   
-  return oauth2Client.generateAuthUrl({
+  console.log('[OAuth] Generating auth URL...');
+  const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline', // Get refresh token
     scope: SCOPES,
     prompt: 'consent', // Force consent screen to get refresh token
     state: state || undefined,
   });
+  console.log('[OAuth] Auth URL generated successfully');
+  
+  return authUrl;
 }
 
 /**
