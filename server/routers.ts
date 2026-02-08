@@ -55,7 +55,6 @@ import { clientRouter } from "./routers/crm/index.js";
 import { analyticsRouter } from "./routers/reports/index.js";
 import { debugRouter } from "./routers/debug.router.js";
 import { diagnosticRouter } from "./routers/diagnostic.router.js";
-import { partnerSettingsRouter } from "./routers/partner-settings.router.js";
 
 export const appRouter = router({
   // Sistema
@@ -85,7 +84,6 @@ export const appRouter = router({
   modules: modulesRouter,
   invitations: invitationsRouter,
   partners: partnersRouter,
-  partnerSettings: partnerSettingsRouter,
   onboarding: onboardingRouter,
   language: languageRouter,
   
