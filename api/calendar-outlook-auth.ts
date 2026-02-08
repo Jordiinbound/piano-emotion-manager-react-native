@@ -43,7 +43,12 @@ export default async function handler(request: any) {
     const authUrl = await getAuthorizationUrl(userId);
 
     // Redirigir al usuario a Microsoft para autorización
-    return Response.redirect(authUrl, 302);
+    return new Response(null, {
+      status: 302,
+      headers: {
+        'Location': authUrl,
+      },
+    });
   } catch (error) {
     console.error('Error generating Microsoft auth URL:', error);
     
