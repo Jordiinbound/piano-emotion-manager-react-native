@@ -1,6 +1,7 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Linking,
   Pressable,
@@ -44,6 +45,7 @@ export default function ClientDetailScreen() {
   const { sendCustomMessage } = useWhatsApp();
 
   const [isEditing, setIsEditing] = useState(isNew);
+  const [isLoading, setIsLoading] = useState(!isNew);
   const [form, setForm] = useState<Partial<Client>>({
     firstName: '',
     lastName1: '',
@@ -101,6 +103,9 @@ export default function ClientDetailScreen() {
             province: '',
           },
         });
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
       }
     }
   }, [id, isNew, clients]);
@@ -130,6 +135,7 @@ export default function ClientDetailScreen() {
           address: form.address,
           notes: form.notes?.trim(),
           routeId: form.routeId,
+          isVip: form.isVip || false,
         });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.replace({
@@ -434,11 +440,19 @@ export default function ClientDetailScreen() {
         ]}
       />
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 100 }]}
-        showsVerticalScrollIndicator={false}
-      >
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={accent} />
+          <ThemedText style={[styles.loadingText, { color: textSecondary }]}>
+            Cargando datos del cliente...
+          </ThemedText>
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 100 }]}
+          showsVerticalScrollIndicator={false}
+        >
         {/* Datos personales */}
         <View style={[styles.section, { backgroundColor: cardBg, borderColor }]}>
           <ThemedText style={styles.sectionTitle}>Datos Personales</ThemedText>
@@ -535,8 +549,7 @@ export default function ClientDetailScreen() {
                     <CitySelector
                       value={form.address?.city || ''}
                       onChangeText={(text) => updateAddress('city', text)}
-                      placeholder="Buscar ciudad..."
-                      listId="fiscal-city-list"
+                      placeholder="Seleccionar ciudad..."
                     />
                   </View>
                 </View>
@@ -583,8 +596,7 @@ export default function ClientDetailScreen() {
                     <CitySelector
                       value={form.shippingAddress?.city || ''}
                       onChangeText={(text) => updateShippingAddress('city', text)}
-                      placeholder="Buscar ciudad..."
-                      listId="shipping-city-list"
+                      placeholder="Seleccionar ciudad..."
                     />
                   </View>
                 </View>
@@ -809,10 +821,11 @@ export default function ClientDetailScreen() {
             <ThemedText style={{ color: error, marginLeft: 8 }}>Eliminar cliente</ThemedText>
           </Pressable>
         )}
-      </ScrollView>
+        </ScrollView>
+      )}
 
       {/* Botón guardar */}
-      {isEditing && (
+      {isEditing && !isLoading && (
         <View style={[styles.footer, { paddingBottom: insets.bottom + Spacing.md }]}>
           <Pressable
             style={[styles.saveButton, { backgroundColor: accent }]}
@@ -834,6 +847,16 @@ export default function ClientDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.xl,
+  },
+  loadingText: {
+    marginTop: Spacing.md,
+    fontSize: 14,
   },
   scrollView: {
     flex: 1,
@@ -958,6 +981,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: Spacing.xs,
     minWidth: 120,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
   actionText: {
     fontSize: 13,

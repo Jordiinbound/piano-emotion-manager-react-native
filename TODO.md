@@ -582,3 +582,15 @@
 - [ ] Agregar el archivo al proyecto React Native
 - [ ] Actualizar componente de filtros para cargar ciudades desde JSON
 - [ ] Probar que el selector de ciudades funcione correctamente
+
+## 🎨 Mejoras Visuales Pendientes (08 Feb 2026)
+
+- [x] Agregar sombras a botones de acción en detalle de cliente (Llamar, Email, WhatsApp, Cómo llegar, Portal)
+- [x] Agregar spinner de carga mientras se cargan los datos del cliente
+- [x] Cambiar selector de ciudades a dropdown nativo <select> con todas las 3,638 ciudades
+
+## 🐛 Bugs Identificados (08 Feb 2026)
+
+- [x] Agregar indicador VIP en detalle de piano (badge verde "VIP" junto al nombre del cliente)
+- [x] Campo VIP no se guardaba en creación de cliente (corregido - agregado isVip a addClient)
+- [ ] Faltan 25 clientes sin pianos (334/359 tienen pianos, deberían ser 359/359)

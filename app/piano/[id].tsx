@@ -341,7 +341,14 @@ export default function PianoDetailScreen() {
           </ScrollView>
         )
       ) : (
-        <ThemedText style={styles.value}>{client ? getClientFullName(client) : '-'}</ThemedText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <ThemedText style={styles.value}>{client ? getClientFullName(client) : '-'}</ThemedText>
+          {client?.isVip && (
+            <View style={[styles.vipBadge, { backgroundColor: '#52a67d' }]}>
+              <ThemedText style={styles.vipBadgeText}>VIP</ThemedText>
+            </View>
+          )}
+        </View>
       )}
     </View>
   );
@@ -1430,5 +1437,16 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
+  },
+  vipBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  vipBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 });

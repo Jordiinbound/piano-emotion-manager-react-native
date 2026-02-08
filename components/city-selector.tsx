@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { BorderRadius, Spacing } from '@/constants/theme';
 import ciudadesData from '@/assets/data/ciudades_espana.json';
@@ -9,42 +9,45 @@ interface CitySelectorProps {
   onChangeText: (text: string) => void;
   placeholder?: string;
   disabled?: boolean;
-  listId?: string;
 }
 
 export function CitySelector({ 
   value, 
   onChangeText, 
-  placeholder = 'Buscar ciudad...', 
-  disabled = false,
-  listId = 'cities-list'
+  placeholder = 'Seleccionar ciudad...', 
+  disabled = false 
 }: CitySelectorProps) {
   const cardBg = useThemeColor({}, 'cardBackground');
   const borderColor = useThemeColor({}, 'border');
   const textColor = useThemeColor({}, 'text');
-  const textSecondary = useThemeColor({}, 'textSecondary');
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={[
-          styles.input,
-          { backgroundColor: cardBg, borderColor, color: textColor },
-        ]}
+      <select
         value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={textSecondary}
-        editable={!disabled}
-        // @ts-ignore - list es un atributo HTML válido
-        list={listId}
-      />
-      {/* Datalist nativo de HTML para autocompletado */}
-      <datalist id={listId}>
+        onChange={(e: any) => onChangeText(e.target.value)}
+        disabled={disabled}
+        style={{
+          width: '100%',
+          padding: Spacing.sm,
+          fontSize: 15,
+          fontFamily: 'Montserrat',
+          backgroundColor: cardBg,
+          color: textColor,
+          borderWidth: 1,
+          borderColor: borderColor,
+          borderRadius: BorderRadius.md,
+          borderStyle: 'solid',
+          outline: 'none',
+        } as any}
+      >
+        <option value="">{placeholder}</option>
         {ciudadesData.map((city: string, index: number) => (
-          <option key={`${city}-${index}`} value={city} />
+          <option key={`${city}-${index}`} value={city}>
+            {city}
+          </option>
         ))}
-      </datalist>
+      </select>
     </View>
   );
 }
@@ -52,13 +55,5 @@ export function CitySelector({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.sm,
-    fontSize: 15,
-    fontFamily: 'Montserrat',
   },
 });
