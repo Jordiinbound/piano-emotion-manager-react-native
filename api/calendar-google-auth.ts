@@ -5,10 +5,10 @@
 
 import { getAuthorizationUrl } from '../server/_core/calendar/oauth-google.js';
 
-export default async function handler(request: Request) {
+export default async function handler(request: any) {
   try {
     // Parse URL correctly - request.url might be relative or absolute
-    const url = new URL(request.url, `https://${request.headers.get('host') || 'localhost'}`);
+    const url = new URL(request.url, `https://${request.headers.host || 'localhost'}`);
     const userId = url.searchParams.get('userId');
 
     if (!userId) {
