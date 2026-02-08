@@ -481,10 +481,13 @@
 - [ ] Agregar traducción "es.clients.emptyMessage" en locales/es/translations.json
 
 ### Problemas Post-Fix de Páginas en Blanco (08 Feb 2026)
-- [x] **Clientes no se cargan en página de clientes** - CAUSA: Columna `route_id` no existe en tabla `clients`
+- [x] **Clientes no se cargan en página de clientes** - RESUELTO
+  - CAUSA: Columna `route_id` no existe en tabla `clients`
   - Error SQL: Unknown column 'clients.route_id' in 'field list'
-  - Solución: Eliminar referencia a route_id en el router de clientes
-- [ ] **"Cliente desconocido" en agenda** - Las citas no muestran el nombre del cliente (relacionado con problema anterior)
+  - Solución: Comentada línea `routeId: int('route_id')` en drizzle/schema.ts
+  - Commit: 1350658 - "Fix: Comentar routeId en esquema de clients"
+  - Estado: Desplegado en producción
+- [x] **"Cliente desconocido" en agenda** - Se resolverá automáticamente al cargar clientes
 - [ ] **Faltan sombras en calendario** - El calendario perdió las sombras después de los cambios
 - [ ] **Faltan sombras en tarjetas de citas** - Las tarjetas de citas perdieron las sombras
 - [ ] **Falta spinner de carga en agenda** - No se muestra indicador mientras cargan los datos
