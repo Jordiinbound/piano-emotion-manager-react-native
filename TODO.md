@@ -491,3 +491,9 @@
 - [ ] **Faltan sombras en calendario** - El calendario perdió las sombras después de los cambios
 - [ ] **Faltan sombras en tarjetas de citas** - Las tarjetas de citas perdieron las sombras
 - [ ] **Falta spinner de carga en agenda** - No se muestra indicador mientras cargan los datos
+
+### Crear estructuras faltantes en TiDB (08 Feb 2026)
+- [x] Verificar esquema actual de tabla clients
+- [x] Crear tabla routes en TiDB - Tabla creada con todos los campos e índices
+- [x] Agregar columna route_id a tabla clients - Columna agregada correctamente
+- [x] Descomentar routeId en drizzle/schema.ts - Esquema actualizado
