@@ -479,3 +479,12 @@
 ### Traducciones Faltantes en Clientes (08 Feb 2026)
 - [ ] Agregar traducción "es.clients.empty" en locales/es/translations.json
 - [ ] Agregar traducción "es.clients.emptyMessage" en locales/es/translations.json
+
+### Problemas Post-Fix de Páginas en Blanco (08 Feb 2026)
+- [x] **Clientes no se cargan en página de clientes** - CAUSA: Columna `route_id` no existe en tabla `clients`
+  - Error SQL: Unknown column 'clients.route_id' in 'field list'
+  - Solución: Eliminar referencia a route_id en el router de clientes
+- [ ] **"Cliente desconocido" en agenda** - Las citas no muestran el nombre del cliente (relacionado con problema anterior)
+- [ ] **Faltan sombras en calendario** - El calendario perdió las sombras después de los cambios
+- [ ] **Faltan sombras en tarjetas de citas** - Las tarjetas de citas perdieron las sombras
+- [ ] **Falta spinner de carga en agenda** - No se muestra indicador mientras cargan los datos
