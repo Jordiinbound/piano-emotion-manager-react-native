@@ -629,4 +629,4 @@
 
 - [x] Calendario: Debe empezar en Lunes y acabar en Domingo - SOLUCIONADO ajustando cálculo de días
 
-- [ ] OAuth: Timeout al conectar Google Calendar y Outlook Calendar (504 GATEWAY_TIMEOUT)
+- [x] OAuth: Timeout al conectar Google Calendar y Outlook Calendar - SOLUCIONADO creando endpoints de callback faltantes
