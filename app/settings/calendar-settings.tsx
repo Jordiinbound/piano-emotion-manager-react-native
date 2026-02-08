@@ -193,8 +193,13 @@ export default function CalendarSettingsScreen() {
         <View style={[
           styles.summaryCard,
           {
-            backgroundColor: hasAnyConnection ? `${success}10` : `${warning}10`,
-            borderColor: hasAnyConnection ? success : warning,
+            backgroundColor: cardBg,
+            borderColor: borderColor,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 8,
+            elevation: 5,
           }
         ]}>
           <View style={styles.summaryIcon}>
@@ -240,7 +245,7 @@ export default function CalendarSettingsScreen() {
           {/* Google Calendar */}
           <View style={[styles.connectionRow, { borderTopColor: borderColor }]}>
             <View style={[styles.providerIcon, { backgroundColor: `${accent}15` }]}>
-              <IconSymbol name="envelope.fill" size={24} color={accent} />
+              <IconSymbol name="calendar.badge.clock" size={24} color={accent} />
             </View>
             <View style={styles.connectionInfo}>
               <ThemedText style={styles.connectionName}>Google Calendar</ThemedText>
@@ -273,7 +278,7 @@ export default function CalendarSettingsScreen() {
           {/* Outlook Calendar */}
           <View style={[styles.connectionRow, { borderTopColor: borderColor }]}>
             <View style={[styles.providerIcon, { backgroundColor: `${accent}15` }]}>
-              <IconSymbol name="envelope.circle.fill" size={24} color={accent} />
+              <IconSymbol name="calendar.circle" size={24} color={accent} />
             </View>
             <View style={styles.connectionInfo}>
               <ThemedText style={styles.connectionName}>Outlook Calendar</ThemedText>

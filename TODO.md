@@ -604,3 +604,7 @@
 - [x] Calendario: Cambio de día funciona correctamente (setSelectedDate ya estaba implementado)
 
 - [ ] Timeout al conectar Google/Outlook Calendar (FUNCTION_INVOCATION_TIMEOUT en Vercel)
+
+- [x] Aviso "Sin Conexión" actualizado a diseño moderno (cardBg con sombras)
+- [x] Icono de Google Calendar corregido (calendar.badge.clock)
+- [x] Icono de Outlook Calendar corregido (calendar.circle)
