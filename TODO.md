@@ -612,3 +612,5 @@
 - [x] Icono de Outlook Calendar corregido (cambiado a 'calendar' simple que sí existe)
 
 - [x] Contenedor de "Conexiones" y "Sincronización" ahora tienen sombras
+
+- [x] Usar mismo icono para Google y Outlook Calendar (calendar.badge.clock para ambos)

@@ -289,7 +289,7 @@ export default function CalendarSettingsScreen() {
           {/* Outlook Calendar */}
           <View style={[styles.connectionRow, { borderTopColor: borderColor }]}>
             <View style={[styles.providerIcon, { backgroundColor: `${accent}15` }]}>
-              <IconSymbol name="calendar" size={24} color={accent} />
+              <IconSymbol name="calendar.badge.clock" size={24} color={accent} />
             </View>
             <View style={styles.connectionInfo}>
               <ThemedText style={styles.connectionName}>Outlook Calendar</ThemedText>
