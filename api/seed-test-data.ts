@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifyClerkSession } from '../server/_core/clerk.js';
 import { getDb } from '../server/db.js';
-import { clients, pianos, services } from '../drizzle/schema.js';
+import { clients, pianos, services } from '../../drizzle/schema.js';
 import { eq } from 'drizzle-orm';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

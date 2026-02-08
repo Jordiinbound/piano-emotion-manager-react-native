@@ -1,6 +1,6 @@
-import { getDb } from '../drizzle/db.js';
-import { shops, shopTierConfig, shopRolePermissions } from '../drizzle/shop-schema.js';
-import { distributorWooCommerceConfig } from '../drizzle/distributor-schema.js';
+import { getDb } from '../../drizzle/db.js';
+import { shops, shopTierConfig, shopRolePermissions } from '../../drizzle/shop-schema.js';
+import { distributorWooCommerceConfig } from '../../drizzle/distributor-schema.js';
 import { eq } from 'drizzle-orm';
 
 export default async function handler(req: any, res: any) {
