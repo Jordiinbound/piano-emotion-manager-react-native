@@ -103,9 +103,10 @@ export default function ClientDetailScreen() {
             province: '',
           },
         });
-        setIsLoading(false);
+        // Delay mínimo para que el spinner sea visible
+        setTimeout(() => setIsLoading(false), 300);
       } else {
-        setIsLoading(false);
+        setTimeout(() => setIsLoading(false), 300);
       }
     }
   }, [id, isNew, clients]);

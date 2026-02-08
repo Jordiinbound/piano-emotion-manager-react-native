@@ -594,3 +594,7 @@
 - [x] Agregar indicador VIP en detalle de piano (badge verde "VIP" junto al nombre del cliente)
 - [x] Campo VIP no se guardaba en creación de cliente (corregido - agregado isVip a addClient)
 - [ ] Faltan 25 clientes sin pianos (334/359 tienen pianos, deberían ser 359/359)
+
+## 🐛 Bugs Nuevos (08 Feb 2026)
+
+- [x] Spinner de carga no aparece en detalle de cliente (corregido - agregado delay de 300ms)
