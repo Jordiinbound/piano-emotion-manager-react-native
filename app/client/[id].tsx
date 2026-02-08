@@ -6,6 +6,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   TextInput,
   View,
 } from 'react-native';
@@ -68,6 +69,7 @@ export default function ClientDetailScreen() {
     },
     notes: '',
     routeId: undefined,
+    isVip: false,
   });
   const [taxIdValidation, setTaxIdValidation] = useState<TaxIdValidationResult | null>(null);
 
@@ -413,7 +415,7 @@ export default function ClientDetailScreen() {
           ),
           headerRight: () =>
             !isNew && (
-              <Pressable onPress={() => setIsEditing(!isEditing)}>
+              <Pressable onPress={() => setIsEditing(!isEditing)} style={{ marginRight: 16 }}>
                 <ThemedText style={{ color: accent }}>
                   {isEditing ? 'Cancelar' : 'Editar'}
                 </ThemedText>
@@ -685,7 +687,7 @@ export default function ClientDetailScreen() {
               </ThemedText>
             </Pressable>
             <Pressable
-              style={[styles.actionButton, { backgroundColor: '#25D366', borderColor: '#25D366' }]}
+              style={[styles.actionButton, { backgroundColor: '#52a67d', borderColor: '#52a67d' }]}
               onPress={() => {
                 if (form.phone) {
                   sendCustomMessage(form as Client, 'Hola, me pongo en contacto contigo desde Piano Emotion Manager.');
@@ -698,7 +700,7 @@ export default function ClientDetailScreen() {
               <ThemedText style={[styles.actionText, { color: '#FFFFFF' }]}>WhatsApp</ThemedText>
             </Pressable>
             <Pressable
-              style={[styles.actionButton, { backgroundColor: '#4285F4', borderColor: '#4285F4' }]}
+              style={[styles.actionButton, { backgroundColor: '#5b7fc7', borderColor: '#5b7fc7' }]}
               onPress={handleOpenMaps}
               disabled={!hasValidAddress()}
             >
@@ -708,7 +710,7 @@ export default function ClientDetailScreen() {
               </ThemedText>
             </Pressable>
             <Pressable
-              style={[styles.actionButton, { backgroundColor: '#8B5CF6', borderColor: '#8B5CF6' }]}
+              style={[styles.actionButton, { backgroundColor: '#9b7fc9', borderColor: '#9b7fc9' }]}
               onPress={handleSharePortal}
               accessibilityRole="button"
               accessibilityLabel="Compartir portal del cliente"
@@ -804,6 +806,11 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     gap: Spacing.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   sectionTitle: {
     fontSize: 16,

@@ -308,6 +308,7 @@ export const clients = mysqlTable("clients", {
 	phone: varchar({ length: 50 }),
 	address: text(),
 	clientType: mysqlEnum(['particular','student','professional','music_school','conservatory','concert_hall']).default('particular').notNull(),
+	isVip: tinyint().default(0),
 	notes: text(),
 	createdAt: timestamp({ mode: 'string' }).default('CURRENT_TIMESTAMP').notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),

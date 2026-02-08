@@ -501,3 +501,42 @@
 ### Fortalecer sombras en UI (08 Feb 2026)
 - [x] Actualizar sombras del calendario - Aumentada opacidad a 0.15, offset a 4, radius a 8, elevation a 5
 - [x] Actualizar sombras de tarjetas de citas - Aumentada opacidad a 0.15, offset a 4, radius a 8, elevation a 5
+
+### Agregar sombras a filtros de clientes (08 Feb 2026)
+- [x] Agregar sombras a selectores de filtros (PROVINCIA, CIUDAD, RUTA) - Agregado boxShadow para web
+
+### ✅ RESUELTO: Clientes sin pianos (08 Feb 2026)
+- [x] Identificar los 25 clientes que no tienen pianos asignados - IDs 1-25
+- [x] Investigar por qué estos clientes no tienen pianos - Error de importación: pianos empezaban desde clientId 26
+- [x] Verificar si es error de importación de datos - Confirmado: 290 citas existían para estos clientes
+- [x] Corregir el problema - Creados 44 pianos (5 para instituciones, 1 para individuales)
+- [x] Resultado: 359/359 clientes ahora tienen pianos (100%)
+
+### Agregar TODAS las ciudades de España (08 Feb 2026)
+- [x] Consultar qué ciudades existen actualmente - 10 ciudades encontradas
+- [x] Obtener lista completa de TODAS las ciudades de España - 3,638 municipios únicos descargados
+- [ ] Preparar script SQL para insertar todas las ciudades
+- [ ] Ejecutar inserción en base de datos
+
+### Funcionalidad VIP para clientes (08 Feb 2026)
+- [x] Verificar cómo se calcula la estadística "VIP" en el frontend - Hardcodeado a 0
+- [x] Agregar campo isVip a la tabla clients en TiDB - Completado
+- [x] Actualizar esquema de Drizzle con el campo isVip - Completado
+- [x] Actualizar router para calcular correctamente el conteo de VIP - Completado
+- [x] Buscar/crear página de detalle de cliente - app/client/[id].tsx
+- [x] Agregar margen al botón editar en página de detalle - Completado
+- [x] Matizar colores de botones (Llamar, WhatsApp, Cómo llegar, Email, Portal) - Aplicados colores suaves del dashboard:
+  - WhatsApp: #52a67d (verde suave)
+  - Cómo llegar: #5b7fc7 (azul suave)
+  - Portal: #9b7fc9 (violeta suave)
+- [x] Aplicar sombras a las cajas contenedoras (secciones) como en inventario - Aplicadas sombras idénticas:
+  - shadowRadius: 12, shadowOpacity: 0.15, elevation: 6
+- [ ] Agregar toggle/checkbox de VIP en la interfaz de detalle del cliente
+- [ ] Implementar tRPC mutation para actualizar isVip
+- [ ] Probar que la funcionalidad VIP funcione correctamente
+
+### Implementar archivo JSON de ciudades (08 Feb 2026)
+- [ ] Crear archivo JSON con las 3,638 ciudades de España
+- [ ] Agregar el archivo al proyecto React Native
+- [ ] Actualizar componente de filtros para cargar ciudades desde JSON
+- [ ] Probar que el selector de ciudades funcione correctamente

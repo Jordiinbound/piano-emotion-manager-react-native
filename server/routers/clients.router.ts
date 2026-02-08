@@ -505,8 +505,21 @@ export const clientsRouter = router({
     // Por ahora, activos = total (no existe columna status)
     const active = total;
 
-    // Por ahora, VIP = 0 (no existe columna isVIP)
-    const vip = 0;
+    // Contar clientes VIP (isVip = 1)
+    const [{ vipCount }] = await database
+      .select({ vipCount: sql<number>`COUNT(*)` })
+      .from(clients)
+      .where(
+        and(
+          filterByPartnerAndOrganization(
+            clients,
+            ctx.partnerId,
+            ctx.orgContext,
+          ),
+          eq(clients.isVip, 1),
+        ),
+      );
+    const vip = Number(vipCount) || 0;
 
     // Clientes con pianos (DISTINCT clientId en tabla pianos)
     const [{ withPianos }] = await database
