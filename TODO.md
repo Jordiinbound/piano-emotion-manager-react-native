@@ -641,3 +641,8 @@
 - [x] Marcar como VIP clientes con pianos de más de 30,000 euros - COMPLETADO (149 clientes VIP)
 
 - [x] Ajustar valores: teatros y salas de conciertos solo deben tener pianos de cola de alto valor - COMPLETADO (116 pianos ajustados)
+
+- [ ] Implementar configuración dinámica del umbral de valor VIP (actualmente fijo en 30,000€)
+- [ ] Crear interfaz de configuración para ajustar umbral VIP
+- [ ] Implementar actualización automática de VIPs cuando cambie el umbral
+- [ ] Permitir marcado manual de VIP (independiente del umbral automático)

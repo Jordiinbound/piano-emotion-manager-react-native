@@ -3,9 +3,9 @@
  * Maneja la respuesta de Google después de la autorización
  */
 
-import { exchangeCodeForTokens } from '../../../server/_core/calendar/oauth-google.js';
-import { getDb } from '../../../server/db.js';
-import { calendarConnections } from '../../../drizzle/calendar-schema.js';
+import { exchangeCodeForTokens } from '../../../server/_core/calendar/oauth-google';
+import { getDb } from '../../../server/db';
+import { calendarConnections } from '../../../drizzle/calendar-schema';
 import { eq, and } from 'drizzle-orm';
 
 export default async function handler(request: Request) {

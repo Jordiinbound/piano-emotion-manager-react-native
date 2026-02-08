@@ -3,11 +3,12 @@
  * Genera la URL de autorización de Google y redirige al usuario
  */
 
-import { getAuthorizationUrl } from '../server/_core/calendar/oauth-google.js';
+import { getAuthorizationUrl } from '../server/_core/calendar/oauth-google';
 
 export default async function handler(request: Request) {
   try {
-    const url = new URL(request.url);
+    // Parse URL correctly - request.url might be relative or absolute
+    const url = new URL(request.url, `https://${request.headers.get('host') || 'localhost'}`);
     const userId = url.searchParams.get('userId');
 
     if (!userId) {

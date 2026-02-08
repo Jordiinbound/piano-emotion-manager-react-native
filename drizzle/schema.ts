@@ -309,6 +309,7 @@ export const clients = mysqlTable("clients", {
 	address: text(),
 	clientType: mysqlEnum(['particular','student','professional','music_school','conservatory','concert_hall']).default('particular').notNull(),
 	isVip: tinyint().default(0),
+	vipSource: mysqlEnum(['auto', 'manual']), // 'auto' = por umbral, 'manual' = marcado por usuario
 	notes: text(),
 	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
@@ -737,6 +738,8 @@ export const partnerSettings = mysqlTable("partner_settings", {
 	pushNotifications: tinyint().default(1),
 	emailNotifications: tinyint().default(1),
 	calendarSync: mysqlEnum(['none','google','outlook']).default('none'),
+	// VIP Configuration
+	vipThreshold: decimal({ precision: 10, scale: 2 }).default('30000.00'), // Umbral de valor para VIP automático
 	createdAt: timestamp({ mode: 'string' }).default(sql`CURRENT_TIMESTAMP`).notNull(),
 	updatedAt: timestamp({ mode: 'string' }).defaultNow().onUpdateNow().notNull(),
 },

@@ -4,8 +4,8 @@
 
 import { google } from 'googleapis';
 import type { OAuth2Client } from 'google-auth-library';
-import { encrypt, decrypt } from './encryption.js';
-import type { OAuthTokens } from './types.js';
+import { encrypt, decrypt } from './encryption';
+import type { OAuthTokens } from './types';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_CALENDAR_CLIENT_ID || '';
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CALENDAR_CLIENT_SECRET || '';
