@@ -633,11 +633,11 @@
 
 - [ ] Dashboard: Métrica "CON PIANOS" muestra 334 en lugar de 359 (cálculo incorrecto en el código del dashboard)
 
-- [ ] Implementar lógica real para "clientes activos" (actualmente solo muestra total=activos sin sentido)
+- [x] Implementar lógica real para "clientes activos" - COMPLETADO (clientes con servicios últimos 12 meses)
 
-- [ ] Agregar campos de valor a tabla pianos (purchasePrice, currentValue, insuranceValue)
-- [ ] Actualizar interfaz de edición de pianos para incluir campos de valor
+- [x] Agregar campos de valor a tabla pianos - COMPLETADO (purchasePrice, currentValue, insuranceValue)
+- [ ] Actualizar interfaz de edición de pianos para incluir campos de valor (PENDIENTE - solo backend)
 
-- [ ] Marcar como VIP clientes con pianos de más de 30,000 euros
+- [x] Marcar como VIP clientes con pianos de más de 30,000 euros - COMPLETADO (149 clientes VIP)
 
-- [ ] Ajustar valores: teatros y salas de conciertos solo deben tener pianos de cola de alto valor (50k-150k€)
+- [x] Ajustar valores: teatros y salas de conciertos solo deben tener pianos de cola de alto valor - COMPLETADO (116 pianos ajustados)
