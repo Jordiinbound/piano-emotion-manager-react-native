@@ -21,6 +21,7 @@ import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { useSnackbar } from '@/components/snackbar';
+import { CitySelector } from '@/components/city-selector';
 import { useClientsData, usePianosData, useServicesData } from '@/hooks/data';
 import { useWhatsApp } from '@/hooks/use-whatsapp';
 import { generatePortalUrl } from '@/hooks/use-client-portal';
@@ -529,7 +530,15 @@ export default function ClientDetailScreen() {
                   {renderInput('C.P.', form.address?.postalCode, (text) => updateAddress('postalCode', text), '08001')}
                 </View>
                 <View style={styles.flex2}>
-                  {renderInput('Ciudad', form.address?.city, (text) => updateAddress('city', text), 'Barcelona')}
+                  <View style={styles.inputGroup}>
+                    <ThemedText style={[styles.label, { color: textSecondary }]}>Ciudad</ThemedText>
+                    <CitySelector
+                      value={form.address?.city || ''}
+                      onChangeText={(text) => updateAddress('city', text)}
+                      placeholder="Buscar ciudad..."
+                      listId="fiscal-city-list"
+                    />
+                  </View>
                 </View>
               </View>
               {renderInput('Provincia', form.address?.province, (text) => updateAddress('province', text), 'Barcelona')}
@@ -569,7 +578,15 @@ export default function ClientDetailScreen() {
                   {renderInput('C.P.', form.shippingAddress?.postalCode, (text) => updateShippingAddress('postalCode', text), '08001')}
                 </View>
                 <View style={styles.flex2}>
-                  {renderInput('Ciudad', form.shippingAddress?.city, (text) => updateShippingAddress('city', text), 'Barcelona')}
+                  <View style={styles.inputGroup}>
+                    <ThemedText style={[styles.label, { color: textSecondary }]}>Ciudad</ThemedText>
+                    <CitySelector
+                      value={form.shippingAddress?.city || ''}
+                      onChangeText={(text) => updateShippingAddress('city', text)}
+                      placeholder="Buscar ciudad..."
+                      listId="shipping-city-list"
+                    />
+                  </View>
                 </View>
               </View>
               {renderInput('Provincia', form.shippingAddress?.province, (text) => updateShippingAddress('province', text), 'Barcelona')}
