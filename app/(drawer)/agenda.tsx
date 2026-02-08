@@ -185,33 +185,32 @@ export default function AgendaScreen() {
   }, [appointments, getClient]);
 
   const handleCalendarEventPress = (event: { id: string }) => {
-    router.push({
-      pathname: '/appointment/[id]' as any,
-      params: { id: event.id },
-    });
+    // TODO: Implementar navegación a detalle de cita cuando la ruta exista
+    console.log('[AgendaScreen] Evento seleccionado:', event.id);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Temporalmente no navegar para evitar error de página en blanco
   };
 
   const handleCalendarDatePress = (date: string) => {
-    // Navegar a crear cita con fecha preseleccionada
-    router.push({
-      pathname: '/appointment/[id]' as any,
-      params: { id: 'new', date },
-    });
+    // TODO: Implementar navegación a crear cita cuando la ruta exista
+    // Por ahora, solo actualizar la fecha seleccionada para evitar error de página en blanco
+    console.log('[AgendaScreen] Fecha seleccionada:', date);
+    setSelectedDate(new Date(date));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const handleAppointmentPress = (appointment: Appointment) => {
-    router.push({
-      pathname: '/appointment/[id]' as any,
-      params: { id: appointment.id },
-    });
+    // TODO: Implementar navegación a detalle de cita cuando la ruta exista
+    console.log('[AgendaScreen] Cita seleccionada:', appointment.id);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Temporalmente no navegar para evitar error de página en blanco
   };
 
   const handleAddAppointment = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push({
-      pathname: '/appointment/[id]' as any,
-      params: { id: 'new' },
-    });
+    // TODO: Implementar navegación a crear cita cuando la ruta exista
+    console.log('[AgendaScreen] Crear nueva cita');
+    // Temporalmente no navegar para evitar error de página en blanco
   };
 
   const getStatusColor = (status: Appointment['status']) => {
