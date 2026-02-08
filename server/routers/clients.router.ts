@@ -522,17 +522,13 @@ export const clientsRouter = router({
     const vip = Number(vipCount) || 0;
 
     // Clientes con pianos (DISTINCT clientId en tabla pianos)
+    // Usar solo filtro de partnerId para evitar problemas con organizationId
     const [{ withPianos }] = await database
       .select({ withPianos: sql<number>`COUNT(DISTINCT ${pianos.clientId})` })
       .from(pianos)
       .where(
         and(
-          filterByPartnerAndOrganization(
-            pianos,
-            ctx.partnerId,
-            ctx.orgContext,
-            "pianos"
-          ),
+          eq(pianos.partnerId, ctx.partnerId),
           isNotNull(pianos.clientId)
         )
       );
