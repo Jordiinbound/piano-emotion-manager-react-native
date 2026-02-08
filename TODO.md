@@ -620,3 +620,11 @@
 
 - [x] Calendario: Los días no responden al clic - Corregido problema de zona horaria en conversión de fecha
 - [x] Listado de citas muestra todas las citas en lugar de solo las del día seleccionado - Cambiado filtro de mes a día específico
+
+- [ ] Dashboard: Métricas incorrectas - 0 VIP (debería haber algunos) y 334 clientes con pianos (deberían ser 359)
+
+- [ ] Selector de ciudades: No se cargan todas las ciudades en el listado de clientes
+
+- [ ] Calendario: El día seleccionado no se marca visualmente al hacer clic (el borde naranja no se mueve al nuevo día)
+
+- [ ] Calendario: Debe empezar en Lunes y acabar en Domingo (actualmente empieza en Domingo)

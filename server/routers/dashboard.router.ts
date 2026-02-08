@@ -12,7 +12,9 @@ import { filterByPartner } from "../utils/multi-tenant.js";
 export const dashboardRouter = router({
   /**
    * Obtener métricas mensuales
-   * Retorna clientes, pianos, servicios e ingresos del mes especificado
+   * Retorna:
+   * - Total acumulado de clientes y pianos (hasta la fecha)
+   * - Servicios e ingresos del mes especificado
    */
   getMonthlyMetrics: protectedProcedure
     .input(
@@ -33,29 +35,34 @@ export const dashboardRouter = router({
       const startDateStr = startDate.toISOString();
       const endDateStr = endDate.toISOString();
 
-      // Contar clientes creados en el mes
+      // TOTAL ACUMULADO de clientes (todos los clientes activos)
       const clientsResult = await db
+        .select({ count: sql<number>`COUNT(*)` })
+        .from(clients)
+        .where(eq(clients.partnerId, partnerId));
+
+      // TOTAL ACUMULADO de pianos (todos los pianos)
+      const pianosResult = await db
+        .select({ count: sql<number>`COUNT(*)` })
+        .from(pianos)
+        .where(eq(pianos.partnerId, partnerId));
+
+      // Contar clientes VIP
+      const vipClientsResult = await db
         .select({ count: sql<number>`COUNT(*)` })
         .from(clients)
         .where(
           and(
             eq(clients.partnerId, partnerId),
-            gte(clients.createdAt, startDateStr),
-            lt(clients.createdAt, endDateStr)
+            eq(clients.isVip, true)
           )
         );
 
-      // Contar pianos creados en el mes
-      const pianosResult = await db
-        .select({ count: sql<number>`COUNT(*)` })
+      // Contar clientes con al menos un piano
+      const clientsWithPianosResult = await db
+        .select({ count: sql<number>`COUNT(DISTINCT ${pianos.clientId})` })
         .from(pianos)
-        .where(
-          and(
-            eq(pianos.partnerId, partnerId),
-            gte(pianos.createdAt, startDateStr),
-            lt(pianos.createdAt, endDateStr)
-          )
-        );
+        .where(eq(pianos.partnerId, partnerId));
 
       // Contar servicios del mes (por fecha de servicio, no createdAt)
       const servicesResult = await db
@@ -85,6 +92,8 @@ export const dashboardRouter = router({
       return {
         clients: Number(clientsResult[0]?.count || 0),
         pianos: Number(pianosResult[0]?.count || 0),
+        vipClients: Number(vipClientsResult[0]?.count || 0),
+        clientsWithPianos: Number(clientsWithPianosResult[0]?.count || 0),
         services: Number(servicesResult[0]?.count || 0),
         revenue: Number(revenueResult[0]?.total || 0),
       };

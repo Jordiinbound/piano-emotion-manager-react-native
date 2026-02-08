@@ -28,7 +28,7 @@ interface CalendarViewProps {
 
 type ViewMode = 'month' | 'week' | 'day';
 
-const DAYS_SHORT = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+const DAYS_SHORT = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 const MONTHS = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -39,6 +39,10 @@ export function CalendarView({ events, onEventPress, onDatePress, onMonthChange,
   const [currentDate, setCurrentDate] = useState(() => {
     if (initialDate) return new Date(initialDate);
     return new Date();
+  });
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   });
 
   const accent = useThemeColor({}, 'accent');
@@ -78,7 +82,9 @@ export function CalendarView({ events, onEventPress, onDatePress, onMonthChange,
     const days: { date: string; day: number; isCurrentMonth: boolean; isToday: boolean }[] = [];
     
     // Días del mes anterior para completar la primera semana
-    const startDayOfWeek = firstDay.getDay();
+    // Convertir getDay() (0=domingo) a formato lunes=0, domingo=6
+    let startDayOfWeek = firstDay.getDay() - 1;
+    if (startDayOfWeek === -1) startDayOfWeek = 6; // Si es domingo (0), convertir a 6
     for (let i = startDayOfWeek - 1; i >= 0; i--) {
       const d = new Date(year, month, -i);
       days.push({
@@ -119,7 +125,9 @@ export function CalendarView({ events, onEventPress, onDatePress, onMonthChange,
   // Generar días de la semana actual
   const weekDays = useMemo(() => {
     const startOfWeek = new Date(currentDate);
-    const dayOfWeek = startOfWeek.getDay();
+    // Convertir getDay() (0=domingo) a formato lunes=0, domingo=6
+    let dayOfWeek = startOfWeek.getDay() - 1;
+    if (dayOfWeek === -1) dayOfWeek = 6; // Si es domingo (0), convertir a 6
     startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
     
     const days: { date: string; day: number; dayName: string; isToday: boolean }[] = [];
@@ -188,6 +196,7 @@ export function CalendarView({ events, onEventPress, onDatePress, onMonthChange,
 
   const handleDatePress = (date: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedDate(date);
     onDatePress?.(date);
   };
 
@@ -224,13 +233,14 @@ export function CalendarView({ events, onEventPress, onDatePress, onMonthChange,
         {monthDays.map((day, index) => {
           const dayEvents = eventsByDate[day.date] || [];
           const hasEvents = dayEvents.length > 0;
+          const isSelected = day.date === selectedDate;
           
           return (
             <Pressable
               key={`${day.date}-${index}`}
               style={[
                 styles.dayCell,
-                day.isToday && [styles.todayCell, { borderColor: accent }],
+                isSelected && [styles.todayCell, { borderColor: accent }],
               ]}
               onPress={() => handleDatePress(day.date)}
             >
@@ -238,7 +248,7 @@ export function CalendarView({ events, onEventPress, onDatePress, onMonthChange,
                 style={[
                   styles.dayText,
                   !day.isCurrentMonth && { color: textSecondary, opacity: 0.5 },
-                  day.isToday && { color: accent, fontWeight: '700' },
+                  isSelected && { color: accent, fontWeight: '700' },
                 ]}
               >
                 {day.day}
