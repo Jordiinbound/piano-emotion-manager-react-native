@@ -608,3 +608,7 @@
 - [x] Aviso "Sin Conexión" actualizado a diseño moderno (cardBg con sombras)
 - [x] Icono de Google Calendar corregido (calendar.badge.clock)
 - [x] Icono de Outlook Calendar corregido (calendar.circle)
+
+- [x] Icono de Outlook Calendar corregido (cambiado a 'calendar' simple que sí existe)
+
+- [x] Contenedor de "Conexiones" y "Sincronización" ahora tienen sombras

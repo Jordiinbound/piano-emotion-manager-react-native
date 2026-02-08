@@ -236,7 +236,18 @@ export default function CalendarSettingsScreen() {
         </View>
 
         {/* Conexiones de Calendario */}
-        <View style={[styles.section, { backgroundColor: cardBg, borderColor }]}>
+        <View style={[
+          styles.section,
+          {
+            backgroundColor: cardBg,
+            borderColor,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 8,
+            elevation: 5,
+          }
+        ]}>
           <View style={styles.sectionHeader}>
             <IconSymbol name="calendar" size={20} color={accent} />
             <ThemedText style={styles.sectionTitle}>Conexiones</ThemedText>
@@ -278,7 +289,7 @@ export default function CalendarSettingsScreen() {
           {/* Outlook Calendar */}
           <View style={[styles.connectionRow, { borderTopColor: borderColor }]}>
             <View style={[styles.providerIcon, { backgroundColor: `${accent}15` }]}>
-              <IconSymbol name="calendar.circle" size={24} color={accent} />
+              <IconSymbol name="calendar" size={24} color={accent} />
             </View>
             <View style={styles.connectionInfo}>
               <ThemedText style={styles.connectionName}>Outlook Calendar</ThemedText>
@@ -311,7 +322,18 @@ export default function CalendarSettingsScreen() {
 
         {/* Configuración de Sincronización */}
         {hasAnyConnection && (
-          <View style={[styles.section, { backgroundColor: cardBg, borderColor }]}>
+          <View style={[
+          styles.section,
+          {
+            backgroundColor: cardBg,
+            borderColor,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 8,
+            elevation: 5,
+          }
+        ]}>
             <View style={styles.sectionHeader}>
               <IconSymbol name="arrow.triangle.2.circlepath" size={20} color={accent} />
               <ThemedText style={styles.sectionTitle}>Sincronización</ThemedText>
