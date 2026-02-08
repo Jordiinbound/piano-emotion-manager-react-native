@@ -77,11 +77,13 @@ export default function AgendaScreen() {
       return a.startTime.localeCompare(b.startTime);
     });
 
-    // Filtrar por mes seleccionado
-    const monthStart = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-01`;
-    const lastDay = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-    const monthEnd = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
-    const upcoming = sorted.filter((a) => a.date >= monthStart && a.date <= monthEnd && a.status !== 'cancelled');
+    // Filtrar por día seleccionado
+    const selectedDay = selectedDate.getDate();
+    const selectedDateStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+    const upcoming = sorted.filter((a) => a.date === selectedDateStr && a.status !== 'cancelled');
+    
+    console.log('🔍 [AgendaScreen] Día seleccionado:', selectedDateStr);
+    console.log('🔍 [AgendaScreen] Appointments del día:', upcoming.length);
     
     console.log('🔍 [AgendaScreen] Appointments futuras después de filtrar:', upcoming.length);
 
@@ -191,11 +193,13 @@ export default function AgendaScreen() {
   };
 
   const handleCalendarDatePress = (date: string) => {
-    // TODO: Implementar navegación a crear cita cuando la ruta exista
-    // Por ahora, solo actualizar la fecha seleccionada para evitar error de página en blanco
     console.log('[AgendaScreen] Fecha seleccionada:', date);
-    setSelectedDate(new Date(date));
+    // Crear fecha en hora local sin conversión de zona horaria
+    const [year, month, day] = date.split('-').map(Number);
+    const localDate = new Date(year, month - 1, day);
+    setSelectedDate(localDate);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    console.log('[AgendaScreen] selectedDate actualizado:', localDate.toISOString());
   };
 
   const handleAppointmentPress = (appointment: Appointment) => {

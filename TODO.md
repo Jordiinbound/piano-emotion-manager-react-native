@@ -618,4 +618,5 @@
 
 - [x] Usar mismo icono para Google y Outlook Calendar (calendar.badge.clock para ambos)
 
-- [ ] Calendario: Los días no responden al clic (no se puede cambiar de día seleccionado)
+- [x] Calendario: Los días no responden al clic - Corregido problema de zona horaria en conversión de fecha
+- [x] Listado de citas muestra todas las citas en lugar de solo las del día seleccionado - Cambiado filtro de mes a día específico
