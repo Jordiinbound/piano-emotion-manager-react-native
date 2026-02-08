@@ -497,3 +497,7 @@
 - [x] Crear tabla routes en TiDB - Tabla creada con todos los campos e índices
 - [x] Agregar columna route_id a tabla clients - Columna agregada correctamente
 - [x] Descomentar routeId en drizzle/schema.ts - Esquema actualizado
+
+### Fortalecer sombras en UI (08 Feb 2026)
+- [x] Actualizar sombras del calendario - Aumentada opacidad a 0.15, offset a 4, radius a 8, elevation a 5
+- [x] Actualizar sombras de tarjetas de citas - Aumentada opacidad a 0.15, offset a 4, radius a 8, elevation a 5
