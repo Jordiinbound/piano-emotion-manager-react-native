@@ -4,21 +4,14 @@
  */
 
 import { getAuthorizationUrl } from '../server/_core/calendar/oauth-google.js';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default async function handler(request: any) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    // Parse URL correctly - request.url might be relative or absolute
-    const url = new URL(request.url, `https://${request.headers.host || 'localhost'}`);
-    const userId = url.searchParams.get('userId');
+    const { userId } = req.query;
 
-    if (!userId) {
-      return new Response(
-        JSON.stringify({ error: 'userId is required' }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+    if (!userId || typeof userId !== 'string') {
+      return res.status(400).json({ error: 'userId is required' });
     }
 
     // Validar que las variables de entorno estén configuradas
@@ -27,16 +20,10 @@ export default async function handler(request: any) {
     
     if (!clientId || !clientSecret) {
       console.error('❌ Missing Google OAuth credentials');
-      return new Response(
-        JSON.stringify({
-          error: 'Google Calendar integration not configured',
-          message: 'Please configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel environment variables',
-        }),
-        {
-          status: 503,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      return res.status(503).json({
+        error: 'Google Calendar integration not configured',
+        message: 'Please configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel environment variables',
+      });
     }
 
     // Generar URL de autorización de Google
@@ -45,25 +32,14 @@ export default async function handler(request: any) {
     console.log('[OAuth] Successfully generated auth URL:', authUrl.substring(0, 50) + '...');
 
     // Redirigir al usuario a Google para autorización
-    console.log('[OAuth] 🚀 About to return redirect response...');
-    return new Response(null, {
-      status: 302,
-      headers: {
-        'Location': authUrl,
-      },
-    });
+    console.log('[OAuth] 🚀 Redirecting to Google OAuth...');
+    res.redirect(302, authUrl);
   } catch (error) {
     console.error('Error generating Google auth URL:', error);
     
-    return new Response(
-      JSON.stringify({
-        error: 'Failed to generate authorization URL',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    res.status(500).json({
+      error: 'Failed to generate authorization URL',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
 }
