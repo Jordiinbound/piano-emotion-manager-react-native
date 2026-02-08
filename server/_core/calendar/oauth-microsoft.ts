@@ -6,8 +6,14 @@ import { ConfidentialClientApplication } from '@azure/msal-node';
 import { encrypt, decrypt } from './encryption.js';
 import type { OAuthTokens } from './types';
 
-const MICROSOFT_CLIENT_ID = process.env.OUTLOOK_CLIENT_ID || process.env.MICROSOFT_CALENDAR_CLIENT_ID || '';
-const MICROSOFT_CLIENT_SECRET = process.env.OUTLOOK_CLIENT_SECRET || process.env.MICROSOFT_CALENDAR_CLIENT_SECRET || '';
+const MICROSOFT_CLIENT_ID = process.env.MICROSOFT_CLIENT_ID || 
+                             process.env.OUTLOOK_CLIENT_ID || 
+                             process.env.MICROSOFT_CALENDAR_CLIENT_ID || 
+                             process.env.AZURE_CALENDAR_CLIENT_ID || '';
+const MICROSOFT_CLIENT_SECRET = process.env.MICROSOFT_CLIENT_SECRET || 
+                                process.env.OUTLOOK_CLIENT_SECRET || 
+                                process.env.MICROSOFT_CALENDAR_CLIENT_SECRET || 
+                                process.env.AZURE_CALENDAR_CLIENT_SECRET || '';
 const MICROSOFT_REDIRECT_URI = process.env.MICROSOFT_REDIRECT_URI || process.env.MICROSOFT_CALENDAR_REDIRECT_URI || 'http://localhost:3000/api/calendar/microsoft/callback';
 const MICROSOFT_TENANT_ID = process.env.MICROSOFT_TENANT_ID || 'common'; // 'common' for multi-tenant
 

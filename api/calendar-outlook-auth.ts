@@ -15,8 +15,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Validar que las variables de entorno estén configuradas
-    const clientId = process.env.MICROSOFT_CLIENT_ID || process.env.OUTLOOK_CLIENT_ID;
-    const clientSecret = process.env.MICROSOFT_CLIENT_SECRET || process.env.OUTLOOK_CLIENT_SECRET;
+    const clientId = process.env.MICROSOFT_CLIENT_ID || 
+                     process.env.OUTLOOK_CLIENT_ID || 
+                     process.env.AZURE_CALENDAR_CLIENT_ID;
+    const clientSecret = process.env.MICROSOFT_CLIENT_SECRET || 
+                         process.env.OUTLOOK_CLIENT_SECRET || 
+                         process.env.AZURE_CALENDAR_CLIENT_SECRET;
     
     if (!clientId || !clientSecret) {
       console.error('❌ Missing Microsoft OAuth credentials');
