@@ -6,7 +6,7 @@ import { useRouter, usePathname, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeader } from '@/contexts/HeaderContext';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -304,8 +304,18 @@ export default function AgendaScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 100 }]}
         showsVerticalScrollIndicator={false}
       >
+        {/* Indicador de carga */}
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={accent} />
+            <ThemedText style={[styles.loadingText, { color: textSecondary }]}>
+              Cargando citas...
+            </ThemedText>
+          </View>
+        )}
+
         {/* Vista de Calendario */}
-        {showCalendar && (
+        {!loading && showCalendar && (
           <CalendarView
             events={calendarEvents}
             onEventPress={handleCalendarEventPress}
@@ -316,7 +326,7 @@ export default function AgendaScreen() {
         )}
 
         {/* Optimizador de Rutas - Solo muestra citas de hoy */}
-        {todayAppointments.length > 0 && (
+        {!loading && todayAppointments.length > 0 && (
           <RouteOptimizer
             appointments={todayAppointments}
             getClient={getClient}
@@ -325,13 +335,13 @@ export default function AgendaScreen() {
         )}
 
         {/* Lista de citas */}
-        {groupedAppointments.length === 0 ? (
+        {!loading && groupedAppointments.length === 0 ? (
           <EmptyState
             icon="calendar"
             title="Sin citas programadas"
             message="Programa tu primera cita tocando el botón + abajo."
           />
-        ) : (
+        ) : !loading && (
           <>
             {groupedAppointments.map((group) => (
               <View key={group.date} style={styles.dateGroup}>
@@ -390,6 +400,11 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 1,
     gap: Spacing.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 2,
   },
   timeColumn: {
     width: 50,
@@ -449,5 +464,17 @@ const styles = StyleSheet.create({
   toggleButton: {
     padding: Spacing.sm,
     borderRadius: BorderRadius.sm,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: Spacing.xl * 2,
+    gap: Spacing.md,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
   },
 });

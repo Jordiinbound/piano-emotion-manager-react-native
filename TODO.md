@@ -488,9 +488,9 @@
   - Commit: 1350658 - "Fix: Comentar routeId en esquema de clients"
   - Estado: Desplegado en producción
 - [x] **"Cliente desconocido" en agenda** - Se resolverá automáticamente al cargar clientes
-- [ ] **Faltan sombras en calendario** - El calendario perdió las sombras después de los cambios
-- [ ] **Faltan sombras en tarjetas de citas** - Las tarjetas de citas perdieron las sombras
-- [ ] **Falta spinner de carga en agenda** - No se muestra indicador mientras cargan los datos
+- [x] **Faltan sombras en calendario** - RESUELTO: Agregadas sombras al contenedor del calendario
+- [x] **Faltan sombras en tarjetas de citas** - RESUELTO: Agregadas sombras a appointmentCard
+- [x] **Falta spinner de carga en agenda** - RESUELTO: Agregado ActivityIndicator con mensaje "Cargando citas..."
 
 ### Crear estructuras faltantes en TiDB (08 Feb 2026)
 - [x] Verificar esquema actual de tabla clients
