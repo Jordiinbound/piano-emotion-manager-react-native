@@ -1,5 +1,47 @@
 # TODO - Piano Emotion Manager
 
+## ✅ RESUELTO - Mejoras Visuales y Funcionales (08 Feb 2026)
+
+### Toggle VIP en Detalle de Cliente
+- [x] **IMPLEMENTADO:** Toggle para marcar clientes como VIP
+- [x] **CARACTERÍSTICAS:**
+  - Switch con colores personalizados (verde #52a67d cuando activo)
+  - Feedback háptico al cambiar estado
+  - Deshabilitado en modo vista, editable en modo edición
+  - Descripción clara: "Marca este cliente como VIP para darle prioridad"
+- [x] **COMMIT:** ab11c72 - "Feature: Agregar toggle VIP en página de detalle del cliente"
+- [x] **ESTADO:** Desplegado en producción
+
+### Selector de Ciudades de España
+- [x] **IMPLEMENTADO:** Autocompletado de ciudades con 3,638 municipios
+- [x] **CARACTERÍSTICAS:**
+  - Componente CitySelector con datalist nativo HTML
+  - Integrado en dirección fiscal y dirección de envío
+  - Autocompletado nativo del navegador
+  - Datos desde archivo JSON (assets/data/ciudades_espana.json)
+- [x] **COMMIT:** ef9bf24 - "Feature: Agregar selector de ciudades de España con autocompletado"
+- [x] **ESTADO:** Desplegado en producción
+
+### Mejoras Visuales en Detalle de Cliente
+- [x] **COLORES MATIZADOS:** Botones menos brillantes
+  - WhatsApp: #52a67d (verde suave)
+  - Cómo llegar: #5b7fc7 (azul suave)
+  - Portal: #9b7fc9 (violeta suave)
+- [x] **SOMBRAS:** Agregadas a todas las secciones contenedoras
+  - shadowColor: '#000', shadowOffset: {width: 0, height: 4}
+  - shadowOpacity: 0.15, shadowRadius: 8, elevation: 5
+- [x] **MARGEN:** Agregado marginRight: 16 al botón editar
+- [x] **COMMIT:** b167702 - "UI: Mejoras visuales en página de detalle del cliente"
+- [x] **ESTADO:** Desplegado en producción
+
+### Sombras en Filtros de Clientes
+- [x] **AJUSTADAS:** Sombras consistentes con inventario
+  - shadowRadius: 8 (antes 12)
+  - elevation: 5 (antes 6)
+  - Agregado boxShadow para web
+- [x] **COMMIT:** c94a059 - "UI: Ajustar sombras en filtros de clientes"
+- [x] **ESTADO:** Desplegado en producción
+
 ## ✅ RESUELTO - Páginas en blanco (08 Feb 2026)
 
 ### Página de Clientes
