@@ -1127,7 +1127,7 @@ export default function SettingsUnifiedScreen() {
   function renderAdvancedTab() {
     return (
       <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
-        <ThemedText style={styles.sectionTitle}>CONFIGURACIÓN TEST - VERIFICANDO DEPLOY</ThemedText>
+        <ThemedText style={styles.sectionTitle}>Configuración Avanzada</ThemedText>
         
         <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
           <Pressable
@@ -1211,17 +1211,11 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     gap: Spacing.sm,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 6,
   },
   searchInput: {
     flex: 1,
@@ -1294,17 +1288,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     marginHorizontal: Spacing.md,
     borderWidth: 1,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 6,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -1373,17 +1361,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 6,
   },
   optionButtonText: {
     fontSize: 14,
@@ -1458,17 +1440,11 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 6,
   },
   moduleHeader: {
     flexDirection: 'row',
