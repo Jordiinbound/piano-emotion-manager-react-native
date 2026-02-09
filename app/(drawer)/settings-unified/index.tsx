@@ -4,6 +4,7 @@
  * 
  * Centro de control único para todas las configuraciones de la aplicación
  * Accesible desde el drawer y el icono de cabecera
+ * Última actualización: 2026-02-09 - Sombras y toggle coral aplicados
  */
 
 import { useRouter, Stack } from 'expo-router';

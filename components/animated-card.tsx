@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
+// AnimatedCard - Sombras actualizadas 2026-02-09
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
