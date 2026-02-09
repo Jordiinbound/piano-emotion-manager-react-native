@@ -687,14 +687,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     ...Platform.select({
       web: {
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.10)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        elevation: 5,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.22,
+        shadowRadius: 14,
+        elevation: 8,
       },
     }),
   },
@@ -729,6 +729,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     minWidth: 0,
+    ...Platform.select({
+      web: {
+        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
+      },
+      default: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.18,
+        shadowRadius: 12,
+        elevation: 6,
+      },
+    }),
   },
   metricHeader: {
     flexDirection: 'row',
@@ -814,6 +826,18 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
+    ...Platform.select({
+      web: {
+        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
+      },
+      default: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.18,
+        shadowRadius: 12,
+        elevation: 6,
+      },
+    }),
   },
   chartContainer: {
     width: '100%',
