@@ -64,7 +64,7 @@ const MENU_ITEMS: MenuItem[] = [
   { key: 'rates', label: 'Tarifas', icon: 'list.bullet', route: '/rates', color: '#EC4899' },
   { key: 'business', label: 'Datos Fiscales', icon: 'person.text.rectangle.fill', route: '/business-info', color: '#6B7280' },
   { key: 'modules', label: 'Módulos y Plan', icon: 'square.grid.2x2.fill', route: '/settings/modules', color: '#8B5CF6' },
-  { key: 'settings', label: 'Configuración', icon: 'gearshape.fill', route: '/settings', color: '#64748B' },
+  { key: 'settings', label: 'Configuración', icon: 'gearshape.fill', route: '/settings-unified', color: '#64748B' },
   { key: 'help', label: 'Centro de Ayuda', icon: 'questionmark.circle.fill', route: '/help', color: '#0EA5E9' },
 ];
 
