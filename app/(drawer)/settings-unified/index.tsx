@@ -291,8 +291,8 @@ export default function SettingsUnifiedScreen() {
       <Switch
         value={value}
         onValueChange={onToggle}
-        trackColor={{ false: borderColor, true: '#fca5a5' }}
-        thumbColor={value ? '#ef4444' : '#f4f3f4'}
+        trackColor={{ false: borderColor, true: '#f8b4a0' }}
+        thumbColor={value ? '#E07856' : '#f4f3f4'}
       />
     </View>
   );
@@ -896,8 +896,8 @@ export default function SettingsUnifiedScreen() {
                         : [...settings.activeModules, module.code];
                       updateSettings({ activeModules: newModules });
                     }}
-                    trackColor={{ false: borderColor, true: '#fca5a5' }}
-                    thumbColor={isActive ? '#ef4444' : '#f4f3f4'}
+        trackColor={{ false: borderColor, true: '#f8b4a0' }}
+        thumbColor={isActive ? '#E07856' : '#f4f3f4'}
                     disabled={module.premium}
                   />
                 </View>
@@ -1211,6 +1211,17 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     gap: Spacing.sm,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   searchInput: {
     flex: 1,
@@ -1286,12 +1297,12 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
       },
       android: {
-        elevation: 2,
+        elevation: 6,
       },
     }),
   },
@@ -1362,6 +1373,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   optionButtonText: {
     fontSize: 14,
@@ -1436,6 +1458,17 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   moduleHeader: {
     flexDirection: 'row',
