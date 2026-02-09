@@ -189,16 +189,18 @@ export const clientsRouter = router({
       console.log('[clients.list] Using partnerId:', partnerId, 'for filter');
       
       try {
-        // Obtener clientes con conteo de pianos usando LEFT JOIN
+        // Obtener clientes con conteo de pianos usando subconsulta
         const items = await withQueue(() => database
           .select({
             ...clients,
-            pianoCount: sql<number>`COALESCE(COUNT(DISTINCT ${pianos.id}), 0)`,
+            pianoCount: sql<number>`(
+              SELECT COALESCE(COUNT(*), 0) 
+              FROM ${pianos} 
+              WHERE ${pianos.clientId} = ${clients.id}
+            )`,
           })
           .from(clients)
-          .leftJoin(pianos, eq(pianos.clientId, clients.id))
           .where(and(...whereClauses))
-          .groupBy(clients.id)
           .orderBy(orderByClause)
           .limit(limit)
           .offset(offset));
