@@ -3,7 +3,7 @@
  * Piano Emotion Manager
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,8 @@ import {
   type PeriodPreset,
 } from '@/hooks/reports';
 import { useTranslation } from '@/hooks/use-translation';
+import { useClientsData, usePianosData, useServicesData } from '@/hooks/data';
+import { getClientFullName } from '@/types';
 
 // Se eliminó la constante SCREEN_WIDTH - ahora se usa state reactivo
 
@@ -445,6 +447,54 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   };
   const { data: revenueData, isLoading: revenueLoading } = useRevenueChart(last12MonthsRange, 'month');
   
+  // Datos adicionales para nuevos gráficos
+  const { clients } = useClientsData();
+  const { pianos } = usePianosData();
+  const { services } = useServicesData();
+
+  // Calcular distribución de pianos
+  const pianosByCategory = useMemo(() => ({
+    vertical: pianos.filter((p) => p.category === 'vertical').length,
+    grand: pianos.filter((p) => p.category === 'grand').length,
+  }), [pianos]);
+
+  // Calcular top clientes por facturación (últimos 12 meses)
+  const topClients = useMemo(() => {
+    const now = new Date();
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(now.getMonth() - 12);
+    const clientRevenue: Record<string, number> = {};
+    
+    services.forEach((s) => {
+      const serviceDate = new Date(s.date);
+      if (serviceDate >= twelveMonthsAgo && serviceDate <= now) {
+        clientRevenue[s.clientId] = (clientRevenue[s.clientId] || 0) + (s.cost || 0);
+      }
+    });
+    
+    return Object.entries(clientRevenue)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([clientId, revenue]) => ({
+        client: clients.find((c) => c.id === clientId),
+        revenue,
+      }));
+  }, [clients, services]);
+
+  // Calcular tasa de retención (clientes que han contratado servicios en más de un año)
+  const retentionRate = useMemo(() => {
+    const clientYears: Record<string, Set<number>> = {};
+    services.forEach((s) => {
+      const year = new Date(s.date).getFullYear();
+      if (!clientYears[s.clientId]) {
+        clientYears[s.clientId] = new Set();
+      }
+      clientYears[s.clientId].add(year);
+    });
+    const repeatingClients = Object.values(clientYears).filter(years => years.size > 1).length;
+    return clients.length > 0 ? (repeatingClients / clients.length) * 100 : 0;
+  }, [clients, services]);
+  
   // Debug: verificar datos
   console.log('Dashboard Data (optimizado):', {
     metrics,
@@ -613,17 +663,132 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </View>
       </View>
 
-      {/* View All Reports Button */}
-      {onNavigateToReports && (
-        <TouchableOpacity
-          style={styles.viewAllButton}
-          onPress={onNavigateToReports}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.viewAllButtonText}>{t('reports.viewAllReports')}</Text>
-          <Ionicons name="arrow-forward" size={18} color={COLORS.primary} />
-        </TouchableOpacity>
-      )}
+      {/* Distribución de Pianos */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Distribución de Pianos</Text>
+          <Text style={styles.sectionSubtitle}>Categorías de pianos registrados</Text>
+        </View>
+        <View style={styles.chartCard}>
+          <View style={styles.pianoDistribution}>
+            <View style={styles.pianoDonutContainer}>
+              <Svg width="200" height="200" viewBox="0 0 200 200">
+                <Circle
+                  cx="100"
+                  cy="100"
+                  r="70"
+                  fill="none"
+                  stroke={COLORS.primary}
+                  strokeWidth="40"
+                  strokeDasharray={`${(pianosByCategory.vertical / (pianosByCategory.vertical + pianosByCategory.grand)) * 440} 440`}
+                  transform="rotate(-90 100 100)"
+                />
+                <Circle
+                  cx="100"
+                  cy="100"
+                  r="70"
+                  fill="none"
+                  stroke={COLORS.success}
+                  strokeWidth="40"
+                  strokeDasharray={`${(pianosByCategory.grand / (pianosByCategory.vertical + pianosByCategory.grand)) * 440} 440`}
+                  strokeDashoffset={`-${(pianosByCategory.vertical / (pianosByCategory.vertical + pianosByCategory.grand)) * 440}`}
+                  transform="rotate(-90 100 100)"
+                />
+                <SvgText
+                  x="100"
+                  y="95"
+                  textAnchor="middle"
+                  fontSize="32"
+                  fontWeight="700"
+                  fill={COLORS.text.primary}
+                >
+                  {pianosByCategory.vertical + pianosByCategory.grand}
+                </SvgText>
+                <SvgText
+                  x="100"
+                  y="115"
+                  textAnchor="middle"
+                  fontSize="14"
+                  fill={COLORS.text.secondary}
+                >
+                  Total
+                </SvgText>
+              </Svg>
+            </View>
+            <View style={styles.pianoLegend}>
+              <View style={styles.pianoLegendItem}>
+                <View style={[styles.pianoLegendDot, { backgroundColor: COLORS.primary }]} />
+                <Text style={styles.pianoLegendText}>Vertical</Text>
+                <Text style={styles.pianoLegendValue}>
+                  {pianosByCategory.vertical} ({Math.round((pianosByCategory.vertical / (pianosByCategory.vertical + pianosByCategory.grand)) * 100)}%)
+                </Text>
+              </View>
+              <View style={styles.pianoLegendItem}>
+                <View style={[styles.pianoLegendDot, { backgroundColor: COLORS.success }]} />
+                <Text style={styles.pianoLegendText}>De Cola</Text>
+                <Text style={styles.pianoLegendValue}>
+                  {pianosByCategory.grand} ({Math.round((pianosByCategory.grand / (pianosByCategory.vertical + pianosByCategory.grand)) * 100)}%)
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* Top Clientes */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Top Clientes</Text>
+          <Text style={styles.sectionSubtitle}>Por facturación en los últimos 12 meses</Text>
+        </View>
+        <View style={styles.chartCard}>
+          {topClients.length > 0 ? (
+            topClients.map((item, index) => (
+              <View key={item.client?.id || index} style={styles.topClientItem}>
+                <View style={[styles.topClientRank, { backgroundColor: COLORS.accent + '15' }]}>
+                  <Text style={[styles.topClientRankText, { color: COLORS.accent }]}>{index + 1}</Text>
+                </View>
+                <Text style={styles.topClientName} numberOfLines={1}>
+                  {item.client ? getClientFullName(item.client) : 'Cliente desconocido'}
+                </Text>
+                <Text style={[styles.topClientCount, { color: COLORS.success }]}>
+                  {formatCurrency(item.revenue)}
+                </Text>
+              </View>
+            ))
+          ) : (
+            <Text style={[styles.emptyChart, { color: COLORS.text.secondary }]}>
+              No hay datos suficientes
+            </Text>
+          )}
+        </View>
+      </View>
+
+      {/* Tasa de Retención de Clientes */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Tasa de Retención de Clientes</Text>
+          <Text style={styles.sectionSubtitle}>Clientes que repiten</Text>
+        </View>
+        <View style={styles.chartCard}>
+          <View style={styles.retentionContainer}>
+            <View style={styles.retentionBar}>
+              <View 
+                style={[
+                  styles.retentionBarFill, 
+                  { 
+                    width: `${retentionRate}%`,
+                    backgroundColor: COLORS.success 
+                  }
+                ]} 
+              />
+            </View>
+            <Text style={styles.retentionText}>
+              {Math.round(retentionRate)}% de tus clientes han contratado servicios en más de un año
+            </Text>
+          </View>
+        </View>
+      </View>
 
       <View style={styles.bottomPadding} />
     </ScrollView>
@@ -687,14 +852,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     ...Platform.select({
       web: {
-        boxShadow: '0 6px 16px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.10)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)',
       },
       default: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.22,
-        shadowRadius: 14,
-        elevation: 8,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 5,
       },
     }),
   },
@@ -729,18 +894,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     minWidth: 0,
-    ...Platform.select({
-      web: {
-        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
-      },
-      default: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.18,
-        shadowRadius: 12,
-        elevation: 6,
-      },
-    }),
   },
   metricHeader: {
     flexDirection: 'row',
@@ -826,18 +979,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
-    ...Platform.select({
-      web: {
-        boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
-      },
-      default: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.18,
-        shadowRadius: 12,
-        elevation: 6,
-      },
-    }),
   },
   chartContainer: {
     width: '100%',
@@ -997,6 +1138,97 @@ const styles = StyleSheet.create({
   },
   bottomPadding: {
     height: 40,
+  },
+  // Estilos para Distribución de Pianos
+  pianoDistribution: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    gap: 24,
+  },
+  pianoDonutContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pianoLegend: {
+    gap: 16,
+  },
+  pianoLegendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  pianoLegendDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  pianoLegendText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
+    color: COLORS.text.primary,
+    flex: 1,
+  },
+  pianoLegendValue: {
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
+    color: COLORS.text.secondary,
+  },
+  // Estilos para Top Clientes
+  topClientItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+    gap: 12,
+  },
+  topClientRank: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topClientRankText: {
+    fontSize: 16,
+    fontFamily: 'Montserrat',
+    fontWeight: '700',
+  },
+  topClientName: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '600',
+    color: COLORS.text.primary,
+  },
+  topClientCount: {
+    fontSize: 13,
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
+  },
+  // Estilos para Tasa de Retención
+  retentionContainer: {
+    gap: 16,
+  },
+  retentionBar: {
+    height: 24,
+    backgroundColor: COLORS.border,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  retentionBarFill: {
+    height: '100%',
+    borderRadius: 12,
+  },
+  retentionText: {
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    fontWeight: '400',
+    color: COLORS.text.secondary,
+    textAlign: 'center',
   },
 });
 
