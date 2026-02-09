@@ -140,7 +140,7 @@ function DrawerContent() {
         }}
       />
       <Drawer.Screen
-        name="settings"
+        name="settings-unified"
         options={{
           drawerLabel: 'Configuración',
           title: 'Configuración',

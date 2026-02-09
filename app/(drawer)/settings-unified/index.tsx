@@ -4,7 +4,7 @@
  * 
  * Centro de control único para todas las configuraciones de la aplicación
  * Accesible desde el drawer y el icono de cabecera
- * Última actualización: 2026-02-09 - Sombras y toggle coral aplicados
+ * Última actualización: 2026-02-09 15:30 - Ruta corregida, sombras en tabs, toggle coral forzado
  */
 
 import { useRouter, Stack } from 'expo-router';
@@ -466,7 +466,7 @@ export default function SettingsUnifiedScreen() {
         </View>
 
         {/* Preferencias de comunicación */}
-        <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
+        <View style={[styles.cardNoShadow, { backgroundColor: cardBg, borderColor }]}>
           <View style={styles.cardHeader}>
             <View style={[styles.cardIcon, { backgroundColor: `${accent}15` }]}>
               <IconSymbol name="envelope.fill" size={24} color={accent} />
@@ -1244,6 +1244,11 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     paddingHorizontal: Spacing.md,
     position: 'relative',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   tabGridItem: {
     minWidth: '23%',
@@ -1294,6 +1299,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 12,
     elevation: 6,
+  },
+  cardNoShadow: {
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+    marginHorizontal: Spacing.md,
+    borderWidth: 1,
   },
   cardHeader: {
     flexDirection: 'row',
