@@ -1127,7 +1127,7 @@ export default function SettingsUnifiedScreen() {
   function renderAdvancedTab() {
     return (
       <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.md }}>
-        <ThemedText style={styles.sectionTitle}>Configuración Avanzada</ThemedText>
+        <ThemedText style={styles.sectionTitle}>CONFIGURACIÓN TEST - VERIFICANDO DEPLOY</ThemedText>
         
         <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
           <Pressable
