@@ -496,6 +496,13 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     position: 'relative',
     marginBottom: Spacing.xs,
+    backgroundColor: '#FFFFFF',
+    borderRadius: BorderRadius.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   blogTabText: {
     fontSize: 15,
