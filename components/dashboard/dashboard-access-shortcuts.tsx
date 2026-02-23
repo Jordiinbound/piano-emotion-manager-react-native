@@ -100,13 +100,14 @@ export const DashboardAccessShortcuts = memo(function DashboardAccessShortcuts({
     >
       <View style={styles.centeredGrid}>
         {visibleModules.map((action) => (
-          <AnimatedCard
-            key={action.key}
-            icon={action.icon}
-            label={action.label}
-            color={action.color}
-            onPress={() => handleAction(action.key)}
-          />
+          <View key={action.key} style={{ width: 60 }}>
+            <AnimatedCard
+              icon={action.icon}
+              label={action.label}
+              color={action.color}
+              onPress={() => handleAction(action.key)}
+            />
+          </View>
         ))}
       </View>
     </Accordion>
