@@ -132,6 +132,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 3, // Gap mínimo entre elementos
     position: 'relative',
+    flexShrink: 0, // Evitar que se encoja
+    flexGrow: 0, // Evitar que crezca
+    maxWidth: 60, // Forzar ancho máximo
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
