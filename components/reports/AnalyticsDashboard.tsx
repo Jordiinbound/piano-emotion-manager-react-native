@@ -472,27 +472,43 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       }
     });
     
-    return Object.entries(clientRevenue)
+    const topClientsData = Object.entries(clientRevenue)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([clientId, revenue]) => ({
         client: clients.find((c) => c.id === clientId),
         revenue,
       }));
+    
+    console.log('[TopClientes] Debug:', {
+      totalServices: services.length,
+      servicesInLast12Months: services.filter(s => {
+        const serviceDate = new Date(s.date);
+        return serviceDate >= twelveMonthsAgo && serviceDate <= now;
+      }).length,
+      clientRevenue,
+      topClientsData
+    });
+    
+    return topClientsData;
   }, [clients, services]);
 
-  // Calcular tasa de retención (clientes que han contratado servicios en más de un año)
+  // Calcular tasa de retención (clientes activos en los últimos 12 meses)
   const retentionRate = useMemo(() => {
-    const clientYears: Record<string, Set<number>> = {};
+    const now = new Date();
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(now.getMonth() - 12);
+    
+    const activeClientIds = new Set<string>();
     services.forEach((s) => {
-      const year = new Date(s.date).getFullYear();
-      if (!clientYears[s.clientId]) {
-        clientYears[s.clientId] = new Set();
+      const serviceDate = new Date(s.date);
+      if (serviceDate >= twelveMonthsAgo && serviceDate <= now) {
+        activeClientIds.add(s.clientId);
       }
-      clientYears[s.clientId].add(year);
     });
-    const repeatingClients = Object.values(clientYears).filter(years => years.size > 1).length;
-    return clients.length > 0 ? (repeatingClients / clients.length) * 100 : 0;
+    
+    const activeClients = activeClientIds.size;
+    return clients.length > 0 ? (activeClients / clients.length) * 100 : 0;
   }, [clients, services]);
   
   // Debug: verificar datos
@@ -784,7 +800,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               />
             </View>
             <Text style={styles.retentionText}>
-              {Math.round(retentionRate)}% de tus clientes han contratado servicios en más de un año
+              {Math.round(retentionRate)}% de tus clientes han contratado servicios en los últimos 12 meses
             </Text>
           </View>
         </View>
