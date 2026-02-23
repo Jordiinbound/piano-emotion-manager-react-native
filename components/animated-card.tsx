@@ -79,7 +79,8 @@ export function AnimatedCard({
         { 
           backgroundColor: disabled ? '#F3F4F6' : cardBg, 
           borderColor: disabled ? '#E5E7EB' : borderColor,
-          width: cardSize,
+          width: 60, // Forzar 60px directamente en inline style
+          minWidth: 60,
           opacity: disabled ? 0.8 : 1,
         }
       ]}
