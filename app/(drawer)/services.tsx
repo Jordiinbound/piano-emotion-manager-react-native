@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.sm,
   },
   filtersWrapper: {
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.lg,
     alignItems: 'center',
   },
   filtersContainer: {
@@ -352,10 +352,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: Spacing.sm,
     shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 2, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
   },
   filterText: {
     fontSize: 15,
