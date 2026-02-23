@@ -212,28 +212,27 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   moduleCard: {
-    width: 90, // Ancho fijo reducido a la mitad aproximadamente
-    paddingVertical: 8, // Padding vertical mínimo
-    paddingHorizontal: 4, // Padding horizontal mínimo
+    minWidth: 150,
+    padding: Spacing.lg,
     borderRadius: 4,
     borderWidth: 1,
     alignItems: 'center',
-    gap: 6, // Gap mínimo entre icono y texto
+    gap: Spacing.md,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15, // Aumentado de 0.05 a 0.15 para sombra más visible
-    shadowRadius: 12, // Aumentado de 8 a 12
-    elevation: 4, // Aumentado de 2 a 4 para Android
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   iconContainer: {
-    width: 56, // Tamaño original mantenido
-    height: 56, // Tamaño original mantenido
+    width: 56,
+    height: 56,
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
   moduleLabel: {
-    fontSize: 13, // Reducido de 14 a 13
+    fontSize: 14,
     fontFamily: 'Montserrat',
     fontWeight: '600',
     textAlign: 'center',
