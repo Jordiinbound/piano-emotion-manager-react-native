@@ -448,7 +448,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   const { data: revenueData, isLoading: revenueLoading } = useRevenueChart(last12MonthsRange, 'month');
   
   // Datos adicionales para nuevos gráficos
-  const { clients } = useClientsData();
+  const { clients } = useClientsData({ pageSize: 5000 }); // Cargar suficientes clientes para analytics
   const { pianos } = usePianosData();
   const { services } = useServicesData({ pageSize: 5000 }); // Cargar suficientes servicios para analytics
 
@@ -476,7 +476,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([clientId, revenue]) => ({
-        client: clients.find((c) => c.id === clientId),
+        client: clients.find((c) => String(c.id) === String(clientId)), // Comparar como strings
         revenue,
       }));
     
@@ -487,28 +487,57 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         return serviceDate >= twelveMonthsAgo && serviceDate <= now;
       }).length,
       clientRevenue,
-      topClientsData
+      topClientsData,
+      sampleClientIds: Object.keys(clientRevenue).slice(0, 3),
+      sampleClients: clients.slice(0, 3).map(c => ({ id: c.id, type: typeof c.id }))
     });
     
     return topClientsData;
   }, [clients, services]);
 
-  // Calcular tasa de retención (clientes activos en los últimos 12 meses)
+  // Calcular tasa de retención (clientes que repiten en últimos 12 meses)
   const retentionRate = useMemo(() => {
     const now = new Date();
     const twelveMonthsAgo = new Date();
     twelveMonthsAgo.setMonth(now.getMonth() - 12);
+    const twentyFourMonthsAgo = new Date();
+    twentyFourMonthsAgo.setMonth(now.getMonth() - 24);
     
-    const activeClientIds = new Set<string>();
+    // Clientes con servicios en los 12 meses anteriores (meses 13-24)
+    const previousPeriodClients = new Set<string>();
     services.forEach((s) => {
       const serviceDate = new Date(s.date);
-      if (serviceDate >= twelveMonthsAgo && serviceDate <= now) {
-        activeClientIds.add(s.clientId);
+      if (serviceDate >= twentyFourMonthsAgo && serviceDate < twelveMonthsAgo) {
+        previousPeriodClients.add(s.clientId);
       }
     });
     
-    const activeClients = activeClientIds.size;
-    return clients.length > 0 ? (activeClients / clients.length) * 100 : 0;
+    // Clientes con servicios en los últimos 12 meses
+    const currentPeriodClients = new Set<string>();
+    services.forEach((s) => {
+      const serviceDate = new Date(s.date);
+      if (serviceDate >= twelveMonthsAgo && serviceDate <= now) {
+        currentPeriodClients.add(s.clientId);
+      }
+    });
+    
+    // Clientes que repiten (estuvieron en ambos períodos)
+    const repeatingClients = Array.from(previousPeriodClients).filter(id => 
+      currentPeriodClients.has(id)
+    ).length;
+    
+    const rate = previousPeriodClients.size > 0 
+      ? (repeatingClients / previousPeriodClients.size) * 100 
+      : 0;
+    
+    console.log('[RetentionRate] Debug:', {
+      previousPeriodClients: previousPeriodClients.size,
+      currentPeriodClients: currentPeriodClients.size,
+      repeatingClients,
+      rate: rate.toFixed(1) + '%'
+    });
+    
+    return rate;
   }, [clients, services]);
   
   // Debug: verificar datos
