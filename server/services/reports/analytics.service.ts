@@ -562,6 +562,24 @@ export class AnalyticsService {
 
       console.log('[getTotalRevenue] Query result:', result);
       const total = Number(result[0]?.total || 0);
+      
+      // DEBUG: Contar facturas en este período para diagnosticar
+      const countResult = await db
+        .select({
+          count: count(),
+          status: invoices.status,
+        })
+        .from(invoices)
+        .where(
+          and(
+            eq(invoices.partnerId, this.partnerId),
+            gte(invoices.date, startDate.toISOString()),
+            lte(invoices.date, endDate.toISOString())
+          )
+        )
+        .groupBy(invoices.status);
+      
+      console.log('[getTotalRevenue] Invoices count by status:', countResult);
       console.log('[getTotalRevenue] Returning total:', total);
       
       return total;
