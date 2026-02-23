@@ -126,7 +126,8 @@ export function AnimatedCard({
 const styles = StyleSheet.create({
   card: {
     alignItems: 'center',
-    padding: Spacing.sm,
+    paddingVertical: 6, // Reducido para menor altura
+    paddingHorizontal: Spacing.sm,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     gap: Spacing.xs,
