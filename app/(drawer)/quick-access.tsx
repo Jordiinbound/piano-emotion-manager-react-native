@@ -212,18 +212,18 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   moduleCard: {
-    minWidth: 120, // Reducido de 150 a 120 para tarjetas más compactas
-    paddingVertical: Spacing.sm, // Padding vertical reducido
-    paddingHorizontal: Spacing.xs, // Padding horizontal aún más reducido
+    width: 90, // Ancho fijo reducido a la mitad aproximadamente
+    paddingVertical: 8, // Padding vertical mínimo
+    paddingHorizontal: 4, // Padding horizontal mínimo
     borderRadius: 4,
     borderWidth: 1,
     alignItems: 'center',
-    gap: Spacing.sm, // Reducido de md a sm
+    gap: 6, // Gap mínimo entre icono y texto
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15, // Aumentado de 0.05 a 0.15 para sombra más visible
+    shadowRadius: 12, // Aumentado de 8 a 12
+    elevation: 4, // Aumentado de 2 a 4 para Android
   },
   iconContainer: {
     width: 56, // Tamaño original mantenido
