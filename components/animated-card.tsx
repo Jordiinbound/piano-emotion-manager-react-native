@@ -67,8 +67,8 @@ export function AnimatedCard({
     onPress();
   };
 
-  const cardSize = size === 'small' ? 90 : 100;
-  const iconContainerSize = size === 'small' ? 40 : 44;
+  const cardSize = size === 'small' ? 90 : 90; // Reducido a 90px para todas las tarjetas
+  const iconContainerSize = size === 'small' ? 48 : 56; // Iconos mantienen tamaño 56px
   const iconSize = size === 'small' ? 24 : 28;
 
   return (
@@ -126,10 +126,11 @@ export function AnimatedCard({
 const styles = StyleSheet.create({
   card: {
     alignItems: 'center',
-    padding: Spacing.sm,
+    paddingVertical: 8, // Padding vertical reducido
+    paddingHorizontal: 4, // Padding horizontal mínimo
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    gap: Spacing.xs,
+    gap: 4, // Gap reducido entre elementos
     position: 'relative',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
