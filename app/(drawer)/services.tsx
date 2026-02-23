@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 6,
   },
