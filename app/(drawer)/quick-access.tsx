@@ -226,8 +226,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   iconContainer: {
-    width: 44, // Reducido de 56 a 44
-    height: 44, // Reducido de 56 a 44
+    width: 56, // Tamaño original mantenido
+    height: 56, // Tamaño original mantenido
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
