@@ -13,7 +13,7 @@ export const dashboardRouter = router({
   /**
    * Obtener métricas mensuales
    * Retorna:
-   * - Total acumulado de clientes y pianos (hasta la fecha)
+   * - Clientes y pianos creados en el mes especificado
    * - Servicios e ingresos del mes especificado
    */
   getMonthlyMetrics: protectedProcedure
@@ -35,17 +35,29 @@ export const dashboardRouter = router({
       const startDateStr = startDate.toISOString();
       const endDateStr = endDate.toISOString();
 
-      // TOTAL ACUMULADO de clientes (todos los clientes activos)
+      // Clientes creados en el mes seleccionado
       const clientsResult = await db
         .select({ count: sql<number>`COUNT(*)` })
         .from(clients)
-        .where(eq(clients.partnerId, partnerId));
+        .where(
+          and(
+            eq(clients.partnerId, partnerId),
+            gte(clients.createdAt, startDateStr),
+            lt(clients.createdAt, endDateStr)
+          )
+        );
 
-      // TOTAL ACUMULADO de pianos (todos los pianos)
+      // Pianos creados en el mes seleccionado
       const pianosResult = await db
         .select({ count: sql<number>`COUNT(*)` })
         .from(pianos)
-        .where(eq(pianos.partnerId, partnerId));
+        .where(
+          and(
+            eq(pianos.partnerId, partnerId),
+            gte(pianos.createdAt, startDateStr),
+            lt(pianos.createdAt, endDateStr)
+          )
+        );
 
       // Contar clientes VIP
       const vipClientsResult = await db
