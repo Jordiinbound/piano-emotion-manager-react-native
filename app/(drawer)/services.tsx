@@ -341,6 +341,7 @@ const styles = StyleSheet.create({
   },
   filtersContainer: {
     paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
     gap: Spacing.sm,
   },
   filterChip: {
@@ -352,9 +353,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: Spacing.sm,
     shadowColor: '#000',
-    shadowOffset: { width: 3, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
     elevation: 6,
   },
   filterText: {
