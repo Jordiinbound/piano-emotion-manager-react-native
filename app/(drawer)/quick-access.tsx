@@ -212,12 +212,13 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   moduleCard: {
-    minWidth: 150,
-    padding: Spacing.lg,
+    minWidth: 120, // Reducido de 150 a 120 para tarjetas más compactas
+    paddingVertical: Spacing.sm, // Padding vertical reducido
+    paddingHorizontal: Spacing.xs, // Padding horizontal aún más reducido
     borderRadius: 4,
     borderWidth: 1,
     alignItems: 'center',
-    gap: Spacing.md,
+    gap: Spacing.sm, // Reducido de md a sm
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -225,14 +226,14 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   iconContainer: {
-    width: 56,
-    height: 56,
+    width: 44, // Reducido de 56 a 44
+    height: 44, // Reducido de 56 a 44
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
   moduleLabel: {
-    fontSize: 14,
+    fontSize: 13, // Reducido de 14 a 13
     fontFamily: 'Montserrat',
     fontWeight: '600',
     textAlign: 'center',
