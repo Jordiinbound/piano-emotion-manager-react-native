@@ -67,7 +67,7 @@ export function AnimatedCard({
     onPress();
   };
 
-  const cardSize = size === 'small' ? 70 : 70; // Reducido drásticamente a 70px
+  const cardSize = size === 'small' ? 60 : 60; // Reducido a 60px como solicitado
   const iconContainerSize = size === 'small' ? 48 : 56; // Iconos mantienen tamaño 56px
   const iconSize = size === 'small' ? 24 : 28;
 
