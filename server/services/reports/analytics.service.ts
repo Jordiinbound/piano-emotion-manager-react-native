@@ -6,7 +6,7 @@
  */
 
 import { getDb } from '../../../drizzle/db.js';
-import { eq, and, gte, lte, sql, count, sum, avg, desc } from 'drizzle-orm';
+import { eq, and, gte, lte, ne, sql, count, sum, avg, desc } from 'drizzle-orm';
 import { clients, pianos, services, invoices } from '../../../drizzle/schema.js';
 
 // ============================================================================
@@ -545,7 +545,7 @@ export class AnalyticsService {
 
       const db = await getDb();
       
-      // Calcular ingresos desde facturas pagadas, no desde costos de servicios
+      // Calcular ingresos desde facturas emitidas (todas excepto draft)
       const result = await db
         .select({
           total: sum(invoices.total),
@@ -554,7 +554,7 @@ export class AnalyticsService {
         .where(
           and(
             eq(invoices.partnerId, this.partnerId),
-            eq(invoices.status, 'paid'),
+            ne(invoices.status, 'draft'),
             gte(invoices.date, startDate.toISOString()),
             lte(invoices.date, endDate.toISOString())
           )
