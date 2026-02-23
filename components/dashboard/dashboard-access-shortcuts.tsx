@@ -119,6 +119,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: Spacing.md,
+    gap: Spacing.sm, // Reducido de md a sm para mejor agrupación
   },
 });
