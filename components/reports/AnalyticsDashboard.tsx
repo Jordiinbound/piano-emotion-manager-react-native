@@ -450,7 +450,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   // Datos adicionales para nuevos gráficos
   const { clients } = useClientsData();
   const { pianos } = usePianosData();
-  const { services } = useServicesData();
+  const { services } = useServicesData({ pageSize: 5000 }); // Cargar suficientes servicios para analytics
 
   // Calcular distribución de pianos
   const pianosByCategory = useMemo(() => ({
