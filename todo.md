@@ -948,6 +948,11 @@
 - [x] Fix tuner showing French instead of Spanish (castellano) - all 9 language tunerScreen sections were shifted by one
 
 ## Tuner - UI Truncation
-- [ ] Fix text truncation on narrower screen widths
-- [ ] Make tool tiles responsive - dynamic width based on available screen space
-- [ ] Use flex-wrap grid instead of horizontal scroll for wide layout
+- [x] Fix text truncation on narrower screen widths
+- [x] Make tool tiles responsive - dynamic width based on available screen space
+- [x] Use flex-wrap grid instead of horizontal scroll for wide layout
+
+## Tuner - Audio Level Too Low (VUMeter -65dB)
+- [ ] Diagnose why VUMeter shows -65dB even with loud sounds (palmada)
+- [ ] Fix audio pipeline gain/processing so microphone input registers correctly
+- [ ] Verify indicator responds to sound after fix

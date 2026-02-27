@@ -67,6 +67,8 @@ export interface TunerEngineConfig {
   useStretchTuning: boolean;
   /** Umbral de ruido (RMS mínimo para procesar) */
   noiseGateThreshold: number;
+  /** Input gain multiplier (1 = no gain, 4 = 4x amplification) */
+  inputGain: number;
   /** Tamaño del buffer de audio (potencia de 2) */
   bufferSize: number;
   /** Frecuencia de muestreo deseada */
@@ -88,7 +90,8 @@ export type TunerEngineCallback = (result: PitchDetectionResult) => void;
 const DEFAULT_CONFIG: TunerEngineConfig = {
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
-  noiseGateThreshold: 0.001, // Lowered from 0.003 for better sensitivity
+  noiseGateThreshold: 0.0005, // Very low gate to catch even quiet signals
+  inputGain: 6, // 6x input amplification to compensate for low mic levels
   bufferSize: 4096,
   sampleRate: 44100,
   fftSize: 8192,
@@ -439,6 +442,8 @@ export class TunerAudioEngine {
   private useWorklet: boolean = false;
   private detectBeats: boolean = false;
   
+  // Gain node for input amplification
+  private inputGainNode: GainNode | null = null;
   // Bandpass filter nodes
   private highpassFilter: BiquadFilterNode | null = null;
   private lowpassFilter: BiquadFilterNode | null = null;
@@ -503,8 +508,14 @@ export class TunerAudioEngine {
       // Step 3: Create source node from microphone
       this.sourceNode = this.audioContext.createMediaStreamSource(this.mediaStream);
       
+      // Step 3.5: Create input gain node to amplify microphone signal
+      this.inputGainNode = this.audioContext.createGain();
+      this.inputGainNode.gain.setValueAtTime(this.config.inputGain, this.audioContext.currentTime);
+      this.sourceNode.connect(this.inputGainNode);
+      console.log('[TunerEngine] Input gain set to', this.config.inputGain, 'x');
+      
       // Step 4: Optional bandpass filter
-      let lastNode: AudioNode = this.sourceNode;
+      let lastNode: AudioNode = this.inputGainNode;
       
       if (this.config.useBandpassFilter) {
         this.highpassFilter = this.audioContext.createBiquadFilter();
@@ -650,6 +661,11 @@ export class TunerAudioEngine {
       this.lowpassFilter = null;
     }
     
+    if (this.inputGainNode) {
+      this.inputGainNode.disconnect();
+      this.inputGainNode = null;
+    }
+    
     if (this.sourceNode) {
       this.sourceNode.disconnect();
       this.sourceNode = null;
@@ -681,6 +697,11 @@ export class TunerAudioEngine {
    */
   updateConfig(config: Partial<TunerEngineConfig>): void {
     this.config = { ...this.config, ...config };
+    // Update gain node in real-time if it exists
+    if (config.inputGain !== undefined && this.inputGainNode && this.audioContext) {
+      this.inputGainNode.gain.setValueAtTime(config.inputGain, this.audioContext.currentTime);
+      console.log('[TunerEngine] Input gain updated to', config.inputGain, 'x');
+    }
   }
 
   /**
@@ -769,7 +790,14 @@ export class TunerAudioEngine {
     
     // Diagnostic logging every 2 seconds
     if (now - this.lastLogTime > 2000) {
-      console.log(`[TunerEngine] Status: frames=${this.frameCount}, rms=${rmsLevel.toFixed(6)}, gate=${this.config.noiseGateThreshold}, worklet=${this.useWorklet}`);
+      // Find max absolute sample value for diagnostics
+      let maxSample = 0;
+      for (let i = 0; i < buffer.length; i++) {
+        const abs = Math.abs(buffer[i]);
+        if (abs > maxSample) maxSample = abs;
+      }
+      const dbLevel = rmsLevel > 0 ? 20 * Math.log10(rmsLevel) : -Infinity;
+      console.log(`[TunerEngine] Status: frames=${this.frameCount}, rms=${rmsLevel.toFixed(6)} (${dbLevel.toFixed(1)}dB), maxSample=${maxSample.toFixed(6)}, gate=${this.config.noiseGateThreshold}, gain=${this.config.inputGain}x, worklet=${this.useWorklet}`);
       this.lastLogTime = now;
     }
     

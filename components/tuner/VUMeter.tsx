@@ -23,8 +23,8 @@ interface VUMeterProps {
 }
 
 const SEGMENTS = 20;
-const OPTIMAL_MIN = 0.015;
-const OPTIMAL_MAX = 0.5;
+const OPTIMAL_MIN = 0.005; // Lowered to work with various mic levels + gain
+const OPTIMAL_MAX = 0.8; // Raised to accommodate amplified signals
 
 export function VUMeter({ rmsLevel, isListening, compact = false }: VUMeterProps) {
   const textColor = useThemeColor({}, 'text');
