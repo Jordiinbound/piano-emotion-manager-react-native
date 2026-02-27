@@ -323,60 +323,64 @@ function ToolMenu({
         </Pressable>
       </View>
 
-      {/* Categories with tools - each row scrolls horizontally */}
+      {/* Categories with tools - responsive flex-wrap grid */}
       <View style={{ paddingHorizontal: 12, paddingBottom: 10, gap: 10 }}>
-        {categories.map(category => (
-          <View key={category.id} style={{ gap: 4 }}>
-            <ThemedText style={[menuStyles.categoryTitle, { color: textSecondary }]}>
-              {category.title}
-            </ThemedText>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ flexDirection: 'row', gap: 6, paddingRight: 8 }}
-            >
-              {category.tools.map(tool => {
-                const isActive = activeView === tool.id;
-                return (
-                  <Pressable
-                    key={tool.id}
-                    onPress={() => onSelect(tool.id)}
-                    style={({ pressed }) => [
-                      menuStyles.toolTile,
-                      {
-                        width: 96,
-                        backgroundColor: isActive ? TUNER_COLORS.primary + '15' : surface,
-                        borderColor: isActive ? TUNER_COLORS.primary : 'transparent',
-                        opacity: pressed ? 0.7 : 1,
-                      },
-                    ]}
-                  >
-                    <Ionicons
-                      name={tool.icon as any}
-                      size={iconSize}
-                      color={isActive ? TUNER_COLORS.primary : textSecondary}
-                    />
-                    <ThemedText
-                      style={[
-                        menuStyles.toolLabel,
-                        { color: isActive ? TUNER_COLORS.primary : textColor },
+        {categories.map(category => {
+          // Calculate tile width: fit as many as possible with min 88px, max 110px
+          const availableWidth = width - 24; // paddingHorizontal 12*2
+          const gap = 6;
+          const minTileWidth = 88;
+          const cols = Math.floor((availableWidth + gap) / (minTileWidth + gap));
+          const tileWidth = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+          return (
+            <View key={category.id} style={{ gap: 4 }}>
+              <ThemedText style={[menuStyles.categoryTitle, { color: textSecondary }]}>
+                {category.title}
+              </ThemedText>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                {category.tools.map(tool => {
+                  const isActive = activeView === tool.id;
+                  return (
+                    <Pressable
+                      key={tool.id}
+                      onPress={() => onSelect(tool.id)}
+                      style={({ pressed }) => [
+                        menuStyles.toolTile,
+                        {
+                          width: tileWidth,
+                          backgroundColor: isActive ? TUNER_COLORS.primary + '15' : surface,
+                          borderColor: isActive ? TUNER_COLORS.primary : 'transparent',
+                          opacity: pressed ? 0.7 : 1,
+                        },
                       ]}
-                      numberOfLines={1}
                     >
-                      {tool.label}
-                    </ThemedText>
-                    <ThemedText
-                      style={[menuStyles.toolDesc, { color: textSecondary }]}
-                      numberOfLines={1}
-                    >
-                      {tool.description}
-                    </ThemedText>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-          </View>
-        ))}
+                      <Ionicons
+                        name={tool.icon as any}
+                        size={iconSize}
+                        color={isActive ? TUNER_COLORS.primary : textSecondary}
+                      />
+                      <ThemedText
+                        style={[
+                          menuStyles.toolLabel,
+                          { color: isActive ? TUNER_COLORS.primary : textColor },
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {tool.label}
+                      </ThemedText>
+                      <ThemedText
+                        style={[menuStyles.toolDesc, { color: textSecondary }]}
+                        numberOfLines={1}
+                      >
+                        {tool.description}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          );
+        })}
       </View>
     </View>
   );

@@ -938,14 +938,16 @@
 
 ## Tuner - Audio Detection Not Working (CRITICAL)
 - [ ] Fix audio pipeline: indicator not moving at all, detected frequency shows "— Hz"
-- [ ] Rewrite audio engine to use reliable fallback (AnalyserNode + requestAnimationFrame) as primary
-- [ ] Add worklet timeout detection to auto-switch to fallback
-- [ ] Lower confidence threshold in AnimatedCentsGauge (0.75 → 0.3)
-- [ ] Lower noise gate threshold for better sensitivity
-- [ ] Add comprehensive diagnostic logging
+- [x] Rewrite audio engine to use reliable fallback (AnalyserNode + requestAnimationFrame) as primary
+- [x] Add worklet timeout detection to auto-switch to fallback
+- [x] Lower confidence threshold in AnimatedCentsGauge (0.75 → 0.3)
+- [x] Lower noise gate threshold for better sensitivity
+- [x] Add comprehensive diagnostic logging
 
 ## Tuner - Language Bug
-- [ ] Fix tuner showing French instead of Spanish (castellano)
+- [x] Fix tuner showing French instead of Spanish (castellano) - all 9 language tunerScreen sections were shifted by one
 
 ## Tuner - UI Truncation
 - [ ] Fix text truncation on narrower screen widths
+- [ ] Make tool tiles responsive - dynamic width based on available screen space
+- [ ] Use flex-wrap grid instead of horizontal scroll for wide layout
