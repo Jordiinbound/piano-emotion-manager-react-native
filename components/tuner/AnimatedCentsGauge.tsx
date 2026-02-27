@@ -76,7 +76,7 @@ export function AnimatedCentsGauge({
   const needleAngle = useSharedValue(0);
 
   useEffect(() => {
-    if (keyIndex < 0 || confidence < 0.1) {
+    if (keyIndex < 0 || confidence < 0.3) {
       // No detection — return to center
       needleAngle.value = withTiming(0, {
         duration: 300,

@@ -90,8 +90,8 @@ export type TunerEngineCallback = (result: PitchDetectionResult) => void;
 const DEFAULT_CONFIG: TunerEngineConfig = {
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
-  noiseGateThreshold: 0.0005, // Very low gate to catch even quiet signals
-  inputGain: 8, // 8x input amplification — enough to boost low mic levels without clipping
+  noiseGateThreshold: 0.008, // Gate high enough to filter ambient noise, low enough for piano
+  inputGain: 4, // 4x input amplification — moderate boost without amplifying noise too much
   bufferSize: 4096,
   sampleRate: 44100,
   fftSize: 8192,
@@ -851,8 +851,8 @@ export class TunerAudioEngine {
       console.log(`[TunerEngine] YIN result: freq=${rawFrequency.toFixed(1)}, conf=${confidence.toFixed(3)}, rms=${rmsLevel.toFixed(6)}, bufLen=${buffer.length}, sr=${sampleRate}`);
     }
     
-    // Accept detections with confidence >= 0.15 (very permissive to show any detection)
-    if (rawFrequency <= 0 || confidence < 0.15) {
+    // Accept detections with confidence >= 0.3 (reject noise-induced phantom frequencies)
+    if (rawFrequency <= 0 || confidence < 0.3) {
       this.callback({
         frequency: 0,
         confidence,

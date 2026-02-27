@@ -965,5 +965,11 @@
 - [x] Fix ProximityBeep still mounting/unmounting several times per second - rewritten with refs + debounced visual updates
 
 ## Header Text Changes
-- [ ] Change "Piano Tuner Pro" to "Piano Emotion Tuner Pro" in tuner header
-- [ ] Increase font size by 2pt for both "Afinador" and "Piano Emotion Tuner Pro"
+- [x] Change "Piano Tuner Pro" to "Piano Emotion Tuner Pro" in tuner header
+- [x] Increase font size by 2pt for both "Afinador" and "Piano Emotion Tuner Pro"
+
+## Tuner - False Detections from Ambient Noise
+- [ ] Reduce inputGain from 8x to 4x to avoid amplifying noise
+- [ ] Raise noiseGateThreshold to filter ambient noise but pass piano
+- [ ] Raise YIN confidence threshold to reject spurious detections
+- [ ] Fix in both tuner-audio-engine.ts defaults AND TunerContext initial state
