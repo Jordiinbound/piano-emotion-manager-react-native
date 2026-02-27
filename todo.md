@@ -962,4 +962,8 @@
 - [x] Fix layout jumping when ProximityBeep toggles visibility
 
 ## ProximityBeep Still Flickering
-- [ ] Fix ProximityBeep still mounting/unmounting several times per second despite isListening fix
+- [x] Fix ProximityBeep still mounting/unmounting several times per second - rewritten with refs + debounced visual updates
+
+## Header Text Changes
+- [ ] Change "Piano Tuner Pro" to "Piano Emotion Tuner Pro" in tuner header
+- [ ] Increase font size by 2pt for both "Afinador" and "Piano Emotion Tuner Pro"

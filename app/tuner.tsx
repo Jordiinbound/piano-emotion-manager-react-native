@@ -35,7 +35,7 @@ export default function TunerPage() {
             Afinador
           </ThemedText>
           <ThemedText style={[styles.headerSubtitle, { color: '#6b7280' }]}>
-            Piano Tuner Pro
+            Piano Emotion Tuner Pro
           </ThemedText>
         </View>
         <View style={{ width: 40 }} />
@@ -86,16 +86,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 17,
+    fontSize: 19,
     fontWeight: '700',
     fontFamily: 'Arkhip',
-    lineHeight: 22,
+    lineHeight: 24,
   },
   headerSubtitle: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '400',
     fontFamily: 'Montserrat',
-    lineHeight: 14,
+    lineHeight: 16,
   },
   nativeMessage: {
     flex: 1,
