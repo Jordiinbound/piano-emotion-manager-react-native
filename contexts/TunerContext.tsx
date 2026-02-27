@@ -143,7 +143,7 @@ const initialState: TunerState = {
   autoDetect: true,
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
-  noiseGateThreshold: 0.01,
+  noiseGateThreshold: 0.0005, // Very low to ensure audio reaches YIN detector
   meterRange: 50,
   showFrequency: true,
   showInharmonicity: true,
@@ -238,8 +238,14 @@ function tunerReducer(state: TunerState, action: TunerAction): TunerState {
           [action.payload.feature]: action.payload.enabled,
         },
       };
-    case 'LOAD_SETTINGS':
-      return { ...state, ...action.payload };
+    case 'LOAD_SETTINGS': {
+      const loaded = { ...state, ...action.payload };
+      // Migration: old noiseGateThreshold (0.01) was too high, force update
+      if (loaded.noiseGateThreshold >= 0.005) {
+        loaded.noiseGateThreshold = 0.0005;
+      }
+      return loaded;
+    }
     default:
       return state;
   }

@@ -91,7 +91,7 @@ const DEFAULT_CONFIG: TunerEngineConfig = {
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
   noiseGateThreshold: 0.0005, // Very low gate to catch even quiet signals
-  inputGain: 6, // 6x input amplification to compensate for low mic levels
+  inputGain: 30, // 30x input amplification — browsers often deliver very low mic levels
   bufferSize: 4096,
   sampleRate: 44100,
   fftSize: 8192,
@@ -158,8 +158,8 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
         bestTau = tau;
       }
     }
-    // More permissive fallback - accept if below 0.6
-    if (minVal > 0.6) {
+    // More permissive fallback - accept if below 0.85
+    if (minVal > 0.85) {
       return { frequency: 0, confidence: 0 };
     }
   }
@@ -833,13 +833,13 @@ export class TunerAudioEngine {
       fftData = freqBuf;
     }
     
-    // Log detection results periodically
-    if (now - this.lastLogTime < 100 && rawFrequency > 0) {
-      console.log(`[TunerEngine] YIN: freq=${rawFrequency.toFixed(1)} conf=${confidence.toFixed(3)} rms=${rmsLevel.toFixed(4)}`);
+    // Log YIN results every 2 seconds (always, not just when freq > 0)
+    if (now - this.lastLogTime < 200) {
+      console.log(`[TunerEngine] YIN result: freq=${rawFrequency.toFixed(1)}, conf=${confidence.toFixed(3)}, rms=${rmsLevel.toFixed(6)}, bufLen=${buffer.length}, sr=${sampleRate}`);
     }
     
-    // Accept detections with confidence >= 0.3 (lowered from 0.5)
-    if (rawFrequency <= 0 || confidence < 0.3) {
+    // Accept detections with confidence >= 0.15 (very permissive to show any detection)
+    if (rawFrequency <= 0 || confidence < 0.15) {
       this.callback({
         frequency: 0,
         confidence,
