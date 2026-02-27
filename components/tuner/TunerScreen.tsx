@@ -1,13 +1,14 @@
 /**
- * TunerScreen - Pantalla principal del afinador de pianos (Professional v3)
+ * TunerScreen - Pantalla principal del afinador de pianos (Professional v4)
  * 
  * Menú responsive con categorías y grid adaptativo.
- * En móvil: grid compacto 3-4 columnas con iconos.
- * En tablet/desktop: grid más amplio con labels.
+ * Incluye feature toggles para activar/desactivar funcionalidades.
+ * 7 nuevas herramientas: ProximityBeep, FullscreenTuner, StabilityHistogram,
+ * MultiStringDetector, PianoHeatmap, ShareReport, DriftPrediction.
  */
 
 import React, { useCallback, useState, useMemo } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, useWindowDimensions, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, useWindowDimensions, Platform, Switch } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -32,6 +33,13 @@ import { TuningReportGenerator } from './TuningReportGenerator';
 import { VUMeter } from './VUMeter';
 import { AnimatedCentsGauge } from './AnimatedCentsGauge';
 import { TunerTutorial } from './TunerTutorial';
+import { StabilityHistogram } from './StabilityHistogram';
+import { MultiStringDetector } from './MultiStringDetector';
+import { PianoHeatmap } from './PianoHeatmap';
+import { ShareReport } from './ShareReport';
+import { DriftPrediction } from './DriftPrediction';
+import { ProximityBeep } from './ProximityBeep';
+import { FullscreenTuner } from './FullscreenTuner';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getFullNoteName,
@@ -88,8 +96,12 @@ const TOOL_CATEGORIES: ToolCategory[] = [
     tools: [
       { id: 'spectrogram', label: 'Espectro', icon: 'pulse-outline', description: 'Espectrograma FFT' },
       { id: 'railsback', label: 'Railsback', icon: 'analytics-outline', description: 'Curva de afinación' },
+      { id: 'heatmap', label: 'Mapa Calor', icon: 'grid-outline', description: 'Visión global 88 teclas' },
       { id: 'unison', label: 'Unísono', icon: 'git-compare-outline', description: 'Detección de batidos' },
+      { id: 'multiString', label: 'Multi-corda', icon: 'layers-outline', description: 'Separar cuerdas unísono' },
       { id: 'stringQuality', label: 'Cuerdas', icon: 'search-outline', description: 'Calidad de cuerdas' },
+      { id: 'stability', label: 'Estabilitat', icon: 'bar-chart-outline', description: 'Histograma estabilidad' },
+      { id: 'driftPrediction', label: 'Predicció', icon: 'trending-up-outline', description: 'Predicción de deriva' },
     ],
   },
   {
@@ -101,6 +113,7 @@ const TOOL_CATEGORIES: ToolCategory[] = [
       { id: 'micCalibration', label: 'Micrófono', icon: 'mic-outline', description: 'Calibrar latencia' },
       { id: 'profiles', label: 'Pianos', icon: 'albums-outline', description: 'Perfiles e historial' },
       { id: 'report', label: 'Informe', icon: 'document-text-outline', description: 'Generar PDF' },
+      { id: 'shareReport', label: 'Compartir', icon: 'share-outline', description: 'Enviar informe' },
     ],
   },
 ];
@@ -122,26 +135,16 @@ function ToolMenu({
   width: number;
 }) {
   const surface = useThemeColor({}, 'surface');
-  const cardBg = useThemeColor({}, 'cardBackground');
   const border = useThemeColor({}, 'border');
   const textColor = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
-  const background = useThemeColor({}, 'background');
 
-  // Responsive: determine layout
   const isCompact = width < 480;
   const isMedium = width >= 480 && width < 768;
   const isWide = width >= 768;
-  const columns = isCompact ? 4 : isMedium ? 4 : 6;
   const showDescriptions = isWide;
   const iconSize = isCompact ? 20 : 22;
-  const tileWidth = isCompact
-    ? (width - 48) / 4
-    : isMedium
-      ? (width - 56) / 4
-      : (width - 80) / 6;
 
-  // Active tool info
   const activeTool = ALL_TOOLS.find(t => t.id === activeView);
 
   return (
@@ -343,13 +346,15 @@ function TunerScreenContent() {
     setUnisonMode,
     saveCalibrationPoint,
     resetCalibration,
+    setFeatureToggle,
   } = useTuner();
   
   const { width } = useWindowDimensions();
   const [showSettings, setShowSettings] = useState(false);
-  const [menuExpanded, setMenuExpanded] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [darkTuningMode, setDarkTuningMode] = useState(false);
+  const [showFullscreen, setShowFullscreen] = useState(false);
+  const [showFeatureToggles, setShowFeatureToggles] = useState(false);
   
   // Check if tutorial has been seen
   React.useEffect(() => {
@@ -382,8 +387,6 @@ function TunerScreenContent() {
   const border = useThemeColor({}, 'border');
   const textColor = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
-  
-  const gaugeSize = Math.min(260, width - 80);
   
   // Determinar la tecla activa
   const activeKey = state.autoDetect
@@ -445,18 +448,17 @@ function TunerScreenContent() {
   
   const handleToolSelect = useCallback((toolId: TunerViewMode) => {
     setActiveView(toolId);
-    if (toolId === 'unison') {
+    if (toolId === 'unison' || toolId === 'multiString') {
       setUnisonMode(true);
     } else if (state.unisonMode) {
       setUnisonMode(false);
     }
-    setMenuExpanded(false);
     if (Platform.OS !== 'web') {
       try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
     }
   }, [setActiveView, setUnisonMode, state.unisonMode]);
   
-  // Helper: Compact note display used by multiple views
+  // Helper: Compact note display
   const renderCompactNoteDisplay = () => (
     <View style={styles.noteDisplayCompact}>
       <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
@@ -473,7 +475,7 @@ function TunerScreenContent() {
     </View>
   );
   
-  // Helper: Deviation bar used by multiple views
+  // Helper: Deviation bar
   const renderDeviationBar = () => (
     <DeviationBar
       centsDeviation={isActive ? centsDeviation : 0}
@@ -490,6 +492,41 @@ function TunerScreenContent() {
     });
     return map;
   }, [state.measurements]);
+
+  // Helper: tuning history for drift prediction
+  const tuningHistory = useMemo(() => {
+    return state.measurements
+      .filter((m): m is NonNullable<typeof m> => m !== null)
+      .map(m => ({
+        keyIndex: m.keyIndex,
+        centsDeviation: m.centsDeviation,
+        frequency: m.frequency,
+        targetFrequency: m.targetFrequency,
+        inharmonicity: m.inharmonicity,
+        timestamp: m.timestamp,
+      }));
+  }, [state.measurements]);
+  
+  // ─── Fullscreen mode ───
+  if (showFullscreen && state.featureToggles.fullscreen) {
+    return (
+      <FullscreenTuner
+        noteName={noteName}
+        octave={String(octave)}
+        centsDeviation={isActive ? centsDeviation : 0}
+        frequency={detectedFreq}
+        targetFrequency={targetFreq}
+        isActive={isActive}
+        isListening={state.isListening}
+        isStable={detection?.isStable ?? false}
+        rmsLevel={detection?.rmsLevel ?? 0}
+        onToggleListening={handleToggleListening}
+        onExit={() => setShowFullscreen(false)}
+        onSave={handleSave}
+        onNavigateKey={navigateKey}
+      />
+    );
+  }
   
   // Show tutorial on first visit
   if (showTutorial) {
@@ -503,6 +540,58 @@ function TunerScreenContent() {
   
   if (showSettings) {
     return <TunerSettings onBack={() => setShowSettings(false)} />;
+  }
+
+  // ─── Feature toggles panel ───
+  if (showFeatureToggles) {
+    const toggleItems: { key: keyof typeof state.featureToggles; label: string; description: string }[] = [
+      { key: 'proximityBeep', label: 'Beep de proximitat', description: 'So auditiu que accelera quan s\'acosta a l\'afinació correcta' },
+      { key: 'stabilityHistogram', label: 'Histograma d\'estabilitat', description: 'Mostra les últimes 10 lectures per nota' },
+      { key: 'heatmap', label: 'Mapa de calor', description: 'Visió global de les 88 tecles en colors' },
+      { key: 'multiString', label: 'Detecció multi-corda', description: 'Separa les freqüències de les cordes d\'un uníson' },
+      { key: 'driftPrediction', label: 'Predicció de deriva', description: 'Prediu quines notes es desafinaran primer' },
+      { key: 'fullscreen', label: 'Mode pantalla completa', description: 'Afinador immersiu sense distraccions' },
+    ];
+
+    return (
+      <View style={[styles.container, { backgroundColor: background }]}>
+        <View style={[styles.featureToggleHeader, { borderBottomColor: border }]}>
+          <Pressable
+            onPress={() => setShowFeatureToggles(false)}
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1, padding: 8 }]}
+          >
+            <Ionicons name="arrow-back" size={24} color={textColor} />
+          </Pressable>
+          <ThemedText style={[styles.featureToggleTitle, { color: textColor }]}>
+            Funcionalitats
+          </ThemedText>
+          <View style={{ width: 40 }} />
+        </View>
+        <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
+          <ThemedText style={[styles.featureToggleSubtitle, { color: textSecondary }]}>
+            Activa o desactiva les funcionalitats avançades del afinador.
+          </ThemedText>
+          {toggleItems.map(item => (
+            <View key={item.key} style={[styles.featureToggleRow, { backgroundColor: surface, borderColor: border }]}>
+              <View style={{ flex: 1, gap: 2 }}>
+                <ThemedText style={[styles.featureToggleLabel, { color: textColor }]}>
+                  {item.label}
+                </ThemedText>
+                <ThemedText style={[styles.featureToggleDesc, { color: textSecondary }]}>
+                  {item.description}
+                </ThemedText>
+              </View>
+              <Switch
+                value={state.featureToggles[item.key]}
+                onValueChange={(val) => setFeatureToggle(item.key, val)}
+                trackColor={{ false: border, true: TUNER_COLORS.primary + '60' }}
+                thumbColor={state.featureToggles[item.key] ? TUNER_COLORS.primary : '#f4f3f4'}
+              />
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    );
   }
   
   return (
@@ -530,6 +619,30 @@ function TunerScreenContent() {
           </View>
           
           <View style={styles.headerActions}>
+            {/* Fullscreen button */}
+            {state.featureToggles.fullscreen && state.isListening && (
+              <Pressable
+                onPress={() => setShowFullscreen(true)}
+                style={({ pressed }) => [
+                  styles.modeBadge,
+                  { backgroundColor: surface, borderColor: border, opacity: pressed ? 0.7 : 1 },
+                ]}
+              >
+                <Ionicons name="expand-outline" size={14} color={textSecondary} />
+              </Pressable>
+            )}
+            
+            {/* Feature toggles button */}
+            <Pressable
+              onPress={() => setShowFeatureToggles(true)}
+              style={({ pressed }) => [
+                styles.modeBadge,
+                { backgroundColor: surface, borderColor: border, opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <Ionicons name="options-outline" size={14} color={textSecondary} />
+            </Pressable>
+            
             <Pressable
               onPress={handleAutoDetect}
               style={({ pressed }) => [
@@ -554,10 +667,19 @@ function TunerScreenContent() {
           </View>
         </View>
         
+        {/* ═══ Proximity Beep (invisible, audio only) ═══ */}
+        {state.featureToggles.proximityBeep && state.isListening && isActive && (
+          <ProximityBeep
+            centsDeviation={centsDeviation}
+            isActive={isActive}
+            enabled={state.featureToggles.proximityBeep}
+          />
+        )}
+        
         {/* ═══ Vista: Afinador principal ═══ */}
         {state.activeView === 'tuner' && (
           <>
-            {/* VU Meter - indicador de nivel de señal */}
+            {/* VU Meter */}
             {state.isListening && (
               <View style={{ paddingHorizontal: 16, marginBottom: 8 }}>
                 <VUMeter
@@ -585,6 +707,17 @@ function TunerScreenContent() {
             
             {/* Barra de desviación */}
             {renderDeviationBar()}
+            
+            {/* Stability histogram (below main gauge) */}
+            {state.featureToggles.stabilityHistogram && isActive && (
+              <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
+                <StabilityHistogram
+                  keyIndex={activeKey}
+                  currentCents={centsDeviation}
+                  isActive={isActive}
+                />
+              </View>
+            )}
             
             {/* Información de frecuencia */}
             {state.showFrequency && (
@@ -676,17 +809,19 @@ function TunerScreenContent() {
               height={220}
               showStretchCurve={state.useStretchTuning}
             />
-            <View style={[styles.infoCard, { backgroundColor: cardBg, borderColor: border }]}>
-              <View style={styles.infoCardHeader}>
-                <Ionicons name="information-circle-outline" size={16} color={textSecondary} />
-                <ThemedText style={[styles.infoCardTitle, { color: textSecondary }]}>
-                  Curva de Railsback
-                </ThemedText>
-              </View>
-              <ThemedText style={[styles.infoCardBody, { color: textSecondary }]}>
-                La curva de Railsback muestra cómo la afinación de un piano se desvía del temperamento igual puro. Los graves se afinan ligeramente más bajos y los agudos más altos para compensar la inharmonicidad de las cuerdas.
-              </ThemedText>
-            </View>
+          </>
+        )}
+
+        {/* ═══ Vista: Mapa de calor ═══ */}
+        {state.activeView === 'heatmap' && (
+          <>
+            <View style={{ height: 8 }} />
+            <PianoHeatmap
+              measurements={measurementsMap}
+              activeKeyIndex={activeKey}
+              onKeyPress={handleKeyPress}
+              width={width - 32}
+            />
           </>
         )}
         
@@ -700,6 +835,48 @@ function TunerScreenContent() {
               beatFrequency={detection?.beatFrequency ?? null}
               isActive={isActive}
               width={width - 32}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Multi-corda ═══ */}
+        {state.activeView === 'multiString' && (
+          <>
+            {renderCompactNoteDisplay()}
+            {renderDeviationBar()}
+            <View style={{ height: 12 }} />
+            <MultiStringDetector
+              fftData={detection?.fftData ?? null}
+              sampleRate={detection?.actualSampleRate ?? 44100}
+              fundamentalFreq={detectedFreq}
+              keyIndex={activeKey}
+              isActive={isActive}
+              width={width - 32}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Estabilitat ═══ */}
+        {state.activeView === 'stability' && (
+          <>
+            {renderCompactNoteDisplay()}
+            {renderDeviationBar()}
+            <View style={{ height: 12 }} />
+            <StabilityHistogram
+              keyIndex={activeKey}
+              currentCents={isActive ? centsDeviation : 0}
+              isActive={isActive}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Predicció de deriva ═══ */}
+        {state.activeView === 'driftPrediction' && (
+          <>
+            <View style={{ height: 8 }} />
+            <DriftPrediction
+              tuningHistory={[tuningHistory]}
+              currentMeasurements={measurementsMap}
             />
           </>
         )}
@@ -796,6 +973,19 @@ function TunerScreenContent() {
             />
           </>
         )}
+
+        {/* ═══ Vista: Compartir informe ═══ */}
+        {state.activeView === 'shareReport' && (
+          <>
+            <View style={{ height: 8 }} />
+            <ShareReport
+              measurements={measurementsMap}
+              concertPitch={state.concertPitch}
+              temperamentId={'equal'}
+              pianoName={state.calibrationData?.profileName ?? undefined}
+            />
+          </>
+        )}
         
         {/* ═══ Controles comunes (siempre visibles) ═══ */}
         
@@ -870,7 +1060,7 @@ function TunerScreenContent() {
           </Pressable>
         </View>
         
-        {/* Indicador de AudioWorklet + Dark mode toggle */}
+        {/* Indicador de motor + Dark mode + Tutorial */}
         {state.isListening && (
           <View style={styles.engineBadge}>
             <View style={[styles.engineDot, { backgroundColor: TUNER_COLORS.inTune }]} />
@@ -881,8 +1071,8 @@ function TunerScreenContent() {
             <Pressable
               onPress={toggleDarkTuningMode}
               style={({ pressed }) => [{
-                flexDirection: 'row',
-                alignItems: 'center',
+                flexDirection: 'row' as const,
+                alignItems: 'center' as const,
                 gap: 4,
                 paddingHorizontal: 8,
                 paddingVertical: 4,
@@ -908,8 +1098,8 @@ function TunerScreenContent() {
           <Pressable
             onPress={() => setShowTutorial(true)}
             style={({ pressed }) => [{
-              flexDirection: 'row',
-              alignItems: 'center',
+              flexDirection: 'row' as const,
+              alignItems: 'center' as const,
               gap: 4,
               paddingHorizontal: 12,
               paddingVertical: 6,
@@ -1025,25 +1215,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: 'Montserrat',
     lineHeight: 14,
-  },
-  noteDisplay: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  noteName: {
-    fontSize: 72,
-    fontWeight: '700',
-    fontFamily: 'Montserrat',
-    lineHeight: 80,
-  },
-  octaveNumber: {
-    fontSize: 28,
-    fontWeight: '500',
-    fontFamily: 'Montserrat',
-    lineHeight: 34,
-    marginLeft: 2,
   },
   noteDisplayCompact: {
     flexDirection: 'row',
@@ -1221,5 +1392,47 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontFamily: 'Montserrat',
     lineHeight: 17,
+  },
+  // Feature toggles panel styles
+  featureToggleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  featureToggleTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    fontFamily: 'Montserrat',
+    lineHeight: 24,
+  },
+  featureToggleSubtitle: {
+    fontSize: 13,
+    fontWeight: '400',
+    fontFamily: 'Montserrat',
+    lineHeight: 18,
+    marginBottom: 8,
+  },
+  featureToggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 12,
+  },
+  featureToggleLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    lineHeight: 18,
+  },
+  featureToggleDesc: {
+    fontSize: 12,
+    fontWeight: '400',
+    fontFamily: 'Montserrat',
+    lineHeight: 16,
   },
 });

@@ -36,7 +36,7 @@ export interface KeyMeasurement {
   timestamp: number;
 }
 
-export type TunerViewMode = 'tuner' | 'guided' | 'spectrogram' | 'railsback' | 'unison' | 'calibration' | 'toneGen' | 'stringQuality' | 'temperament' | 'profiles' | 'micCalibration' | 'report' | 'settings';
+export type TunerViewMode = 'tuner' | 'guided' | 'spectrogram' | 'railsback' | 'unison' | 'calibration' | 'toneGen' | 'stringQuality' | 'temperament' | 'profiles' | 'micCalibration' | 'report' | 'settings' | 'heatmap' | 'multiString' | 'stability' | 'driftPrediction' | 'shareReport';
 
 export interface TunerState {
   /** Motor activo */
@@ -75,6 +75,15 @@ export interface TunerState {
   showSpectrogram: boolean;
   /** Mostrar curva de Railsback */
   showRailsback: boolean;
+  /** Feature toggles */
+  featureToggles: {
+    proximityBeep: boolean;
+    stabilityHistogram: boolean;
+    heatmap: boolean;
+    multiString: boolean;
+    driftPrediction: boolean;
+    fullscreen: boolean;
+  };
 }
 
 type TunerAction =
@@ -98,6 +107,7 @@ type TunerAction =
   | { type: 'SAVE_CALIBRATION_POINT'; payload: { keyIndex: number; inharmonicity: number } }
   | { type: 'SET_SHOW_SPECTROGRAM'; payload: boolean }
   | { type: 'SET_SHOW_RAILSBACK'; payload: boolean }
+  | { type: 'SET_FEATURE_TOGGLE'; payload: { feature: keyof TunerState['featureToggles']; enabled: boolean } }
   | { type: 'LOAD_SETTINGS'; payload: Partial<TunerState> };
 
 interface TunerContextType {
@@ -121,6 +131,7 @@ interface TunerContextType {
   resetCalibration: () => void;
   setShowSpectrogram: (show: boolean) => void;
   setShowRailsback: (show: boolean) => void;
+  setFeatureToggle: (feature: keyof TunerState['featureToggles'], enabled: boolean) => void;
 }
 
 // ─── Estado inicial ──────────────────────────────────────────────────────────
@@ -144,6 +155,14 @@ const initialState: TunerState = {
   calibrationData: null,
   showSpectrogram: false,
   showRailsback: false,
+  featureToggles: {
+    proximityBeep: true,
+    stabilityHistogram: true,
+    heatmap: true,
+    multiString: true,
+    driftPrediction: true,
+    fullscreen: true,
+  },
 };
 
 // ─── Reducer ────────────────────────────────────────────────────────────────
@@ -211,6 +230,14 @@ function tunerReducer(state: TunerState, action: TunerAction): TunerState {
       return { ...state, showSpectrogram: action.payload };
     case 'SET_SHOW_RAILSBACK':
       return { ...state, showRailsback: action.payload };
+    case 'SET_FEATURE_TOGGLE':
+      return {
+        ...state,
+        featureToggles: {
+          ...state.featureToggles,
+          [action.payload.feature]: action.payload.enabled,
+        },
+      };
     case 'LOAD_SETTINGS':
       return { ...state, ...action.payload };
     default:
@@ -247,6 +274,13 @@ export function TunerProvider({ children }: { children: ReactNode }) {
         if (savedCalibration) {
           dispatch({ type: 'SET_CALIBRATION_DATA', payload: JSON.parse(savedCalibration) });
         }
+        const savedToggles = await AsyncStorage.getItem('piano_tuner_feature_toggles');
+        if (savedToggles) {
+          const toggles = JSON.parse(savedToggles);
+          Object.entries(toggles).forEach(([feature, enabled]) => {
+            dispatch({ type: 'SET_FEATURE_TOGGLE', payload: { feature: feature as any, enabled: enabled as boolean } });
+          });
+        }
       } catch {}
     })();
   }, []);
@@ -263,9 +297,10 @@ export function TunerProvider({ children }: { children: ReactNode }) {
       autoDetect: state.autoDetect,
       showSpectrogram: state.showSpectrogram,
       showRailsback: state.showRailsback,
+      featureToggles: state.featureToggles,
     };
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch(() => {});
-  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.meterRange, state.showFrequency, state.showInharmonicity, state.autoDetect, state.showSpectrogram, state.showRailsback]);
+  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.meterRange, state.showFrequency, state.showInharmonicity, state.autoDetect, state.showSpectrogram, state.showRailsback, state.featureToggles]);
 
   const handleDetection = useCallback((result: PitchDetectionResult) => {
     dispatch({ type: 'SET_DETECTION', payload: result });
@@ -439,6 +474,15 @@ export function TunerProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_SHOW_RAILSBACK', payload: show });
   }, []);
 
+  const setFeatureToggle = useCallback((feature: keyof TunerState['featureToggles'], enabled: boolean) => {
+    dispatch({ type: 'SET_FEATURE_TOGGLE', payload: { feature, enabled } });
+  }, []);
+
+  // Persist feature toggles
+  useEffect(() => {
+    AsyncStorage.setItem('piano_tuner_feature_toggles', JSON.stringify(state.featureToggles)).catch(() => {});
+  }, [state.featureToggles]);
+
   // Cleanup al desmontar
   useEffect(() => {
     return () => {
@@ -470,6 +514,7 @@ export function TunerProvider({ children }: { children: ReactNode }) {
     resetCalibration,
     setShowSpectrogram,
     setShowRailsback,
+    setFeatureToggle,
   };
 
   return (
