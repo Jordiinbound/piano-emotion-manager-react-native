@@ -1,39 +1,88 @@
 /**
- * ProximityBeep — Feedback auditiu de proximitat
+ * ProximityBeep — Feedback auditivo de proximidad
  * 
- * Emet un beep que accelera quan la desviació en cents s'acosta a 0.
- * Permet al tècnic afinar sense mirar la pantalla (mans ocupades amb la clavilla).
- * Usa Web Audio API OscillatorNode per generar tons purs de baixa latència.
+ * Emite un beep que acelera cuando la desviación en cents se acerca a 0.
+ * Permite al técnico afinar sin mirar la pantalla (manos ocupadas con la clavija).
+ * Usa Web Audio API OscillatorNode para generar tonos puros de baja latencia.
+ * 
+ * Usa refs para valores que cambian rápido (centsDeviation) para evitar
+ * re-renders constantes y flickering del layout.
  */
 
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Ionicons } from '@expo/vector-icons';
 
 interface ProximityBeepProps {
-  /** Desviació en cents actual */
   centsDeviation: number;
-  /** Si l'afinador està actiu */
   isActive: boolean;
-  /** Si el beep està activat */
   enabled: boolean;
-  /** Callback per activar/desactivar */
   onToggle: () => void;
+}
+
+type ProximityCategory = 'inactive' | 'perfect' | 'very_close' | 'close' | 'approaching' | 'far' | 'out_of_range';
+
+function getCategory(absCents: number, active: boolean): ProximityCategory {
+  if (!active) return 'inactive';
+  if (absCents <= 1) return 'perfect';
+  if (absCents <= 3) return 'very_close';
+  if (absCents <= 10) return 'close';
+  if (absCents <= 25) return 'approaching';
+  if (absCents <= 50) return 'far';
+  return 'out_of_range';
+}
+
+const LABELS: Record<ProximityCategory, string> = {
+  inactive: 'Inactivo',
+  perfect: '¡Perfecto!',
+  very_close: 'Muy cerca',
+  close: 'Cerca',
+  approaching: 'Acercándose',
+  far: 'Lejos',
+  out_of_range: 'Fuera de rango',
+};
+
+function getCategoryColor(cat: ProximityCategory, fallback: string): string {
+  if (cat === 'perfect' || cat === 'very_close') return '#22C55E';
+  if (cat === 'close') return '#F59E0B';
+  return fallback;
 }
 
 export function ProximityBeep({ centsDeviation, isActive, enabled, onToggle }: ProximityBeepProps) {
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const oscillatorRef = useRef<OscillatorNode | null>(null);
-  const gainRef = useRef<GainNode | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const beepIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const centsRef = useRef(centsDeviation);
+  const isActiveRef = useRef(isActive);
+
+  // Debounced visual category — only re-render when category actually changes
+  const [displayCat, setDisplayCat] = useState<ProximityCategory>(() =>
+    getCategory(Math.abs(centsDeviation), isActive)
+  );
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const textColor = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
   const border = useThemeColor({}, 'border');
 
-  // Inicialitzar AudioContext
+  // Sync refs (no re-render) + debounce visual category
+  useEffect(() => {
+    centsRef.current = centsDeviation;
+    isActiveRef.current = isActive;
+
+    const newCat = getCategory(Math.abs(centsDeviation), isActive);
+    if (newCat !== displayCat) {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => setDisplayCat(newCat), 250);
+    }
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [centsDeviation, isActive]); // intentionally omit displayCat to avoid loop
+
+  // Audio context (lazy)
   const getAudioCtx = useCallback(() => {
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -41,110 +90,71 @@ export function ProximityBeep({ centsDeviation, isActive, enabled, onToggle }: P
     return audioCtxRef.current;
   }, []);
 
-  // Emetre un beep curt
-  const playBeep = useCallback((frequency: number, duration: number) => {
+  // Play a short beep
+  const playBeep = useCallback((freq: number, dur: number) => {
     try {
       const ctx = getAudioCtx();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      
       osc.type = 'sine';
-      osc.frequency.value = frequency;
-      gain.gain.value = 0.15;
-      
+      osc.frequency.value = freq;
       osc.connect(gain);
       gain.connect(ctx.destination);
-      
-      // Envelope suau
       gain.gain.setValueAtTime(0, ctx.currentTime);
       gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.005);
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
-      
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
       osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + duration);
+      osc.stop(ctx.currentTime + dur);
     } catch {}
   }, [getAudioCtx]);
 
+  // Beep loop — reads from refs, runs on a fixed 150ms polling interval
+  // instead of re-creating setInterval on every centsDeviation change
   useEffect(() => {
-    if (!enabled || !isActive) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+    if (!enabled) {
+      if (beepIntervalRef.current) { clearInterval(beepIntervalRef.current); beepIntervalRef.current = null; }
       return;
     }
 
-    const absCents = Math.abs(centsDeviation);
-    
-    // Si està molt lluny (>50 cents), no fer beep
-    if (absCents > 50) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+    // Single polling loop that reads current values from refs
+    let lastBeepTime = 0;
+    const POLL_MS = 80; // check 12 times/sec
+
+    beepIntervalRef.current = setInterval(() => {
+      if (!isActiveRef.current || !enabledRef.current) return;
+      const absCents = Math.abs(centsRef.current);
+      if (absCents > 50) return;
+
+      // Determine beep interval based on proximity
+      let minGap: number, freq: number, dur: number;
+      if (absCents <= 1)       { minGap = 100;  freq = 1800; dur = 0.08; }
+      else if (absCents <= 3)  { minGap = 150;  freq = 1500; dur = 0.06; }
+      else if (absCents <= 5)  { minGap = 250;  freq = 1200; dur = 0.05; }
+      else if (absCents <= 10) { minGap = 400;  freq = 1000; dur = 0.04; }
+      else if (absCents <= 20) { minGap = 600;  freq = 800;  dur = 0.035; }
+      else if (absCents <= 35) { minGap = 900;  freq = 600;  dur = 0.03; }
+      else                     { minGap = 1200; freq = 500;  dur = 0.025; }
+
+      const now = Date.now();
+      if (now - lastBeepTime >= minGap) {
+        playBeep(freq, dur);
+        lastBeepTime = now;
       }
-      return;
-    }
-
-    // Calcular interval i freqüència del beep segons proximitat
-    // Més a prop = beeps més ràpids i to més agut
-    let beepInterval: number;
-    let beepFreq: number;
-    let beepDuration: number;
-
-    if (absCents <= 1) {
-      // Perfecte: to continu agut
-      beepInterval = 100;
-      beepFreq = 1800;
-      beepDuration = 0.08;
-    } else if (absCents <= 3) {
-      // Molt a prop: beeps ràpids
-      beepInterval = 150;
-      beepFreq = 1500;
-      beepDuration = 0.06;
-    } else if (absCents <= 5) {
-      beepInterval = 250;
-      beepFreq = 1200;
-      beepDuration = 0.05;
-    } else if (absCents <= 10) {
-      beepInterval = 400;
-      beepFreq = 1000;
-      beepDuration = 0.04;
-    } else if (absCents <= 20) {
-      beepInterval = 600;
-      beepFreq = 800;
-      beepDuration = 0.035;
-    } else if (absCents <= 35) {
-      beepInterval = 900;
-      beepFreq = 600;
-      beepDuration = 0.03;
-    } else {
-      beepInterval = 1200;
-      beepFreq = 500;
-      beepDuration = 0.025;
-    }
-
-    // Netejar interval anterior
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    // Crear nou interval
-    intervalRef.current = setInterval(() => {
-      playBeep(beepFreq, beepDuration);
-    }, beepInterval);
+    }, POLL_MS);
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      if (beepIntervalRef.current) { clearInterval(beepIntervalRef.current); beepIntervalRef.current = null; }
     };
-  }, [enabled, isActive, centsDeviation, playBeep]);
+  }, [enabled, playBeep]); // only re-create when enabled toggles
 
-  // Cleanup
+  // Keep enabledRef in sync
+  const enabledRef = useRef(enabled);
+  useEffect(() => { enabledRef.current = enabled; }, [enabled]);
+
+  // Cleanup audio context on unmount
   useEffect(() => {
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (beepIntervalRef.current) clearInterval(beepIntervalRef.current);
       if (audioCtxRef.current) {
         audioCtxRef.current.close().catch(() => {});
         audioCtxRef.current = null;
@@ -152,14 +162,7 @@ export function ProximityBeep({ centsDeviation, isActive, enabled, onToggle }: P
     };
   }, []);
 
-  const absCents = Math.abs(centsDeviation);
-  const proximityLabel = !isActive ? 'Inactivo'
-    : absCents <= 1 ? '¡Perfecto!'
-    : absCents <= 3 ? 'Muy cerca'
-    : absCents <= 10 ? 'Cerca'
-    : absCents <= 25 ? 'Acercándose'
-    : absCents <= 50 ? 'Lejos'
-    : 'Fuera de rango';
+  const labelColor = getCategoryColor(displayCat, textSecondary);
 
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor: border }]}>
@@ -173,13 +176,10 @@ export function ProximityBeep({ centsDeviation, isActive, enabled, onToggle }: P
           <ThemedText style={[styles.label, { color: textColor }]}>
             Feedback auditivo
           </ThemedText>
-          {enabled && isActive && (
-            <ThemedText style={[styles.proximity, {
-              color: absCents <= 3 ? '#22C55E' : absCents <= 10 ? '#F59E0B' : textSecondary
-            }]}>
-              {proximityLabel}
-            </ThemedText>
-          )}
+          {/* Always render the proximity line to keep layout stable */}
+          <ThemedText style={[styles.proximity, { color: labelColor }]}>
+            {LABELS[displayCat]}
+          </ThemedText>
         </View>
         <Pressable
           onPress={onToggle}

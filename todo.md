@@ -960,3 +960,6 @@
 ## ProximityBeep / Feedback Auditivo Issues
 - [x] Fix ProximityBeep text showing in Catalan instead of Spanish ("Feedback auditiu / A prop")
 - [x] Fix layout jumping when ProximityBeep toggles visibility
+
+## ProximityBeep Still Flickering
+- [ ] Fix ProximityBeep still mounting/unmounting several times per second despite isListening fix
