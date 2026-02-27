@@ -1,29 +1,33 @@
 /**
- * StabilityHistogram — Histograma d'estabilitat per nota
+ * StabilityHistogram — Histograma de estabilidad por nota
  * 
- * Guarda les últimes 10 lectures de desviació per nota i mostra
- * un mini-histograma que indica si la corda és estable o fluctua.
- * Útil per verificar que l'afinació s'ha assentat.
+ * Guarda las últimas 10 lecturas de desviación por nota y muestra
+ * un mini-histograma que indica si la cuerda es estable o fluctúa.
+ * Útil para verificar que la afinación se ha asentado.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import Svg, { Rect, Line, Text as SvgText } from 'react-native-svg';
 
 interface StabilityHistogramProps {
-  /** Historial de lectures (últimes 10 desviacions en cents) */
-  readings: number[];
-  /** Rang del medidor en cents */
-  meterRange: number;
-  /** Si l'afinador està actiu */
+  /** Índice de la tecla activa */
+  keyIndex: number;
+  /** Desviación actual en cents */
+  currentCents: number;
+  /** Si el afinador está activo */
   isActive: boolean;
-  /** Mode fosc d'afinació */
+  /** Rango del medidor en cents */
+  meterRange?: number;
+  /** Modo oscuro de afinación */
   darkTuningMode?: boolean;
 }
 
-export function StabilityHistogram({ readings, meterRange, isActive, darkTuningMode }: StabilityHistogramProps) {
+const MAX_READINGS = 10;
+
+export function StabilityHistogram({ keyIndex, currentCents, isActive, meterRange = 50, darkTuningMode }: StabilityHistogramProps) {
   const textColor = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
@@ -34,8 +38,31 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
   const bgSurface = darkTuningMode ? '#1a1a1a' : surface;
   const bgBorder = darkTuningMode ? '#333333' : border;
 
+  // Internal readings history, keyed by keyIndex
+  const readingsRef = useRef<Map<number, number[]>>(new Map());
+  const lastKeyRef = useRef<number>(-1);
+
+  // Update readings when we get a new detection
+  useEffect(() => {
+    if (!isActive || keyIndex < 0) return;
+    
+    // Reset if key changed
+    if (keyIndex !== lastKeyRef.current) {
+      lastKeyRef.current = keyIndex;
+    }
+    
+    const keyReadings = readingsRef.current.get(keyIndex) || [];
+    keyReadings.push(currentCents);
+    if (keyReadings.length > MAX_READINGS) {
+      keyReadings.shift();
+    }
+    readingsRef.current.set(keyIndex, keyReadings);
+  }, [keyIndex, currentCents, isActive]);
+
+  const readings = readingsRef.current.get(keyIndex) || [];
+
   const stats = useMemo(() => {
-    if (readings.length === 0) return null;
+    if (!readings || readings.length === 0) return null;
     const mean = readings.reduce((a, b) => a + b, 0) / readings.length;
     const variance = readings.reduce((a, b) => a + (b - mean) ** 2, 0) / readings.length;
     const stdDev = Math.sqrt(variance);
@@ -43,22 +70,22 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
     const max = Math.max(...readings);
     const range = max - min;
     
-    // Classificació d'estabilitat
+    // Clasificación de estabilidad
     let stability: 'excellent' | 'good' | 'fair' | 'unstable';
     let stabilityLabel: string;
     let stabilityColor: string;
     
     if (stdDev <= 0.5 && range <= 2) {
       stability = 'excellent';
-      stabilityLabel = 'Excel·lent';
+      stabilityLabel = 'Excelente';
       stabilityColor = '#22C55E';
     } else if (stdDev <= 1.5 && range <= 5) {
       stability = 'good';
-      stabilityLabel = 'Bona';
+      stabilityLabel = 'Buena';
       stabilityColor = '#4ADE80';
     } else if (stdDev <= 3 && range <= 10) {
       stability = 'fair';
-      stabilityLabel = 'Acceptable';
+      stabilityLabel = 'Aceptable';
       stabilityColor = '#F59E0B';
     } else {
       stability = 'unstable';
@@ -67,7 +94,7 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
     }
     
     return { mean, stdDev, min, max, range, stability, stabilityLabel, stabilityColor };
-  }, [readings]);
+  }, [readings, readings.length]);
 
   const SVG_WIDTH = 280;
   const SVG_HEIGHT = 80;
@@ -83,7 +110,7 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
     <View style={[styles.container, { backgroundColor: bgSurface, borderColor: bgBorder }]}>
       <View style={styles.header}>
         <ThemedText style={[styles.title, { color: fgText }]}>
-          Estabilitat
+          Estabilidad
         </ThemedText>
         {stats && (
           <View style={[styles.badge, { backgroundColor: stats.stabilityColor + '20', borderColor: stats.stabilityColor }]}>
@@ -96,12 +123,12 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
 
       {readings.length === 0 ? (
         <ThemedText style={[styles.emptyText, { color: fgMuted }]}>
-          Esperant lectures...
+          Esperando lecturas...
         </ThemedText>
       ) : (
         <>
           <Svg width={SVG_WIDTH} height={SVG_HEIGHT} viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}>
-            {/* Línia central (0 cents) */}
+            {/* Línea central (0 cents) */}
             <Line
               x1={MARGIN_LEFT}
               y1={MARGIN_TOP + CHART_HEIGHT / 2}
@@ -112,7 +139,7 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
               strokeDasharray="4,3"
             />
             
-            {/* Zona de tolerància (±2 cents) */}
+            {/* Zona de tolerancia (±2 cents) */}
             <Rect
               x={MARGIN_LEFT}
               y={MARGIN_TOP + CHART_HEIGHT / 2 - (2 / maxAbsCents) * (CHART_HEIGHT / 2)}
@@ -122,7 +149,7 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
               opacity={0.1}
             />
             
-            {/* Barres de l'histograma */}
+            {/* Barras del histograma */}
             {readings.map((cents, i) => {
               const clampedCents = Math.max(-maxAbsCents, Math.min(maxAbsCents, cents));
               const barHeight = Math.abs(clampedCents / maxAbsCents) * (CHART_HEIGHT / 2);
@@ -152,7 +179,7 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
               );
             })}
             
-            {/* Etiquetes */}
+            {/* Etiquetas */}
             <SvgText x={SVG_WIDTH - 8} y={MARGIN_TOP + 8} fontSize={8} fill={fgMuted} textAnchor="end">
               +{maxAbsCents.toFixed(0)}¢
             </SvgText>
@@ -161,10 +188,10 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
             </SvgText>
           </Svg>
 
-          {/* Estadístiques */}
+          {/* Estadísticas */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <ThemedText style={[styles.statLabel, { color: fgMuted }]}>Mitjana</ThemedText>
+              <ThemedText style={[styles.statLabel, { color: fgMuted }]}>Media</ThemedText>
               <ThemedText style={[styles.statValue, { color: fgText }]}>
                 {stats ? `${stats.mean > 0 ? '+' : ''}${stats.mean.toFixed(1)}¢` : '—'}
               </ThemedText>
@@ -176,13 +203,13 @@ export function StabilityHistogram({ readings, meterRange, isActive, darkTuningM
               </ThemedText>
             </View>
             <View style={styles.statItem}>
-              <ThemedText style={[styles.statLabel, { color: fgMuted }]}>Rang</ThemedText>
+              <ThemedText style={[styles.statLabel, { color: fgMuted }]}>Rango</ThemedText>
               <ThemedText style={[styles.statValue, { color: fgText }]}>
                 {stats ? `${stats.range.toFixed(1)}¢` : '—'}
               </ThemedText>
             </View>
             <View style={styles.statItem}>
-              <ThemedText style={[styles.statLabel, { color: fgMuted }]}>Lectures</ThemedText>
+              <ThemedText style={[styles.statLabel, { color: fgMuted }]}>Lecturas</ThemedText>
               <ThemedText style={[styles.statValue, { color: fgText }]}>
                 {readings.length}/10
               </ThemedText>
@@ -211,7 +238,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 13,
     fontWeight: '700',
-    fontFamily: 'Montserrat',
     lineHeight: 18,
   },
   badge: {
@@ -223,12 +249,10 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 10,
     fontWeight: '700',
-    fontFamily: 'Montserrat',
     lineHeight: 14,
   },
   emptyText: {
     fontSize: 12,
-    fontFamily: 'Montserrat',
     lineHeight: 16,
     textAlign: 'center',
     paddingVertical: 20,
@@ -247,7 +271,6 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 9,
     fontWeight: '500',
-    fontFamily: 'Montserrat',
     lineHeight: 12,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
@@ -255,7 +278,6 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 12,
     fontWeight: '700',
-    fontFamily: 'Montserrat',
     lineHeight: 16,
     marginTop: 2,
   },
