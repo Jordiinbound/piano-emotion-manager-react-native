@@ -90,8 +90,8 @@ export type TunerEngineCallback = (result: PitchDetectionResult) => void;
 const DEFAULT_CONFIG: TunerEngineConfig = {
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
-  noiseGateThreshold: 0.008, // Gate high enough to filter ambient noise, low enough for piano
-  inputGain: 4, // 4x input amplification — moderate boost without amplifying noise too much
+  noiseGateThreshold: 0.002, // Low gate for weak laptop mics (~-50dB signal)
+  inputGain: 8, // 8x input amplification for weak laptop mics
   bufferSize: 4096,
   sampleRate: 44100,
   fftSize: 8192,
@@ -513,6 +513,13 @@ export class TunerAudioEngine {
       this.inputGainNode.gain.setValueAtTime(this.config.inputGain, this.audioContext.currentTime);
       this.sourceNode.connect(this.inputGainNode);
       console.log('[TunerEngine] Input gain set to', this.config.inputGain, 'x');
+      console.log('[TunerEngine] Noise gate threshold:', this.config.noiseGateThreshold);
+      console.log('[TunerEngine] Full config:', JSON.stringify({
+        inputGain: this.config.inputGain,
+        noiseGateThreshold: this.config.noiseGateThreshold,
+        bufferSize: this.config.bufferSize,
+        sampleRate: this.config.sampleRate,
+      }));
       
       // Step 4: Optional bandpass filter
       let lastNode: AudioNode = this.inputGainNode;
@@ -851,8 +858,8 @@ export class TunerAudioEngine {
       console.log(`[TunerEngine] YIN result: freq=${rawFrequency.toFixed(1)}, conf=${confidence.toFixed(3)}, rms=${rmsLevel.toFixed(6)}, bufLen=${buffer.length}, sr=${sampleRate}`);
     }
     
-    // Accept detections with confidence >= 0.3 (reject noise-induced phantom frequencies)
-    if (rawFrequency <= 0 || confidence < 0.3) {
+    // Accept detections with confidence >= 0.15 (permissive for weak laptop mics)
+    if (rawFrequency <= 0 || confidence < 0.15) {
       this.callback({
         frequency: 0,
         confidence,

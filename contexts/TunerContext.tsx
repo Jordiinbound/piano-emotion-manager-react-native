@@ -53,6 +53,8 @@ export interface TunerState {
   useStretchTuning: boolean;
   /** Umbral de ruido */
   noiseGateThreshold: number;
+  /** Ganancia de entrada del micrófono */
+  inputGain: number;
   /** Rango del medidor en cents */
   meterRange: number;
   /** Mostrar frecuencia */
@@ -143,7 +145,8 @@ const initialState: TunerState = {
   autoDetect: true,
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
-  noiseGateThreshold: 0.008, // High enough to filter ambient noise, low enough for piano
+  noiseGateThreshold: 0.002, // Low gate for weak laptop mics (~-50dB signal)
+  inputGain: 8, // 8x input amplification for weak laptop mics
   meterRange: 50,
   showFrequency: true,
   showInharmonicity: true,
@@ -240,10 +243,11 @@ function tunerReducer(state: TunerState, action: TunerAction): TunerState {
       };
     case 'LOAD_SETTINGS': {
       const loaded = { ...state, ...action.payload };
-      // Migration: normalize noiseGateThreshold to 0.008 (old values were either too high 0.01 or too low 0.0005)
-      if (loaded.noiseGateThreshold >= 0.01 || loaded.noiseGateThreshold < 0.005) {
-        loaded.noiseGateThreshold = 0.008;
-      }
+      // FORCED migration v2: always override to optimal values for weak mics
+      // User's mic produces ~-50dB signal, needs maximum amplification
+      loaded.noiseGateThreshold = 0.002;
+      loaded.inputGain = 8;
+      console.log('[TunerContext] LOAD_SETTINGS migration: forced gate=0.002, gain=8');
       return loaded;
     }
     default:
@@ -297,6 +301,7 @@ export function TunerProvider({ children }: { children: ReactNode }) {
       concertPitch: state.concertPitch,
       useStretchTuning: state.useStretchTuning,
       noiseGateThreshold: state.noiseGateThreshold,
+      inputGain: state.inputGain,
       meterRange: state.meterRange,
       showFrequency: state.showFrequency,
       showInharmonicity: state.showInharmonicity,
@@ -306,7 +311,7 @@ export function TunerProvider({ children }: { children: ReactNode }) {
       featureToggles: state.featureToggles,
     };
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch(() => {});
-  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.meterRange, state.showFrequency, state.showInharmonicity, state.autoDetect, state.showSpectrogram, state.showRailsback, state.featureToggles]);
+  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.inputGain, state.meterRange, state.showFrequency, state.showInharmonicity, state.autoDetect, state.showSpectrogram, state.showRailsback, state.featureToggles]);
 
   const handleDetection = useCallback((result: PitchDetectionResult) => {
     if (result.frequency > 0 && Math.random() < 0.1) {
@@ -324,18 +329,18 @@ export function TunerProvider({ children }: { children: ReactNode }) {
     try {
       dispatch({ type: 'SET_AUDIO_ERROR', payload: null });
       
+      const engineConfig = {
+        concertPitch: state.concertPitch,
+        useStretchTuning: state.useStretchTuning,
+        noiseGateThreshold: state.noiseGateThreshold,
+        inputGain: state.inputGain ?? 8,
+      };
+      console.log('[TunerContext] startListening with config:', JSON.stringify(engineConfig));
+      
       if (!engineRef.current) {
-        engineRef.current = new TunerAudioEngine({
-          concertPitch: state.concertPitch,
-          useStretchTuning: state.useStretchTuning,
-          noiseGateThreshold: state.noiseGateThreshold,
-        });
+        engineRef.current = new TunerAudioEngine(engineConfig);
       } else {
-        engineRef.current.updateConfig({
-          concertPitch: state.concertPitch,
-          useStretchTuning: state.useStretchTuning,
-          noiseGateThreshold: state.noiseGateThreshold,
-        });
+        engineRef.current.updateConfig(engineConfig);
       }
       
       // Activar detección de batidos si modo unísono está activo
@@ -354,7 +359,7 @@ export function TunerProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'SET_AUDIO_ERROR', payload: errorMsg });
       dispatch({ type: 'SET_LISTENING', payload: false });
     }
-  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.unisonMode, handleDetection]);
+  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.inputGain, state.unisonMode, handleDetection]);
 
   const stopListening = useCallback(() => {
     if (engineRef.current) {
