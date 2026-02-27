@@ -40,6 +40,13 @@ import { ShareReport } from './ShareReport';
 import { DriftPrediction } from './DriftPrediction';
 import { ProximityBeep } from './ProximityBeep';
 import { FullscreenTuner } from './FullscreenTuner';
+import { MultiPartialAnalyzer } from './MultiPartialAnalyzer';
+import { PartialWeighting } from './PartialWeighting';
+import { AuralChecks } from './AuralChecks';
+import { OverpullCalculator } from './OverpullCalculator';
+import { SpinnerDisplay } from './SpinnerDisplay';
+import { PhaseDisplay } from './PhaseDisplay';
+import { TuningModes } from './TuningModes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getFullNoteName,
@@ -87,6 +94,9 @@ const TOOL_CATEGORIES: ToolCategory[] = [
       { id: 'guided', label: 'Guiada', icon: 'navigate-outline', description: 'Asistente paso a paso' },
       { id: 'toneGen', label: 'Tono Ref.', icon: 'volume-high-outline', description: 'Generador de tonos' },
       { id: 'temperament', label: 'Temperamento', icon: 'musical-notes-outline', description: 'Temperamentos históricos' },
+      { id: 'tuningModes', label: 'Modes', icon: 'options-outline', description: 'Concert/Studio/Practice/Historic' },
+      { id: 'overpull', label: 'Overpull', icon: 'push-outline', description: 'Compensació pitch-raise' },
+      { id: 'auralChecks', label: 'Aural', icon: 'ear-outline', description: 'Beat rates intervals' },
     ],
   },
   {
@@ -102,6 +112,10 @@ const TOOL_CATEGORIES: ToolCategory[] = [
       { id: 'stringQuality', label: 'Cuerdas', icon: 'search-outline', description: 'Calidad de cuerdas' },
       { id: 'stability', label: 'Estabilitat', icon: 'bar-chart-outline', description: 'Histograma estabilidad' },
       { id: 'driftPrediction', label: 'Predicció', icon: 'trending-up-outline', description: 'Predicción de deriva' },
+      { id: 'multiPartial', label: 'Parcials', icon: 'cellular-outline', description: 'Anàlisi multi-parcial FFT' },
+      { id: 'partialWeighting', label: 'Pesos', icon: 'options-outline', description: 'Pesos parcials 2:1/4:2/4:1/6:3' },
+      { id: 'spinner', label: 'Spinner', icon: 'sync-outline', description: 'Display estroboscòpic' },
+      { id: 'phaseDisplay', label: 'Fase', icon: 'swap-horizontal-outline', description: 'Display de fase TuneLab' },
     ],
   },
   {
@@ -1132,6 +1146,109 @@ function TunerScreenContent() {
           </>
         )}
         
+        {/* ═══ Vista: Multi-Partial Analyzer ═══ */}
+        {state.activeView === 'multiPartial' && (
+          <>
+            {renderCompactNoteDisplay()}
+            {renderDeviationBar()}
+            <View style={{ height: 12 }} />
+            <MultiPartialAnalyzer
+              fftData={detection?.fftData ?? null}
+              sampleRate={detection?.actualSampleRate ?? 44100}
+              fundamentalFreq={detectedFreq}
+              keyIndex={activeKey}
+              isActive={isActive}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Partial Weighting ═══ */}
+        {state.activeView === 'partialWeighting' && (
+          <>
+            {renderCompactNoteDisplay()}
+            <View style={{ height: 8 }} />
+            <PartialWeighting
+              keyIndex={activeKey}
+              centsDeviation={isActive ? centsDeviation : 0}
+              frequency={detectedFreq}
+              targetFrequency={targetFreq}
+              inharmonicity={detection?.inharmonicity ?? null}
+              isActive={isActive}
+              concertPitch={state.concertPitch}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Aural Checks ═══ */}
+        {state.activeView === 'auralChecks' && (
+          <>
+            {renderCompactNoteDisplay()}
+            <View style={{ height: 8 }} />
+            <AuralChecks
+              keyIndex={activeKey}
+              concertPitch={state.concertPitch}
+              measurements={measurementsMap}
+              useStretchTuning={state.useStretchTuning}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Overpull Calculator ═══ */}
+        {state.activeView === 'overpull' && (
+          <>
+            {renderCompactNoteDisplay()}
+            <View style={{ height: 8 }} />
+            <OverpullCalculator
+              keyIndex={activeKey}
+              currentCents={isActive ? centsDeviation : 0}
+              targetCents={0}
+              isListening={state.isListening}
+              measurements={measurementsMap}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Spinner Display ═══ */}
+        {state.activeView === 'spinner' && (
+          <>
+            {renderCompactNoteDisplay()}
+            <View style={{ height: 8 }} />
+            <SpinnerDisplay
+              fftData={detection?.fftData ?? null}
+              sampleRate={detection?.actualSampleRate ?? 44100}
+              fundamentalFreq={detectedFreq}
+              centsDeviation={isActive ? centsDeviation : 0}
+              isActive={isActive}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Phase Display ═══ */}
+        {state.activeView === 'phaseDisplay' && (
+          <>
+            {renderCompactNoteDisplay()}
+            <View style={{ height: 8 }} />
+            <PhaseDisplay
+              frequency={detectedFreq}
+              targetFrequency={targetFreq}
+              centsDeviation={isActive ? centsDeviation : 0}
+              isActive={isActive}
+              isListening={state.isListening}
+            />
+          </>
+        )}
+
+        {/* ═══ Vista: Tuning Modes ═══ */}
+        {state.activeView === 'tuningModes' && (
+          <>
+            <View style={{ height: 8 }} />
+            <TuningModes
+              concertPitch={state.concertPitch}
+              onConcertPitchChange={(pitch) => setConcertPitch(pitch)}
+            />
+          </>
+        )}
+
         {/* ═══ Controles comunes (siempre visibles) ═══ */}
         
         {/* Navegación de teclas */}
