@@ -880,11 +880,11 @@ function TunerScreenContent() {
             {renderDeviationBar()}
             
             {/* Stability histogram (below main gauge) */}
-            {state.featureToggles.stabilityHistogram && isActive && (
+            {state.featureToggles.stabilityHistogram && state.isListening && (
               <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
                 <StabilityHistogram
                   keyIndex={activeKey}
-                  currentCents={centsDeviation}
+                  currentCents={isActive ? centsDeviation : 0}
                   isActive={isActive}
                 />
               </View>

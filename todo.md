@@ -958,5 +958,5 @@
 - [ ] Verify indicator responds to sound after fix
 
 ## ProximityBeep / Feedback Auditivo Issues
-- [ ] Fix ProximityBeep text showing in Catalan instead of Spanish ("Feedback auditiu / A prop")
-- [ ] Fix layout jumping when ProximityBeep toggles visibility
+- [x] Fix ProximityBeep text showing in Catalan instead of Spanish ("Feedback auditiu / A prop")
+- [x] Fix layout jumping when ProximityBeep toggles visibility
