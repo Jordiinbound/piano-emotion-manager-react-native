@@ -323,23 +323,18 @@ function ToolMenu({
         </Pressable>
       </View>
 
-      {/* Categories with tools - vertical grid for wide screens */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={menuStyles.verticalGrid}
-      >
+      {/* Categories with tools - each row scrolls horizontally */}
+      <View style={{ paddingHorizontal: 12, paddingBottom: 10, gap: 10 }}>
         {categories.map(category => (
-          <View
-            key={category.id}
-            style={menuStyles.categoryBlock}
-          >
+          <View key={category.id} style={{ gap: 4 }}>
             <ThemedText style={[menuStyles.categoryTitle, { color: textSecondary }]}>
               {category.title}
             </ThemedText>
-            <View style={[
-              menuStyles.toolsRow,
-              { flexWrap: 'wrap' },
-            ]}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ flexDirection: 'row', gap: 6, paddingRight: 8 }}
+            >
               {category.tools.map(tool => {
                 const isActive = activeView === tool.id;
                 return (
@@ -379,10 +374,10 @@ function ToolMenu({
                   </Pressable>
                 );
               })}
-            </View>
+            </ScrollView>
           </View>
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }
