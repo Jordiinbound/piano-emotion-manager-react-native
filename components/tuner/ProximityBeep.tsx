@@ -153,13 +153,13 @@ export function ProximityBeep({ centsDeviation, isActive, enabled, onToggle }: P
   }, []);
 
   const absCents = Math.abs(centsDeviation);
-  const proximityLabel = !isActive ? 'Inactiu'
-    : absCents <= 1 ? 'Perfecte!'
-    : absCents <= 3 ? 'Molt a prop'
-    : absCents <= 10 ? 'A prop'
-    : absCents <= 25 ? 'Apropant-se'
-    : absCents <= 50 ? 'Lluny'
-    : 'Fora de rang';
+  const proximityLabel = !isActive ? 'Inactivo'
+    : absCents <= 1 ? '¡Perfecto!'
+    : absCents <= 3 ? 'Muy cerca'
+    : absCents <= 10 ? 'Cerca'
+    : absCents <= 25 ? 'Acercándose'
+    : absCents <= 50 ? 'Lejos'
+    : 'Fuera de rango';
 
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor: border }]}>
@@ -171,7 +171,7 @@ export function ProximityBeep({ centsDeviation, isActive, enabled, onToggle }: P
         />
         <View style={styles.info}>
           <ThemedText style={[styles.label, { color: textColor }]}>
-            Feedback auditiu
+            Feedback auditivo
           </ThemedText>
           {enabled && isActive && (
             <ThemedText style={[styles.proximity, {

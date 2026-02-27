@@ -956,3 +956,7 @@
 - [ ] Diagnose why VUMeter shows -65dB even with loud sounds (palmada)
 - [ ] Fix audio pipeline gain/processing so microphone input registers correctly
 - [ ] Verify indicator responds to sound after fix
+
+## ProximityBeep / Feedback Auditivo Issues
+- [ ] Fix ProximityBeep text showing in Catalan instead of Spanish ("Feedback auditiu / A prop")
+- [ ] Fix layout jumping when ProximityBeep toggles visibility

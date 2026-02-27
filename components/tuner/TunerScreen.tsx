@@ -837,12 +837,13 @@ function TunerScreenContent() {
           </View>
         </View>
         
-        {/* ═══ Proximity Beep (invisible, audio only) ═══ */}
-        {state.featureToggles.proximityBeep && state.isListening && isActive && (
+        {/* ═══ Proximity Beep ═══ */}
+        {state.featureToggles.proximityBeep && state.isListening && (
           <ProximityBeep
             centsDeviation={centsDeviation}
             isActive={isActive}
             enabled={state.featureToggles.proximityBeep}
+            onToggle={() => dispatch({ type: 'SET_FEATURE_TOGGLE', payload: { feature: 'proximityBeep', enabled: !state.featureToggles.proximityBeep } })}
           />
         )}
         
