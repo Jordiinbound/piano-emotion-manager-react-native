@@ -506,7 +506,14 @@ function TunerScreenContent() {
     saveCalibrationPoint,
     resetCalibration,
     setFeatureToggle,
+    setConcertPitch,
+    setMeterRange,
+    setNoiseGateThreshold,
+    setUseStretchTuning,
   } = useTuner();
+
+  // Tuning mode state
+  const [selectedTuningModeId, setSelectedTuningModeId] = React.useState('studio');
   
   const { width } = useWindowDimensions();
   const [showSettings, setShowSettings] = useState(false);
@@ -1243,8 +1250,14 @@ function TunerScreenContent() {
           <>
             <View style={{ height: 8 }} />
             <TuningModes
-              concertPitch={state.concertPitch}
-              onConcertPitchChange={(pitch) => setConcertPitch(pitch)}
+              selectedModeId={selectedTuningModeId}
+              onModeChange={(mode) => {
+                setSelectedTuningModeId(mode.id);
+                setConcertPitch(mode.recommendedPitch);
+                setMeterRange(mode.meterRange);
+                setNoiseGateThreshold(mode.noiseGateThreshold);
+                setUseStretchTuning(mode.useStretchTuning);
+              }}
             />
           </>
         )}

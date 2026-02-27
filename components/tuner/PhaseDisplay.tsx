@@ -32,6 +32,8 @@ import {
   getStretchedFrequency,
   getFullNoteName,
 } from '@/constants/piano-tuning';
+import { useLanguage } from '@/contexts/language-context';
+import { getTunerTranslation } from '@/locales/tuner-translations';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -182,6 +184,8 @@ export function PhaseDisplay({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
   const borderColor = useThemeColor({}, 'border');
+  const { currentLanguage } = useLanguage();
+  const tt = getTunerTranslation(currentLanguage);
 
   // Calculate beat frequencies for each partial
   const beatFrequencies = useMemo(() => {
@@ -206,12 +210,12 @@ export function PhaseDisplay({
 
   // Overall status
   const getStatusText = () => {
-    if (!isActive) return 'Inactiu';
+    if (!isActive) return tt.phaseDisplay.inactive;
     const absBeat = Math.abs(fundamentalBeat);
-    if (absBeat < 0.1) return 'Afinat — fase estable';
+    if (absBeat < 0.1) return `${tt.phaseDisplay.inTune} — ${tt.phaseDisplay.phaseStable}`;
     if (absBeat < 0.5) return `Batiments lents: ${absBeat.toFixed(2)} Hz`;
     if (absBeat < 2.0) return `Batiments: ${absBeat.toFixed(1)} Hz`;
-    return `Desafinat: ${absBeat.toFixed(1)} Hz`;
+    return `${tt.phaseDisplay.outOfTune}: ${absBeat.toFixed(1)} Hz`;
   };
 
   const getStatusColor = () => {
@@ -226,7 +230,7 @@ export function PhaseDisplay({
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor }]}>
       <View style={styles.header}>
-        <ThemedText style={[styles.title, { color: textColor }]}>Display de Fase</ThemedText>
+        <ThemedText style={[styles.title, { color: textColor }]}>{tt.phaseDisplay.title}</ThemedText>
         <View style={[styles.badge, { backgroundColor: '#1B6B93' + '20' }]}>
           <ThemedText style={[styles.badgeText, { color: '#1B6B93' }]}>{noteName}</ThemedText>
         </View>
@@ -265,13 +269,13 @@ export function PhaseDisplay({
           </ThemedText>
         </View>
         <View style={styles.infoItem}>
-          <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Objectiu</ThemedText>
+          <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>{tt.phaseDisplay.targetFreq}</ThemedText>
           <ThemedText style={[styles.infoValue, { color: textColor }]}>
             {targetFreq > 0 ? `${targetFreq.toFixed(2)} Hz` : '—'}
           </ThemedText>
         </View>
         <View style={styles.infoItem}>
-          <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Desviació</ThemedText>
+          <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>{tt.phaseDisplay.deviation}</ThemedText>
           <ThemedText style={[styles.infoValue, { color: getStatusColor() }]}>
             {isActive ? `${centsDeviation > 0 ? '+' : ''}${centsDeviation.toFixed(1)}¢` : '—'}
           </ThemedText>

@@ -32,6 +32,8 @@ import {
   frequencyToCents,
   getFullNoteName,
 } from '@/constants/piano-tuning';
+import { useLanguage } from '@/contexts/language-context';
+import { getTunerTranslation } from '@/locales/tuner-translations';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -202,6 +204,8 @@ export function SpinnerDisplay({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
   const borderColor = useThemeColor({}, 'border');
+  const { currentLanguage } = useLanguage();
+  const tt = getTunerTranslation(currentLanguage);
 
   const B = inharmonicity ?? getExpectedInharmonicity(fundamentalFreq);
 
@@ -290,7 +294,7 @@ export function SpinnerDisplay({
       <View style={styles.columnHeaders}>
         <ThemedText style={[styles.colHeader, { color: textSecondary, width: 24 }]}>n</ThemedText>
         <ThemedText style={[styles.colHeader, { color: textSecondary, flex: 1, textAlign: 'center' }]}>
-          {isActive ? 'Aturat = afinat' : 'Inactiu'}
+          {isActive ? tt.spinner.stoppedMeansInTune : tt.spinner.inactive}
         </ThemedText>
         <ThemedText style={[styles.colHeader, { color: textSecondary, width: 44, textAlign: 'right' }]}>¢</ThemedText>
       </View>
@@ -314,15 +318,15 @@ export function SpinnerDisplay({
       <View style={[styles.legend, { borderTopColor: borderColor }]}>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: '#10B981' }]} />
-          <ThemedText style={[styles.legendText, { color: textSecondary }]}>Afinat</ThemedText>
+          <ThemedText style={[styles.legendText, { color: textSecondary }]}>{tt.spinner.inTune}</ThemedText>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: '#FBBF24' }]} />
-          <ThemedText style={[styles.legendText, { color: textSecondary }]}>Proper</ThemedText>
+          <ThemedText style={[styles.legendText, { color: textSecondary }]}>{tt.spinner.close}</ThemedText>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: '#EF4444' }]} />
-          <ThemedText style={[styles.legendText, { color: textSecondary }]}>Desafinat</ThemedText>
+          <ThemedText style={[styles.legendText, { color: textSecondary }]}>{tt.spinner.outOfTune}</ThemedText>
         </View>
         <ThemedText style={[styles.legendText, { color: textSecondary }]}>→ agut · ← greu</ThemedText>
       </View>

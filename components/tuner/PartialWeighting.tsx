@@ -24,6 +24,8 @@ import {
   getFullNoteName,
   TOTAL_KEYS,
 } from '@/constants/piano-tuning';
+import { useLanguage } from '@/contexts/language-context';
+import { getTunerTranslation } from '@/locales/tuner-translations';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -56,7 +58,7 @@ export interface PartialWeightingProps {
 export const WEIGHT_PRESETS: { id: string; name: string; description: string; weights: PartialWeights }[] = [
   {
     id: 'concert',
-    name: 'Concert',
+    name: tt.partialWeighting.concert,
     description: 'Més stretch per sales grans. Pesos alts en 4:1 i 6:3.',
     weights: { octave21: 0.2, octave42: 0.3, octave41: 0.35, octave63: 0.15 },
   },
@@ -161,6 +163,8 @@ export function PartialWeighting({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
   const border = useThemeColor({}, 'border');
+  const { currentLanguage } = useLanguage();
+  const tt = getTunerTranslation(currentLanguage);
   const [activePreset, setActivePreset] = useState<string | null>('studio');
 
   const handlePreset = useCallback((preset: typeof WEIGHT_PRESETS[0]) => {
@@ -213,7 +217,7 @@ export function PartialWeighting({
   const yScale = (c: number) => pad.top + plotH / 2 - (c / maxCents) * (plotH / 2);
 
   const intervals: { key: keyof PartialWeights; label: string; ratio: string; color: string }[] = [
-    { key: 'octave21', label: 'Octava 2:1', ratio: '2:1', color: '#1B6B93' },
+    { key: 'octave21', label: tt.partialWeighting.octave21, ratio: '2:1', color: '#1B6B93' },
     { key: 'octave42', label: 'Doble 4:2', ratio: '4:2', color: '#8B5CF6' },
     { key: 'octave41', label: 'Doble 4:1', ratio: '4:1', color: '#F59E0B' },
     { key: 'octave63', label: 'Triple 6:3', ratio: '6:3', color: '#EF4444' },
@@ -221,7 +225,7 @@ export function PartialWeighting({
 
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor: border }]}>
-      <ThemedText style={[styles.title, { color: textColor }]}>Ponderació de Parcials</ThemedText>
+      <ThemedText style={[styles.title, { color: textColor }]}>{tt.partialWeighting.title}</ThemedText>
 
       {/* Presets */}
       <View style={styles.presetRow}>

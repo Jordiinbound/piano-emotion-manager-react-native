@@ -28,6 +28,8 @@ import {
   getOctave,
   TOTAL_KEYS,
 } from '@/constants/piano-tuning';
+import { useLanguage } from '@/contexts/language-context';
+import { getTunerTranslation } from '@/locales/tuner-translations';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -133,9 +135,9 @@ function generateChecksForKey(
     lowerPartial: number;
     upperPartial: number;
   }[] = [
-    { name: 'Octava', shortName: '8va', semitones: 12, lowerPartial: 2, upperPartial: 1 },
-    { name: 'Quinta', shortName: '5ta', semitones: 7, lowerPartial: 3, upperPartial: 2 },
-    { name: 'Quarta', shortName: '4ta', semitones: 5, lowerPartial: 4, upperPartial: 3 },
+    { name: tt.auralChecks.octave, shortName: '8va', semitones: 12, lowerPartial: 2, upperPartial: 1 },
+    { name: tt.auralChecks.fifth, shortName: '5ta', semitones: 7, lowerPartial: 3, upperPartial: 2 },
+    { name: tt.auralChecks.fourth, shortName: '4ta', semitones: 5, lowerPartial: 4, upperPartial: 3 },
     { name: 'Tercera Major', shortName: '3ra M', semitones: 4, lowerPartial: 5, upperPartial: 4 },
     { name: 'Sexta Major', shortName: '6ta M', semitones: 9, lowerPartial: 5, upperPartial: 3 },
   ];
@@ -204,6 +206,8 @@ export function AuralChecks({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
   const borderColor = useThemeColor({}, 'border');
+  const { currentLanguage } = useLanguage();
+  const tt = getTunerTranslation(currentLanguage);
 
   const checks = useMemo(() => {
     if (selectedKeyIndex < 0 || selectedKeyIndex >= TOTAL_KEYS) return [];
@@ -220,9 +224,9 @@ export function AuralChecks({
   if (selectedKeyIndex < 0 || selectedKeyIndex >= TOTAL_KEYS) {
     return (
       <View style={[styles.container, { backgroundColor: surface, borderColor }]}>
-        <ThemedText style={[styles.title, { color: textColor }]}>Verificació Auditiva</ThemedText>
+        <ThemedText style={[styles.title, { color: textColor }]}>{tt.auralChecks.title}</ThemedText>
         <ThemedText style={[styles.placeholder, { color: textSecondary }]}>
-          Seleccioneu una nota per veure les verificacions
+          {tt.auralChecks.subtitle}
         </ThemedText>
       </View>
     );
@@ -233,7 +237,7 @@ export function AuralChecks({
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor }]}>
       <View style={styles.header}>
-        <ThemedText style={[styles.title, { color: textColor }]}>Verificació Auditiva</ThemedText>
+        <ThemedText style={[styles.title, { color: textColor }]}>{tt.auralChecks.title}</ThemedText>
         <View style={[styles.noteBadge, { backgroundColor: '#1B6B93' + '20' }]}>
           <ThemedText style={[styles.noteBadgeText, { color: '#1B6B93' }]}>{noteName}</ThemedText>
         </View>
@@ -290,7 +294,7 @@ export function AuralChecks({
       {/* Legend */}
       <View style={[styles.legend, { borderTopColor: borderColor }]}>
         <ThemedText style={[styles.legendText, { color: textSecondary }]}>
-          Esperat → Mesurat (batiments/s) · Toqueu per escoltar
+          {tt.auralChecks.expectedBeatRate} → {tt.auralChecks.measuredBeatRate} ({tt.auralChecks.beatsPerSecond}) · {tt.auralChecks.tapToPlay}
         </ThemedText>
       </View>
     </View>

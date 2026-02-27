@@ -24,6 +24,8 @@ import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { getFullNoteName } from '@/constants/piano-tuning';
+import { useLanguage } from '@/contexts/language-context';
+import { getTunerTranslation } from '@/locales/tuner-translations';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -75,6 +77,8 @@ export function OverpullCalculator({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
   const borderColor = useThemeColor({}, 'border');
+  const { currentLanguage } = useLanguage();
+  const tt = getTunerTranslation(currentLanguage);
 
   const [phase, setPhase] = useState<OverpullPhase>('idle');
   const [initialCents, setInitialCents] = useState<number>(0);
@@ -194,9 +198,9 @@ export function OverpullCalculator({
   }[phase];
 
   const phaseLabel = {
-    idle: 'Preparat',
-    measuring: 'Mesurant posició inicial...',
-    waiting: `Esperant relaxació... ${countdown}s`,
+    idle: tt.overpull.ready,
+    measuring: tt.overpull.measuring,
+    waiting: `${tt.overpull.waiting}... ${countdown}s`,
     calculated: 'Overpull calculat',
     applying: 'Aplicant overpull...',
   }[phase];
@@ -204,7 +208,7 @@ export function OverpullCalculator({
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor }]}>
       <View style={styles.header}>
-        <ThemedText style={[styles.title, { color: textColor }]}>Calculadora d'Overpull</ThemedText>
+        <ThemedText style={[styles.title, { color: textColor }]}>{tt.overpull.title}</ThemedText>
         <View style={[styles.phaseBadge, { backgroundColor: phaseColor + '20' }]}>
           <ThemedText style={[styles.phaseBadgeText, { color: phaseColor }]}>{noteName}</ThemedText>
         </View>
@@ -236,7 +240,7 @@ export function OverpullCalculator({
             ]}
           >
             <ThemedText style={styles.actionButtonText}>
-              {isActive && isStable ? 'Mesurar Drift' : 'Esperant nota estable...'}
+              {isActive && isStable ? tt.overpull.measureDrift : tt.overpull.waitingStable}
             </ThemedText>
           </TouchableOpacity>
         </View>
@@ -260,7 +264,7 @@ export function OverpullCalculator({
             No toqueu la corda durant la mesura
           </ThemedText>
           <TouchableOpacity onPress={resetMeasurement} style={[styles.cancelButton, { borderColor }]}>
-            <ThemedText style={[styles.cancelButtonText, { color: textSecondary }]}>Cancel·lar</ThemedText>
+            <ThemedText style={[styles.cancelButtonText, { color: textSecondary }]}>{tt.overpull.cancel}</ThemedText>
           </TouchableOpacity>
         </View>
       )}
@@ -276,7 +280,7 @@ export function OverpullCalculator({
               </ThemedText>
             </View>
             <View style={[styles.resultCard, { backgroundColor: '#1B6B93' + '15' }]}>
-              <ThemedText style={[styles.resultLabel, { color: textSecondary }]}>Overpull</ThemedText>
+              <ThemedText style={[styles.resultLabel, { color: textSecondary }]}>{tt.overpull.overpullAmount}</ThemedText>
               <ThemedText style={[styles.resultValue, { color: '#1B6B93' }]}>
                 {result.overpullCents > 0 ? '+' : ''}{result.overpullCents.toFixed(1)}¢
               </ThemedText>
@@ -284,7 +288,7 @@ export function OverpullCalculator({
           </View>
 
           <View style={[styles.targetRow, { backgroundColor: '#10B981' + '15', borderColor: '#10B981' + '30' }]}>
-            <ThemedText style={[styles.targetLabel, { color: '#10B981' }]}>Objectiu amb overpull</ThemedText>
+            <ThemedText style={[styles.targetLabel, { color: '#10B981' }]}>{tt.overpull.targetWithOverpull}</ThemedText>
             <ThemedText style={[styles.targetValue, { color: '#10B981' }]}>
               {result.targetWithOverpull > 0 ? '+' : ''}{result.targetWithOverpull.toFixed(1)} cents
             </ThemedText>
@@ -302,13 +306,13 @@ export function OverpullCalculator({
               onPress={() => setPhase('applying')}
               style={[styles.applyButton, { backgroundColor: '#1B6B93' }]}
             >
-              <ThemedText style={styles.applyButtonText}>Aplicar</ThemedText>
+              <ThemedText style={styles.applyButtonText}>{tt.overpull.apply}</ThemedText>
             </TouchableOpacity>
           </View>
 
           {/* Confidence */}
           <ThemedText style={[styles.confidenceText, { color: textSecondary }]}>
-            Confiança: {(result.confidence * 100).toFixed(0)}% · Factor: ×{overpullFactor}
+            {tt.overpull.confidence}: {(result.confidence * 100).toFixed(0)}% · {tt.overpull.factor}: ×{overpullFactor}
           </ThemedText>
         </View>
       )}
@@ -342,7 +346,7 @@ export function OverpullCalculator({
             </View>
           </View>
           <TouchableOpacity onPress={resetMeasurement} style={[styles.doneButton, { backgroundColor: '#10B981' }]}>
-            <ThemedText style={styles.doneButtonText}>Fet</ThemedText>
+            <ThemedText style={styles.doneButtonText}>{tt.overpull.done}</ThemedText>
           </TouchableOpacity>
         </View>
       )}

@@ -20,6 +20,8 @@ import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { type PartialWeights, WEIGHT_PRESETS } from './PartialWeighting';
+import { useLanguage } from '@/contexts/language-context';
+import { getTunerTranslation } from '@/locales/tuner-translations';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -126,6 +128,8 @@ export function TuningModes({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
   const borderColor = useThemeColor({}, 'border');
+  const { currentLanguage } = useLanguage();
+  const tt = getTunerTranslation(currentLanguage);
 
   const handleSelect = useCallback((mode: TuningModeConfig) => {
     onModeChange(mode);
@@ -191,29 +195,29 @@ export function TuningModes({
 
         <View style={styles.detailsGrid}>
           <View style={styles.detailItem}>
-            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>Rang</ThemedText>
+            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>{tt.tuningModes.range}</ThemedText>
             <ThemedText style={[styles.detailValue, { color: textColor }]}>±{selectedMode.meterRange}¢</ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>Overpull</ThemedText>
+            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>{tt.tuningModes.overpull}</ThemedText>
             <ThemedText style={[styles.detailValue, { color: textColor }]}>×{selectedMode.overpullFactor}</ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>Estabilitat</ThemedText>
+            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>{tt.tuningModes.stability}</ThemedText>
             <ThemedText style={[styles.detailValue, { color: textColor }]}>{selectedMode.stabilityThreshold}¢</ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>Pitch</ThemedText>
+            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>{tt.tuningModes.pitch}</ThemedText>
             <ThemedText style={[styles.detailValue, { color: textColor }]}>A={selectedMode.recommendedPitch}</ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>Stretch</ThemedText>
+            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>{tt.tuningModes.stretch}</ThemedText>
             <ThemedText style={[styles.detailValue, { color: selectedMode.useStretchTuning ? '#10B981' : '#EF4444' }]}>
               {selectedMode.useStretchTuning ? 'Sí' : 'No'}
             </ThemedText>
           </View>
           <View style={styles.detailItem}>
-            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>Suavitzat</ThemedText>
+            <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>{tt.tuningModes.smoothing}</ThemedText>
             <ThemedText style={[styles.detailValue, { color: textColor }]}>{(selectedMode.emaSmoothingFactor * 100).toFixed(0)}%</ThemedText>
           </View>
         </View>

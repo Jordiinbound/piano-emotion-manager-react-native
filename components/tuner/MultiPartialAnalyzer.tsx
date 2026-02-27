@@ -13,6 +13,8 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import Svg, { Line, Circle, Text as SvgText, Rect } from 'react-native-svg';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useLanguage } from '@/contexts/language-context';
+import { getTunerTranslation } from '@/locales/tuner-translations';
 import {
   getExpectedInharmonicity,
   getInharmonicPartialFrequency,
@@ -155,6 +157,8 @@ export function MultiPartialAnalyzer({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const surface = useThemeColor({}, 'surface');
   const border = useThemeColor({}, 'border');
+  const { currentLanguage } = useLanguage();
+  const tt = getTunerTranslation(currentLanguage);
 
   const B = inharmonicity ?? getExpectedInharmonicity(fundamentalFreq);
   
@@ -186,9 +190,9 @@ export function MultiPartialAnalyzer({
   if (!isActive || fundamentalFreq <= 0) {
     return (
       <View style={[styles.container, { backgroundColor: surface, borderColor: border }]}>
-        <ThemedText style={[styles.title, { color: textColor }]}>Anàlisi Multi-Parcial</ThemedText>
+        <ThemedText style={[styles.title, { color: textColor }]}>{tt.multiPartial.title}</ThemedText>
         <ThemedText style={[styles.placeholder, { color: textSecondary }]}>
-          Toqueu una nota per veure els parcials
+          {tt.multiPartial.noData}
         </ThemedText>
       </View>
     );
@@ -197,7 +201,7 @@ export function MultiPartialAnalyzer({
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor: border }]}>
       <View style={styles.header}>
-        <ThemedText style={[styles.title, { color: textColor }]}>Anàlisi Multi-Parcial</ThemedText>
+        <ThemedText style={[styles.title, { color: textColor }]}>{tt.multiPartial.title}</ThemedText>
         <View style={styles.badges}>
           <View style={[styles.badge, { backgroundColor: '#1B6B93' + '20' }]}>
             <ThemedText style={[styles.badgeText, { color: '#1B6B93' }]}>
@@ -206,7 +210,7 @@ export function MultiPartialAnalyzer({
           </View>
           <View style={[styles.badge, { backgroundColor: '#10B981' + '20' }]}>
             <ThemedText style={[styles.badgeText, { color: '#10B981' }]}>
-              {detectedCount}/{maxPartials} parcials
+              {detectedCount}/{maxPartials} {tt.tunerCommon.partials}
             </ThemedText>
           </View>
           <View style={[styles.badge, { backgroundColor: '#8B5CF6' + '20' }]}>
@@ -301,8 +305,8 @@ export function MultiPartialAnalyzer({
         <View style={styles.table}>
           <View style={[styles.tableRow, styles.tableHeader, { borderBottomColor: border }]}>
             <ThemedText style={[styles.tableHeaderCell, styles.cellN, { color: textSecondary }]}>n</ThemedText>
-            <ThemedText style={[styles.tableHeaderCell, styles.cellFreq, { color: textSecondary }]}>Esperat</ThemedText>
-            <ThemedText style={[styles.tableHeaderCell, styles.cellFreq, { color: textSecondary }]}>Mesurat</ThemedText>
+            <ThemedText style={[styles.tableHeaderCell, styles.cellFreq, { color: textSecondary }]}>{tt.multiPartial.expected}</ThemedText>
+            <ThemedText style={[styles.tableHeaderCell, styles.cellFreq, { color: textSecondary }]}>{tt.multiPartial.measured}</ThemedText>
             <ThemedText style={[styles.tableHeaderCell, styles.cellDb, { color: textSecondary }]}>dB</ThemedText>
             <ThemedText style={[styles.tableHeaderCell, styles.cellCents, { color: textSecondary }]}>¢</ThemedText>
           </View>
