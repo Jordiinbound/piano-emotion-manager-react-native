@@ -36,7 +36,7 @@ export interface KeyMeasurement {
   timestamp: number;
 }
 
-export type TunerViewMode = 'tuner' | 'spectrogram' | 'railsback' | 'unison' | 'calibration' | 'toneGen' | 'settings';
+export type TunerViewMode = 'tuner' | 'guided' | 'spectrogram' | 'railsback' | 'unison' | 'calibration' | 'toneGen' | 'stringQuality' | 'temperament' | 'profiles' | 'micCalibration' | 'report' | 'settings';
 
 export interface TunerState {
   /** Motor activo */

@@ -1,5 +1,5 @@
 /**
- * TunerScreen - Pantalla principal del afinador de pianos (Professional)
+ * TunerScreen - Pantalla principal del afinador de pianos (Professional v2)
  * 
  * Interfaz completa de afinación que incluye:
  * - Medidor circular de cents (CentsGauge)
@@ -9,12 +9,18 @@
  * - Modo unísono con detección de batidos (UnisonMeter)
  * - Calibración de inharmonicidad individual (CalibrationPanel)
  * - Generador de tonos de referencia (ToneGeneratorPanel)
+ * - Afinación guiada paso a paso (GuidedTuning)
+ * - Temperamentos históricos (TemperamentSelector)
+ * - Perfiles de pianos con historial (PianoProfileManager)
+ * - Análisis de calidad de cuerdas (StringQualityAnalyzer)
+ * - Calibración de micrófono (MicCalibration)
+ * - Generación de informes PDF (TuningReportGenerator)
  * - Tira de piano con estado de afinación (MiniPianoStrip)
  * - Navegación por pestañas entre modos profesionales
  */
 
 import React, { useCallback, useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, useWindowDimensions, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -30,6 +36,12 @@ import { RailsbackChart } from './RailsbackChart';
 import { UnisonMeter } from './UnisonMeter';
 import { CalibrationPanel } from './CalibrationPanel';
 import { ToneGeneratorPanel } from './ToneGeneratorPanel';
+import { GuidedTuning } from './GuidedTuning';
+import { TemperamentSelector } from './TemperamentSelector';
+import { PianoProfileManager } from './PianoProfileManager';
+import { StringQualityAnalyzer } from './StringQualityAnalyzer';
+import { MicCalibration } from './MicCalibration';
+import { TuningReportGenerator } from './TuningReportGenerator';
 import {
   getFullNoteName,
   getNoteName,
@@ -60,11 +72,17 @@ interface TabItem {
 
 const TABS: TabItem[] = [
   { id: 'tuner', label: 'Afinador', icon: 'radio-outline' },
+  { id: 'guided', label: 'Guiada', icon: 'navigate-outline' },
   { id: 'spectrogram', label: 'Espectro', icon: 'pulse-outline' },
   { id: 'railsback', label: 'Railsback', icon: 'analytics-outline' },
   { id: 'unison', label: 'Unísono', icon: 'git-compare-outline' },
   { id: 'calibration', label: 'Calibrar', icon: 'construct-outline' },
   { id: 'toneGen', label: 'Tono Ref.', icon: 'volume-high-outline' },
+  { id: 'stringQuality', label: 'Cuerdas', icon: 'search-outline' },
+  { id: 'temperament', label: 'Temperamento', icon: 'musical-notes-outline' },
+  { id: 'profiles', label: 'Pianos', icon: 'albums-outline' },
+  { id: 'micCalibration', label: 'Micrófono', icon: 'mic-outline' },
+  { id: 'report', label: 'Informe', icon: 'document-text-outline' },
 ];
 
 // ─── Componente interno (requiere TunerProvider) ─────────────────────────────
@@ -127,45 +145,70 @@ function TunerScreenContent() {
     } else {
       await startListening();
     }
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    } catch {}
+    if (Platform.OS !== 'web') {
+      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } catch {}
+    }
   }, [state.isListening, startListening, stopListening]);
   
   const handleKeyPress = useCallback((keyIndex: number) => {
     setSelectedKey(keyIndex);
     setAutoDetect(false);
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch {}
+    if (Platform.OS !== 'web') {
+      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
+    }
   }, [setSelectedKey, setAutoDetect]);
   
   const handleAutoDetect = useCallback(() => {
     setAutoDetect(true);
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch {}
+    if (Platform.OS !== 'web') {
+      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
+    }
   }, [setAutoDetect]);
   
   const handleSave = useCallback(() => {
     saveMeasurement();
-    try {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch {}
+    if (Platform.OS !== 'web') {
+      try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch {}
+    }
   }, [saveMeasurement]);
   
   const handleTabPress = useCallback((tabId: TunerViewMode) => {
     setActiveView(tabId);
-    // Activar/desactivar modo unísono según la pestaña
     if (tabId === 'unison') {
       setUnisonMode(true);
     } else if (state.unisonMode) {
       setUnisonMode(false);
     }
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch {}
+    if (Platform.OS !== 'web') {
+      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
+    }
   }, [setActiveView, setUnisonMode, state.unisonMode]);
+  
+  // Helper: Compact note display used by multiple views
+  const renderCompactNoteDisplay = () => (
+    <View style={styles.noteDisplayCompact}>
+      <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
+        {noteName}
+      </ThemedText>
+      <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
+        {octave}
+      </ThemedText>
+      {isActive && (
+        <ThemedText style={[styles.centsCompact, { color: Math.abs(centsDeviation) > 2 ? TUNER_COLORS.outOfTune : TUNER_COLORS.inTune }]}>
+          {centsDeviation > 0 ? '+' : ''}{centsDeviation.toFixed(1)}¢
+        </ThemedText>
+      )}
+    </View>
+  );
+  
+  // Helper: Deviation bar used by multiple views
+  const renderDeviationBar = () => (
+    <DeviationBar
+      centsDeviation={isActive ? centsDeviation : 0}
+      range={state.meterRange}
+      isActive={isActive}
+    />
+  );
   
   if (showSettings) {
     return <TunerSettings onBack={() => setShowSettings(false)} />;
@@ -289,11 +332,7 @@ function TunerScreenContent() {
             </View>
             
             {/* Barra de desviación */}
-            <DeviationBar
-              centsDeviation={isActive ? centsDeviation : 0}
-              range={state.meterRange}
-              isActive={isActive}
-            />
+            {renderDeviationBar()}
             
             {/* Información de frecuencia */}
             {state.showFrequency && (
@@ -329,34 +368,37 @@ function TunerScreenContent() {
           </>
         )}
         
+        {/* ═══ Vista: Afinación Guiada ═══ */}
+        {state.activeView === 'guided' && (
+          <>
+            {renderCompactNoteDisplay()}
+            {renderDeviationBar()}
+            <View style={{ height: 12 }} />
+            <GuidedTuning
+              currentKeyIndex={activeKey}
+              centsDeviation={isActive ? centsDeviation : 0}
+              isListening={state.isListening}
+              onSelectKey={(keyIndex) => {
+                setSelectedKey(keyIndex);
+                setAutoDetect(false);
+              }}
+              keyMeasurements={(() => {
+                const map = new Map<number, { cents: number; timestamp: number }>();
+                state.measurements.forEach((m, i) => {
+                  if (m) map.set(i, { cents: m.centsDeviation, timestamp: m.timestamp });
+                });
+                return map;
+              })()}
+            />
+          </>
+        )}
+        
         {/* ═══ Vista: Espectrograma ═══ */}
         {state.activeView === 'spectrogram' && (
           <>
-            {/* Nota detectada (compacta) */}
-            <View style={styles.noteDisplayCompact}>
-              <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
-                {noteName}
-              </ThemedText>
-              <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
-                {octave}
-              </ThemedText>
-              {isActive && (
-                <ThemedText style={[styles.centsCompact, { color: centsDeviation > 2 ? TUNER_COLORS.outOfTune : centsDeviation < -2 ? TUNER_COLORS.outOfTune : TUNER_COLORS.inTune }]}>
-                  {centsDeviation > 0 ? '+' : ''}{centsDeviation.toFixed(1)}¢
-                </ThemedText>
-              )}
-            </View>
-            
-            {/* Barra de desviación */}
-            <DeviationBar
-              centsDeviation={isActive ? centsDeviation : 0}
-              range={state.meterRange}
-              isActive={isActive}
-            />
-            
+            {renderCompactNoteDisplay()}
+            {renderDeviationBar()}
             <View style={{ height: 12 }} />
-            
-            {/* Espectrograma */}
             <Spectrogram
               fftData={detection?.fftData ?? null}
               sampleRate={detection?.actualSampleRate ?? 44100}
@@ -372,28 +414,9 @@ function TunerScreenContent() {
         {/* ═══ Vista: Railsback ═══ */}
         {state.activeView === 'railsback' && (
           <>
-            <View style={styles.noteDisplayCompact}>
-              <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
-                {noteName}
-              </ThemedText>
-              <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
-                {octave}
-              </ThemedText>
-              {isActive && (
-                <ThemedText style={[styles.centsCompact, { color: centsDeviation > 2 ? TUNER_COLORS.outOfTune : centsDeviation < -2 ? TUNER_COLORS.outOfTune : TUNER_COLORS.inTune }]}>
-                  {centsDeviation > 0 ? '+' : ''}{centsDeviation.toFixed(1)}¢
-                </ThemedText>
-              )}
-            </View>
-            
-            <DeviationBar
-              centsDeviation={isActive ? centsDeviation : 0}
-              range={state.meterRange}
-              isActive={isActive}
-            />
-            
+            {renderCompactNoteDisplay()}
+            {renderDeviationBar()}
             <View style={{ height: 12 }} />
-            
             <RailsbackChart
               measurements={state.measurements}
               concertPitch={state.concertPitch}
@@ -401,8 +424,6 @@ function TunerScreenContent() {
               height={220}
               showStretchCurve={state.useStretchTuning}
             />
-            
-            {/* Leyenda informativa */}
             <View style={[styles.infoCard, { backgroundColor: cardBg, borderColor: border }]}>
               <View style={styles.infoCardHeader}>
                 <Ionicons name="information-circle-outline" size={16} color={textSecondary} />
@@ -411,7 +432,7 @@ function TunerScreenContent() {
                 </ThemedText>
               </View>
               <ThemedText style={[styles.infoCardBody, { color: textSecondary }]}>
-                La curva de Railsback muestra cómo la afinación de un piano se desvía del temperamento igual puro. Los graves se afinan ligeramente más bajos y los agudos más altos para compensar la inharmonicidad de las cuerdas. La línea punteada azul es el objetivo de stretch, y la línea verde son sus mediciones reales.
+                La curva de Railsback muestra cómo la afinación de un piano se desvía del temperamento igual puro. Los graves se afinan ligeramente más bajos y los agudos más altos para compensar la inharmonicidad de las cuerdas.
               </ThemedText>
             </View>
           </>
@@ -420,28 +441,9 @@ function TunerScreenContent() {
         {/* ═══ Vista: Unísono ═══ */}
         {state.activeView === 'unison' && (
           <>
-            <View style={styles.noteDisplayCompact}>
-              <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
-                {noteName}
-              </ThemedText>
-              <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
-                {octave}
-              </ThemedText>
-              {isActive && (
-                <ThemedText style={[styles.centsCompact, { color: centsDeviation > 2 ? TUNER_COLORS.outOfTune : centsDeviation < -2 ? TUNER_COLORS.outOfTune : TUNER_COLORS.inTune }]}>
-                  {centsDeviation > 0 ? '+' : ''}{centsDeviation.toFixed(1)}¢
-                </ThemedText>
-              )}
-            </View>
-            
-            <DeviationBar
-              centsDeviation={isActive ? centsDeviation : 0}
-              range={state.meterRange}
-              isActive={isActive}
-            />
-            
+            {renderCompactNoteDisplay()}
+            {renderDeviationBar()}
             <View style={{ height: 12 }} />
-            
             <UnisonMeter
               beatFrequency={detection?.beatFrequency ?? null}
               isActive={isActive}
@@ -453,17 +455,8 @@ function TunerScreenContent() {
         {/* ═══ Vista: Calibración ═══ */}
         {state.activeView === 'calibration' && (
           <>
-            <View style={styles.noteDisplayCompact}>
-              <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
-                {noteName}
-              </ThemedText>
-              <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
-                {octave}
-              </ThemedText>
-            </View>
-            
+            {renderCompactNoteDisplay()}
             <View style={{ height: 8 }} />
-            
             <CalibrationPanel
               calibrationData={state.calibrationData}
               currentInharmonicity={detection?.inharmonicity ?? null}
@@ -480,11 +473,86 @@ function TunerScreenContent() {
         {state.activeView === 'toneGen' && (
           <>
             <View style={{ height: 8 }} />
-            
             <ToneGeneratorPanel
               activeKeyIndex={activeKey >= 0 ? activeKey : 48}
               concertPitch={state.concertPitch}
               useStretchTuning={state.useStretchTuning}
+            />
+          </>
+        )}
+        
+        {/* ═══ Vista: Análisis de cuerdas ═══ */}
+        {state.activeView === 'stringQuality' && (
+          <>
+            {renderCompactNoteDisplay()}
+            <View style={{ height: 8 }} />
+            <StringQualityAnalyzer
+              keyIndex={activeKey}
+              frequency={detectedFreq}
+              fftData={detection?.fftData ?? null}
+              sampleRate={detection?.actualSampleRate ?? 44100}
+              inharmonicity={detection?.inharmonicity ?? null}
+              rmsLevel={detection?.rmsLevel ?? 0}
+              isListening={state.isListening}
+            />
+          </>
+        )}
+        
+        {/* ═══ Vista: Temperamentos ═══ */}
+        {state.activeView === 'temperament' && (
+          <>
+            <View style={{ height: 8 }} />
+            <TemperamentSelector
+              selectedTemperamentId={'equal'}
+              onSelectTemperament={() => {}}
+            />
+          </>
+        )}
+        
+        {/* ═══ Vista: Perfiles de pianos ═══ */}
+        {state.activeView === 'profiles' && (
+          <>
+            <View style={{ height: 8 }} />
+            <PianoProfileManager
+              onSelectProfile={() => {}}
+              activeProfileId={null}
+              currentMeasurements={(() => {
+                const map = new Map<number, { cents: number; inharmonicity: number | null; timestamp: number }>();
+                state.measurements.forEach((m, i) => {
+                  if (m) map.set(i, { cents: m.centsDeviation, inharmonicity: m.inharmonicity, timestamp: m.timestamp });
+                });
+                return map;
+              })()}
+            />
+          </>
+        )}
+        
+        {/* ═══ Vista: Calibración de micrófono ═══ */}
+        {state.activeView === 'micCalibration' && (
+          <>
+            <View style={{ height: 8 }} />
+            <MicCalibration
+              currentLatency={0}
+              onCalibrationComplete={() => {}}
+            />
+          </>
+        )}
+        
+        {/* ═══ Vista: Informe de afinación ═══ */}
+        {state.activeView === 'report' && (
+          <>
+            <View style={{ height: 8 }} />
+            <TuningReportGenerator
+              profile={null}
+              currentMeasurements={(() => {
+                const map = new Map<number, { cents: number; inharmonicity: number | null; timestamp: number }>();
+                state.measurements.forEach((m, i) => {
+                  if (m) map.set(i, { cents: m.centsDeviation, inharmonicity: m.inharmonicity, timestamp: m.timestamp });
+                });
+                return map;
+              })()}
+              concertPitch={state.concertPitch}
+              temperamentId={'equal'}
             />
           </>
         )}
@@ -581,19 +649,21 @@ function TunerScreenContent() {
         )}
         
         {/* Info de stretch tuning */}
-        <View style={[styles.infoCard, { backgroundColor: cardBg, borderColor: border }]}>
-          <View style={styles.infoCardHeader}>
-            <Ionicons name="information-circle-outline" size={16} color={textSecondary} />
-            <ThemedText style={[styles.infoCardTitle, { color: textSecondary }]}>
-              {state.useStretchTuning ? 'Stretch Tuning activado' : 'Temperamento igual'}
+        {state.activeView === 'tuner' && (
+          <View style={[styles.infoCard, { backgroundColor: cardBg, borderColor: border }]}>
+            <View style={styles.infoCardHeader}>
+              <Ionicons name="information-circle-outline" size={16} color={textSecondary} />
+              <ThemedText style={[styles.infoCardTitle, { color: textSecondary }]}>
+                {state.useStretchTuning ? 'Stretch Tuning activado' : 'Temperamento igual'}
+              </ThemedText>
+            </View>
+            <ThemedText style={[styles.infoCardBody, { color: textSecondary }]}>
+              {state.useStretchTuning
+                ? 'Las frecuencias objetivo incluyen compensación de inharmonicidad (curva de Railsback). Recomendado para pianos acústicos.'
+                : 'Frecuencias de temperamento igual puro. Adecuado para referencia o instrumentos electrónicos.'}
             </ThemedText>
           </View>
-          <ThemedText style={[styles.infoCardBody, { color: textSecondary }]}>
-            {state.useStretchTuning
-              ? 'Las frecuencias objetivo incluyen compensación de inharmonicidad (curva de Railsback). Recomendado para pianos acústicos.'
-              : 'Frecuencias de temperamento igual puro. Adecuado para referencia o instrumentos electrónicos.'}
-          </ThemedText>
-        </View>
+        )}
         
         <View style={{ height: 40 }} />
       </ScrollView>
