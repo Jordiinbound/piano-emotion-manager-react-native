@@ -1,25 +1,12 @@
 /**
- * TunerScreen - Pantalla principal del afinador de pianos (Professional v2)
+ * TunerScreen - Pantalla principal del afinador de pianos (Professional v3)
  * 
- * Interfaz completa de afinación que incluye:
- * - Medidor circular de cents (CentsGauge)
- * - Barra de desviación horizontal (DeviationBar)
- * - Espectrograma en tiempo real (Spectrogram)
- * - Curva de Railsback con mediciones (RailsbackChart)
- * - Modo unísono con detección de batidos (UnisonMeter)
- * - Calibración de inharmonicidad individual (CalibrationPanel)
- * - Generador de tonos de referencia (ToneGeneratorPanel)
- * - Afinación guiada paso a paso (GuidedTuning)
- * - Temperamentos históricos (TemperamentSelector)
- * - Perfiles de pianos con historial (PianoProfileManager)
- * - Análisis de calidad de cuerdas (StringQualityAnalyzer)
- * - Calibración de micrófono (MicCalibration)
- * - Generación de informes PDF (TuningReportGenerator)
- * - Tira de piano con estado de afinación (MiniPianoStrip)
- * - Navegación por pestañas entre modos profesionales
+ * Menú responsive con categorías y grid adaptativo.
+ * En móvil: grid compacto 3-4 columnas con iconos.
+ * En tablet/desktop: grid más amplio con labels.
  */
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, Pressable, useWindowDimensions, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
@@ -62,28 +49,277 @@ const TUNER_COLORS = {
   outOfTune: '#EF4444',
 };
 
-// ─── Tabs de navegación ─────────────────────────────────────────────────────
+// ─── Categorías y herramientas del menú ────────────────────────────────────
 
-interface TabItem {
+interface ToolItem {
   id: TunerViewMode;
   label: string;
   icon: string;
+  description: string;
 }
 
-const TABS: TabItem[] = [
-  { id: 'tuner', label: 'Afinador', icon: 'radio-outline' },
-  { id: 'guided', label: 'Guiada', icon: 'navigate-outline' },
-  { id: 'spectrogram', label: 'Espectro', icon: 'pulse-outline' },
-  { id: 'railsback', label: 'Railsback', icon: 'analytics-outline' },
-  { id: 'unison', label: 'Unísono', icon: 'git-compare-outline' },
-  { id: 'calibration', label: 'Calibrar', icon: 'construct-outline' },
-  { id: 'toneGen', label: 'Tono Ref.', icon: 'volume-high-outline' },
-  { id: 'stringQuality', label: 'Cuerdas', icon: 'search-outline' },
-  { id: 'temperament', label: 'Temperamento', icon: 'musical-notes-outline' },
-  { id: 'profiles', label: 'Pianos', icon: 'albums-outline' },
-  { id: 'micCalibration', label: 'Micrófono', icon: 'mic-outline' },
-  { id: 'report', label: 'Informe', icon: 'document-text-outline' },
+interface ToolCategory {
+  id: string;
+  title: string;
+  icon: string;
+  tools: ToolItem[];
+}
+
+const TOOL_CATEGORIES: ToolCategory[] = [
+  {
+    id: 'tuning',
+    title: 'Afinación',
+    icon: 'radio',
+    tools: [
+      { id: 'tuner', label: 'Afinador', icon: 'radio-outline', description: 'Medidor de afinación en tiempo real' },
+      { id: 'guided', label: 'Guiada', icon: 'navigate-outline', description: 'Asistente paso a paso' },
+      { id: 'toneGen', label: 'Tono Ref.', icon: 'volume-high-outline', description: 'Generador de tonos' },
+      { id: 'temperament', label: 'Temperamento', icon: 'musical-notes-outline', description: 'Temperamentos históricos' },
+    ],
+  },
+  {
+    id: 'analysis',
+    title: 'Análisis',
+    icon: 'analytics',
+    tools: [
+      { id: 'spectrogram', label: 'Espectro', icon: 'pulse-outline', description: 'Espectrograma FFT' },
+      { id: 'railsback', label: 'Railsback', icon: 'analytics-outline', description: 'Curva de afinación' },
+      { id: 'unison', label: 'Unísono', icon: 'git-compare-outline', description: 'Detección de batidos' },
+      { id: 'stringQuality', label: 'Cuerdas', icon: 'search-outline', description: 'Calidad de cuerdas' },
+    ],
+  },
+  {
+    id: 'config',
+    title: 'Configuración',
+    icon: 'construct',
+    tools: [
+      { id: 'calibration', label: 'Calibrar', icon: 'construct-outline', description: 'Inharmonicidad individual' },
+      { id: 'micCalibration', label: 'Micrófono', icon: 'mic-outline', description: 'Calibrar latencia' },
+      { id: 'profiles', label: 'Pianos', icon: 'albums-outline', description: 'Perfiles e historial' },
+      { id: 'report', label: 'Informe', icon: 'document-text-outline', description: 'Generar PDF' },
+    ],
+  },
 ];
+
+// Flat list for quick lookup
+const ALL_TOOLS = TOOL_CATEGORIES.flatMap(c => c.tools);
+
+// ─── Componente de menú responsive ──────────────────────────────────────────
+
+function ToolMenu({
+  activeView,
+  onSelect,
+  onSettings,
+  width,
+}: {
+  activeView: TunerViewMode;
+  onSelect: (id: TunerViewMode) => void;
+  onSettings: () => void;
+  width: number;
+}) {
+  const surface = useThemeColor({}, 'surface');
+  const cardBg = useThemeColor({}, 'cardBackground');
+  const border = useThemeColor({}, 'border');
+  const textColor = useThemeColor({}, 'text');
+  const textSecondary = useThemeColor({}, 'textSecondary');
+  const background = useThemeColor({}, 'background');
+
+  // Responsive: determine layout
+  const isCompact = width < 480;
+  const isMedium = width >= 480 && width < 768;
+  const isWide = width >= 768;
+  const columns = isCompact ? 4 : isMedium ? 4 : 6;
+  const showDescriptions = isWide;
+  const iconSize = isCompact ? 20 : 22;
+  const tileWidth = isCompact
+    ? (width - 48) / 4
+    : isMedium
+      ? (width - 56) / 4
+      : (width - 80) / 6;
+
+  // Active tool info
+  const activeTool = ALL_TOOLS.find(t => t.id === activeView);
+
+  return (
+    <View style={[menuStyles.container, { borderBottomColor: border }]}>
+      {/* Active tool indicator */}
+      <View style={[menuStyles.activeIndicator, { backgroundColor: TUNER_COLORS.primary + '0D' }]}>
+        <Ionicons
+          name={(activeTool?.icon ?? 'radio-outline') as any}
+          size={16}
+          color={TUNER_COLORS.primary}
+        />
+        <ThemedText style={[menuStyles.activeLabel, { color: TUNER_COLORS.primary }]}>
+          {activeTool?.label ?? 'Afinador'}
+        </ThemedText>
+        <View style={{ flex: 1 }} />
+        <Pressable
+          onPress={onSettings}
+          style={({ pressed }) => [
+            menuStyles.settingsBtn,
+            { backgroundColor: surface, opacity: pressed ? 0.7 : 1 },
+          ]}
+        >
+          <Ionicons name="settings-outline" size={16} color={textSecondary} />
+        </Pressable>
+      </View>
+
+      {/* Categories with tools */}
+      <ScrollView
+        horizontal={isCompact || isMedium}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          (isCompact || isMedium)
+            ? menuStyles.horizontalScroll
+            : menuStyles.verticalGrid
+        }
+      >
+        {TOOL_CATEGORIES.map(category => (
+          <View
+            key={category.id}
+            style={[
+              menuStyles.categoryBlock,
+              (isCompact || isMedium) && menuStyles.categoryBlockHorizontal,
+            ]}
+          >
+            <ThemedText style={[menuStyles.categoryTitle, { color: textSecondary }]}>
+              {category.title}
+            </ThemedText>
+            <View style={[
+              menuStyles.toolsRow,
+              isWide && { flexWrap: 'wrap' },
+            ]}>
+              {category.tools.map(tool => {
+                const isActive = activeView === tool.id;
+                return (
+                  <Pressable
+                    key={tool.id}
+                    onPress={() => onSelect(tool.id)}
+                    style={({ pressed }) => [
+                      menuStyles.toolTile,
+                      {
+                        width: isCompact ? 64 : isMedium ? 72 : 100,
+                        backgroundColor: isActive ? TUNER_COLORS.primary + '15' : surface,
+                        borderColor: isActive ? TUNER_COLORS.primary : 'transparent',
+                        opacity: pressed ? 0.7 : 1,
+                      },
+                    ]}
+                  >
+                    <Ionicons
+                      name={tool.icon as any}
+                      size={iconSize}
+                      color={isActive ? TUNER_COLORS.primary : textSecondary}
+                    />
+                    <ThemedText
+                      style={[
+                        menuStyles.toolLabel,
+                        { color: isActive ? TUNER_COLORS.primary : textColor },
+                        isCompact && { fontSize: 9 },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {tool.label}
+                    </ThemedText>
+                    {showDescriptions && (
+                      <ThemedText
+                        style={[menuStyles.toolDesc, { color: textSecondary }]}
+                        numberOfLines={1}
+                      >
+                        {tool.description}
+                      </ThemedText>
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
+const menuStyles = StyleSheet.create({
+  container: {
+    borderBottomWidth: 1,
+  },
+  activeIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  activeLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    fontFamily: 'Montserrat',
+    lineHeight: 18,
+  },
+  settingsBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  horizontalScroll: {
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    paddingBottom: 10,
+    gap: 16,
+  },
+  verticalGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    gap: 16,
+  },
+  categoryBlock: {
+    gap: 6,
+  },
+  categoryBlockHorizontal: {
+    minWidth: 'auto' as any,
+  },
+  categoryTitle: {
+    fontSize: 10,
+    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    lineHeight: 14,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    paddingLeft: 4,
+  },
+  toolsRow: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  toolTile: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    gap: 3,
+  },
+  toolLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    lineHeight: 13,
+    textAlign: 'center',
+  },
+  toolDesc: {
+    fontSize: 8,
+    fontWeight: '400',
+    fontFamily: 'Montserrat',
+    lineHeight: 10,
+    textAlign: 'center',
+  },
+});
 
 // ─── Componente interno (requiere TunerProvider) ─────────────────────────────
 
@@ -104,6 +340,7 @@ function TunerScreenContent() {
   
   const { width } = useWindowDimensions();
   const [showSettings, setShowSettings] = useState(false);
+  const [menuExpanded, setMenuExpanded] = useState(false);
   
   const background = useThemeColor({}, 'background');
   const surface = useThemeColor({}, 'surface');
@@ -172,13 +409,14 @@ function TunerScreenContent() {
     }
   }, [saveMeasurement]);
   
-  const handleTabPress = useCallback((tabId: TunerViewMode) => {
-    setActiveView(tabId);
-    if (tabId === 'unison') {
+  const handleToolSelect = useCallback((toolId: TunerViewMode) => {
+    setActiveView(toolId);
+    if (toolId === 'unison') {
       setUnisonMode(true);
     } else if (state.unisonMode) {
       setUnisonMode(false);
     }
+    setMenuExpanded(false);
     if (Platform.OS !== 'web') {
       try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
     }
@@ -209,6 +447,15 @@ function TunerScreenContent() {
       isActive={isActive}
     />
   );
+
+  // Helper: measurements as Map
+  const measurementsMap = useMemo(() => {
+    const map = new Map<number, { cents: number; inharmonicity: number | null; timestamp: number }>();
+    state.measurements.forEach((m, i) => {
+      if (m) map.set(i, { cents: m.centsDeviation, inharmonicity: m.inharmonicity, timestamp: m.timestamp });
+    });
+    return map;
+  }, [state.measurements]);
   
   if (showSettings) {
     return <TunerSettings onBack={() => setShowSettings(false)} />;
@@ -216,58 +463,13 @@ function TunerScreenContent() {
   
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
-      {/* Tabs de navegación */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={[styles.tabBar, { borderBottomColor: border }]}
-        contentContainerStyle={styles.tabBarContent}
-      >
-        {TABS.map(tab => {
-          const isActiveTab = state.activeView === tab.id;
-          return (
-            <Pressable
-              key={tab.id}
-              onPress={() => handleTabPress(tab.id)}
-              style={({ pressed }) => [
-                styles.tab,
-                {
-                  borderBottomColor: isActiveTab ? TUNER_COLORS.primary : 'transparent',
-                  opacity: pressed ? 0.7 : 1,
-                },
-              ]}
-            >
-              <Ionicons
-                name={tab.icon as any}
-                size={16}
-                color={isActiveTab ? TUNER_COLORS.primary : textSecondary}
-              />
-              <ThemedText
-                style={[
-                  styles.tabLabel,
-                  { color: isActiveTab ? TUNER_COLORS.primary : textSecondary },
-                ]}
-              >
-                {tab.label}
-              </ThemedText>
-            </Pressable>
-          );
-        })}
-        
-        {/* Botón de ajustes */}
-        <Pressable
-          onPress={() => setShowSettings(true)}
-          style={({ pressed }) => [
-            styles.tab,
-            { opacity: pressed ? 0.7 : 1 },
-          ]}
-        >
-          <Ionicons name="settings-outline" size={16} color={textSecondary} />
-          <ThemedText style={[styles.tabLabel, { color: textSecondary }]}>
-            Ajustes
-          </ThemedText>
-        </Pressable>
-      </ScrollView>
+      {/* Menú de herramientas responsive */}
+      <ToolMenu
+        activeView={state.activeView}
+        onSelect={handleToolSelect}
+        onSettings={() => setShowSettings(true)}
+        width={width}
+      />
       
       <ScrollView
         style={styles.scrollView}
@@ -516,13 +718,7 @@ function TunerScreenContent() {
             <PianoProfileManager
               onSelectProfile={() => {}}
               activeProfileId={null}
-              currentMeasurements={(() => {
-                const map = new Map<number, { cents: number; inharmonicity: number | null; timestamp: number }>();
-                state.measurements.forEach((m, i) => {
-                  if (m) map.set(i, { cents: m.centsDeviation, inharmonicity: m.inharmonicity, timestamp: m.timestamp });
-                });
-                return map;
-              })()}
+              currentMeasurements={measurementsMap}
             />
           </>
         )}
@@ -544,13 +740,7 @@ function TunerScreenContent() {
             <View style={{ height: 8 }} />
             <TuningReportGenerator
               profile={null}
-              currentMeasurements={(() => {
-                const map = new Map<number, { cents: number; inharmonicity: number | null; timestamp: number }>();
-                state.measurements.forEach((m, i) => {
-                  if (m) map.set(i, { cents: m.centsDeviation, inharmonicity: m.inharmonicity, timestamp: m.timestamp });
-                });
-                return map;
-              })()}
+              currentMeasurements={measurementsMap}
               concertPitch={state.concertPitch}
               temperamentId={'equal'}
             />
@@ -686,28 +876,6 @@ export default function TunerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  tabBar: {
-    borderBottomWidth: 1,
-    maxHeight: 44,
-  },
-  tabBarContent: {
-    flexDirection: 'row',
-    paddingHorizontal: 8,
-  },
-  tab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderBottomWidth: 2,
-  },
-  tabLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    fontFamily: 'Montserrat',
-    lineHeight: 14,
   },
   scrollView: {
     flex: 1,
