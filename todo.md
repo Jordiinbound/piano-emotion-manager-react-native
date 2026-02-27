@@ -935,3 +935,17 @@
 
 ## Global - Aplicar fondo blanco en toda la aplicación
 - [x] Añadir regla CSS global para fondo blanco en body y html
+
+## Tuner - Audio Detection Not Working (CRITICAL)
+- [ ] Fix audio pipeline: indicator not moving at all, detected frequency shows "— Hz"
+- [ ] Rewrite audio engine to use reliable fallback (AnalyserNode + requestAnimationFrame) as primary
+- [ ] Add worklet timeout detection to auto-switch to fallback
+- [ ] Lower confidence threshold in AnimatedCentsGauge (0.75 → 0.3)
+- [ ] Lower noise gate threshold for better sensitivity
+- [ ] Add comprehensive diagnostic logging
+
+## Tuner - Language Bug
+- [ ] Fix tuner showing French instead of Spanish (castellano)
+
+## Tuner - UI Truncation
+- [ ] Fix text truncation on narrower screen widths

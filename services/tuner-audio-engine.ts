@@ -1,17 +1,18 @@
 /**
- * Tuner Audio Engine — Professional Grade v3
+ * Tuner Audio Engine — Professional Grade v4
  * 
  * Motor de audio para afinación de pianos usando Web Audio API.
  * Implementa:
- * - AudioWorklet para procesamiento en thread dedicado (fallback a ScriptProcessor)
+ * - AnalyserNode + requestAnimationFrame como método PRIMARIO (más fiable)
+ * - AudioWorklet como mejora opcional con timeout de detección
  * - Detección de pitch con algoritmo YIN (de Cheveigné & Kawahara, 2002)
  * - Estimación de inharmonicidad por superposición de parciales (entropía de Renyi)
  * - Detección de batidos para afinación de unísonos
  * - Generador de tonos de referencia con parciales inarmónicos
  * - Exposición de datos FFT para espectrograma en tiempo real
- * - [NEW] Filtro passa-banda para eliminar ruido fora del rang del piano
- * - [NEW] Mitjana mòbil exponencial (EMA) per estabilitzar lectures
- * - [NEW] Correcció d'octava millorada per anàlisi de parcials
+ * - Filtro passa-banda para eliminar ruido fuera del rango del piano
+ * - Media móvil exponencial (EMA) para estabilizar lecturas
+ * - Corrección de octava mejorada por análisis de parciales
  * 
  * Algoritmos basados en:
  * - YIN: "YIN, a fundamental frequency estimator for speech and music" (JASA, 2002)
@@ -87,7 +88,7 @@ export type TunerEngineCallback = (result: PitchDetectionResult) => void;
 const DEFAULT_CONFIG: TunerEngineConfig = {
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
-  noiseGateThreshold: 0.003,
+  noiseGateThreshold: 0.001, // Lowered from 0.003 for better sensitivity
   bufferSize: 4096,
   sampleRate: 44100,
   fftSize: 8192,
@@ -108,7 +109,7 @@ const PIANO_FREQ_HIGH = 4300; // Just above C8 (4186 Hz)
  * Pasos: diferencia → CMND → umbral absoluto → interpolación parabólica
  */
 function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: number; confidence: number } {
-  const threshold = 0.12;
+  const threshold = 0.15; // Slightly more permissive threshold
   const halfSize = Math.floor(buffer.length / 2);
   
   // Paso 1: Función de diferencia
@@ -154,7 +155,8 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
         bestTau = tau;
       }
     }
-    if (minVal > 0.5) {
+    // More permissive fallback - accept if below 0.6
+    if (minVal > 0.6) {
       return { frequency: 0, confidence: 0 };
     }
   }
@@ -187,9 +189,6 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
 
 /**
  * Corrige errores de octava analizando los parciales en el espectro FFT.
- * YIN a veces detecta la 2a armónica en vez de la fundamental, especialmente
- * en notas graves. Este corrector verifica si la frecuencia detectada tiene
- * energía significativa a la mitad (sub-octava) y corrige si es necesario.
  */
 function correctOctaveError(
   detectedFreq: number,
@@ -200,57 +199,45 @@ function correctOctaveError(
   if (!fftData || detectedFreq <= 0) return detectedFreq;
   
   const binResolution = sampleRate / fftSize;
+  const searchRadius = Math.max(2, Math.round(5 / binResolution));
   
-  // Verificar sub-octava (frecuencia / 2)
-  const subOctaveFreq = detectedFreq / 2;
-  if (subOctaveFreq < PIANO_FREQ_LOW) return detectedFreq;
-  
-  const subOctaveBin = Math.round(subOctaveFreq / binResolution);
+  // Encontrar pico en la frecuencia detectada
   const detectedBin = Math.round(detectedFreq / binResolution);
-  
-  if (subOctaveBin < 1 || subOctaveBin >= fftData.length || detectedBin >= fftData.length) {
-    return detectedFreq;
-  }
-  
-  // Buscar el pico alrededor de la sub-octava (±3 bins)
-  const searchRadius = 3;
-  let subOctavePeak = -Infinity;
-  for (let i = Math.max(1, subOctaveBin - searchRadius); i <= Math.min(fftData.length - 1, subOctaveBin + searchRadius); i++) {
-    if (fftData[i] > subOctavePeak) subOctavePeak = fftData[i];
-  }
-  
-  // Buscar el pico alrededor de la frecuencia detectada
   let detectedPeak = -Infinity;
   for (let i = Math.max(1, detectedBin - searchRadius); i <= Math.min(fftData.length - 1, detectedBin + searchRadius); i++) {
     if (fftData[i] > detectedPeak) detectedPeak = fftData[i];
   }
   
-  // Si la sub-octava tiene energía significativa (dentro de 15 dB del pico detectado),
-  // probablemente es la fundamental real
-  if (subOctavePeak > detectedPeak - 15) {
-    // Verificar también que hay energía en la 3a armónica de la sub-octava (3 * subOctaveFreq)
-    const thirdHarmonicFreq = subOctaveFreq * 3;
-    const thirdBin = Math.round(thirdHarmonicFreq / binResolution);
+  // Verificar sub-octava
+  const subOctaveFreq = detectedFreq / 2;
+  if (subOctaveFreq < PIANO_FREQ_LOW) return detectedFreq;
+  
+  const subBin = Math.round(subOctaveFreq / binResolution);
+  if (subBin >= 1 && subBin < fftData.length) {
+    let subOctavePeak = -Infinity;
+    for (let i = Math.max(1, subBin - searchRadius); i <= Math.min(fftData.length - 1, subBin + searchRadius); i++) {
+      if (fftData[i] > subOctavePeak) subOctavePeak = fftData[i];
+    }
     
-    if (thirdBin < fftData.length) {
-      let thirdPeak = -Infinity;
-      for (let i = Math.max(1, thirdBin - searchRadius); i <= Math.min(fftData.length - 1, thirdBin + searchRadius); i++) {
+    // Verificar 3a armónica de la sub-octava
+    const thirdHarmonicBin = Math.round(subOctaveFreq * 3 / binResolution);
+    let thirdPeak = -Infinity;
+    if (thirdHarmonicBin < fftData.length) {
+      for (let i = Math.max(1, thirdHarmonicBin - searchRadius); i <= Math.min(fftData.length - 1, thirdHarmonicBin + searchRadius); i++) {
         if (fftData[i] > thirdPeak) thirdPeak = fftData[i];
       }
       
-      // Si la 3a armónica de la sub-octava también tiene energía, confirmar corrección
       if (thirdPeak > detectedPeak - 25) {
         return subOctaveFreq;
       }
     }
     
-    // Incluso sin la 3a armónica, si la sub-octava es muy fuerte, corregir
     if (subOctavePeak > detectedPeak - 6) {
       return subOctaveFreq;
     }
   }
   
-  // Verificar super-octava: ¿YIN detectó la sub-armónica por error?
+  // Verificar super-octava
   const superOctaveFreq = detectedFreq * 2;
   if (superOctaveFreq > PIANO_FREQ_HIGH) return detectedFreq;
   
@@ -261,7 +248,6 @@ function correctOctaveError(
       if (fftData[i] > superPeak) superPeak = fftData[i];
     }
     
-    // Si la super-octava es mucho más fuerte (>12 dB), probablemente es la fundamental real
     if (superPeak > detectedPeak + 12) {
       return superOctaveFreq;
     }
@@ -281,7 +267,6 @@ function estimateInharmonicity(
   
   const binResolution = sampleRate / (fftData.length * 2);
   
-  // Para frecuencias altas (> 1000 Hz): método directo f2/f1
   if (fundamentalFreq > 1000) {
     const f2Expected = 2 * fundamentalFreq;
     const searchStart = Math.max(0, Math.round(f2Expected * 0.98 / binResolution));
@@ -303,7 +288,6 @@ function estimateInharmonicity(
     return Math.max(0, B);
   }
   
-  // Para frecuencias medias/bajas: minimización de entropía de Renyi
   const expectedB = getExpectedInharmonicity(fundamentalFreq);
   const N = Math.round(4 * (8 - Math.log(fundamentalFreq)));
   const R = 80;
@@ -362,9 +346,6 @@ function estimateInharmonicity(
 
 // ─── Detección de Batidos (Unísono) ─────────────────────────────────────────
 
-/**
- * Detecta la frecuencia de batido en la envolvente de amplitud.
- */
 function detectBeatFrequency(buffer: Float32Array, sampleRate: number): number | null {
   const blockSize = 64;
   const envelopeLength = Math.floor(buffer.length / blockSize);
@@ -458,20 +439,24 @@ export class TunerAudioEngine {
   private useWorklet: boolean = false;
   private detectBeats: boolean = false;
   
-  // [NEW] Bandpass filter nodes
+  // Bandpass filter nodes
   private highpassFilter: BiquadFilterNode | null = null;
   private lowpassFilter: BiquadFilterNode | null = null;
   
-  // [NEW] EMA (Exponential Moving Average) state
+  // EMA (Exponential Moving Average) state
   private emaFrequency: number = 0;
   private emaCents: number = 0;
   private emaInitialized: boolean = false;
   private emaStableCount: number = 0;
-  private readonly EMA_STABLE_THRESHOLD = 4; // Frames needed to consider stable
+  private readonly EMA_STABLE_THRESHOLD = 4;
   
   // Median smoothing for raw frequency
   private lastFrequencies: number[] = [];
   private readonly SMOOTHING_WINDOW = 5;
+
+  // Diagnostic counters
+  private frameCount: number = 0;
+  private lastLogTime: number = 0;
 
   constructor(config?: Partial<TunerEngineConfig>) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -479,65 +464,73 @@ export class TunerAudioEngine {
 
   /**
    * Inicia la captura de audio y la detección de pitch.
+   * STRATEGY: Always start with AnalyserNode + requestAnimationFrame (reliable).
+   * Then optionally try AudioWorklet as an upgrade.
    */
   async start(callback: TunerEngineCallback): Promise<void> {
     this.callback = callback;
-    console.log('[TunerEngine] start() called');
+    this.frameCount = 0;
+    this.lastLogTime = Date.now();
+    console.log('[TunerEngine] start() called — v4 fallback-first strategy');
     
     try {
-      // Solicitar acceso al micrófono con configuración óptima
+      // Step 1: Request microphone access
       console.log('[TunerEngine] Requesting microphone access...');
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: false,
           noiseSuppression: false,
           autoGainControl: false,
-          sampleRate: this.config.sampleRate,
         } as any,
       });
       
-      console.log('[TunerEngine] Microphone access granted, tracks:', this.mediaStream.getAudioTracks().length);
+      const tracks = this.mediaStream.getAudioTracks();
+      console.log('[TunerEngine] Microphone granted. Tracks:', tracks.length, 
+        'Settings:', JSON.stringify(tracks[0]?.getSettings()));
       
-      // Crear contexto de audio
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({
-        sampleRate: this.config.sampleRate,
-      });
+      // Step 2: Create AudioContext (use browser's default sample rate for compatibility)
+      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const actualSampleRate = this.audioContext.sampleRate;
+      console.log('[TunerEngine] AudioContext created. SampleRate:', actualSampleRate, 'State:', this.audioContext.state);
       
-      // Crear nodo fuente desde el micrófono
+      // Resume context if suspended (Chrome autoplay policy)
+      if (this.audioContext.state === 'suspended') {
+        console.log('[TunerEngine] AudioContext suspended, resuming...');
+        await this.audioContext.resume();
+        console.log('[TunerEngine] AudioContext resumed. State:', this.audioContext.state);
+      }
+      
+      // Step 3: Create source node from microphone
       this.sourceNode = this.audioContext.createMediaStreamSource(this.mediaStream);
       
-      // [NEW] Crear filtros passa-banda para eliminar ruido fuera del rango del piano
+      // Step 4: Optional bandpass filter
       let lastNode: AudioNode = this.sourceNode;
       
       if (this.config.useBandpassFilter) {
-        // Highpass filter: elimina frecuencias por debajo de 26 Hz (rumble, vibración)
         this.highpassFilter = this.audioContext.createBiquadFilter();
         this.highpassFilter.type = 'highpass';
         this.highpassFilter.frequency.setValueAtTime(PIANO_FREQ_LOW, this.audioContext.currentTime);
         this.highpassFilter.Q.setValueAtTime(0.7, this.audioContext.currentTime);
         
-        // Lowpass filter: elimina frecuencias por encima de 4300 Hz (ruido eléctrico, sibilancia)
         this.lowpassFilter = this.audioContext.createBiquadFilter();
         this.lowpassFilter.type = 'lowpass';
-        // Use 5000 Hz to preserve harmonics needed for YIN detection
         this.lowpassFilter.frequency.setValueAtTime(5000, this.audioContext.currentTime);
         this.lowpassFilter.Q.setValueAtTime(0.7, this.audioContext.currentTime);
         
-        // Cadena: micrófono → highpass → lowpass
         lastNode.connect(this.highpassFilter);
         this.highpassFilter.connect(this.lowpassFilter);
         lastNode = this.lowpassFilter;
       }
       
-      // Crear nodo analizador para FFT (espectrograma)
+      // Step 5: Create AnalyserNode for FFT data AND time-domain data
       this.analyserNode = this.audioContext.createAnalyser();
       this.analyserNode.fftSize = this.config.fftSize;
       this.analyserNode.smoothingTimeConstant = 0.3;
       
-      // Conectar: [filtros] → analizador
+      // Connect: [filters] → analyser
       lastNode.connect(this.analyserNode);
       
-      // Set isRunning BEFORE starting audio processing (worklet or fallback)
+      // Step 6: Set running state
       this.isRunning = true;
       this.lastFrequencies = [];
       this.emaFrequency = 0;
@@ -545,42 +538,83 @@ export class TunerAudioEngine {
       this.emaInitialized = false;
       this.emaStableCount = 0;
       
-      // Intentar usar AudioWorklet (thread dedicado)
-      try {
-        this.workletBlobURL = createWorkletBlobURL();
-        await this.audioContext.audioWorklet.addModule(this.workletBlobURL);
-        
-        this.workletNode = new AudioWorkletNode(this.audioContext, 'tuner-processor');
-        this.workletNode.port.onmessage = (event) => {
-          if (event.data.type === 'buffer') {
-            this.processBuffer(new Float32Array(event.data.buffer), event.data.sampleRate);
-          }
-        };
-        
-        // Configurar tamaño de buffer
-        this.workletNode.port.postMessage({
-          type: 'setBufferSize',
-          bufferSize: this.config.bufferSize,
-        });
-        
-        // Connect worklet to analyserNode output (after filters)
-        this.analyserNode.connect(this.workletNode);
-        this.workletNode.connect(this.audioContext.destination);
-        this.useWorklet = true;
-        console.log('[TunerEngine] AudioWorklet connected to analyserNode successfully');
-        
-      } catch (workletError) {
-        // Fallback a AnalyserNode + requestAnimationFrame
-        console.log('[TunerEngine] AudioWorklet failed, using fallback:', workletError);
-        this.useWorklet = false;
-        this.timeBuffer = new Float32Array(this.analyserNode.fftSize);
-        this.freqBuffer = new Float32Array(this.analyserNode.frequencyBinCount);
-        this.processAudioFallback();
-      }
+      // Step 7: ALWAYS start the fallback (AnalyserNode + rAF) — this is our PRIMARY method
+      this.timeBuffer = new Float32Array(this.config.bufferSize);
+      this.freqBuffer = new Float32Array(this.analyserNode.frequencyBinCount);
+      console.log('[TunerEngine] Starting PRIMARY audio loop (AnalyserNode + rAF). BufferSize:', this.config.bufferSize, 'FFT bins:', this.analyserNode.frequencyBinCount);
+      this.processAudioFallback();
+      
+      // Step 8: Optionally try AudioWorklet as upgrade (non-blocking)
+      this.tryUpgradeToWorklet().catch((err) => {
+        console.log('[TunerEngine] Worklet upgrade skipped:', err?.message || err);
+      });
       
     } catch (error) {
-      console.error('Error al iniciar el motor de audio:', error);
+      console.error('[TunerEngine] Error starting audio:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Try to upgrade to AudioWorklet for lower latency.
+   * If this fails or doesn't produce data, the fallback keeps running.
+   */
+  private async tryUpgradeToWorklet(): Promise<void> {
+    if (!this.audioContext || !this.analyserNode) return;
+    
+    try {
+      this.workletBlobURL = createWorkletBlobURL();
+      await this.audioContext.audioWorklet.addModule(this.workletBlobURL);
+      
+      this.workletNode = new AudioWorkletNode(this.audioContext, 'tuner-processor');
+      
+      let workletReceivedData = false;
+      
+      this.workletNode.port.onmessage = (event) => {
+        if (event.data.type === 'buffer') {
+          workletReceivedData = true;
+          // Only use worklet data if we've confirmed it works
+          if (this.useWorklet) {
+            this.processBuffer(new Float32Array(event.data.buffer), event.data.sampleRate);
+          }
+        }
+      };
+      
+      this.workletNode.port.postMessage({
+        type: 'setBufferSize',
+        bufferSize: this.config.bufferSize,
+      });
+      
+      this.analyserNode.connect(this.workletNode);
+      this.workletNode.connect(this.audioContext.destination);
+      
+      console.log('[TunerEngine] AudioWorklet loaded, waiting 2s to verify data flow...');
+      
+      // Wait 2 seconds to verify the worklet actually sends data
+      await new Promise<void>((resolve) => setTimeout(resolve, 2000));
+      
+      if (workletReceivedData && this.isRunning) {
+        // Worklet is working! Switch to it and stop the fallback loop
+        this.useWorklet = true;
+        if (this.animationFrameId !== null) {
+          cancelAnimationFrame(this.animationFrameId);
+          this.animationFrameId = null;
+        }
+        console.log('[TunerEngine] ✅ Upgraded to AudioWorklet (lower latency)');
+      } else {
+        // Worklet didn't send data — keep using fallback
+        console.log('[TunerEngine] ⚠️ AudioWorklet loaded but no data received. Keeping fallback.');
+        if (this.workletNode) {
+          this.workletNode.disconnect();
+          this.workletNode = null;
+        }
+      }
+    } catch (err) {
+      console.log('[TunerEngine] AudioWorklet not available:', err);
+      if (this.workletBlobURL) {
+        URL.revokeObjectURL(this.workletBlobURL);
+        this.workletBlobURL = null;
+      }
     }
   }
 
@@ -638,6 +672,8 @@ export class TunerAudioEngine {
     
     this.analyserNode = null;
     this.callback = null;
+    this.useWorklet = false;
+    console.log('[TunerEngine] Stopped. Processed', this.frameCount, 'frames total.');
   }
 
   /**
@@ -676,8 +712,7 @@ export class TunerAudioEngine {
   }
 
   /**
-   * [NEW] Aplica EMA (Exponential Moving Average) a la frecuencia y cents.
-   * Esto estabiliza las lecturas sin añadir latencia perceptible.
+   * Aplica EMA (Exponential Moving Average) a la frecuencia y cents.
    */
   private applyEMA(frequency: number, centsDeviation: number): { frequency: number; centsDeviation: number; isStable: boolean } {
     const alpha = this.config.emaSmoothingFactor;
@@ -686,24 +721,24 @@ export class TunerAudioEngine {
       this.emaFrequency = frequency;
       this.emaCents = centsDeviation;
       this.emaInitialized = true;
-      this.emaStableCount = 0;
       return { frequency, centsDeviation, isStable: false };
     }
     
-    // Si la nota cambia drásticamente (más de 50 cents), resetear EMA
-    const centsDiff = Math.abs(frequencyToCents(this.emaFrequency, frequency));
-    if (centsDiff > 50) {
+    // Check if frequency jumped significantly (new note)
+    const freqRatio = frequency / this.emaFrequency;
+    if (freqRatio > 1.06 || freqRatio < 0.94) {
+      // New note detected — reset EMA
       this.emaFrequency = frequency;
       this.emaCents = centsDeviation;
       this.emaStableCount = 0;
       return { frequency, centsDeviation, isStable: false };
     }
     
-    // Aplicar EMA
+    // Apply EMA
     this.emaFrequency = alpha * this.emaFrequency + (1 - alpha) * frequency;
     this.emaCents = alpha * this.emaCents + (1 - alpha) * centsDeviation;
     
-    // Determinar estabilidad
+    // Determine stability
     if (Math.abs(centsDeviation - this.emaCents) < 1.5) {
       this.emaStableCount = Math.min(this.emaStableCount + 1, this.EMA_STABLE_THRESHOLD + 5);
     } else {
@@ -724,16 +759,22 @@ export class TunerAudioEngine {
    */
   private processBuffer(buffer: Float32Array, sampleRate: number): void {
     if (!this.isRunning || !this.callback) {
-      console.log('[TunerEngine] processBuffer skipped: isRunning=', this.isRunning, 'callback=', !!this.callback);
       return;
     }
     
+    this.frameCount++;
+    const now = Date.now();
+    
     const rmsLevel = calculateRMS(buffer);
+    
+    // Diagnostic logging every 2 seconds
+    if (now - this.lastLogTime > 2000) {
+      console.log(`[TunerEngine] Status: frames=${this.frameCount}, rms=${rmsLevel.toFixed(6)}, gate=${this.config.noiseGateThreshold}, worklet=${this.useWorklet}`);
+      this.lastLogTime = now;
+    }
     
     // Noise gate
     if (rmsLevel < this.config.noiseGateThreshold) {
-      // Log every 60 frames to avoid spam
-      if (Math.random() < 0.02) console.log('[TunerEngine] Below noise gate: rms=', rmsLevel.toFixed(6), 'threshold=', this.config.noiseGateThreshold);
       this.callback({
         frequency: 0,
         confidence: 0,
@@ -753,11 +794,10 @@ export class TunerAudioEngine {
       return;
     }
     
-    // Detección de pitch con YIN
+    // Pitch detection with YIN
     const { frequency: rawFrequency, confidence } = yinDetectPitch(buffer, sampleRate);
-    if (Math.random() < 0.05) console.log('[TunerEngine] YIN result: freq=', rawFrequency.toFixed(1), 'confidence=', confidence.toFixed(3), 'rms=', rmsLevel.toFixed(6));
     
-    // Obtener datos FFT del analyser
+    // Get FFT data from analyser
     let fftData: Float32Array | null = null;
     if (this.analyserNode) {
       const freqBuf = new Float32Array(this.analyserNode.frequencyBinCount);
@@ -765,8 +805,13 @@ export class TunerAudioEngine {
       fftData = freqBuf;
     }
     
-    if (rawFrequency <= 0 || confidence < 0.5) {
-      if (Math.random() < 0.05) console.log('[TunerEngine] Rejected: freq=', rawFrequency.toFixed(1), 'confidence=', confidence.toFixed(3));
+    // Log detection results periodically
+    if (now - this.lastLogTime < 100 && rawFrequency > 0) {
+      console.log(`[TunerEngine] YIN: freq=${rawFrequency.toFixed(1)} conf=${confidence.toFixed(3)} rms=${rmsLevel.toFixed(4)}`);
+    }
+    
+    // Accept detections with confidence >= 0.3 (lowered from 0.5)
+    if (rawFrequency <= 0 || confidence < 0.3) {
       this.callback({
         frequency: 0,
         confidence,
@@ -783,7 +828,7 @@ export class TunerAudioEngine {
       return;
     }
     
-    // [NEW] Corrección de octava usando análisis de parciales FFT
+    // Octave correction using FFT partial analysis
     let correctedFrequency = rawFrequency;
     if (this.config.useOctaveCorrection && fftData) {
       correctedFrequency = correctOctaveError(
@@ -794,7 +839,7 @@ export class TunerAudioEngine {
       );
     }
     
-    // Suavizado de frecuencia (mediana móvil)
+    // Frequency smoothing (moving median)
     this.lastFrequencies.push(correctedFrequency);
     if (this.lastFrequencies.length > this.SMOOTHING_WINDOW) {
       this.lastFrequencies.shift();
@@ -803,7 +848,7 @@ export class TunerAudioEngine {
     const sortedFreqs = [...this.lastFrequencies].sort((a, b) => a - b);
     const medianFrequency = sortedFreqs[Math.floor(sortedFreqs.length / 2)];
     
-    // Encontrar la tecla más cercana
+    // Find nearest key
     const keyIndex = findNearestKey(medianFrequency, this.config.concertPitch);
     
     if (keyIndex < 0 || keyIndex >= TOTAL_KEYS) {
@@ -823,17 +868,17 @@ export class TunerAudioEngine {
       return;
     }
     
-    // Calcular frecuencia objetivo
+    // Calculate target frequency
     const targetFrequency = this.config.useStretchTuning
       ? getStretchedFrequency(keyIndex, this.config.concertPitch)
       : getEqualTemperamentFrequency(keyIndex, this.config.concertPitch);
     
     const rawCentsDeviation = frequencyToCents(targetFrequency, medianFrequency);
     
-    // [NEW] Aplicar EMA para estabilizar la lectura
+    // Apply EMA for stable readings
     const ema = this.applyEMA(medianFrequency, rawCentsDeviation);
     
-    // Estimar inharmonicidad
+    // Estimate inharmonicity
     let inharmonicity: number | null = null;
     if (fftData) {
       try {
@@ -845,7 +890,7 @@ export class TunerAudioEngine {
       } catch {}
     }
     
-    // Detección de batidos (si está activada)
+    // Beat detection (if enabled)
     let beatFrequency: number | null = null;
     if (this.detectBeats) {
       try {
@@ -869,15 +914,30 @@ export class TunerAudioEngine {
   }
 
   /**
-   * Fallback: procesamiento via AnalyserNode + requestAnimationFrame
+   * PRIMARY audio processing: AnalyserNode + requestAnimationFrame.
+   * This is the most reliable method across all browsers.
    */
   private processAudioFallback = (): void => {
-    if (!this.isRunning || !this.analyserNode || !this.timeBuffer || !this.callback) {
+    if (!this.isRunning || !this.analyserNode || !this.callback) {
       return;
     }
     
-    this.analyserNode.getFloatTimeDomainData(this.timeBuffer);
-    this.processBuffer(this.timeBuffer, this.audioContext!.sampleRate);
+    // Use a buffer size that matches our config for YIN accuracy
+    if (!this.timeBuffer || this.timeBuffer.length !== this.config.bufferSize) {
+      this.timeBuffer = new Float32Array(this.config.bufferSize);
+    }
+    
+    // getFloatTimeDomainData fills the buffer with time-domain audio samples
+    // The buffer size is limited by analyserNode.fftSize, so we need to ensure
+    // our buffer doesn't exceed it
+    const readSize = Math.min(this.config.bufferSize, this.analyserNode.fftSize);
+    const readBuffer = new Float32Array(readSize);
+    this.analyserNode.getFloatTimeDomainData(readBuffer);
+    
+    // Process the audio data
+    this.processBuffer(readBuffer, this.audioContext!.sampleRate);
+    
+    // Schedule next frame
     this.animationFrameId = requestAnimationFrame(this.processAudioFallback);
   };
 }
