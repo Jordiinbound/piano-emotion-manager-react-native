@@ -303,6 +303,9 @@ export function TunerProvider({ children }: { children: ReactNode }) {
   }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.meterRange, state.showFrequency, state.showInharmonicity, state.autoDetect, state.showSpectrogram, state.showRailsback, state.featureToggles]);
 
   const handleDetection = useCallback((result: PitchDetectionResult) => {
+    if (result.frequency > 0 && Math.random() < 0.1) {
+      console.log('[TunerContext] Detection: freq=', result.frequency.toFixed(1), 'key=', result.keyIndex, 'cents=', result.centsDeviation.toFixed(1), 'rms=', result.rmsLevel.toFixed(4));
+    }
     dispatch({ type: 'SET_DETECTION', payload: result });
   }, []);
 

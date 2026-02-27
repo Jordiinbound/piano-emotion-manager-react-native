@@ -87,7 +87,7 @@ export type TunerEngineCallback = (result: PitchDetectionResult) => void;
 const DEFAULT_CONFIG: TunerEngineConfig = {
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
-  noiseGateThreshold: 0.008,
+  noiseGateThreshold: 0.003,
   bufferSize: 4096,
   sampleRate: 44100,
   fftSize: 8192,
@@ -482,9 +482,11 @@ export class TunerAudioEngine {
    */
   async start(callback: TunerEngineCallback): Promise<void> {
     this.callback = callback;
+    console.log('[TunerEngine] start() called');
     
     try {
       // Solicitar acceso al micrófono con configuración óptima
+      console.log('[TunerEngine] Requesting microphone access...');
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: false,
@@ -493,6 +495,8 @@ export class TunerAudioEngine {
           sampleRate: this.config.sampleRate,
         } as any,
       });
+      
+      console.log('[TunerEngine] Microphone access granted, tracks:', this.mediaStream.getAudioTracks().length);
       
       // Crear contexto de audio
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({
@@ -515,7 +519,8 @@ export class TunerAudioEngine {
         // Lowpass filter: elimina frecuencias por encima de 4300 Hz (ruido eléctrico, sibilancia)
         this.lowpassFilter = this.audioContext.createBiquadFilter();
         this.lowpassFilter.type = 'lowpass';
-        this.lowpassFilter.frequency.setValueAtTime(PIANO_FREQ_HIGH, this.audioContext.currentTime);
+        // Use 5000 Hz to preserve harmonics needed for YIN detection
+        this.lowpassFilter.frequency.setValueAtTime(5000, this.audioContext.currentTime);
         this.lowpassFilter.Q.setValueAtTime(0.7, this.audioContext.currentTime);
         
         // Cadena: micrófono → highpass → lowpass
@@ -531,6 +536,14 @@ export class TunerAudioEngine {
       
       // Conectar: [filtros] → analizador
       lastNode.connect(this.analyserNode);
+      
+      // Set isRunning BEFORE starting audio processing (worklet or fallback)
+      this.isRunning = true;
+      this.lastFrequencies = [];
+      this.emaFrequency = 0;
+      this.emaCents = 0;
+      this.emaInitialized = false;
+      this.emaStableCount = 0;
       
       // Intentar usar AudioWorklet (thread dedicado)
       try {
@@ -550,24 +563,20 @@ export class TunerAudioEngine {
           bufferSize: this.config.bufferSize,
         });
         
-        lastNode.connect(this.workletNode);
+        // Connect worklet to analyserNode output (after filters)
+        this.analyserNode.connect(this.workletNode);
         this.workletNode.connect(this.audioContext.destination);
         this.useWorklet = true;
+        console.log('[TunerEngine] AudioWorklet connected to analyserNode successfully');
         
-      } catch {
+      } catch (workletError) {
         // Fallback a AnalyserNode + requestAnimationFrame
+        console.log('[TunerEngine] AudioWorklet failed, using fallback:', workletError);
         this.useWorklet = false;
         this.timeBuffer = new Float32Array(this.analyserNode.fftSize);
         this.freqBuffer = new Float32Array(this.analyserNode.frequencyBinCount);
         this.processAudioFallback();
       }
-      
-      this.isRunning = true;
-      this.lastFrequencies = [];
-      this.emaFrequency = 0;
-      this.emaCents = 0;
-      this.emaInitialized = false;
-      this.emaStableCount = 0;
       
     } catch (error) {
       console.error('Error al iniciar el motor de audio:', error);
@@ -714,12 +723,17 @@ export class TunerAudioEngine {
    * Procesa un buffer de audio (llamado desde AudioWorklet o fallback).
    */
   private processBuffer(buffer: Float32Array, sampleRate: number): void {
-    if (!this.isRunning || !this.callback) return;
+    if (!this.isRunning || !this.callback) {
+      console.log('[TunerEngine] processBuffer skipped: isRunning=', this.isRunning, 'callback=', !!this.callback);
+      return;
+    }
     
     const rmsLevel = calculateRMS(buffer);
     
     // Noise gate
     if (rmsLevel < this.config.noiseGateThreshold) {
+      // Log every 60 frames to avoid spam
+      if (Math.random() < 0.02) console.log('[TunerEngine] Below noise gate: rms=', rmsLevel.toFixed(6), 'threshold=', this.config.noiseGateThreshold);
       this.callback({
         frequency: 0,
         confidence: 0,
@@ -741,6 +755,7 @@ export class TunerAudioEngine {
     
     // Detección de pitch con YIN
     const { frequency: rawFrequency, confidence } = yinDetectPitch(buffer, sampleRate);
+    if (Math.random() < 0.05) console.log('[TunerEngine] YIN result: freq=', rawFrequency.toFixed(1), 'confidence=', confidence.toFixed(3), 'rms=', rmsLevel.toFixed(6));
     
     // Obtener datos FFT del analyser
     let fftData: Float32Array | null = null;
@@ -750,7 +765,8 @@ export class TunerAudioEngine {
       fftData = freqBuf;
     }
     
-    if (rawFrequency <= 0 || confidence < 0.75) {
+    if (rawFrequency <= 0 || confidence < 0.5) {
+      if (Math.random() < 0.05) console.log('[TunerEngine] Rejected: freq=', rawFrequency.toFixed(1), 'confidence=', confidence.toFixed(3));
       this.callback({
         frequency: 0,
         confidence,
