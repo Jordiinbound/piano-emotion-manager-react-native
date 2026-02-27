@@ -27,6 +27,7 @@ const CATEGORIES = [
       { key: 'shop', icon: 'cart.fill', label: 'Tienda', color: '#52a67d', tier: 'free' as PlanTier },
       { key: 'calendar_adv', icon: 'calendar.badge.clock', label: 'Calendario+', color: '#9b7fc9', tier: 'free' as PlanTier },
       { key: 'dashboard_editor', icon: 'square.grid.2x2', label: 'Dashboard+', color: '#e07a5f', tier: 'free' as PlanTier },
+      { key: 'tuner', icon: 'tuningfork', label: 'Afinador', color: '#1B6B93', tier: 'free' as PlanTier },
       { key: 'modules', icon: 'creditcard.fill', label: 'Gestionar Plan', color: '#9b7fc9', tier: 'free' as PlanTier },
     ],
   },
@@ -70,6 +71,7 @@ const ROUTE_MAP: Record<string, string> = {
   payments: '/payment-settings',
   dashboard_editor: '/dashboard-editor',
   predictions: '/predictions',
+  tuner: '/tuner',
 };
 
 // Información de planes para el modal

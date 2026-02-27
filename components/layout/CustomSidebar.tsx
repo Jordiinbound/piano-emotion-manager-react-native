@@ -47,6 +47,7 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: 'HERRAMIENTAS',
     items: [
+      { id: 'afinador', label: 'Afinador', icon: 'ear-outline', route: '/tuner' },
       { id: 'accesos', label: 'Accesos Rápidos', icon: 'flash-outline', route: '/(drawer)/quick-access' },
       { id: 'herramientas', label: 'Herramientas Avanzadas', icon: 'build-outline', route: '/(drawer)/advanced-tools' },
       { id: 'configuracion', label: 'Configuración', icon: 'cog-outline', route: '/(drawer)/settings' },
