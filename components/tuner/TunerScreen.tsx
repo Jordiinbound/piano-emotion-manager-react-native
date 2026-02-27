@@ -48,6 +48,8 @@ import { SpinnerDisplay } from './SpinnerDisplay';
 import { PhaseDisplay } from './PhaseDisplay';
 import { TuningModes } from './TuningModes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLanguage } from '@/contexts/language-context';
+import { getTunerTranslation } from '@/locales/tuner-translations';
 import {
   getFullNoteName,
   getNoteName,
@@ -84,56 +86,57 @@ interface ToolCategory {
   tools: ToolItem[];
 }
 
-const TOOL_CATEGORIES: ToolCategory[] = [
-  {
-    id: 'tuning',
-    title: 'Afinación',
-    icon: 'radio',
-    tools: [
-      { id: 'tuner', label: 'Afinador', icon: 'radio-outline', description: 'Medidor de afinación en tiempo real' },
-      { id: 'guided', label: 'Guiada', icon: 'navigate-outline', description: 'Asistente paso a paso' },
-      { id: 'toneGen', label: 'Tono Ref.', icon: 'volume-high-outline', description: 'Generador de tonos' },
-      { id: 'temperament', label: 'Temperamento', icon: 'musical-notes-outline', description: 'Temperamentos históricos' },
-      { id: 'tuningModes', label: 'Modes', icon: 'options-outline', description: 'Concert/Studio/Practice/Historic' },
-      { id: 'overpull', label: 'Overpull', icon: 'push-outline', description: 'Compensació pitch-raise' },
-      { id: 'auralChecks', label: 'Aural', icon: 'ear-outline', description: 'Beat rates intervals' },
-    ],
-  },
-  {
-    id: 'analysis',
-    title: 'Análisis',
-    icon: 'analytics',
-    tools: [
-      { id: 'spectrogram', label: 'Espectro', icon: 'pulse-outline', description: 'Espectrograma FFT' },
-      { id: 'railsback', label: 'Railsback', icon: 'analytics-outline', description: 'Curva de afinación' },
-      { id: 'heatmap', label: 'Mapa Calor', icon: 'grid-outline', description: 'Visión global 88 teclas' },
-      { id: 'unison', label: 'Unísono', icon: 'git-compare-outline', description: 'Detección de batidos' },
-      { id: 'multiString', label: 'Multi-corda', icon: 'layers-outline', description: 'Separar cuerdas unísono' },
-      { id: 'stringQuality', label: 'Cuerdas', icon: 'search-outline', description: 'Calidad de cuerdas' },
-      { id: 'stability', label: 'Estabilitat', icon: 'bar-chart-outline', description: 'Histograma estabilidad' },
-      { id: 'driftPrediction', label: 'Predicció', icon: 'trending-up-outline', description: 'Predicción de deriva' },
-      { id: 'multiPartial', label: 'Parcials', icon: 'cellular-outline', description: 'Anàlisi multi-parcial FFT' },
-      { id: 'partialWeighting', label: 'Pesos', icon: 'options-outline', description: 'Pesos parcials 2:1/4:2/4:1/6:3' },
-      { id: 'spinner', label: 'Spinner', icon: 'sync-outline', description: 'Display estroboscòpic' },
-      { id: 'phaseDisplay', label: 'Fase', icon: 'swap-horizontal-outline', description: 'Display de fase TuneLab' },
-    ],
-  },
-  {
-    id: 'config',
-    title: 'Configuración',
-    icon: 'construct',
-    tools: [
-      { id: 'calibration', label: 'Calibrar', icon: 'construct-outline', description: 'Inharmonicidad individual' },
-      { id: 'micCalibration', label: 'Micrófono', icon: 'mic-outline', description: 'Calibrar latencia' },
-      { id: 'profiles', label: 'Pianos', icon: 'albums-outline', description: 'Perfiles e historial' },
-      { id: 'report', label: 'Informe', icon: 'document-text-outline', description: 'Generar PDF' },
-      { id: 'shareReport', label: 'Compartir', icon: 'share-outline', description: 'Enviar informe' },
-    ],
-  },
-];
+function getToolCategories(ts: ReturnType<typeof getTunerTranslation>['tunerScreen']): ToolCategory[] {
+  return [
+    {
+      id: 'tuning',
+      title: ts.catTuning,
+      icon: 'radio',
+      tools: [
+        { id: 'tuner', label: ts.toolTuner, icon: 'radio-outline', description: ts.descTuner },
+        { id: 'guided', label: ts.toolGuided, icon: 'navigate-outline', description: ts.descGuided },
+        { id: 'toneGen', label: ts.toolToneRef, icon: 'volume-high-outline', description: ts.descToneRef },
+        { id: 'temperament', label: ts.toolTemperament, icon: 'musical-notes-outline', description: ts.descTemperament },
+        { id: 'tuningModes', label: ts.toolTuningModes, icon: 'options-outline', description: ts.descTuningModes },
+        { id: 'overpull', label: ts.toolOverpull, icon: 'push-outline', description: ts.descOverpull },
+        { id: 'auralChecks', label: ts.toolAuralChecks, icon: 'ear-outline', description: ts.descAuralChecks },
+      ],
+    },
+    {
+      id: 'analysis',
+      title: ts.catAnalysis,
+      icon: 'analytics',
+      tools: [
+        { id: 'spectrogram', label: ts.toolSpectrogram, icon: 'pulse-outline', description: ts.descSpectrogram },
+        { id: 'railsback', label: ts.toolRailsback, icon: 'analytics-outline', description: ts.descRailsback },
+        { id: 'heatmap', label: ts.toolHeatmap, icon: 'grid-outline', description: ts.descHeatmap },
+        { id: 'unison', label: ts.toolUnison, icon: 'git-compare-outline', description: ts.descUnison },
+        { id: 'multiString', label: ts.toolMultiString, icon: 'layers-outline', description: ts.descMultiString },
+        { id: 'stringQuality', label: ts.toolStringQuality, icon: 'search-outline', description: ts.descStringQuality },
+        { id: 'stability', label: ts.toolStability, icon: 'bar-chart-outline', description: ts.descStability },
+        { id: 'driftPrediction', label: ts.toolDriftPrediction, icon: 'trending-up-outline', description: ts.descDriftPrediction },
+        { id: 'multiPartial', label: ts.toolMultiPartial, icon: 'cellular-outline', description: ts.descMultiPartial },
+        { id: 'partialWeighting', label: ts.toolPartialWeighting, icon: 'options-outline', description: ts.descPartialWeighting },
+        { id: 'spinner', label: ts.toolSpinner, icon: 'sync-outline', description: ts.descSpinner },
+        { id: 'phaseDisplay', label: ts.toolPhaseDisplay, icon: 'swap-horizontal-outline', description: ts.descPhaseDisplay },
+      ],
+    },
+    {
+      id: 'config',
+      title: ts.catConfig,
+      icon: 'construct',
+      tools: [
+        { id: 'calibration', label: ts.toolCalibration, icon: 'construct-outline', description: ts.descCalibration },
+        { id: 'micCalibration', label: ts.toolMicCalibration, icon: 'mic-outline', description: ts.descMicCalibration },
+        { id: 'profiles', label: ts.toolProfiles, icon: 'albums-outline', description: ts.descProfiles },
+        { id: 'report', label: ts.toolReport, icon: 'document-text-outline', description: ts.descReport },
+        { id: 'shareReport', label: ts.toolShareReport, icon: 'share-outline', description: ts.descShareReport },
+      ],
+    },
+  ];
+}
 
-// Flat list for quick lookup
-const ALL_TOOLS = TOOL_CATEGORIES.flatMap(c => c.tools);
+// ALL_TOOLS is now computed inside TunerScreenContent using getToolCategories()
 
 // ─── Componente de menú responsive ──────────────────────────────────────────
 
@@ -142,11 +145,17 @@ function ToolMenu({
   onSelect,
   onSettings,
   width,
+  categories,
+  allTools,
+  fallbackLabel,
 }: {
   activeView: TunerViewMode;
   onSelect: (id: TunerViewMode) => void;
   onSettings: () => void;
   width: number;
+  categories: ToolCategory[];
+  allTools: ToolItem[];
+  fallbackLabel: string;
 }) {
   const surface = useThemeColor({}, 'surface');
   const border = useThemeColor({}, 'border');
@@ -158,10 +167,10 @@ function ToolMenu({
   const isWide = width >= 768;
   const iconSize = isCompact ? 18 : 20;
 
-  const activeTool = ALL_TOOLS.find(t => t.id === activeView);
+  const activeTool = allTools.find(t => t.id === activeView);
   
   // Find which category the active tool belongs to
-  const activeCategoryId = TOOL_CATEGORIES.find(c => c.tools.some(t => t.id === activeView))?.id ?? 'tuning';
+  const activeCategoryId = categories.find(c => c.tools.some(t => t.id === activeView))?.id ?? 'tuning';
 
   // On mobile: collapsed mode with category pills + expandable grid
   if (isCompact) {
@@ -175,7 +184,7 @@ function ToolMenu({
             color={TUNER_COLORS.primary}
           />
           <ThemedText style={[menuStyles.activeLabel, { color: TUNER_COLORS.primary }]} numberOfLines={1}>
-            {activeTool?.label ?? 'Afinador'}
+            {activeTool?.label ?? fallbackLabel}
           </ThemedText>
           <View style={{ flex: 1 }} />
           <Pressable
@@ -191,7 +200,7 @@ function ToolMenu({
 
         {/* Category pills - horizontal scrollable */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={menuStyles.categoryPillRow}>
-          {TOOL_CATEGORIES.map(category => {
+          {categories.map(category => {
             const isExpanded = expandedCategory === category.id;
             const isActiveCategory = activeCategoryId === category.id;
             return (
@@ -237,7 +246,7 @@ function ToolMenu({
         {/* Expanded category grid */}
         {expandedCategory && (
           <View style={[menuStyles.expandedGrid, { borderTopColor: border }]}>
-            {TOOL_CATEGORIES.find(c => c.id === expandedCategory)?.tools.map(tool => {
+            {categories.find(c => c.id === expandedCategory)?.tools.map(tool => {
               const isActive = activeView === tool.id;
               return (
                 <Pressable
@@ -300,7 +309,7 @@ function ToolMenu({
           color={TUNER_COLORS.primary}
         />
         <ThemedText style={[menuStyles.activeLabel, { color: TUNER_COLORS.primary }]}>
-          {activeTool?.label ?? 'Afinador'}
+          {activeTool?.label ?? fallbackLabel}
         </ThemedText>
         <View style={{ flex: 1 }} />
         <Pressable
@@ -319,7 +328,7 @@ function ToolMenu({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={menuStyles.verticalGrid}
       >
-        {TOOL_CATEGORIES.map(category => (
+        {categories.map(category => (
           <View
             key={category.id}
             style={menuStyles.categoryBlock}
@@ -481,6 +490,11 @@ const TUTORIAL_SEEN_KEY = 'piano_tuner_tutorial_seen';
 const DARK_TUNING_KEY = 'piano_tuner_dark_mode';
 
 function TunerScreenContent() {
+  const { currentLanguage } = useLanguage();
+  const tt = getTunerTranslation(currentLanguage);
+  const ts = tt.tunerScreen;
+  const TOOL_CATEGORIES = useMemo(() => getToolCategories(ts), [currentLanguage]);
+  const ALL_TOOLS = useMemo(() => TOOL_CATEGORIES.flatMap(c => c.tools), [TOOL_CATEGORIES]);
   const {
     state,
     startListening,
@@ -699,12 +713,12 @@ function TunerScreenContent() {
   // ─── Feature toggles panel ───
   if (showFeatureToggles) {
     const toggleItems: { key: keyof typeof state.featureToggles; label: string; description: string }[] = [
-      { key: 'proximityBeep', label: 'Beep de proximitat', description: 'So auditiu que accelera quan s\'acosta a l\'afinació correcta' },
-      { key: 'stabilityHistogram', label: 'Histograma d\'estabilitat', description: 'Mostra les últimes 10 lectures per nota' },
-      { key: 'heatmap', label: 'Mapa de calor', description: 'Visió global de les 88 tecles en colors' },
-      { key: 'multiString', label: 'Detecció multi-corda', description: 'Separa les freqüències de les cordes d\'un uníson' },
-      { key: 'driftPrediction', label: 'Predicció de deriva', description: 'Prediu quines notes es desafinaran primer' },
-      { key: 'fullscreen', label: 'Mode pantalla completa', description: 'Afinador immersiu sense distraccions' },
+      { key: 'proximityBeep', label: ts.toggleProximityBeep, description: ts.toggleProximityBeepDesc },
+      { key: 'stabilityHistogram', label: ts.toggleStabilityHistogram, description: ts.toggleStabilityHistogramDesc },
+      { key: 'heatmap', label: ts.toggleHeatmap, description: ts.toggleHeatmapDesc },
+      { key: 'multiString', label: ts.toggleMultiString, description: ts.toggleMultiStringDesc },
+      { key: 'driftPrediction', label: ts.toggleDriftPrediction, description: ts.toggleDriftPredictionDesc },
+      { key: 'fullscreen', label: ts.toggleFullscreen, description: ts.toggleFullscreenDesc },
     ];
 
     return (
@@ -717,13 +731,13 @@ function TunerScreenContent() {
             <Ionicons name="arrow-back" size={24} color={textColor} />
           </Pressable>
           <ThemedText style={[styles.featureToggleTitle, { color: textColor }]}>
-            Funcionalitats
+            {ts.features}
           </ThemedText>
           <View style={{ width: 40 }} />
         </View>
         <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
           <ThemedText style={[styles.featureToggleSubtitle, { color: textSecondary }]}>
-            Activa o desactiva les funcionalitats avançades del afinador.
+            {ts.featuresSubtitle}
           </ThemedText>
           {toggleItems.map(item => (
             <View key={item.key} style={[styles.featureToggleRow, { backgroundColor: surface, borderColor: border }]}>
@@ -756,6 +770,9 @@ function TunerScreenContent() {
         onSelect={handleToolSelect}
         onSettings={() => setShowSettings(true)}
         width={width}
+        categories={TOOL_CATEGORIES}
+        allTools={ALL_TOOLS}
+        fallbackLabel={ts.toolTuner}
       />
       
       <ScrollView
@@ -768,7 +785,7 @@ function TunerScreenContent() {
           <View style={styles.progressBadge}>
             <Ionicons name="musical-notes" size={14} color={TUNER_COLORS.primary} />
             <ThemedText style={[styles.progressText, { color: textSecondary }]}>
-              {tunedCount}/88 afinadas
+              {tunedCount}/88 {ts.tuned}
             </ThemedText>
           </View>
           
@@ -1277,7 +1294,7 @@ function TunerScreenContent() {
           >
             <Ionicons name="checkmark" size={18} color={isActive ? '#ffffff' : textSecondary} />
             <ThemedText style={[styles.saveButtonText, { color: isActive ? '#ffffff' : textSecondary }]}>
-              Guardar
+              {ts.save}
             </ThemedText>
           </Pressable>
           
@@ -1318,7 +1335,7 @@ function TunerScreenContent() {
               color="#ffffff"
             />
             <ThemedText style={styles.mainButtonText}>
-              {state.isListening ? 'Detener' : 'Iniciar afinación'}
+              {state.isListening ? ts.stop : ts.startTuning}
             </ThemedText>
           </Pressable>
         </View>
@@ -1328,7 +1345,7 @@ function TunerScreenContent() {
           <View style={styles.engineBadge}>
             <View style={[styles.engineDot, { backgroundColor: TUNER_COLORS.inTune }]} />
             <ThemedText style={[styles.engineText, { color: textSecondary }]}>
-              Motor de audio activo
+              {ts.audioActive}
             </ThemedText>
             <View style={{ flex: 1 }} />
             <Pressable
@@ -1350,7 +1367,7 @@ function TunerScreenContent() {
                 color={darkTuningMode ? '#FFD700' : textSecondary}
               />
               <ThemedText style={[styles.engineText, { color: darkTuningMode ? '#FFD700' : textSecondary }]}>
-                {darkTuningMode ? 'Modo oscuro' : 'Oscuro'}
+                {darkTuningMode ? ts.darkMode : ts.dark}
               </ThemedText>
             </Pressable>
           </View>
@@ -1392,13 +1409,13 @@ function TunerScreenContent() {
             <View style={styles.infoCardHeader}>
               <Ionicons name="information-circle-outline" size={16} color={textSecondary} />
               <ThemedText style={[styles.infoCardTitle, { color: textSecondary }]}>
-                {state.useStretchTuning ? 'Stretch Tuning activado' : 'Temperamento igual'}
+                {state.useStretchTuning ? ts.stretchTuningActive : ts.equalTemperament}
               </ThemedText>
             </View>
             <ThemedText style={[styles.infoCardBody, { color: textSecondary }]}>
               {state.useStretchTuning
-                ? 'Las frecuencias objetivo incluyen compensación de inharmonicidad (curva de Railsback). Recomendado para pianos acústicos.'
-                : 'Frecuencias de temperamento igual puro. Adecuado para referencia o instrumentos electrónicos.'}
+                ? ts.stretchTuningDesc
+                : ts.equalTemperamentDesc}
             </ThemedText>
           </View>
         )}
