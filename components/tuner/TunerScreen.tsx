@@ -154,8 +154,7 @@ function ToolMenu({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
-  const isCompact = width < 480;
-  const isMedium = width >= 480 && width < 768;
+  const isCompact = width < 768;
   const isWide = width >= 768;
   const iconSize = isCompact ? 18 : 20;
 
@@ -190,8 +189,8 @@ function ToolMenu({
           </Pressable>
         </View>
 
-        {/* Category pills */}
-        <View style={menuStyles.categoryPillRow}>
+        {/* Category pills - horizontal scrollable */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={menuStyles.categoryPillRow}>
           {TOOL_CATEGORIES.map(category => {
             const isExpanded = expandedCategory === category.id;
             const isActiveCategory = activeCategoryId === category.id;
@@ -233,7 +232,7 @@ function ToolMenu({
               </Pressable>
             );
           })}
-        </View>
+        </ScrollView>
 
         {/* Expanded category grid */}
         {expandedCategory && (
@@ -290,7 +289,7 @@ function ToolMenu({
     );
   }
 
-  // Medium and wide: horizontal scroll with categories
+  // Wide: full grid with categories and descriptions
   return (
     <View style={[menuStyles.container, { borderBottomColor: border }]}>
       {/* Active tool indicator */}
@@ -315,31 +314,22 @@ function ToolMenu({
         </Pressable>
       </View>
 
-      {/* Categories with tools */}
+      {/* Categories with tools - vertical grid for wide screens */}
       <ScrollView
-        horizontal={isMedium}
-        showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={
-          isMedium
-            ? menuStyles.horizontalScroll
-            : menuStyles.verticalGrid
-        }
+        contentContainerStyle={menuStyles.verticalGrid}
       >
         {TOOL_CATEGORIES.map(category => (
           <View
             key={category.id}
-            style={[
-              menuStyles.categoryBlock,
-              isMedium && menuStyles.categoryBlockHorizontal,
-            ]}
+            style={menuStyles.categoryBlock}
           >
             <ThemedText style={[menuStyles.categoryTitle, { color: textSecondary }]}>
               {category.title}
             </ThemedText>
             <View style={[
               menuStyles.toolsRow,
-              isWide && { flexWrap: 'wrap' },
+              { flexWrap: 'wrap' },
             ]}>
               {category.tools.map(tool => {
                 const isActive = activeView === tool.id;
@@ -350,7 +340,7 @@ function ToolMenu({
                     style={({ pressed }) => [
                       menuStyles.toolTile,
                       {
-                        width: isMedium ? 68 : 96,
+                        width: 96,
                         backgroundColor: isActive ? TUNER_COLORS.primary + '15' : surface,
                         borderColor: isActive ? TUNER_COLORS.primary : 'transparent',
                         opacity: pressed ? 0.7 : 1,
@@ -371,14 +361,12 @@ function ToolMenu({
                     >
                       {tool.label}
                     </ThemedText>
-                    {isWide && (
-                      <ThemedText
-                        style={[menuStyles.toolDesc, { color: textSecondary }]}
-                        numberOfLines={1}
-                      >
-                        {tool.description}
-                      </ThemedText>
-                    )}
+                    <ThemedText
+                      style={[menuStyles.toolDesc, { color: textSecondary }]}
+                      numberOfLines={1}
+                    >
+                      {tool.description}
+                    </ThemedText>
                   </Pressable>
                 );
               })}
