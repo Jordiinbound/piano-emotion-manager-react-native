@@ -138,15 +138,145 @@ function ToolMenu({
   const border = useThemeColor({}, 'border');
   const textColor = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const isCompact = width < 480;
   const isMedium = width >= 480 && width < 768;
   const isWide = width >= 768;
-  const showDescriptions = isWide;
-  const iconSize = isCompact ? 20 : 22;
+  const iconSize = isCompact ? 18 : 20;
 
   const activeTool = ALL_TOOLS.find(t => t.id === activeView);
+  
+  // Find which category the active tool belongs to
+  const activeCategoryId = TOOL_CATEGORIES.find(c => c.tools.some(t => t.id === activeView))?.id ?? 'tuning';
 
+  // On mobile: collapsed mode with category pills + expandable grid
+  if (isCompact) {
+    return (
+      <View style={[menuStyles.container, { borderBottomColor: border }]}>
+        {/* Active tool indicator */}
+        <View style={[menuStyles.activeIndicator, { backgroundColor: TUNER_COLORS.primary + '0D' }]}>
+          <Ionicons
+            name={(activeTool?.icon ?? 'radio-outline') as any}
+            size={16}
+            color={TUNER_COLORS.primary}
+          />
+          <ThemedText style={[menuStyles.activeLabel, { color: TUNER_COLORS.primary }]} numberOfLines={1}>
+            {activeTool?.label ?? 'Afinador'}
+          </ThemedText>
+          <View style={{ flex: 1 }} />
+          <Pressable
+            onPress={onSettings}
+            style={({ pressed }) => [
+              menuStyles.settingsBtn,
+              { backgroundColor: surface, opacity: pressed ? 0.7 : 1 },
+            ]}
+          >
+            <Ionicons name="settings-outline" size={16} color={textSecondary} />
+          </Pressable>
+        </View>
+
+        {/* Category pills */}
+        <View style={menuStyles.categoryPillRow}>
+          {TOOL_CATEGORIES.map(category => {
+            const isExpanded = expandedCategory === category.id;
+            const isActiveCategory = activeCategoryId === category.id;
+            return (
+              <Pressable
+                key={category.id}
+                onPress={() => setExpandedCategory(isExpanded ? null : category.id)}
+                style={({ pressed }) => [{
+                  flexDirection: 'row' as const,
+                  alignItems: 'center' as const,
+                  gap: 4,
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: 14,
+                  borderWidth: 1,
+                  backgroundColor: isExpanded ? TUNER_COLORS.primary + '15' : (isActiveCategory ? surface : 'transparent'),
+                  borderColor: isExpanded ? TUNER_COLORS.primary : (isActiveCategory ? border : 'transparent'),
+                  opacity: pressed ? 0.7 : 1,
+                }]}
+              >
+                <Ionicons
+                  name={category.icon as any}
+                  size={14}
+                  color={isExpanded ? TUNER_COLORS.primary : textSecondary}
+                />
+                <ThemedText style={{
+                  fontSize: 11,
+                  fontWeight: '600',
+                  fontFamily: 'Montserrat',
+                  color: isExpanded ? TUNER_COLORS.primary : textSecondary,
+                }}>
+                  {category.title}
+                </ThemedText>
+                <Ionicons
+                  name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                  size={12}
+                  color={isExpanded ? TUNER_COLORS.primary : textSecondary}
+                />
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {/* Expanded category grid */}
+        {expandedCategory && (
+          <View style={[menuStyles.expandedGrid, { borderTopColor: border }]}>
+            {TOOL_CATEGORIES.find(c => c.id === expandedCategory)?.tools.map(tool => {
+              const isActive = activeView === tool.id;
+              return (
+                <Pressable
+                  key={tool.id}
+                  onPress={() => {
+                    onSelect(tool.id);
+                    setExpandedCategory(null);
+                  }}
+                  style={({ pressed }) => [{
+                    flex: 1,
+                    minWidth: (width - 48) / 4 - 6,
+                    maxWidth: (width - 48) / 3 - 4,
+                    alignItems: 'center' as const,
+                    justifyContent: 'center' as const,
+                    paddingVertical: 10,
+                    paddingHorizontal: 4,
+                    borderRadius: 10,
+                    borderWidth: 1.5,
+                    gap: 3,
+                    backgroundColor: isActive ? TUNER_COLORS.primary + '15' : surface,
+                    borderColor: isActive ? TUNER_COLORS.primary : 'transparent',
+                    opacity: pressed ? 0.7 : 1,
+                  }]}
+                >
+                  <Ionicons
+                    name={tool.icon as any}
+                    size={iconSize}
+                    color={isActive ? TUNER_COLORS.primary : textSecondary}
+                  />
+                  <ThemedText
+                    style={{
+                      fontSize: 9,
+                      fontWeight: '600',
+                      fontFamily: 'Montserrat',
+                      lineHeight: 12,
+                      textAlign: 'center',
+                      color: isActive ? TUNER_COLORS.primary : textColor,
+                    }}
+                    numberOfLines={2}
+                  >
+                    {tool.label}
+                  </ThemedText>
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
+      </View>
+    );
+  }
+
+  // Medium and wide: horizontal scroll with categories
   return (
     <View style={[menuStyles.container, { borderBottomColor: border }]}>
       {/* Active tool indicator */}
@@ -173,11 +303,11 @@ function ToolMenu({
 
       {/* Categories with tools */}
       <ScrollView
-        horizontal={isCompact || isMedium}
+        horizontal={isMedium}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={
-          (isCompact || isMedium)
+          isMedium
             ? menuStyles.horizontalScroll
             : menuStyles.verticalGrid
         }
@@ -187,7 +317,7 @@ function ToolMenu({
             key={category.id}
             style={[
               menuStyles.categoryBlock,
-              (isCompact || isMedium) && menuStyles.categoryBlockHorizontal,
+              isMedium && menuStyles.categoryBlockHorizontal,
             ]}
           >
             <ThemedText style={[menuStyles.categoryTitle, { color: textSecondary }]}>
@@ -206,7 +336,7 @@ function ToolMenu({
                     style={({ pressed }) => [
                       menuStyles.toolTile,
                       {
-                        width: isCompact ? 64 : isMedium ? 72 : 100,
+                        width: isMedium ? 68 : 96,
                         backgroundColor: isActive ? TUNER_COLORS.primary + '15' : surface,
                         borderColor: isActive ? TUNER_COLORS.primary : 'transparent',
                         opacity: pressed ? 0.7 : 1,
@@ -222,13 +352,12 @@ function ToolMenu({
                       style={[
                         menuStyles.toolLabel,
                         { color: isActive ? TUNER_COLORS.primary : textColor },
-                        isCompact && { fontSize: 9 },
                       ]}
                       numberOfLines={1}
                     >
                       {tool.label}
                     </ThemedText>
-                    {showDescriptions && (
+                    {isWide && (
                       <ThemedText
                         style={[menuStyles.toolDesc, { color: textSecondary }]}
                         numberOfLines={1}
@@ -255,27 +384,43 @@ const menuStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
   activeLabel: {
     fontSize: 14,
     fontWeight: '700',
     fontFamily: 'Montserrat',
     lineHeight: 18,
+    flexShrink: 1,
   },
   settingsBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  categoryPillRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    paddingBottom: 8,
+    gap: 6,
+    flexWrap: 'wrap',
+  },
+  expandedGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 6,
+    borderTopWidth: 1,
   },
   horizontalScroll: {
     flexDirection: 'row',
     paddingHorizontal: 12,
     paddingBottom: 10,
-    gap: 16,
+    gap: 14,
   },
   verticalGrid: {
     flexDirection: 'row',
@@ -1173,8 +1318,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     marginBottom: 6,
+    flexWrap: 'wrap',
+    gap: 4,
   },
   progressBadge: {
     flexDirection: 'row',
@@ -1190,7 +1337,10 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
+    flexWrap: 'wrap',
+    flexShrink: 1,
+    justifyContent: 'flex-end',
   },
   modeBadge: {
     paddingHorizontal: 12,
