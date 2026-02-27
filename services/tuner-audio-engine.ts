@@ -91,7 +91,7 @@ const DEFAULT_CONFIG: TunerEngineConfig = {
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
   noiseGateThreshold: 0.0005, // Very low gate to catch even quiet signals
-  inputGain: 30, // 30x input amplification — browsers often deliver very low mic levels
+  inputGain: 8, // 8x input amplification — enough to boost low mic levels without clipping
   bufferSize: 4096,
   sampleRate: 44100,
   fftSize: 8192,
@@ -785,6 +785,19 @@ export class TunerAudioEngine {
     
     this.frameCount++;
     const now = Date.now();
+    
+    // Clipping protection: if gain causes samples > 1.0, normalize the buffer
+    let maxAbs = 0;
+    for (let i = 0; i < buffer.length; i++) {
+      const abs = Math.abs(buffer[i]);
+      if (abs > maxAbs) maxAbs = abs;
+    }
+    if (maxAbs > 1.0) {
+      const scale = 0.95 / maxAbs;
+      for (let i = 0; i < buffer.length; i++) {
+        buffer[i] *= scale;
+      }
+    }
     
     const rmsLevel = calculateRMS(buffer);
     
