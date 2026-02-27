@@ -14,3 +14,6 @@ export { PianoProfileManager } from './PianoProfileManager';
 export { StringQualityAnalyzer } from './StringQualityAnalyzer';
 export { MicCalibration } from './MicCalibration';
 export { TuningReportGenerator } from './TuningReportGenerator';
+export { VUMeter } from './VUMeter';
+export { AnimatedCentsGauge } from './AnimatedCentsGauge';
+export { TunerTutorial } from './TunerTutorial';

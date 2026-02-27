@@ -29,6 +29,10 @@ import { PianoProfileManager } from './PianoProfileManager';
 import { StringQualityAnalyzer } from './StringQualityAnalyzer';
 import { MicCalibration } from './MicCalibration';
 import { TuningReportGenerator } from './TuningReportGenerator';
+import { VUMeter } from './VUMeter';
+import { AnimatedCentsGauge } from './AnimatedCentsGauge';
+import { TunerTutorial } from './TunerTutorial';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getFullNoteName,
   getNoteName,
@@ -323,6 +327,9 @@ const menuStyles = StyleSheet.create({
 
 // ─── Componente interno (requiere TunerProvider) ─────────────────────────────
 
+const TUTORIAL_SEEN_KEY = 'piano_tuner_tutorial_seen';
+const DARK_TUNING_KEY = 'piano_tuner_dark_mode';
+
 function TunerScreenContent() {
   const {
     state,
@@ -341,6 +348,33 @@ function TunerScreenContent() {
   const { width } = useWindowDimensions();
   const [showSettings, setShowSettings] = useState(false);
   const [menuExpanded, setMenuExpanded] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [darkTuningMode, setDarkTuningMode] = useState(false);
+  
+  // Check if tutorial has been seen
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const seen = await AsyncStorage.getItem(TUTORIAL_SEEN_KEY);
+        if (!seen) setShowTutorial(true);
+        const darkMode = await AsyncStorage.getItem(DARK_TUNING_KEY);
+        if (darkMode === 'true') setDarkTuningMode(true);
+      } catch {}
+    })();
+  }, []);
+  
+  const handleTutorialComplete = useCallback(() => {
+    setShowTutorial(false);
+    AsyncStorage.setItem(TUTORIAL_SEEN_KEY, 'true').catch(() => {});
+  }, []);
+  
+  const toggleDarkTuningMode = useCallback(() => {
+    setDarkTuningMode(prev => {
+      const next = !prev;
+      AsyncStorage.setItem(DARK_TUNING_KEY, String(next)).catch(() => {});
+      return next;
+    });
+  }, []);
   
   const background = useThemeColor({}, 'background');
   const surface = useThemeColor({}, 'surface');
@@ -457,6 +491,16 @@ function TunerScreenContent() {
     return map;
   }, [state.measurements]);
   
+  // Show tutorial on first visit
+  if (showTutorial) {
+    return (
+      <TunerTutorial
+        onComplete={handleTutorialComplete}
+        onSkip={handleTutorialComplete}
+      />
+    );
+  }
+  
   if (showSettings) {
     return <TunerSettings onBack={() => setShowSettings(false)} />;
   }
@@ -513,23 +557,29 @@ function TunerScreenContent() {
         {/* ═══ Vista: Afinador principal ═══ */}
         {state.activeView === 'tuner' && (
           <>
-            {/* Nota detectada */}
-            <View style={styles.noteDisplay}>
-              <ThemedText style={[styles.noteName, { color: textColor }]}>
-                {noteName}
-              </ThemedText>
-              <ThemedText style={[styles.octaveNumber, { color: textSecondary }]}>
-                {octave}
-              </ThemedText>
-            </View>
+            {/* VU Meter - indicador de nivel de señal */}
+            {state.isListening && (
+              <View style={{ paddingHorizontal: 16, marginBottom: 8 }}>
+                <VUMeter
+                  rmsLevel={detection?.rmsLevel ?? 0}
+                  isListening={state.isListening}
+                  compact={false}
+                />
+              </View>
+            )}
             
-            {/* Medidor circular */}
+            {/* Medidor animado profesional */}
             <View style={styles.gaugeContainer}>
-              <CentsGauge
+              <AnimatedCentsGauge
                 centsDeviation={isActive ? centsDeviation : 0}
-                range={state.meterRange}
-                isActive={isActive}
-                size={gaugeSize}
+                keyIndex={activeKey}
+                frequency={detectedFreq}
+                targetFrequency={targetFreq}
+                confidence={detection?.confidence ?? 0}
+                meterRange={state.meterRange}
+                showFrequency={state.showFrequency}
+                isStable={detection?.isStable ?? false}
+                darkTuningMode={darkTuningMode}
               />
             </View>
             
@@ -820,15 +870,60 @@ function TunerScreenContent() {
           </Pressable>
         </View>
         
-        {/* Indicador de AudioWorklet */}
+        {/* Indicador de AudioWorklet + Dark mode toggle */}
         {state.isListening && (
           <View style={styles.engineBadge}>
             <View style={[styles.engineDot, { backgroundColor: TUNER_COLORS.inTune }]} />
             <ThemedText style={[styles.engineText, { color: textSecondary }]}>
               Motor de audio activo
             </ThemedText>
+            <View style={{ flex: 1 }} />
+            <Pressable
+              onPress={toggleDarkTuningMode}
+              style={({ pressed }) => [{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 4,
+                paddingHorizontal: 8,
+                paddingVertical: 4,
+                borderRadius: 8,
+                backgroundColor: darkTuningMode ? '#333' : surface,
+                opacity: pressed ? 0.7 : 1,
+              }]}
+            >
+              <Ionicons
+                name={darkTuningMode ? 'moon' : 'moon-outline'}
+                size={14}
+                color={darkTuningMode ? '#FFD700' : textSecondary}
+              />
+              <ThemedText style={[styles.engineText, { color: darkTuningMode ? '#FFD700' : textSecondary }]}>
+                {darkTuningMode ? 'Modo oscuro' : 'Oscuro'}
+              </ThemedText>
+            </Pressable>
           </View>
         )}
+        
+        {/* Tutorial button */}
+        <View style={{ alignItems: 'center', marginBottom: 4 }}>
+          <Pressable
+            onPress={() => setShowTutorial(true)}
+            style={({ pressed }) => [{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4,
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 8,
+              backgroundColor: surface,
+              opacity: pressed ? 0.7 : 1,
+            }]}
+          >
+            <Ionicons name="help-circle-outline" size={16} color={textSecondary} />
+            <ThemedText style={[styles.engineText, { color: textSecondary }]}>
+              Tutorial
+            </ThemedText>
+          </Pressable>
+        </View>
         
         {/* Error de audio */}
         {state.audioError && (

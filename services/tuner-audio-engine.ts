@@ -1,5 +1,5 @@
 /**
- * Tuner Audio Engine — Professional Grade
+ * Tuner Audio Engine — Professional Grade v3
  * 
  * Motor de audio para afinación de pianos usando Web Audio API.
  * Implementa:
@@ -9,6 +9,9 @@
  * - Detección de batidos para afinación de unísonos
  * - Generador de tonos de referencia con parciales inarmónicos
  * - Exposición de datos FFT para espectrograma en tiempo real
+ * - [NEW] Filtro passa-banda para eliminar ruido fora del rang del piano
+ * - [NEW] Mitjana mòbil exponencial (EMA) per estabilitzar lectures
+ * - [NEW] Correcció d'octava millorada per anàlisi de parcials
  * 
  * Algoritmos basados en:
  * - YIN: "YIN, a fundamental frequency estimator for speech and music" (JASA, 2002)
@@ -52,6 +55,8 @@ export interface PitchDetectionResult {
   actualSampleRate: number;
   /** Frecuencia de batido detectada (para modo unísono) */
   beatFrequency: number | null;
+  /** Indica si la lectura está estabilizada (EMA convergida) */
+  isStable: boolean;
 }
 
 export interface TunerEngineConfig {
@@ -67,6 +72,12 @@ export interface TunerEngineConfig {
   sampleRate: number;
   /** Tamaño FFT para espectrograma */
   fftSize: number;
+  /** Factor de suavizado EMA (0-1, más alto = más suave, más lento) */
+  emaSmoothingFactor: number;
+  /** Activar filtro passa-banda */
+  useBandpassFilter: boolean;
+  /** Activar corrección de octava */
+  useOctaveCorrection: boolean;
 }
 
 export type TunerEngineCallback = (result: PitchDetectionResult) => void;
@@ -80,7 +91,15 @@ const DEFAULT_CONFIG: TunerEngineConfig = {
   bufferSize: 4096,
   sampleRate: 44100,
   fftSize: 8192,
+  emaSmoothingFactor: 0.35,
+  useBandpassFilter: true,
+  useOctaveCorrection: true,
 };
+
+// ─── Piano frequency range ──────────────────────────────────────────────────
+
+const PIANO_FREQ_LOW = 26;    // Just below A0 (27.5 Hz)
+const PIANO_FREQ_HIGH = 4300; // Just above C8 (4186 Hz)
 
 // ─── Algoritmo YIN ───────────────────────────────────────────────────────────
 
@@ -162,6 +181,93 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
   const confidence = 1 - cmnd[bestTau];
   
   return { frequency, confidence: Math.max(0, Math.min(1, confidence)) };
+}
+
+// ─── Corrección de octava ───────────────────────────────────────────────────
+
+/**
+ * Corrige errores de octava analizando los parciales en el espectro FFT.
+ * YIN a veces detecta la 2a armónica en vez de la fundamental, especialmente
+ * en notas graves. Este corrector verifica si la frecuencia detectada tiene
+ * energía significativa a la mitad (sub-octava) y corrige si es necesario.
+ */
+function correctOctaveError(
+  detectedFreq: number,
+  fftData: Float32Array | null,
+  sampleRate: number,
+  fftSize: number
+): number {
+  if (!fftData || detectedFreq <= 0) return detectedFreq;
+  
+  const binResolution = sampleRate / fftSize;
+  
+  // Verificar sub-octava (frecuencia / 2)
+  const subOctaveFreq = detectedFreq / 2;
+  if (subOctaveFreq < PIANO_FREQ_LOW) return detectedFreq;
+  
+  const subOctaveBin = Math.round(subOctaveFreq / binResolution);
+  const detectedBin = Math.round(detectedFreq / binResolution);
+  
+  if (subOctaveBin < 1 || subOctaveBin >= fftData.length || detectedBin >= fftData.length) {
+    return detectedFreq;
+  }
+  
+  // Buscar el pico alrededor de la sub-octava (±3 bins)
+  const searchRadius = 3;
+  let subOctavePeak = -Infinity;
+  for (let i = Math.max(1, subOctaveBin - searchRadius); i <= Math.min(fftData.length - 1, subOctaveBin + searchRadius); i++) {
+    if (fftData[i] > subOctavePeak) subOctavePeak = fftData[i];
+  }
+  
+  // Buscar el pico alrededor de la frecuencia detectada
+  let detectedPeak = -Infinity;
+  for (let i = Math.max(1, detectedBin - searchRadius); i <= Math.min(fftData.length - 1, detectedBin + searchRadius); i++) {
+    if (fftData[i] > detectedPeak) detectedPeak = fftData[i];
+  }
+  
+  // Si la sub-octava tiene energía significativa (dentro de 15 dB del pico detectado),
+  // probablemente es la fundamental real
+  if (subOctavePeak > detectedPeak - 15) {
+    // Verificar también que hay energía en la 3a armónica de la sub-octava (3 * subOctaveFreq)
+    const thirdHarmonicFreq = subOctaveFreq * 3;
+    const thirdBin = Math.round(thirdHarmonicFreq / binResolution);
+    
+    if (thirdBin < fftData.length) {
+      let thirdPeak = -Infinity;
+      for (let i = Math.max(1, thirdBin - searchRadius); i <= Math.min(fftData.length - 1, thirdBin + searchRadius); i++) {
+        if (fftData[i] > thirdPeak) thirdPeak = fftData[i];
+      }
+      
+      // Si la 3a armónica de la sub-octava también tiene energía, confirmar corrección
+      if (thirdPeak > detectedPeak - 25) {
+        return subOctaveFreq;
+      }
+    }
+    
+    // Incluso sin la 3a armónica, si la sub-octava es muy fuerte, corregir
+    if (subOctavePeak > detectedPeak - 6) {
+      return subOctaveFreq;
+    }
+  }
+  
+  // Verificar super-octava: ¿YIN detectó la sub-armónica por error?
+  const superOctaveFreq = detectedFreq * 2;
+  if (superOctaveFreq > PIANO_FREQ_HIGH) return detectedFreq;
+  
+  const superBin = Math.round(superOctaveFreq / binResolution);
+  if (superBin < fftData.length) {
+    let superPeak = -Infinity;
+    for (let i = Math.max(1, superBin - searchRadius); i <= Math.min(fftData.length - 1, superBin + searchRadius); i++) {
+      if (fftData[i] > superPeak) superPeak = fftData[i];
+    }
+    
+    // Si la super-octava es mucho más fuerte (>12 dB), probablemente es la fundamental real
+    if (superPeak > detectedPeak + 12) {
+      return superOctaveFreq;
+    }
+  }
+  
+  return detectedFreq;
 }
 
 // ─── Estimación de Inharmonicidad ────────────────────────────────────────────
@@ -258,19 +364,12 @@ function estimateInharmonicity(
 
 /**
  * Detecta la frecuencia de batido en la envolvente de amplitud.
- * Los batidos se producen cuando dos cuerdas del mismo unísono están
- * ligeramente desafinadas entre sí. La frecuencia de batido = |f1 - f2|.
- * 
- * Método: Análisis de la envolvente de amplitud del audio.
- * 1. Calcular envolvente via rectificación + filtro paso bajo
- * 2. Aplicar YIN a la envolvente para detectar la frecuencia de modulación
  */
 function detectBeatFrequency(buffer: Float32Array, sampleRate: number): number | null {
   const blockSize = 64;
   const envelopeLength = Math.floor(buffer.length / blockSize);
   if (envelopeLength < 128) return null;
   
-  // Calcular envolvente de amplitud (RMS por bloques)
   const envelope = new Float32Array(envelopeLength);
   for (let i = 0; i < envelopeLength; i++) {
     let sum = 0;
@@ -282,13 +381,11 @@ function detectBeatFrequency(buffer: Float32Array, sampleRate: number): number |
     envelope[i] = Math.sqrt(sum / blockSize);
   }
   
-  // Remover DC de la envolvente
   let mean = 0;
   for (let i = 0; i < envelope.length; i++) mean += envelope[i];
   mean /= envelope.length;
   for (let i = 0; i < envelope.length; i++) envelope[i] -= mean;
   
-  // Suavizar la envolvente (filtro de media móvil)
   const smoothed = new Float32Array(envelope.length);
   const smoothWindow = 3;
   for (let i = smoothWindow; i < envelope.length - smoothWindow; i++) {
@@ -297,17 +394,14 @@ function detectBeatFrequency(buffer: Float32Array, sampleRate: number): number |
     smoothed[i] = s / (2 * smoothWindow + 1);
   }
   
-  // Detectar frecuencia de la envolvente con autocorrelación
   const envelopeSampleRate = sampleRate / blockSize;
   const halfLen = Math.floor(smoothed.length / 2);
   
-  // Buscar batidos entre 0.5 Hz y 15 Hz
   const minLag = Math.max(2, Math.floor(envelopeSampleRate / 15));
   const maxLag = Math.min(halfLen - 1, Math.floor(envelopeSampleRate / 0.5));
   
   if (maxLag <= minLag) return null;
   
-  // Autocorrelación normalizada
   let maxCorr = 0;
   let bestLag = 0;
   let energy = 0;
@@ -327,12 +421,9 @@ function detectBeatFrequency(buffer: Float32Array, sampleRate: number): number |
     }
   }
   
-  // Solo reportar si la correlación es significativa
   if (maxCorr < 0.15 || bestLag === 0) return null;
   
   const beatFreq = envelopeSampleRate / bestLag;
-  
-  // Sanity check: batidos razonables están entre 0.5 y 12 Hz
   if (beatFreq < 0.5 || beatFreq > 12) return null;
   
   return Math.round(beatFreq * 100) / 100;
@@ -367,7 +458,18 @@ export class TunerAudioEngine {
   private useWorklet: boolean = false;
   private detectBeats: boolean = false;
   
-  // Smoothing para estabilizar la lectura
+  // [NEW] Bandpass filter nodes
+  private highpassFilter: BiquadFilterNode | null = null;
+  private lowpassFilter: BiquadFilterNode | null = null;
+  
+  // [NEW] EMA (Exponential Moving Average) state
+  private emaFrequency: number = 0;
+  private emaCents: number = 0;
+  private emaInitialized: boolean = false;
+  private emaStableCount: number = 0;
+  private readonly EMA_STABLE_THRESHOLD = 4; // Frames needed to consider stable
+  
+  // Median smoothing for raw frequency
   private lastFrequencies: number[] = [];
   private readonly SMOOTHING_WINDOW = 5;
 
@@ -400,13 +502,35 @@ export class TunerAudioEngine {
       // Crear nodo fuente desde el micrófono
       this.sourceNode = this.audioContext.createMediaStreamSource(this.mediaStream);
       
+      // [NEW] Crear filtros passa-banda para eliminar ruido fuera del rango del piano
+      let lastNode: AudioNode = this.sourceNode;
+      
+      if (this.config.useBandpassFilter) {
+        // Highpass filter: elimina frecuencias por debajo de 26 Hz (rumble, vibración)
+        this.highpassFilter = this.audioContext.createBiquadFilter();
+        this.highpassFilter.type = 'highpass';
+        this.highpassFilter.frequency.setValueAtTime(PIANO_FREQ_LOW, this.audioContext.currentTime);
+        this.highpassFilter.Q.setValueAtTime(0.7, this.audioContext.currentTime);
+        
+        // Lowpass filter: elimina frecuencias por encima de 4300 Hz (ruido eléctrico, sibilancia)
+        this.lowpassFilter = this.audioContext.createBiquadFilter();
+        this.lowpassFilter.type = 'lowpass';
+        this.lowpassFilter.frequency.setValueAtTime(PIANO_FREQ_HIGH, this.audioContext.currentTime);
+        this.lowpassFilter.Q.setValueAtTime(0.7, this.audioContext.currentTime);
+        
+        // Cadena: micrófono → highpass → lowpass
+        lastNode.connect(this.highpassFilter);
+        this.highpassFilter.connect(this.lowpassFilter);
+        lastNode = this.lowpassFilter;
+      }
+      
       // Crear nodo analizador para FFT (espectrograma)
       this.analyserNode = this.audioContext.createAnalyser();
       this.analyserNode.fftSize = this.config.fftSize;
       this.analyserNode.smoothingTimeConstant = 0.3;
       
-      // Conectar: micrófono → analizador
-      this.sourceNode.connect(this.analyserNode);
+      // Conectar: [filtros] → analizador
+      lastNode.connect(this.analyserNode);
       
       // Intentar usar AudioWorklet (thread dedicado)
       try {
@@ -426,7 +550,7 @@ export class TunerAudioEngine {
           bufferSize: this.config.bufferSize,
         });
         
-        this.sourceNode.connect(this.workletNode);
+        lastNode.connect(this.workletNode);
         this.workletNode.connect(this.audioContext.destination);
         this.useWorklet = true;
         
@@ -440,6 +564,10 @@ export class TunerAudioEngine {
       
       this.isRunning = true;
       this.lastFrequencies = [];
+      this.emaFrequency = 0;
+      this.emaCents = 0;
+      this.emaInitialized = false;
+      this.emaStableCount = 0;
       
     } catch (error) {
       console.error('Error al iniciar el motor de audio:', error);
@@ -467,6 +595,16 @@ export class TunerAudioEngine {
     if (this.scriptProcessorNode) {
       this.scriptProcessorNode.disconnect();
       this.scriptProcessorNode = null;
+    }
+    
+    if (this.highpassFilter) {
+      this.highpassFilter.disconnect();
+      this.highpassFilter = null;
+    }
+    
+    if (this.lowpassFilter) {
+      this.lowpassFilter.disconnect();
+      this.lowpassFilter = null;
     }
     
     if (this.sourceNode) {
@@ -529,6 +667,50 @@ export class TunerAudioEngine {
   }
 
   /**
+   * [NEW] Aplica EMA (Exponential Moving Average) a la frecuencia y cents.
+   * Esto estabiliza las lecturas sin añadir latencia perceptible.
+   */
+  private applyEMA(frequency: number, centsDeviation: number): { frequency: number; centsDeviation: number; isStable: boolean } {
+    const alpha = this.config.emaSmoothingFactor;
+    
+    if (!this.emaInitialized) {
+      this.emaFrequency = frequency;
+      this.emaCents = centsDeviation;
+      this.emaInitialized = true;
+      this.emaStableCount = 0;
+      return { frequency, centsDeviation, isStable: false };
+    }
+    
+    // Si la nota cambia drásticamente (más de 50 cents), resetear EMA
+    const centsDiff = Math.abs(frequencyToCents(this.emaFrequency, frequency));
+    if (centsDiff > 50) {
+      this.emaFrequency = frequency;
+      this.emaCents = centsDeviation;
+      this.emaStableCount = 0;
+      return { frequency, centsDeviation, isStable: false };
+    }
+    
+    // Aplicar EMA
+    this.emaFrequency = alpha * this.emaFrequency + (1 - alpha) * frequency;
+    this.emaCents = alpha * this.emaCents + (1 - alpha) * centsDeviation;
+    
+    // Determinar estabilidad
+    if (Math.abs(centsDeviation - this.emaCents) < 1.5) {
+      this.emaStableCount = Math.min(this.emaStableCount + 1, this.EMA_STABLE_THRESHOLD + 5);
+    } else {
+      this.emaStableCount = Math.max(0, this.emaStableCount - 1);
+    }
+    
+    const isStable = this.emaStableCount >= this.EMA_STABLE_THRESHOLD;
+    
+    return {
+      frequency: this.emaFrequency,
+      centsDeviation: this.emaCents,
+      isStable,
+    };
+  }
+
+  /**
    * Procesa un buffer de audio (llamado desde AudioWorklet o fallback).
    */
   private processBuffer(buffer: Float32Array, sampleRate: number): void {
@@ -549,8 +731,11 @@ export class TunerAudioEngine {
         fftData: null,
         actualSampleRate: sampleRate,
         beatFrequency: null,
+        isStable: false,
       });
       this.lastFrequencies = [];
+      this.emaInitialized = false;
+      this.emaStableCount = 0;
       return;
     }
     
@@ -577,25 +762,37 @@ export class TunerAudioEngine {
         fftData,
         actualSampleRate: sampleRate,
         beatFrequency: null,
+        isStable: false,
       });
       return;
     }
     
+    // [NEW] Corrección de octava usando análisis de parciales FFT
+    let correctedFrequency = rawFrequency;
+    if (this.config.useOctaveCorrection && fftData) {
+      correctedFrequency = correctOctaveError(
+        rawFrequency,
+        fftData,
+        sampleRate,
+        this.config.fftSize
+      );
+    }
+    
     // Suavizado de frecuencia (mediana móvil)
-    this.lastFrequencies.push(rawFrequency);
+    this.lastFrequencies.push(correctedFrequency);
     if (this.lastFrequencies.length > this.SMOOTHING_WINDOW) {
       this.lastFrequencies.shift();
     }
     
     const sortedFreqs = [...this.lastFrequencies].sort((a, b) => a - b);
-    const frequency = sortedFreqs[Math.floor(sortedFreqs.length / 2)];
+    const medianFrequency = sortedFreqs[Math.floor(sortedFreqs.length / 2)];
     
     // Encontrar la tecla más cercana
-    const keyIndex = findNearestKey(frequency, this.config.concertPitch);
+    const keyIndex = findNearestKey(medianFrequency, this.config.concertPitch);
     
     if (keyIndex < 0 || keyIndex >= TOTAL_KEYS) {
       this.callback({
-        frequency,
+        frequency: medianFrequency,
         confidence,
         keyIndex: -1,
         centsDeviation: 0,
@@ -605,6 +802,7 @@ export class TunerAudioEngine {
         fftData,
         actualSampleRate: sampleRate,
         beatFrequency: null,
+        isStable: false,
       });
       return;
     }
@@ -614,7 +812,10 @@ export class TunerAudioEngine {
       ? getStretchedFrequency(keyIndex, this.config.concertPitch)
       : getEqualTemperamentFrequency(keyIndex, this.config.concertPitch);
     
-    const centsDeviation = frequencyToCents(targetFrequency, frequency);
+    const rawCentsDeviation = frequencyToCents(targetFrequency, medianFrequency);
+    
+    // [NEW] Aplicar EMA para estabilizar la lectura
+    const ema = this.applyEMA(medianFrequency, rawCentsDeviation);
     
     // Estimar inharmonicidad
     let inharmonicity: number | null = null;
@@ -624,7 +825,7 @@ export class TunerAudioEngine {
         for (let i = 0; i < fftData.length; i++) {
           magnitudes[i] = Math.pow(10, fftData[i] / 20);
         }
-        inharmonicity = estimateInharmonicity(magnitudes, frequency, sampleRate);
+        inharmonicity = estimateInharmonicity(magnitudes, ema.frequency, sampleRate);
       } catch {}
     }
     
@@ -637,16 +838,17 @@ export class TunerAudioEngine {
     }
     
     this.callback({
-      frequency,
+      frequency: ema.frequency,
       confidence,
       keyIndex,
-      centsDeviation,
+      centsDeviation: ema.centsDeviation,
       targetFrequency,
       rmsLevel,
       inharmonicity,
       fftData,
       actualSampleRate: sampleRate,
       beatFrequency,
+      isStable: ema.isStable,
     });
   }
 
@@ -675,11 +877,6 @@ export class ToneGenerator {
   
   /**
    * Genera un tono de referencia con parciales inarmónicos opcionales.
-   * 
-   * @param frequency - Frecuencia fundamental en Hz
-   * @param inharmonicityB - Coeficiente de inharmonicidad (0 para tono puro)
-   * @param numPartials - Número de parciales a generar (1 = solo fundamental)
-   * @param volume - Volumen (0-1)
    */
   async play(
     frequency: number,
@@ -704,16 +901,14 @@ export class ToneGenerator {
         ? getInharmonicPartialFrequency(frequency, n, inharmonicityB)
         : frequency * n;
       
-      // Verificar que no exceda Nyquist
       if (partialFreq >= this.audioContext.sampleRate / 2) break;
       
       const osc = this.audioContext.createOscillator();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(partialFreq, this.audioContext.currentTime);
       
-      // Gain individual: decae con el número de parcial
       const partialGain = this.audioContext.createGain();
-      const amplitude = 1 / (n * n); // Decaimiento cuadrático
+      const amplitude = 1 / (n * n);
       partialGain.gain.setValueAtTime(amplitude, this.audioContext.currentTime);
       
       osc.connect(partialGain);
