@@ -201,8 +201,8 @@ export function OverpullCalculator({
     idle: tt.overpull.ready,
     measuring: tt.overpull.measuring,
     waiting: `${tt.overpull.waiting}... ${countdown}s`,
-    calculated: 'Overpull calculat',
-    applying: 'Aplicant overpull...',
+    calculated: tt.overpull.calculated,
+    applying: tt.overpull.applying,
   }[phase];
 
   return (
@@ -224,10 +224,10 @@ export function OverpullCalculator({
       {phase === 'idle' && (
         <View style={styles.actionSection}>
           <ThemedText style={[styles.instructions, { color: textSecondary }]}>
-            1. Afineu la nota al pitch objectiu{'\n'}
-            2. Premeu "Mesurar" quan sigui estable{'\n'}
-            3. Espereu {waitTime}s sense tocar la corda{'\n'}
-            4. L'overpull es calcularà automàticament
+            {tt.overpull.instructions.step1}{'\n'}
+            {tt.overpull.instructions.step2}{'\n'}
+            {tt.overpull.instructions.step3} {waitTime}s{'\n'}
+            {tt.overpull.instructions.step4}
           </ThemedText>
           <TouchableOpacity
             onPress={startMeasurement}
@@ -261,7 +261,7 @@ export function OverpullCalculator({
             />
           </View>
           <ThemedText style={[styles.waitingHint, { color: textSecondary }]}>
-            No toqueu la corda durant la mesura
+            {tt.overpull.dontTouch}
           </ThemedText>
           <TouchableOpacity onPress={resetMeasurement} style={[styles.cancelButton, { borderColor }]}>
             <ThemedText style={[styles.cancelButtonText, { color: textSecondary }]}>{tt.overpull.cancel}</ThemedText>
@@ -274,7 +274,7 @@ export function OverpullCalculator({
         <View style={styles.resultSection}>
           <View style={styles.resultGrid}>
             <View style={[styles.resultCard, { backgroundColor: borderColor + '30' }]}>
-              <ThemedText style={[styles.resultLabel, { color: textSecondary }]}>Drift mesurat</ThemedText>
+              <ThemedText style={[styles.resultLabel, { color: textSecondary }]}>{tt.overpull.measuredDrift}</ThemedText>
               <ThemedText style={[styles.resultValue, { color: result.measuredDrift < 0 ? '#EF4444' : '#F59E0B' }]}>
                 {result.measuredDrift > 0 ? '+' : ''}{result.measuredDrift.toFixed(1)}¢
               </ThemedText>
@@ -300,7 +300,7 @@ export function OverpullCalculator({
               disabled={!isActive || !isStable}
               style={[styles.retryButton, { borderColor }]}
             >
-              <ThemedText style={[styles.retryButtonText, { color: textSecondary }]}>Repetir</ThemedText>
+              <ThemedText style={[styles.retryButtonText, { color: textSecondary }]}>{tt.overpull.retry}</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setPhase('applying')}
@@ -321,7 +321,7 @@ export function OverpullCalculator({
       {phase === 'applying' && result && (
         <View style={styles.applyingSection}>
           <ThemedText style={[styles.applyingTarget, { color: '#8B5CF6' }]}>
-            Afineu a {result.targetWithOverpull > 0 ? '+' : ''}{result.targetWithOverpull.toFixed(1)} cents
+            {tt.overpull.tuneToTarget} {result.targetWithOverpull > 0 ? '+' : ''}{result.targetWithOverpull.toFixed(1)} cents
           </ThemedText>
           <View style={styles.applyingGauge}>
             <View style={[styles.applyingBar, { backgroundColor: borderColor }]}>
@@ -355,10 +355,10 @@ export function OverpullCalculator({
       {driftHistory.length > 1 && (
         <View style={[styles.historySection, { borderTopColor: borderColor }]}>
           <ThemedText style={[styles.historyTitle, { color: textSecondary }]}>
-            Historial de drift ({driftHistory.length} mesures)
+            {tt.overpull.driftHistory} ({driftHistory.length})
           </ThemedText>
           <ThemedText style={[styles.historyAvg, { color: textColor }]}>
-            Mitjana: {(driftHistory.reduce((s, v) => s + v, 0) / driftHistory.length).toFixed(1)}¢
+            {tt.overpull.average}: {(driftHistory.reduce((s, v) => s + v, 0) / driftHistory.length).toFixed(1)}¢
           </ThemedText>
         </View>
       )}

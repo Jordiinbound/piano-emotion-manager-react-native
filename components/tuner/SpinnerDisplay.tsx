@@ -284,7 +284,7 @@ export function SpinnerDisplay({
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor }]}>
       <View style={styles.header}>
-        <ThemedText style={[styles.title, { color: textColor }]}>Spinner Estroboscòpic</ThemedText>
+        <ThemedText style={[styles.title, { color: textColor }]}>{tt.spinner.title}</ThemedText>
         <View style={[styles.badge, { backgroundColor: '#1B6B93' + '20' }]}>
           <ThemedText style={[styles.badgeText, { color: '#1B6B93' }]}>{noteName}</ThemedText>
         </View>
@@ -328,7 +328,7 @@ export function SpinnerDisplay({
           <View style={[styles.legendDot, { backgroundColor: '#EF4444' }]} />
           <ThemedText style={[styles.legendText, { color: textSecondary }]}>{tt.spinner.outOfTune}</ThemedText>
         </View>
-        <ThemedText style={[styles.legendText, { color: textSecondary }]}>→ agut · ← greu</ThemedText>
+        <ThemedText style={[styles.legendText, { color: textSecondary }]}>{tt.spinner.sharpRight} · {tt.spinner.flatLeft}</ThemedText>
       </View>
     </View>
   );

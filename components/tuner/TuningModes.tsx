@@ -60,9 +60,9 @@ export interface TuningModesProps {
 export const TUNING_MODES: TuningModeConfig[] = [
   {
     id: 'concert',
-    name: 'Concert',
+    name: 'concert',
     icon: '🎵',
-    description: 'Alta precisió per sales de concert. Stretch ampli per projecció sonora. Overpull agressiu per compensar la tensió del bastidor.',
+    description: 'concertDesc',
     partialWeights: WEIGHT_PRESETS[0].weights,
     meterRange: 25,
     noiseGateThreshold: 0.012,
@@ -74,9 +74,9 @@ export const TUNING_MODES: TuningModeConfig[] = [
   },
   {
     id: 'studio',
-    name: 'Estudi',
+    name: 'studio',
     icon: '🎙️',
-    description: 'Equilibrat per gravació. Stretch moderat per claredat en micròfons. Precisió alta sense ser excessivament estricte.',
+    description: 'studioDesc',
     partialWeights: WEIGHT_PRESETS[1].weights,
     meterRange: 30,
     noiseGateThreshold: 0.008,
@@ -88,9 +88,9 @@ export const TUNING_MODES: TuningModeConfig[] = [
   },
   {
     id: 'practice',
-    name: 'Pràctica',
+    name: 'practice',
     icon: '🏠',
-    description: 'Per ús domèstic i pràctica. Stretch mínim, tolerància alta. Ideal per a afinadors principiants o pianos verticals.',
+    description: 'practiceDesc',
     partialWeights: WEIGHT_PRESETS[2].weights,
     meterRange: 50,
     noiseGateThreshold: 0.006,
@@ -102,9 +102,9 @@ export const TUNING_MODES: TuningModeConfig[] = [
   },
   {
     id: 'historic',
-    name: 'Històric',
+    name: 'historic',
     icon: '🏛️',
-    description: 'Per instruments d\'època i temperaments històrics. Sense stretch addicional. Només octaves 2:1 pures.',
+    description: 'historicDesc',
     partialWeights: WEIGHT_PRESETS[3].weights,
     meterRange: 30,
     noiseGateThreshold: 0.008,
@@ -149,7 +149,7 @@ export function TuningModes({
 
   return (
     <View style={[styles.container, { backgroundColor: surface, borderColor }]}>
-      <ThemedText style={[styles.title, { color: textColor }]}>Mode d'Afinació</ThemedText>
+      <ThemedText style={[styles.title, { color: textColor }]}>{tt.tuningModes.title}</ThemedText>
 
       {/* Mode cards */}
       <View style={styles.modesGrid}>
@@ -177,7 +177,7 @@ export function TuningModes({
                   { color: isSelected ? color : textColor, fontWeight: isSelected ? '700' : '500' },
                 ]}
               >
-                {mode.name}
+                {tt.tuningModes[mode.name as keyof typeof tt.tuningModes] ?? mode.name}
               </ThemedText>
               {isSelected && (
                 <View style={[styles.selectedDot, { backgroundColor: color }]} />
@@ -190,7 +190,7 @@ export function TuningModes({
       {/* Selected mode details */}
       <View style={[styles.detailsCard, { backgroundColor: (modeColors[selectedModeId] ?? '#1B6B93') + '08', borderColor }]}>
         <ThemedText style={[styles.detailsDescription, { color: textSecondary }]}>
-          {selectedMode.description}
+          {tt.tuningModes[selectedMode.description as keyof typeof tt.tuningModes] ?? selectedMode.description}
         </ThemedText>
 
         <View style={styles.detailsGrid}>
@@ -213,7 +213,7 @@ export function TuningModes({
           <View style={styles.detailItem}>
             <ThemedText style={[styles.detailLabel, { color: textSecondary }]}>{tt.tuningModes.stretch}</ThemedText>
             <ThemedText style={[styles.detailValue, { color: selectedMode.useStretchTuning ? '#10B981' : '#EF4444' }]}>
-              {selectedMode.useStretchTuning ? 'Sí' : 'No'}
+              {selectedMode.useStretchTuning ? tt.tuningModes.yes : tt.tuningModes.no}
             </ThemedText>
           </View>
           <View style={styles.detailItem}>

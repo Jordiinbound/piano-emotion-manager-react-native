@@ -55,29 +55,25 @@ export interface PartialWeightingProps {
 
 // ─── Presets ────────────────────────────────────────────────────────────────
 
-export const WEIGHT_PRESETS: { id: string; name: string; description: string; weights: PartialWeights }[] = [
+export const WEIGHT_PRESETS: { id: string; nameKey: 'concert' | 'studio' | 'practice' | 'historic'; weights: PartialWeights }[] = [
   {
     id: 'concert',
-    name: tt.partialWeighting.concert,
-    description: 'Més stretch per sales grans. Pesos alts en 4:1 i 6:3.',
+    nameKey: 'concert',
     weights: { octave21: 0.2, octave42: 0.3, octave41: 0.35, octave63: 0.15 },
   },
   {
     id: 'studio',
-    name: 'Estudi',
-    description: 'Equilibrat per gravació. Pesos iguals en 2:1 i 4:2.',
+    nameKey: 'studio',
     weights: { octave21: 0.35, octave42: 0.35, octave41: 0.2, octave63: 0.1 },
   },
   {
     id: 'practice',
-    name: 'Pràctica',
-    description: 'Stretch mínim. Prioritza octaves 2:1 pures.',
+    nameKey: 'practice',
     weights: { octave21: 0.6, octave42: 0.25, octave41: 0.1, octave63: 0.05 },
   },
   {
     id: 'historic',
-    name: 'Històric',
-    description: 'Sense stretch addicional. Només octaves 2:1.',
+    nameKey: 'historic',
     weights: { octave21: 1.0, octave42: 0.0, octave41: 0.0, octave63: 0.0 },
   },
 ];
@@ -218,9 +214,9 @@ export function PartialWeighting({
 
   const intervals: { key: keyof PartialWeights; label: string; ratio: string; color: string }[] = [
     { key: 'octave21', label: tt.partialWeighting.octave21, ratio: '2:1', color: '#1B6B93' },
-    { key: 'octave42', label: 'Doble 4:2', ratio: '4:2', color: '#8B5CF6' },
-    { key: 'octave41', label: 'Doble 4:1', ratio: '4:1', color: '#F59E0B' },
-    { key: 'octave63', label: 'Triple 6:3', ratio: '6:3', color: '#EF4444' },
+    { key: 'octave42', label: tt.partialWeighting.octave42, ratio: '4:2', color: '#8B5CF6' },
+    { key: 'octave41', label: tt.partialWeighting.octave41, ratio: '4:1', color: '#F59E0B' },
+    { key: 'octave63', label: tt.partialWeighting.octave63, ratio: '6:3', color: '#EF4444' },
   ];
 
   return (
@@ -247,7 +243,7 @@ export function PartialWeighting({
                 { color: activePreset === preset.id ? '#1B6B93' : textSecondary },
               ]}
             >
-              {preset.name}
+              {tt.partialWeighting[preset.nameKey]}
             </ThemedText>
           </TouchableOpacity>
         ))}
@@ -290,7 +286,7 @@ export function PartialWeighting({
       {/* Stretch preview chart */}
       <View style={styles.chartSection}>
         <ThemedText style={[styles.chartLabel, { color: textSecondary }]}>
-          Corba de stretch resultant
+          {tt.partialWeighting.moreStretch}
         </ThemedText>
         <Svg width={width - 24} height={chartH}>
           {/* Zero line */}

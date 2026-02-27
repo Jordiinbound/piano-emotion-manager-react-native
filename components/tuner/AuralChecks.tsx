@@ -124,6 +124,7 @@ function generateChecksForKey(
   keyIndex: number,
   concertPitch: number,
   measurements: Map<number, { cents: number; inharmonicity: number | null }>,
+  tt: ReturnType<typeof getTunerTranslation>,
 ): IntervalCheck[] {
   const checks: IntervalCheck[] = [];
 
@@ -138,8 +139,8 @@ function generateChecksForKey(
     { name: tt.auralChecks.octave, shortName: '8va', semitones: 12, lowerPartial: 2, upperPartial: 1 },
     { name: tt.auralChecks.fifth, shortName: '5ta', semitones: 7, lowerPartial: 3, upperPartial: 2 },
     { name: tt.auralChecks.fourth, shortName: '4ta', semitones: 5, lowerPartial: 4, upperPartial: 3 },
-    { name: 'Tercera Major', shortName: '3ra M', semitones: 4, lowerPartial: 5, upperPartial: 4 },
-    { name: 'Sexta Major', shortName: '6ta M', semitones: 9, lowerPartial: 5, upperPartial: 3 },
+    { name: tt.auralChecks.majorThird, shortName: '3M', semitones: 4, lowerPartial: 5, upperPartial: 4 },
+    { name: tt.auralChecks.majorSixth, shortName: '6M', semitones: 9, lowerPartial: 5, upperPartial: 3 },
   ];
 
   for (const interval of intervals) {
@@ -211,7 +212,7 @@ export function AuralChecks({
 
   const checks = useMemo(() => {
     if (selectedKeyIndex < 0 || selectedKeyIndex >= TOTAL_KEYS) return [];
-    return generateChecksForKey(selectedKeyIndex, concertPitch, measurements);
+    return generateChecksForKey(selectedKeyIndex, concertPitch, measurements, tt);
   }, [selectedKeyIndex, concertPitch, measurements]);
 
   const handlePlayInterval = useCallback((lowerKey: number, upperKey: number) => {
@@ -244,7 +245,7 @@ export function AuralChecks({
       </View>
 
       <ThemedText style={[styles.subtitle, { color: textSecondary }]}>
-        Beat rates esperats per als intervals des de {noteName}
+        {tt.auralChecks.subtitle} {noteName}
       </ThemedText>
 
       <ScrollView style={styles.checksList} showsVerticalScrollIndicator={false}>

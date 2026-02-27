@@ -213,8 +213,8 @@ export function PhaseDisplay({
     if (!isActive) return tt.phaseDisplay.inactive;
     const absBeat = Math.abs(fundamentalBeat);
     if (absBeat < 0.1) return `${tt.phaseDisplay.inTune} — ${tt.phaseDisplay.phaseStable}`;
-    if (absBeat < 0.5) return `Batiments lents: ${absBeat.toFixed(2)} Hz`;
-    if (absBeat < 2.0) return `Batiments: ${absBeat.toFixed(1)} Hz`;
+    if (absBeat < 0.5) return `${tt.phaseDisplay.slowBeats}: ${absBeat.toFixed(2)} Hz`;
+    if (absBeat < 2.0) return `${tt.phaseDisplay.beats}: ${absBeat.toFixed(1)} Hz`;
     return `${tt.phaseDisplay.outOfTune}: ${absBeat.toFixed(1)} Hz`;
   };
 
@@ -263,7 +263,7 @@ export function PhaseDisplay({
       {/* Info */}
       <View style={[styles.infoRow, { borderTopColor: borderColor }]}>
         <View style={styles.infoItem}>
-          <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Freq detectada</ThemedText>
+          <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>{tt.phaseDisplay.detectedFreq}</ThemedText>
           <ThemedText style={[styles.infoValue, { color: textColor }]}>
             {isActive && detectedFreq > 0 ? `${detectedFreq.toFixed(2)} Hz` : '—'}
           </ThemedText>
@@ -284,7 +284,7 @@ export function PhaseDisplay({
 
       {/* Legend */}
       <ThemedText style={[styles.legendText, { color: textSecondary }]}>
-        Quadrats aturats = afinat · Moviment = batiments · P1-P{numRows} = parcials
+        {tt.phaseDisplay.stoppedMeansInTune} · P1-P{numRows} = {tt.phaseDisplay.partials}
       </ThemedText>
     </View>
   );
