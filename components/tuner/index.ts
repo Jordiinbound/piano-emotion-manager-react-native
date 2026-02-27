@@ -3,3 +3,8 @@ export { CentsGauge } from './CentsGauge';
 export { DeviationBar } from './DeviationBar';
 export { MiniPianoStrip } from './MiniPianoStrip';
 export { TunerSettings } from './TunerSettings';
+export { Spectrogram } from './Spectrogram';
+export { RailsbackChart } from './RailsbackChart';
+export { UnisonMeter } from './UnisonMeter';
+export { CalibrationPanel } from './CalibrationPanel';
+export { ToneGeneratorPanel } from './ToneGeneratorPanel';

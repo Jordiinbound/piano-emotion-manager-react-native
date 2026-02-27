@@ -1,16 +1,19 @@
 /**
- * Tuner Audio Engine
+ * Tuner Audio Engine — Professional Grade
  * 
  * Motor de audio para afinación de pianos usando Web Audio API.
  * Implementa:
- * - Captura de audio del micrófono en tiempo real
+ * - AudioWorklet para procesamiento en thread dedicado (fallback a ScriptProcessor)
  * - Detección de pitch con algoritmo YIN (de Cheveigné & Kawahara, 2002)
- * - Estimación de inharmonicidad por superposición de parciales
- * - Cálculo de desviación en cents
+ * - Estimación de inharmonicidad por superposición de parciales (entropía de Renyi)
+ * - Detección de batidos para afinación de unísonos
+ * - Generador de tonos de referencia con parciales inarmónicos
+ * - Exposición de datos FFT para espectrograma en tiempo real
  * 
  * Algoritmos basados en:
  * - YIN: "YIN, a fundamental frequency estimator for speech and music" (JASA, 2002)
  * - Inharmonicidad: Entropy Piano Tuner (GPL3) - fftanalyzer.cpp
+ * - Hinrichsen, H. (2012). Entropy-based tuning of musical instruments. arXiv:1203.5101
  */
 
 import {
@@ -24,6 +27,7 @@ import {
   TOTAL_KEYS,
   DEFAULT_CONCERT_PITCH,
 } from '@/constants/piano-tuning';
+import { createWorkletBlobURL } from './tuner-worklet-processor';
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -42,6 +46,12 @@ export interface PitchDetectionResult {
   rmsLevel: number;
   /** Coeficiente de inharmonicidad estimado (si disponible) */
   inharmonicity: number | null;
+  /** Datos FFT para espectrograma (magnitudes lineales) */
+  fftData: Float32Array | null;
+  /** Frecuencia de muestreo real del contexto de audio */
+  actualSampleRate: number;
+  /** Frecuencia de batido detectada (para modo unísono) */
+  beatFrequency: number | null;
 }
 
 export interface TunerEngineConfig {
@@ -55,6 +65,8 @@ export interface TunerEngineConfig {
   bufferSize: number;
   /** Frecuencia de muestreo deseada */
   sampleRate: number;
+  /** Tamaño FFT para espectrograma */
+  fftSize: number;
 }
 
 export type TunerEngineCallback = (result: PitchDetectionResult) => void;
@@ -64,27 +76,20 @@ export type TunerEngineCallback = (result: PitchDetectionResult) => void;
 const DEFAULT_CONFIG: TunerEngineConfig = {
   concertPitch: DEFAULT_CONCERT_PITCH,
   useStretchTuning: true,
-  noiseGateThreshold: 0.01,
+  noiseGateThreshold: 0.008,
   bufferSize: 4096,
   sampleRate: 44100,
+  fftSize: 8192,
 };
 
 // ─── Algoritmo YIN ───────────────────────────────────────────────────────────
 
 /**
  * Implementación del algoritmo YIN para detección de pitch.
- * 
- * El algoritmo YIN es un método robusto de detección de frecuencia fundamental
- * basado en la función de diferencia cuadrática acumulativa normalizada (CMND).
- * 
- * Pasos:
- * 1. Calcular la función de diferencia d(τ)
- * 2. Normalizar acumulativamente d'(τ)
- * 3. Buscar el primer mínimo por debajo del umbral
- * 4. Interpolar parabólicamente para mayor precisión
+ * Pasos: diferencia → CMND → umbral absoluto → interpolación parabólica
  */
 function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: number; confidence: number } {
-  const threshold = 0.15; // Umbral YIN (más bajo = más selectivo)
+  const threshold = 0.12;
   const halfSize = Math.floor(buffer.length / 2);
   
   // Paso 1: Función de diferencia
@@ -98,7 +103,7 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
     difference[tau] = sum;
   }
   
-  // Paso 2: Función de diferencia normalizada acumulativa (CMND)
+  // Paso 2: CMND (Cumulative Mean Normalized Difference)
   const cmnd = new Float32Array(halfSize);
   cmnd[0] = 1;
   let runningSum = 0;
@@ -108,15 +113,12 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
   }
   
   // Paso 3: Búsqueda del umbral absoluto
-  // Empezar desde un período mínimo correspondiente a ~4200 Hz (nota más alta del piano)
   const minTau = Math.max(2, Math.floor(sampleRate / 4200));
-  // Período máximo correspondiente a ~25 Hz (por debajo de A0 = 27.5 Hz)
   const maxTau = Math.min(halfSize - 1, Math.floor(sampleRate / 25));
   
   let bestTau = -1;
   for (let tau = minTau; tau < maxTau; tau++) {
     if (cmnd[tau] < threshold) {
-      // Encontrar el mínimo local a partir de aquí
       while (tau + 1 < maxTau && cmnd[tau + 1] < cmnd[tau]) {
         tau++;
       }
@@ -125,7 +127,6 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
     }
   }
   
-  // Si no se encontró ningún valor por debajo del umbral, buscar el mínimo global
   if (bestTau === -1) {
     let minVal = Infinity;
     for (let tau = minTau; tau < maxTau; tau++) {
@@ -134,7 +135,6 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
         bestTau = tau;
       }
     }
-    // Si el mínimo global es demasiado alto, no hay pitch
     if (minVal > 0.5) {
       return { frequency: 0, confidence: 0 };
     }
@@ -144,7 +144,7 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
     return { frequency: 0, confidence: 0 };
   }
   
-  // Paso 4: Interpolación parabólica para mayor precisión
+  // Paso 4: Interpolación parabólica
   const y0 = cmnd[bestTau - 1];
   const y1 = cmnd[bestTau];
   const y2 = cmnd[bestTau + 1];
@@ -166,16 +166,6 @@ function yinDetectPitch(buffer: Float32Array, sampleRate: number): { frequency: 
 
 // ─── Estimación de Inharmonicidad ────────────────────────────────────────────
 
-/**
- * Estima la inharmonicidad B a partir del espectro FFT.
- * Basado en el método del Entropy Piano Tuner:
- * - Para f > 1000 Hz: usa la relación f2/f1
- * - Para f <= 1000 Hz: minimiza la entropía de Renyi de la superposición de parciales
- * 
- * @param fftData - Datos del espectro FFT (magnitudes)
- * @param fundamentalFreq - Frecuencia fundamental detectada
- * @param sampleRate - Frecuencia de muestreo
- */
 function estimateInharmonicity(
   fftData: Float32Array,
   fundamentalFreq: number,
@@ -183,11 +173,10 @@ function estimateInharmonicity(
 ): number {
   if (fundamentalFreq <= 20 || fundamentalFreq > 2250) return 0;
   
-  const binResolution = sampleRate / (fftData.length * 2); // Resolución frecuencial por bin
+  const binResolution = sampleRate / (fftData.length * 2);
   
   // Para frecuencias altas (> 1000 Hz): método directo f2/f1
   if (fundamentalFreq > 1000) {
-    const f1Bin = Math.round(fundamentalFreq / binResolution);
     const f2Expected = 2 * fundamentalFreq;
     const searchStart = Math.max(0, Math.round(f2Expected * 0.98 / binResolution));
     const searchEnd = Math.min(fftData.length - 1, Math.round(f2Expected * 1.02 / binResolution));
@@ -211,13 +200,13 @@ function estimateInharmonicity(
   // Para frecuencias medias/bajas: minimización de entropía de Renyi
   const expectedB = getExpectedInharmonicity(fundamentalFreq);
   const N = Math.round(4 * (8 - Math.log(fundamentalFreq)));
-  const R = 80; // Ventana de observación en bins
+  const R = 80;
   
   let bestB = expectedB;
   let minEntropy = Infinity;
   
   for (let scanB = expectedB / 5; scanB <= expectedB * 5; scanB *= 1.05) {
-    let superposition = new Float32Array(R);
+    const superposition = new Float32Array(R);
     
     for (let n = 1; n <= N; n++) {
       const fn = getInharmonicPartialFrequency(fundamentalFreq, n, scanB);
@@ -235,7 +224,6 @@ function estimateInharmonicity(
           }
         }
         
-        // Normalizar y sumar
         if (partialSum > 0) {
           for (let r = 0; r < R; r++) {
             superposition[r] += partial[r] / partialSum;
@@ -244,7 +232,6 @@ function estimateInharmonicity(
       }
     }
     
-    // Calcular entropía de Renyi (α = 0.1)
     let totalSum = 0;
     for (let r = 0; r < R; r++) totalSum += superposition[r];
     
@@ -267,6 +254,90 @@ function estimateInharmonicity(
   return bestB;
 }
 
+// ─── Detección de Batidos (Unísono) ─────────────────────────────────────────
+
+/**
+ * Detecta la frecuencia de batido en la envolvente de amplitud.
+ * Los batidos se producen cuando dos cuerdas del mismo unísono están
+ * ligeramente desafinadas entre sí. La frecuencia de batido = |f1 - f2|.
+ * 
+ * Método: Análisis de la envolvente de amplitud del audio.
+ * 1. Calcular envolvente via rectificación + filtro paso bajo
+ * 2. Aplicar YIN a la envolvente para detectar la frecuencia de modulación
+ */
+function detectBeatFrequency(buffer: Float32Array, sampleRate: number): number | null {
+  const blockSize = 64;
+  const envelopeLength = Math.floor(buffer.length / blockSize);
+  if (envelopeLength < 128) return null;
+  
+  // Calcular envolvente de amplitud (RMS por bloques)
+  const envelope = new Float32Array(envelopeLength);
+  for (let i = 0; i < envelopeLength; i++) {
+    let sum = 0;
+    const offset = i * blockSize;
+    for (let j = 0; j < blockSize; j++) {
+      const sample = buffer[offset + j];
+      sum += sample * sample;
+    }
+    envelope[i] = Math.sqrt(sum / blockSize);
+  }
+  
+  // Remover DC de la envolvente
+  let mean = 0;
+  for (let i = 0; i < envelope.length; i++) mean += envelope[i];
+  mean /= envelope.length;
+  for (let i = 0; i < envelope.length; i++) envelope[i] -= mean;
+  
+  // Suavizar la envolvente (filtro de media móvil)
+  const smoothed = new Float32Array(envelope.length);
+  const smoothWindow = 3;
+  for (let i = smoothWindow; i < envelope.length - smoothWindow; i++) {
+    let s = 0;
+    for (let j = -smoothWindow; j <= smoothWindow; j++) s += envelope[i + j];
+    smoothed[i] = s / (2 * smoothWindow + 1);
+  }
+  
+  // Detectar frecuencia de la envolvente con autocorrelación
+  const envelopeSampleRate = sampleRate / blockSize;
+  const halfLen = Math.floor(smoothed.length / 2);
+  
+  // Buscar batidos entre 0.5 Hz y 15 Hz
+  const minLag = Math.max(2, Math.floor(envelopeSampleRate / 15));
+  const maxLag = Math.min(halfLen - 1, Math.floor(envelopeSampleRate / 0.5));
+  
+  if (maxLag <= minLag) return null;
+  
+  // Autocorrelación normalizada
+  let maxCorr = 0;
+  let bestLag = 0;
+  let energy = 0;
+  for (let i = 0; i < halfLen; i++) energy += smoothed[i] * smoothed[i];
+  if (energy < 1e-10) return null;
+  
+  for (let lag = minLag; lag < maxLag; lag++) {
+    let corr = 0;
+    for (let i = 0; i < halfLen; i++) {
+      corr += smoothed[i] * smoothed[i + lag];
+    }
+    corr /= energy;
+    
+    if (corr > maxCorr) {
+      maxCorr = corr;
+      bestLag = lag;
+    }
+  }
+  
+  // Solo reportar si la correlación es significativa
+  if (maxCorr < 0.15 || bestLag === 0) return null;
+  
+  const beatFreq = envelopeSampleRate / bestLag;
+  
+  // Sanity check: batidos razonables están entre 0.5 y 12 Hz
+  if (beatFreq < 0.5 || beatFreq > 12) return null;
+  
+  return Math.round(beatFreq * 100) / 100;
+}
+
 // ─── Cálculo RMS ─────────────────────────────────────────────────────────────
 
 function calculateRMS(buffer: Float32Array): number {
@@ -284,12 +355,17 @@ export class TunerAudioEngine {
   private analyserNode: AnalyserNode | null = null;
   private mediaStream: MediaStream | null = null;
   private sourceNode: MediaStreamAudioSourceNode | null = null;
+  private workletNode: AudioWorkletNode | null = null;
+  private scriptProcessorNode: ScriptProcessorNode | null = null;
   private config: TunerEngineConfig;
   private callback: TunerEngineCallback | null = null;
   private animationFrameId: number | null = null;
   private isRunning: boolean = false;
   private timeBuffer: Float32Array | null = null;
   private freqBuffer: Float32Array | null = null;
+  private workletBlobURL: string | null = null;
+  private useWorklet: boolean = false;
+  private detectBeats: boolean = false;
   
   // Smoothing para estabilizar la lectura
   private lastFrequencies: number[] = [];
@@ -306,14 +382,14 @@ export class TunerAudioEngine {
     this.callback = callback;
     
     try {
-      // Solicitar acceso al micrófono
+      // Solicitar acceso al micrófono con configuración óptima
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: false,
           noiseSuppression: false,
           autoGainControl: false,
           sampleRate: this.config.sampleRate,
-        },
+        } as any,
       });
       
       // Crear contexto de audio
@@ -324,21 +400,46 @@ export class TunerAudioEngine {
       // Crear nodo fuente desde el micrófono
       this.sourceNode = this.audioContext.createMediaStreamSource(this.mediaStream);
       
-      // Crear nodo analizador
+      // Crear nodo analizador para FFT (espectrograma)
       this.analyserNode = this.audioContext.createAnalyser();
-      this.analyserNode.fftSize = this.config.bufferSize * 2;
-      this.analyserNode.smoothingTimeConstant = 0;
+      this.analyserNode.fftSize = this.config.fftSize;
+      this.analyserNode.smoothingTimeConstant = 0.3;
       
       // Conectar: micrófono → analizador
       this.sourceNode.connect(this.analyserNode);
       
-      // Preparar buffers
-      this.timeBuffer = new Float32Array(this.analyserNode.fftSize);
-      this.freqBuffer = new Float32Array(this.analyserNode.frequencyBinCount);
+      // Intentar usar AudioWorklet (thread dedicado)
+      try {
+        this.workletBlobURL = createWorkletBlobURL();
+        await this.audioContext.audioWorklet.addModule(this.workletBlobURL);
+        
+        this.workletNode = new AudioWorkletNode(this.audioContext, 'tuner-processor');
+        this.workletNode.port.onmessage = (event) => {
+          if (event.data.type === 'buffer') {
+            this.processBuffer(new Float32Array(event.data.buffer), event.data.sampleRate);
+          }
+        };
+        
+        // Configurar tamaño de buffer
+        this.workletNode.port.postMessage({
+          type: 'setBufferSize',
+          bufferSize: this.config.bufferSize,
+        });
+        
+        this.sourceNode.connect(this.workletNode);
+        this.workletNode.connect(this.audioContext.destination);
+        this.useWorklet = true;
+        
+      } catch {
+        // Fallback a AnalyserNode + requestAnimationFrame
+        this.useWorklet = false;
+        this.timeBuffer = new Float32Array(this.analyserNode.fftSize);
+        this.freqBuffer = new Float32Array(this.analyserNode.frequencyBinCount);
+        this.processAudioFallback();
+      }
       
       this.isRunning = true;
       this.lastFrequencies = [];
-      this.processAudio();
       
     } catch (error) {
       console.error('Error al iniciar el motor de audio:', error);
@@ -357,6 +458,17 @@ export class TunerAudioEngine {
       this.animationFrameId = null;
     }
     
+    if (this.workletNode) {
+      this.workletNode.port.postMessage({ type: 'stop' });
+      this.workletNode.disconnect();
+      this.workletNode = null;
+    }
+    
+    if (this.scriptProcessorNode) {
+      this.scriptProcessorNode.disconnect();
+      this.scriptProcessorNode = null;
+    }
+    
     if (this.sourceNode) {
       this.sourceNode.disconnect();
       this.sourceNode = null;
@@ -372,6 +484,11 @@ export class TunerAudioEngine {
       this.audioContext = null;
     }
     
+    if (this.workletBlobURL) {
+      URL.revokeObjectURL(this.workletBlobURL);
+      this.workletBlobURL = null;
+    }
+    
     this.analyserNode = null;
     this.callback = null;
   }
@@ -384,6 +501,13 @@ export class TunerAudioEngine {
   }
 
   /**
+   * Activa/desactiva la detección de batidos (modo unísono).
+   */
+  setBeatDetection(enabled: boolean): void {
+    this.detectBeats = enabled;
+  }
+
+  /**
    * Indica si el motor está activo.
    */
   get running(): boolean {
@@ -391,20 +515,28 @@ export class TunerAudioEngine {
   }
 
   /**
-   * Bucle principal de procesamiento de audio.
+   * Indica si se está usando AudioWorklet.
    */
-  private processAudio = (): void => {
-    if (!this.isRunning || !this.analyserNode || !this.timeBuffer || !this.freqBuffer || !this.callback) {
-      return;
-    }
+  get isUsingWorklet(): boolean {
+    return this.useWorklet;
+  }
+
+  /**
+   * Obtiene el contexto de audio (para el generador de tonos).
+   */
+  getAudioContext(): AudioContext | null {
+    return this.audioContext;
+  }
+
+  /**
+   * Procesa un buffer de audio (llamado desde AudioWorklet o fallback).
+   */
+  private processBuffer(buffer: Float32Array, sampleRate: number): void {
+    if (!this.isRunning || !this.callback) return;
     
-    // Obtener datos del dominio temporal
-    this.analyserNode.getFloatTimeDomainData(this.timeBuffer);
+    const rmsLevel = calculateRMS(buffer);
     
-    // Calcular nivel RMS
-    const rmsLevel = calculateRMS(this.timeBuffer);
-    
-    // Noise gate: no procesar si el nivel es muy bajo
+    // Noise gate
     if (rmsLevel < this.config.noiseGateThreshold) {
       this.callback({
         frequency: 0,
@@ -414,19 +546,26 @@ export class TunerAudioEngine {
         targetFrequency: 0,
         rmsLevel,
         inharmonicity: null,
+        fftData: null,
+        actualSampleRate: sampleRate,
+        beatFrequency: null,
       });
       this.lastFrequencies = [];
-      this.animationFrameId = requestAnimationFrame(this.processAudio);
       return;
     }
     
     // Detección de pitch con YIN
-    const { frequency: rawFrequency, confidence } = yinDetectPitch(
-      this.timeBuffer,
-      this.audioContext!.sampleRate
-    );
+    const { frequency: rawFrequency, confidence } = yinDetectPitch(buffer, sampleRate);
     
-    if (rawFrequency <= 0 || confidence < 0.8) {
+    // Obtener datos FFT del analyser
+    let fftData: Float32Array | null = null;
+    if (this.analyserNode) {
+      const freqBuf = new Float32Array(this.analyserNode.frequencyBinCount);
+      this.analyserNode.getFloatFrequencyData(freqBuf);
+      fftData = freqBuf;
+    }
+    
+    if (rawFrequency <= 0 || confidence < 0.75) {
       this.callback({
         frequency: 0,
         confidence,
@@ -435,8 +574,10 @@ export class TunerAudioEngine {
         targetFrequency: 0,
         rmsLevel,
         inharmonicity: null,
+        fftData,
+        actualSampleRate: sampleRate,
+        beatFrequency: null,
       });
-      this.animationFrameId = requestAnimationFrame(this.processAudio);
       return;
     }
     
@@ -461,31 +602,38 @@ export class TunerAudioEngine {
         targetFrequency: 0,
         rmsLevel,
         inharmonicity: null,
+        fftData,
+        actualSampleRate: sampleRate,
+        beatFrequency: null,
       });
-      this.animationFrameId = requestAnimationFrame(this.processAudio);
       return;
     }
     
-    // Calcular frecuencia objetivo (con o sin stretch)
+    // Calcular frecuencia objetivo
     const targetFrequency = this.config.useStretchTuning
       ? getStretchedFrequency(keyIndex, this.config.concertPitch)
       : getEqualTemperamentFrequency(keyIndex, this.config.concertPitch);
     
-    // Calcular desviación en cents
     const centsDeviation = frequencyToCents(targetFrequency, frequency);
     
-    // Estimar inharmonicidad (usando datos FFT)
+    // Estimar inharmonicidad
     let inharmonicity: number | null = null;
-    try {
-      this.analyserNode.getFloatFrequencyData(this.freqBuffer);
-      // Convertir de dB a magnitud lineal
-      const magnitudes = new Float32Array(this.freqBuffer.length);
-      for (let i = 0; i < this.freqBuffer.length; i++) {
-        magnitudes[i] = Math.pow(10, this.freqBuffer[i] / 20);
-      }
-      inharmonicity = estimateInharmonicity(magnitudes, frequency, this.audioContext!.sampleRate);
-    } catch {
-      // Silenciar errores de inharmonicidad
+    if (fftData) {
+      try {
+        const magnitudes = new Float32Array(fftData.length);
+        for (let i = 0; i < fftData.length; i++) {
+          magnitudes[i] = Math.pow(10, fftData[i] / 20);
+        }
+        inharmonicity = estimateInharmonicity(magnitudes, frequency, sampleRate);
+      } catch {}
+    }
+    
+    // Detección de batidos (si está activada)
+    let beatFrequency: number | null = null;
+    if (this.detectBeats) {
+      try {
+        beatFrequency = detectBeatFrequency(buffer, sampleRate);
+      } catch {}
     }
     
     this.callback({
@@ -496,15 +644,127 @@ export class TunerAudioEngine {
       targetFrequency,
       rmsLevel,
       inharmonicity,
+      fftData,
+      actualSampleRate: sampleRate,
+      beatFrequency,
     });
+  }
+
+  /**
+   * Fallback: procesamiento via AnalyserNode + requestAnimationFrame
+   */
+  private processAudioFallback = (): void => {
+    if (!this.isRunning || !this.analyserNode || !this.timeBuffer || !this.callback) {
+      return;
+    }
     
-    this.animationFrameId = requestAnimationFrame(this.processAudio);
+    this.analyserNode.getFloatTimeDomainData(this.timeBuffer);
+    this.processBuffer(this.timeBuffer, this.audioContext!.sampleRate);
+    this.animationFrameId = requestAnimationFrame(this.processAudioFallback);
   };
+}
+
+// ─── Generador de Tonos de Referencia ───────────────────────────────────────
+
+export class ToneGenerator {
+  private audioContext: AudioContext | null = null;
+  private oscillators: OscillatorNode[] = [];
+  private gainNode: GainNode | null = null;
+  private masterGain: GainNode | null = null;
+  private isPlaying: boolean = false;
+  
+  /**
+   * Genera un tono de referencia con parciales inarmónicos opcionales.
+   * 
+   * @param frequency - Frecuencia fundamental en Hz
+   * @param inharmonicityB - Coeficiente de inharmonicidad (0 para tono puro)
+   * @param numPartials - Número de parciales a generar (1 = solo fundamental)
+   * @param volume - Volumen (0-1)
+   */
+  async play(
+    frequency: number,
+    inharmonicityB: number = 0,
+    numPartials: number = 1,
+    volume: number = 0.3
+  ): Promise<void> {
+    this.stop();
+    
+    this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
+    // Master gain con fade-in
+    this.masterGain = this.audioContext.createGain();
+    this.masterGain.gain.setValueAtTime(0, this.audioContext.currentTime);
+    this.masterGain.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + 0.05);
+    this.masterGain.connect(this.audioContext.destination);
+    
+    // Generar parciales
+    const maxPartials = Math.min(numPartials, 8);
+    for (let n = 1; n <= maxPartials; n++) {
+      const partialFreq = inharmonicityB > 0
+        ? getInharmonicPartialFrequency(frequency, n, inharmonicityB)
+        : frequency * n;
+      
+      // Verificar que no exceda Nyquist
+      if (partialFreq >= this.audioContext.sampleRate / 2) break;
+      
+      const osc = this.audioContext.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(partialFreq, this.audioContext.currentTime);
+      
+      // Gain individual: decae con el número de parcial
+      const partialGain = this.audioContext.createGain();
+      const amplitude = 1 / (n * n); // Decaimiento cuadrático
+      partialGain.gain.setValueAtTime(amplitude, this.audioContext.currentTime);
+      
+      osc.connect(partialGain);
+      partialGain.connect(this.masterGain);
+      osc.start();
+      
+      this.oscillators.push(osc);
+    }
+    
+    this.isPlaying = true;
+  }
+  
+  /**
+   * Detiene el tono de referencia con fade-out.
+   */
+  stop(): void {
+    if (this.masterGain && this.audioContext) {
+      const now = this.audioContext.currentTime;
+      this.masterGain.gain.linearRampToValueAtTime(0, now + 0.05);
+      
+      setTimeout(() => {
+        this.oscillators.forEach(osc => {
+          try { osc.stop(); } catch {}
+        });
+        this.oscillators = [];
+        
+        if (this.audioContext) {
+          this.audioContext.close();
+          this.audioContext = null;
+        }
+        this.masterGain = null;
+      }, 100);
+    } else {
+      this.oscillators.forEach(osc => {
+        try { osc.stop(); } catch {}
+      });
+      this.oscillators = [];
+    }
+    
+    this.isPlaying = false;
+  }
+  
+  get playing(): boolean {
+    return this.isPlaying;
+  }
 }
 
 // ─── Singleton para uso global ───────────────────────────────────────────────
 
 let engineInstance: TunerAudioEngine | null = null;
+let toneGeneratorInstance: ToneGenerator | null = null;
 
 export function getTunerEngine(config?: Partial<TunerEngineConfig>): TunerAudioEngine {
   if (!engineInstance) {
@@ -515,9 +775,20 @@ export function getTunerEngine(config?: Partial<TunerEngineConfig>): TunerAudioE
   return engineInstance;
 }
 
+export function getToneGenerator(): ToneGenerator {
+  if (!toneGeneratorInstance) {
+    toneGeneratorInstance = new ToneGenerator();
+  }
+  return toneGeneratorInstance;
+}
+
 export function destroyTunerEngine(): void {
   if (engineInstance) {
     engineInstance.stop();
     engineInstance = null;
+  }
+  if (toneGeneratorInstance) {
+    toneGeneratorInstance.stop();
+    toneGeneratorInstance = null;
   }
 }

@@ -1,15 +1,16 @@
 /**
- * TunerScreen - Pantalla principal del afinador de pianos
+ * TunerScreen - Pantalla principal del afinador de pianos (Professional)
  * 
  * Interfaz completa de afinación que incluye:
- * - Visualización de nota detectada
  * - Medidor circular de cents (CentsGauge)
  * - Barra de desviación horizontal (DeviationBar)
- * - Información de frecuencia e inharmonicidad
+ * - Espectrograma en tiempo real (Spectrogram)
+ * - Curva de Railsback con mediciones (RailsbackChart)
+ * - Modo unísono con detección de batidos (UnisonMeter)
+ * - Calibración de inharmonicidad individual (CalibrationPanel)
+ * - Generador de tonos de referencia (ToneGeneratorPanel)
  * - Tira de piano con estado de afinación (MiniPianoStrip)
- * - Controles de navegación entre teclas
- * 
- * Diseñado para seguir los patrones de Piano Emotion Manager.
+ * - Navegación por pestañas entre modos profesionales
  */
 
 import React, { useCallback, useState } from 'react';
@@ -19,10 +20,16 @@ import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Shadows } from '@/constants/theme';
 import { useTuner, TunerProvider } from '@/contexts/TunerContext';
+import type { TunerViewMode } from '@/contexts/TunerContext';
 import { CentsGauge } from './CentsGauge';
 import { DeviationBar } from './DeviationBar';
 import { MiniPianoStrip } from './MiniPianoStrip';
 import { TunerSettings } from './TunerSettings';
+import { Spectrogram } from './Spectrogram';
+import { RailsbackChart } from './RailsbackChart';
+import { UnisonMeter } from './UnisonMeter';
+import { CalibrationPanel } from './CalibrationPanel';
+import { ToneGeneratorPanel } from './ToneGeneratorPanel';
 import {
   getFullNoteName,
   getNoteName,
@@ -43,10 +50,40 @@ const TUNER_COLORS = {
   outOfTune: '#EF4444',
 };
 
+// ─── Tabs de navegación ─────────────────────────────────────────────────────
+
+interface TabItem {
+  id: TunerViewMode;
+  label: string;
+  icon: string;
+}
+
+const TABS: TabItem[] = [
+  { id: 'tuner', label: 'Afinador', icon: 'radio-outline' },
+  { id: 'spectrogram', label: 'Espectro', icon: 'pulse-outline' },
+  { id: 'railsback', label: 'Railsback', icon: 'analytics-outline' },
+  { id: 'unison', label: 'Unísono', icon: 'git-compare-outline' },
+  { id: 'calibration', label: 'Calibrar', icon: 'construct-outline' },
+  { id: 'toneGen', label: 'Tono Ref.', icon: 'volume-high-outline' },
+];
+
 // ─── Componente interno (requiere TunerProvider) ─────────────────────────────
 
 function TunerScreenContent() {
-  const { state, startListening, stopListening, setSelectedKey, setAutoDetect, navigateKey, saveMeasurement } = useTuner();
+  const {
+    state,
+    startListening,
+    stopListening,
+    setSelectedKey,
+    setAutoDetect,
+    navigateKey,
+    saveMeasurement,
+    setActiveView,
+    setUnisonMode,
+    saveCalibrationPoint,
+    resetCalibration,
+  } = useTuner();
+  
   const { width } = useWindowDimensions();
   const [showSettings, setShowSettings] = useState(false);
   
@@ -57,7 +94,7 @@ function TunerScreenContent() {
   const textColor = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   
-  const gaugeSize = Math.min(300, width - 80);
+  const gaugeSize = Math.min(260, width - 80);
   
   // Determinar la tecla activa
   const activeKey = state.autoDetect
@@ -117,7 +154,18 @@ function TunerScreenContent() {
     } catch {}
   }, [saveMeasurement]);
   
-  // Haptic feedback is triggered via the save button action
+  const handleTabPress = useCallback((tabId: TunerViewMode) => {
+    setActiveView(tabId);
+    // Activar/desactivar modo unísono según la pestaña
+    if (tabId === 'unison') {
+      setUnisonMode(true);
+    } else if (state.unisonMode) {
+      setUnisonMode(false);
+    }
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } catch {}
+  }, [setActiveView, setUnisonMode, state.unisonMode]);
   
   if (showSettings) {
     return <TunerSettings onBack={() => setShowSettings(false)} />;
@@ -125,12 +173,65 @@ function TunerScreenContent() {
   
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
+      {/* Tabs de navegación */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={[styles.tabBar, { borderBottomColor: border }]}
+        contentContainerStyle={styles.tabBarContent}
+      >
+        {TABS.map(tab => {
+          const isActiveTab = state.activeView === tab.id;
+          return (
+            <Pressable
+              key={tab.id}
+              onPress={() => handleTabPress(tab.id)}
+              style={({ pressed }) => [
+                styles.tab,
+                {
+                  borderBottomColor: isActiveTab ? TUNER_COLORS.primary : 'transparent',
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}
+            >
+              <Ionicons
+                name={tab.icon as any}
+                size={16}
+                color={isActiveTab ? TUNER_COLORS.primary : textSecondary}
+              />
+              <ThemedText
+                style={[
+                  styles.tabLabel,
+                  { color: isActiveTab ? TUNER_COLORS.primary : textSecondary },
+                ]}
+              >
+                {tab.label}
+              </ThemedText>
+            </Pressable>
+          );
+        })}
+        
+        {/* Botón de ajustes */}
+        <Pressable
+          onPress={() => setShowSettings(true)}
+          style={({ pressed }) => [
+            styles.tab,
+            { opacity: pressed ? 0.7 : 1 },
+          ]}
+        >
+          <Ionicons name="settings-outline" size={16} color={textSecondary} />
+          <ThemedText style={[styles.tabLabel, { color: textSecondary }]}>
+            Ajustes
+          </ThemedText>
+        </Pressable>
+      </ScrollView>
+      
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header con progreso y ajustes */}
+        {/* Header con progreso */}
         <View style={styles.headerRow}>
           <View style={styles.progressBadge}>
             <Ionicons name="musical-notes" size={14} color={TUNER_COLORS.primary} />
@@ -156,76 +257,239 @@ function TunerScreenContent() {
               </ThemedText>
             </Pressable>
             
-            <Pressable
-              onPress={() => setShowSettings(true)}
-              style={({ pressed }) => [
-                styles.settingsButton,
-                { opacity: pressed ? 0.7 : 1 },
-              ]}
-            >
-              <Ionicons name="settings-outline" size={20} color={textSecondary} />
-            </Pressable>
+            <View style={[styles.refPitchBadgeSmall, { backgroundColor: surface, borderColor: border }]}>
+              <ThemedText style={[styles.refPitchTextSmall, { color: textSecondary }]}>
+                A4={state.concertPitch}
+              </ThemedText>
+            </View>
           </View>
         </View>
         
-        {/* Nota detectada */}
-        <View style={styles.noteDisplay}>
-          <ThemedText style={[styles.noteName, { color: textColor }]}>
-            {noteName}
-          </ThemedText>
-          <ThemedText style={[styles.octaveNumber, { color: textSecondary }]}>
-            {octave}
-          </ThemedText>
-        </View>
-        
-        {/* Medidor circular */}
-        <View style={styles.gaugeContainer}>
-          <CentsGauge
-            centsDeviation={isActive ? centsDeviation : 0}
-            range={state.meterRange}
-            isActive={isActive}
-            size={gaugeSize}
-          />
-        </View>
-        
-        {/* Barra de desviación */}
-        <DeviationBar
-          centsDeviation={isActive ? centsDeviation : 0}
-          range={state.meterRange}
-          isActive={isActive}
-        />
-        
-        {/* Información de frecuencia */}
-        {state.showFrequency && (
-          <View style={[styles.infoRow, { borderColor: border }]}>
-            <View style={styles.infoItem}>
-              <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Objetivo</ThemedText>
-              <ThemedText style={[styles.infoValue, { color: textColor }]}>
-                {targetFreq > 0 ? `${targetFreq.toFixed(2)} Hz` : '— Hz'}
+        {/* ═══ Vista: Afinador principal ═══ */}
+        {state.activeView === 'tuner' && (
+          <>
+            {/* Nota detectada */}
+            <View style={styles.noteDisplay}>
+              <ThemedText style={[styles.noteName, { color: textColor }]}>
+                {noteName}
+              </ThemedText>
+              <ThemedText style={[styles.octaveNumber, { color: textSecondary }]}>
+                {octave}
               </ThemedText>
             </View>
-            <View style={[styles.infoDivider, { backgroundColor: border }]} />
-            <View style={styles.infoItem}>
-              <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Detectada</ThemedText>
-              <ThemedText style={[styles.infoValue, { color: textColor }]}>
-                {detectedFreq > 0 ? `${detectedFreq.toFixed(2)} Hz` : '— Hz'}
-              </ThemedText>
+            
+            {/* Medidor circular */}
+            <View style={styles.gaugeContainer}>
+              <CentsGauge
+                centsDeviation={isActive ? centsDeviation : 0}
+                range={state.meterRange}
+                isActive={isActive}
+                size={gaugeSize}
+              />
             </View>
-            {state.showInharmonicity && (
-              <>
-                <View style={[styles.infoDivider, { backgroundColor: border }]} />
+            
+            {/* Barra de desviación */}
+            <DeviationBar
+              centsDeviation={isActive ? centsDeviation : 0}
+              range={state.meterRange}
+              isActive={isActive}
+            />
+            
+            {/* Información de frecuencia */}
+            {state.showFrequency && (
+              <View style={[styles.infoRow, { borderColor: border }]}>
                 <View style={styles.infoItem}>
-                  <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Inharm. B</ThemedText>
+                  <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Objetivo</ThemedText>
                   <ThemedText style={[styles.infoValue, { color: textColor }]}>
-                    {detection?.inharmonicity != null
-                      ? detection.inharmonicity.toExponential(2)
-                      : '—'}
+                    {targetFreq > 0 ? `${targetFreq.toFixed(2)} Hz` : '— Hz'}
                   </ThemedText>
                 </View>
-              </>
+                <View style={[styles.infoDivider, { backgroundColor: border }]} />
+                <View style={styles.infoItem}>
+                  <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Detectada</ThemedText>
+                  <ThemedText style={[styles.infoValue, { color: textColor }]}>
+                    {detectedFreq > 0 ? `${detectedFreq.toFixed(2)} Hz` : '— Hz'}
+                  </ThemedText>
+                </View>
+                {state.showInharmonicity && (
+                  <>
+                    <View style={[styles.infoDivider, { backgroundColor: border }]} />
+                    <View style={styles.infoItem}>
+                      <ThemedText style={[styles.infoLabel, { color: textSecondary }]}>Inharm. B</ThemedText>
+                      <ThemedText style={[styles.infoValue, { color: textColor }]}>
+                        {detection?.inharmonicity != null
+                          ? detection.inharmonicity.toExponential(2)
+                          : '—'}
+                      </ThemedText>
+                    </View>
+                  </>
+                )}
+              </View>
             )}
-          </View>
+          </>
         )}
+        
+        {/* ═══ Vista: Espectrograma ═══ */}
+        {state.activeView === 'spectrogram' && (
+          <>
+            {/* Nota detectada (compacta) */}
+            <View style={styles.noteDisplayCompact}>
+              <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
+                {noteName}
+              </ThemedText>
+              <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
+                {octave}
+              </ThemedText>
+              {isActive && (
+                <ThemedText style={[styles.centsCompact, { color: centsDeviation > 2 ? TUNER_COLORS.outOfTune : centsDeviation < -2 ? TUNER_COLORS.outOfTune : TUNER_COLORS.inTune }]}>
+                  {centsDeviation > 0 ? '+' : ''}{centsDeviation.toFixed(1)}¢
+                </ThemedText>
+              )}
+            </View>
+            
+            {/* Barra de desviación */}
+            <DeviationBar
+              centsDeviation={isActive ? centsDeviation : 0}
+              range={state.meterRange}
+              isActive={isActive}
+            />
+            
+            <View style={{ height: 12 }} />
+            
+            {/* Espectrograma */}
+            <Spectrogram
+              fftData={detection?.fftData ?? null}
+              sampleRate={detection?.actualSampleRate ?? 44100}
+              fundamentalFreq={detectedFreq}
+              activeKeyIndex={activeKey}
+              inharmonicity={detection?.inharmonicity ?? null}
+              isActive={isActive}
+              width={width - 32}
+            />
+          </>
+        )}
+        
+        {/* ═══ Vista: Railsback ═══ */}
+        {state.activeView === 'railsback' && (
+          <>
+            <View style={styles.noteDisplayCompact}>
+              <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
+                {noteName}
+              </ThemedText>
+              <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
+                {octave}
+              </ThemedText>
+              {isActive && (
+                <ThemedText style={[styles.centsCompact, { color: centsDeviation > 2 ? TUNER_COLORS.outOfTune : centsDeviation < -2 ? TUNER_COLORS.outOfTune : TUNER_COLORS.inTune }]}>
+                  {centsDeviation > 0 ? '+' : ''}{centsDeviation.toFixed(1)}¢
+                </ThemedText>
+              )}
+            </View>
+            
+            <DeviationBar
+              centsDeviation={isActive ? centsDeviation : 0}
+              range={state.meterRange}
+              isActive={isActive}
+            />
+            
+            <View style={{ height: 12 }} />
+            
+            <RailsbackChart
+              measurements={state.measurements}
+              concertPitch={state.concertPitch}
+              width={width - 32}
+              height={220}
+              showStretchCurve={state.useStretchTuning}
+            />
+            
+            {/* Leyenda informativa */}
+            <View style={[styles.infoCard, { backgroundColor: cardBg, borderColor: border }]}>
+              <View style={styles.infoCardHeader}>
+                <Ionicons name="information-circle-outline" size={16} color={textSecondary} />
+                <ThemedText style={[styles.infoCardTitle, { color: textSecondary }]}>
+                  Curva de Railsback
+                </ThemedText>
+              </View>
+              <ThemedText style={[styles.infoCardBody, { color: textSecondary }]}>
+                La curva de Railsback muestra cómo la afinación de un piano se desvía del temperamento igual puro. Los graves se afinan ligeramente más bajos y los agudos más altos para compensar la inharmonicidad de las cuerdas. La línea punteada azul es el objetivo de stretch, y la línea verde son sus mediciones reales.
+              </ThemedText>
+            </View>
+          </>
+        )}
+        
+        {/* ═══ Vista: Unísono ═══ */}
+        {state.activeView === 'unison' && (
+          <>
+            <View style={styles.noteDisplayCompact}>
+              <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
+                {noteName}
+              </ThemedText>
+              <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
+                {octave}
+              </ThemedText>
+              {isActive && (
+                <ThemedText style={[styles.centsCompact, { color: centsDeviation > 2 ? TUNER_COLORS.outOfTune : centsDeviation < -2 ? TUNER_COLORS.outOfTune : TUNER_COLORS.inTune }]}>
+                  {centsDeviation > 0 ? '+' : ''}{centsDeviation.toFixed(1)}¢
+                </ThemedText>
+              )}
+            </View>
+            
+            <DeviationBar
+              centsDeviation={isActive ? centsDeviation : 0}
+              range={state.meterRange}
+              isActive={isActive}
+            />
+            
+            <View style={{ height: 12 }} />
+            
+            <UnisonMeter
+              beatFrequency={detection?.beatFrequency ?? null}
+              isActive={isActive}
+              width={width - 32}
+            />
+          </>
+        )}
+        
+        {/* ═══ Vista: Calibración ═══ */}
+        {state.activeView === 'calibration' && (
+          <>
+            <View style={styles.noteDisplayCompact}>
+              <ThemedText style={[styles.noteNameCompact, { color: textColor }]}>
+                {noteName}
+              </ThemedText>
+              <ThemedText style={[styles.octaveCompact, { color: textSecondary }]}>
+                {octave}
+              </ThemedText>
+            </View>
+            
+            <View style={{ height: 8 }} />
+            
+            <CalibrationPanel
+              calibrationData={state.calibrationData}
+              currentInharmonicity={detection?.inharmonicity ?? null}
+              activeKeyIndex={activeKey}
+              isListening={state.isListening}
+              onSaveCalibration={saveCalibrationPoint}
+              onResetCalibration={resetCalibration}
+              onRenameProfile={() => {}}
+            />
+          </>
+        )}
+        
+        {/* ═══ Vista: Generador de tonos ═══ */}
+        {state.activeView === 'toneGen' && (
+          <>
+            <View style={{ height: 8 }} />
+            
+            <ToneGeneratorPanel
+              activeKeyIndex={activeKey >= 0 ? activeKey : 48}
+              concertPitch={state.concertPitch}
+              useStretchTuning={state.useStretchTuning}
+            />
+          </>
+        )}
+        
+        {/* ═══ Controles comunes (siempre visibles) ═══ */}
         
         {/* Navegación de teclas */}
         <View style={styles.keyNavRow}>
@@ -298,6 +562,16 @@ function TunerScreenContent() {
           </Pressable>
         </View>
         
+        {/* Indicador de AudioWorklet */}
+        {state.isListening && (
+          <View style={styles.engineBadge}>
+            <View style={[styles.engineDot, { backgroundColor: TUNER_COLORS.inTune }]} />
+            <ThemedText style={[styles.engineText, { color: textSecondary }]}>
+              Motor de audio activo
+            </ThemedText>
+          </View>
+        )}
+        
         {/* Error de audio */}
         {state.audioError && (
           <View style={[styles.errorBanner, { backgroundColor: '#FEF2F2', borderColor: '#FECACA' }]}>
@@ -318,13 +592,6 @@ function TunerScreenContent() {
             {state.useStretchTuning
               ? 'Las frecuencias objetivo incluyen compensación de inharmonicidad (curva de Railsback). Recomendado para pianos acústicos.'
               : 'Frecuencias de temperamento igual puro. Adecuado para referencia o instrumentos electrónicos.'}
-          </ThemedText>
-        </View>
-        
-        {/* Pitch de referencia */}
-        <View style={[styles.refPitchBadge, { backgroundColor: surface, borderColor: border }]}>
-          <ThemedText style={[styles.refPitchText, { color: textSecondary }]}>
-            A4 = {state.concertPitch} Hz
           </ThemedText>
         </View>
         
@@ -350,11 +617,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  tabBar: {
+    borderBottomWidth: 1,
+    maxHeight: 44,
+  },
+  tabBarContent: {
+    flexDirection: 'row',
+    paddingHorizontal: 8,
+  },
+  tab: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderBottomWidth: 2,
+  },
+  tabLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    lineHeight: 14,
+  },
   scrollView: {
     flex: 1,
   },
   content: {
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 40,
   },
   headerRow: {
@@ -362,7 +651,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   progressBadge: {
     flexDirection: 'row',
@@ -392,8 +681,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat',
     lineHeight: 16,
   },
-  settingsButton: {
-    padding: 6,
+  refPitchBadgeSmall: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  refPitchTextSmall: {
+    fontSize: 10,
+    fontWeight: '500',
+    fontFamily: 'Montserrat',
+    lineHeight: 14,
   },
   noteDisplay: {
     flexDirection: 'row',
@@ -414,15 +712,42 @@ const styles = StyleSheet.create({
     lineHeight: 34,
     marginLeft: 2,
   },
+  noteDisplayCompact: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'center',
+    gap: 4,
+    marginBottom: 8,
+    paddingHorizontal: 16,
+  },
+  noteNameCompact: {
+    fontSize: 36,
+    fontWeight: '700',
+    fontFamily: 'Montserrat',
+    lineHeight: 42,
+  },
+  octaveCompact: {
+    fontSize: 18,
+    fontWeight: '500',
+    fontFamily: 'Montserrat',
+    lineHeight: 22,
+  },
+  centsCompact: {
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    lineHeight: 20,
+    marginLeft: 8,
+  },
   gaugeContainer: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   infoRow: {
     flexDirection: 'row',
     marginHorizontal: 16,
-    marginTop: 16,
-    paddingVertical: 12,
+    marginTop: 12,
+    paddingVertical: 10,
     borderTopWidth: 1,
     borderBottomWidth: 1,
   },
@@ -455,7 +780,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 12,
-    marginVertical: 16,
+    marginVertical: 14,
     paddingHorizontal: 16,
   },
   navButton: {
@@ -482,8 +807,8 @@ const styles = StyleSheet.create({
   },
   mainButtonContainer: {
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 16,
+    marginTop: 16,
+    marginBottom: 12,
     paddingHorizontal: 16,
   },
   mainButton: {
@@ -504,12 +829,30 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat',
     lineHeight: 22,
   },
+  engineBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginBottom: 8,
+  },
+  engineDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  engineText: {
+    fontSize: 11,
+    fontWeight: '400',
+    fontFamily: 'Montserrat',
+    lineHeight: 14,
+  },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     marginHorizontal: 16,
-    marginTop: 12,
+    marginTop: 8,
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
@@ -523,7 +866,7 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     marginHorizontal: 16,
-    marginTop: 16,
+    marginTop: 12,
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
@@ -545,19 +888,5 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontFamily: 'Montserrat',
     lineHeight: 17,
-  },
-  refPitchBadge: {
-    alignSelf: 'center',
-    marginTop: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-  },
-  refPitchText: {
-    fontSize: 12,
-    fontWeight: '500',
-    fontFamily: 'Montserrat',
-    lineHeight: 16,
   },
 });

@@ -1,11 +1,14 @@
 /**
- * TunerContext - Estado global del afinador de pianos
+ * TunerContext - Estado global del afinador de pianos (Professional)
  * 
  * Gestiona el estado de la sesión de afinación, incluyendo:
  * - Configuración del afinador (concert pitch, stretch tuning, etc.)
  * - Estado de detección en tiempo real
  * - Historial de mediciones por tecla
  * - Control del motor de audio
+ * - Calibración de inharmonicidad individual
+ * - Modo unísono (detección de batidos)
+ * - Vista activa (tuner, spectrogram, railsback, unison, calibration, toneGen)
  */
 
 import React, { createContext, useContext, useReducer, useCallback, useRef, useEffect } from 'react';
@@ -20,6 +23,7 @@ import {
   TOTAL_KEYS,
   DEFAULT_CONCERT_PITCH,
 } from '@/constants/piano-tuning';
+import type { CalibrationData } from '@/components/tuner/CalibrationPanel';
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -31,6 +35,8 @@ export interface KeyMeasurement {
   inharmonicity: number | null;
   timestamp: number;
 }
+
+export type TunerViewMode = 'tuner' | 'spectrogram' | 'railsback' | 'unison' | 'calibration' | 'toneGen' | 'settings';
 
 export interface TunerState {
   /** Motor activo */
@@ -59,6 +65,16 @@ export interface TunerState {
   audioError: string | null;
   /** Permiso de micrófono concedido */
   micPermissionGranted: boolean;
+  /** Vista activa del afinador */
+  activeView: TunerViewMode;
+  /** Modo unísono activo (detección de batidos) */
+  unisonMode: boolean;
+  /** Datos de calibración del piano */
+  calibrationData: CalibrationData | null;
+  /** Mostrar espectrograma */
+  showSpectrogram: boolean;
+  /** Mostrar curva de Railsback */
+  showRailsback: boolean;
 }
 
 type TunerAction =
@@ -76,6 +92,12 @@ type TunerAction =
   | { type: 'RESET_MEASUREMENTS' }
   | { type: 'SET_AUDIO_ERROR'; payload: string | null }
   | { type: 'SET_MIC_PERMISSION'; payload: boolean }
+  | { type: 'SET_ACTIVE_VIEW'; payload: TunerViewMode }
+  | { type: 'SET_UNISON_MODE'; payload: boolean }
+  | { type: 'SET_CALIBRATION_DATA'; payload: CalibrationData | null }
+  | { type: 'SAVE_CALIBRATION_POINT'; payload: { keyIndex: number; inharmonicity: number } }
+  | { type: 'SET_SHOW_SPECTROGRAM'; payload: boolean }
+  | { type: 'SET_SHOW_RAILSBACK'; payload: boolean }
   | { type: 'LOAD_SETTINGS'; payload: Partial<TunerState> };
 
 interface TunerContextType {
@@ -93,6 +115,12 @@ interface TunerContextType {
   saveMeasurement: () => void;
   resetMeasurements: () => void;
   navigateKey: (direction: 'prev' | 'next') => void;
+  setActiveView: (view: TunerViewMode) => void;
+  setUnisonMode: (enabled: boolean) => void;
+  saveCalibrationPoint: (keyIndex: number, inharmonicity: number) => void;
+  resetCalibration: () => void;
+  setShowSpectrogram: (show: boolean) => void;
+  setShowRailsback: (show: boolean) => void;
 }
 
 // ─── Estado inicial ──────────────────────────────────────────────────────────
@@ -111,9 +139,14 @@ const initialState: TunerState = {
   measurements: new Array(TOTAL_KEYS).fill(null),
   audioError: null,
   micPermissionGranted: false,
+  activeView: 'tuner',
+  unisonMode: false,
+  calibrationData: null,
+  showSpectrogram: false,
+  showRailsback: false,
 };
 
-// ─── Reducer ─────────────────────────────────────────────────────────────────
+// ─── Reducer ────────────────────────────────────────────────────────────────
 
 function tunerReducer(state: TunerState, action: TunerAction): TunerState {
   switch (action.type) {
@@ -148,6 +181,36 @@ function tunerReducer(state: TunerState, action: TunerAction): TunerState {
       return { ...state, audioError: action.payload };
     case 'SET_MIC_PERMISSION':
       return { ...state, micPermissionGranted: action.payload };
+    case 'SET_ACTIVE_VIEW':
+      return { ...state, activeView: action.payload };
+    case 'SET_UNISON_MODE':
+      return { ...state, unisonMode: action.payload };
+    case 'SET_CALIBRATION_DATA':
+      return { ...state, calibrationData: action.payload };
+    case 'SAVE_CALIBRATION_POINT': {
+      const existing = state.calibrationData ?? {
+        inharmonicityByKey: new Array(TOTAL_KEYS).fill(null),
+        timestamp: Date.now(),
+        profileName: 'Mi Piano',
+        calibratedCount: 0,
+      };
+      const newInharm = [...existing.inharmonicityByKey];
+      newInharm[action.payload.keyIndex] = action.payload.inharmonicity;
+      const calibratedCount = newInharm.filter(v => v !== null).length;
+      return {
+        ...state,
+        calibrationData: {
+          ...existing,
+          inharmonicityByKey: newInharm,
+          calibratedCount,
+          timestamp: Date.now(),
+        },
+      };
+    }
+    case 'SET_SHOW_SPECTROGRAM':
+      return { ...state, showSpectrogram: action.payload };
+    case 'SET_SHOW_RAILSBACK':
+      return { ...state, showRailsback: action.payload };
     case 'LOAD_SETTINGS':
       return { ...state, ...action.payload };
     default:
@@ -155,12 +218,13 @@ function tunerReducer(state: TunerState, action: TunerAction): TunerState {
   }
 }
 
-// ─── Contexto ────────────────────────────────────────────────────────────────
+// ─── Contexto ───────────────────────────────────────────────────────────────
 
 const TunerContext = createContext<TunerContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'piano_tuner_settings';
 const MEASUREMENTS_KEY = 'piano_tuner_measurements';
+const CALIBRATION_KEY = 'piano_tuner_calibration';
 
 export function TunerProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(tunerReducer, initialState);
@@ -179,6 +243,10 @@ export function TunerProvider({ children }: { children: ReactNode }) {
         if (savedMeasurements) {
           dispatch({ type: 'LOAD_SETTINGS', payload: { measurements: JSON.parse(savedMeasurements) } });
         }
+        const savedCalibration = await AsyncStorage.getItem(CALIBRATION_KEY);
+        if (savedCalibration) {
+          dispatch({ type: 'SET_CALIBRATION_DATA', payload: JSON.parse(savedCalibration) });
+        }
       } catch {}
     })();
   }, []);
@@ -193,9 +261,11 @@ export function TunerProvider({ children }: { children: ReactNode }) {
       showFrequency: state.showFrequency,
       showInharmonicity: state.showInharmonicity,
       autoDetect: state.autoDetect,
+      showSpectrogram: state.showSpectrogram,
+      showRailsback: state.showRailsback,
     };
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch(() => {});
-  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.meterRange, state.showFrequency, state.showInharmonicity, state.autoDetect]);
+  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.meterRange, state.showFrequency, state.showInharmonicity, state.autoDetect, state.showSpectrogram, state.showRailsback]);
 
   const handleDetection = useCallback((result: PitchDetectionResult) => {
     dispatch({ type: 'SET_DETECTION', payload: result });
@@ -224,6 +294,9 @@ export function TunerProvider({ children }: { children: ReactNode }) {
         });
       }
       
+      // Activar detección de batidos si modo unísono está activo
+      engineRef.current.setBeatDetection(state.unisonMode);
+      
       await engineRef.current.start(handleDetection);
       dispatch({ type: 'SET_LISTENING', payload: true });
       dispatch({ type: 'SET_MIC_PERMISSION', payload: true });
@@ -237,7 +310,7 @@ export function TunerProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'SET_AUDIO_ERROR', payload: errorMsg });
       dispatch({ type: 'SET_LISTENING', payload: false });
     }
-  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, handleDetection]);
+  }, [state.concertPitch, state.useStretchTuning, state.noiseGateThreshold, state.unisonMode, handleDetection]);
 
   const stopListening = useCallback(() => {
     if (engineRef.current) {
@@ -317,13 +390,54 @@ export function TunerProvider({ children }: { children: ReactNode }) {
 
   const navigateKey = useCallback((direction: 'prev' | 'next') => {
     const current = state.selectedKey >= 0 ? state.selectedKey : 
-      (state.currentDetection?.keyIndex ?? 48); // Default to A4
+      (state.currentDetection?.keyIndex ?? 48);
     const newKey = direction === 'next' ? 
       Math.min(current + 1, TOTAL_KEYS - 1) : 
       Math.max(current - 1, 0);
     dispatch({ type: 'SET_SELECTED_KEY', payload: newKey });
     dispatch({ type: 'SET_AUTO_DETECT', payload: false });
   }, [state.selectedKey, state.currentDetection]);
+
+  const setActiveView = useCallback((view: TunerViewMode) => {
+    dispatch({ type: 'SET_ACTIVE_VIEW', payload: view });
+  }, []);
+
+  const setUnisonMode = useCallback((enabled: boolean) => {
+    dispatch({ type: 'SET_UNISON_MODE', payload: enabled });
+    if (engineRef.current) {
+      engineRef.current.setBeatDetection(enabled);
+    }
+  }, []);
+
+  const saveCalibrationPoint = useCallback((keyIndex: number, inharmonicity: number) => {
+    dispatch({ type: 'SAVE_CALIBRATION_POINT', payload: { keyIndex, inharmonicity } });
+    
+    // Persistir calibración
+    const existing = state.calibrationData ?? {
+      inharmonicityByKey: new Array(TOTAL_KEYS).fill(null),
+      timestamp: Date.now(),
+      profileName: 'Mi Piano',
+      calibratedCount: 0,
+    };
+    const newInharm = [...existing.inharmonicityByKey];
+    newInharm[keyIndex] = inharmonicity;
+    const updated = { ...existing, inharmonicityByKey: newInharm, timestamp: Date.now() };
+    updated.calibratedCount = newInharm.filter(v => v !== null).length;
+    AsyncStorage.setItem(CALIBRATION_KEY, JSON.stringify(updated)).catch(() => {});
+  }, [state.calibrationData]);
+
+  const resetCalibration = useCallback(() => {
+    dispatch({ type: 'SET_CALIBRATION_DATA', payload: null });
+    AsyncStorage.removeItem(CALIBRATION_KEY).catch(() => {});
+  }, []);
+
+  const setShowSpectrogram = useCallback((show: boolean) => {
+    dispatch({ type: 'SET_SHOW_SPECTROGRAM', payload: show });
+  }, []);
+
+  const setShowRailsback = useCallback((show: boolean) => {
+    dispatch({ type: 'SET_SHOW_RAILSBACK', payload: show });
+  }, []);
 
   // Cleanup al desmontar
   useEffect(() => {
@@ -350,6 +464,12 @@ export function TunerProvider({ children }: { children: ReactNode }) {
     saveMeasurement,
     resetMeasurements,
     navigateKey,
+    setActiveView,
+    setUnisonMode,
+    saveCalibrationPoint,
+    resetCalibration,
+    setShowSpectrogram,
+    setShowRailsback,
   };
 
   return (
